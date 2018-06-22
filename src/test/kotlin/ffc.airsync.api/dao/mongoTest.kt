@@ -63,27 +63,6 @@ class mongoTest {
 
 
     @Test
-    fun convertJsonTest() {
-
-        val data = """
-            {
-  "identity": {
-    "type": "thailand-household-id",
-    "id": "70050034545"
-  },
-  "type": "House",
-  "no": "3",
-  "hid": 2,
-  "_id": 4234228966935819000
-}
-        """.trimIndent()
-        //printDebug(data)
-
-        //val house: Address = data.fromJson()
-        //printDebug(house)
-    }
-
-    @Test
     fun forTest() {
         for (i in 0..3) {
             println(i)

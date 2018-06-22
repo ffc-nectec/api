@@ -36,14 +36,4 @@ class InMemoryOrganizationDaoTest {
         assert(findPcu == pcu)
     }
 
-    @Test
-    fun findByIp() {
-        val pcu = Organization().apply { lastKnownIp = "127.0.0.1" }
-        dao.insert(pcu)
-
-        val findPcu = dao.findByIpAddress("127.0.0.1")
-
-        //assert(findPcu == pcu)
-    }
-
 }
