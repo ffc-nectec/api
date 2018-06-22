@@ -124,3 +124,6 @@ gradle-app.setting
 src/main/kotlin/
 src/test/java/
 src/test/resources/
+Init_ffc_api.patch
+src/main/java/
+src/test/
