@@ -99,11 +99,6 @@ class InMemoryOrgDao : OrgDao {
         return orgList
     }
 
-    override fun remove(organization: Organization) {
-        //pcuList.remove(organization)
-        pcuList.removeIf { it.uuid == organization.uuid }
-    }
-
     override fun find(): List<Organization> {
         return pcuList.toList()
     }

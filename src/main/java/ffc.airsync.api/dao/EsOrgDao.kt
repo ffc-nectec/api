@@ -57,7 +57,7 @@ class EsOrgDao : OrgDao {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun remove(organization: Organization) {
+    fun remove(organization: Organization) {
         client.delete("airsync", "air", organization.uuid.toString())
 
         organization.lastKnownIp?.let { client.delete("lastKnownIp", "ip", it) }

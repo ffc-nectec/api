@@ -51,6 +51,12 @@ object HouseService {
     fun createByOrg(orgId: String, house: Address): Address {
         val org = orgDao.findById(orgId)
         house._sync = true
+        try {
+            house.location = Point(house.coordinates!!.latitude, house.coordinates!!.longitude)
+        } catch (ex: NullPointerException) {
+
+        }
+
         if (house.hid!! < 0) throw BadRequestException("")
         return houseDao.insert(org.uuid, house)
     }

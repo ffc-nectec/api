@@ -27,7 +27,6 @@ interface OrgDao {
     fun findByIpAddress(ipAddress: String): List<Organization>
     fun findByToken(token: UUID): Organization
     fun findById(id: String): Organization
-    fun remove(organization: Organization)
     fun updateToken(organization: Organization): Organization
     fun removeByOrgUuid(orgUUID: UUID)
 

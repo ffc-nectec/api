@@ -95,6 +95,8 @@ class HouseResource {
         //    printDebug(it.geometry)
         //}
 
+        if (geoReturn.features.isEmpty()) throw NotFoundException("ไม่มีรายการบ้าน")
+
         return geoReturn
     }
 

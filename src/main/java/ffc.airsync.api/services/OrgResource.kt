@@ -53,6 +53,7 @@ class OrgResource {
             ipAddress = req.remoteAddr
         }
 
+        printDebug("\tip address select = $ipAddress")
 
         val orgUpdate = OrgService.register(organization, ipAddress)
         printDebug("\tGen ip = " + orgUpdate.lastKnownIp

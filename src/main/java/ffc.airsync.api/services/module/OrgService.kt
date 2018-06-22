@@ -2,6 +2,7 @@ package ffc.airsync.api.services.module
 
 import ffc.airsync.api.printDebug
 import ffc.entity.Organization
+import ffc.entity.toJson
 import java.util.*
 import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.NotFoundException
@@ -12,9 +13,10 @@ object OrgService {
 
         organization.token = UUID.randomUUID()
         organization.lastKnownIp = lastKnownIp
-        organization.socketUrl = "ws://127.0.0.1:8080/airsync"
+        //organization.socketUrl = "ws://127.0.0.1:8080/airsync"
         //organization.socketUrl="ws://188.166.249.72/airsync"
 
+        printDebug("\t\tCall mongo insert organization ${organization.toJson()}")
         orgDao.insert(organization)
         return organization
     }

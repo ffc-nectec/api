@@ -1,7 +1,11 @@
 package ffc.airsync.api.dao
 
-import com.mongodb.*
+import com.mongodb.MongoClient
+import com.mongodb.MongoClientURI
+import com.mongodb.ServerAddress
+import com.mongodb.client.MongoCollection
 import ffc.airsync.api.printDebug
+import org.bson.Document
 import java.util.*
 
 abstract class MongoAbsConnect(val host: String, val port: Int, val dbName: String, val collection: String, val mongoInitRun: MongoInitRun = object : MongoInitRun {
@@ -9,7 +13,7 @@ abstract class MongoAbsConnect(val host: String, val port: Int, val dbName: Stri
     }
 }) {
 
-    protected lateinit var coll: DBCollection
+    protected lateinit var coll2: MongoCollection<Document>
 
     //protected var instant: MongoAbsConnect? = null
     val mongoUrl = System.getenv("MONGODB_URI") + "?maxPoolSize=2&maxIdleTimeMS=20000&connectTimeoutMS=30000&socketTimeoutMS=30000"
@@ -50,14 +54,22 @@ abstract class MongoAbsConnect(val host: String, val port: Int, val dbName: Stri
     }
 
     private fun getDbCollection() {
-        printDebug("Debug mongoClient = $mongoClient")
+        printDebug("Mongo getCollection $collection")
+        printDebug("\tDebug mongoClient = $mongoClient")
         if (mongoUrl.isEmpty() || mongoUrl.startsWith("null")) {
-            this.coll = mongoClient!!.getDB(dbName).getCollection(collection)
+
+            printDebug("\t MongoUrl is null")
+            this.coll2 = mongoClient!!.getDatabase(dbName).getCollection(collection)
+
+
 
         } else {
             printDebug("\t mongoUrl != null get systemenv ${System.getenv("MONGODB_DBNAME")}")
 
-            this.coll = mongoClient!!.getDB(System.getenv("MONGODB_DBNAME")).getCollection(collection)
+
+            val databaseName = System.getenv("MONGODB_DBNAME")
+            this.coll2 = mongoClient!!.getDatabase(databaseName).getCollection(collection)
+
             printDebug("\tSuccess create and connect db collection.")
         }
 
@@ -71,7 +83,9 @@ abstract class MongoAbsConnect(val host: String, val port: Int, val dbName: Stri
                 printDebug("Create mongo client localhost")
                 mongoClient = MongoClient(Arrays.asList(
                         ServerAddress(host, port)
-                )/*,Arrays.asList(credential)*/)
+                )
+
+                        /*,Arrays.asList(credential)*/)
 
                 //printDebug("\t mongoUrl=nul")
 
@@ -83,7 +97,8 @@ abstract class MongoAbsConnect(val host: String, val port: Int, val dbName: Stri
             }
 
 
-            mongoClient!!.setWriteConcern(WriteConcern.JOURNALED)
+            //mongoClient!!.writeConcern = WriteConcern.JOURNALED
+
             //instant = this
         }
     }
