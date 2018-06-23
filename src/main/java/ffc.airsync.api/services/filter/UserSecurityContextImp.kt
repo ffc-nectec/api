@@ -34,7 +34,7 @@ class UserSecurityContextImp(override val token: TokenMessage, override val orgI
 
         this.userPrincipal = object : Principal {
             override fun getName(): String {
-                return token.name ?: ""
+                return token.name
             }
 
         }

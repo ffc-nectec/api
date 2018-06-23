@@ -87,7 +87,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         //val queryRemove = Document("orgUuid", organization.uuid.toString())
         //coll2.deleteOne(queryRemove)
 
-        var index = ""
+        val index: String
 
         try {
             val queryIndex = Document("_id", COUNTERNAME)
@@ -197,7 +197,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         printDebug("Mongo remove org uuid $orgUUID")
         val query = Document("orgUuid", orgUUID.toString())
 
-        val doc = coll2.findOneAndDelete(query) ?: throw NotFoundException()
+        coll2.findOneAndDelete(query) ?: throw NotFoundException()
         coll2.deleteMany(query)
 
     }
@@ -240,7 +240,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
 
         organization.lastKnownIp = doc["lastKnownIp"].toString()
         printDebug("\t\t\t7")
-        organization.firebaseToken = (doc["firebaseToken"] ?: null)?.toString()
+        organization.firebaseToken = doc["firebaseToken"]?.toString()
         printDebug("\t\t\t8")
 
         return organization

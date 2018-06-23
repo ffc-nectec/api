@@ -38,11 +38,11 @@ interface UserDao {
 
         fun checkBlockUser(user: User) {
             printDebug("Check block user.")
-            val user = userBlock.find {
+            val findUser = userBlock.find {
                 it == user.username.trim()
             }
-            printDebug("\tResult block check $user")
-            if (user != null) throw ForbiddenException("User ไม่มีสิทธ์")
+            printDebug("\tResult block check $findUser")
+            if (findUser != null) throw ForbiddenException("User ไม่มีสิทธ์")
         }
     }
 

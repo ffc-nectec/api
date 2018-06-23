@@ -25,7 +25,6 @@ class UserResource {
     fun create(@Context req: HttpServletRequest,
                @PathParam("orgUuid") orgId: String,
                userList: ArrayList<User>): Response {
-        val httpHeader = req.buildHeaderMap()
 
         printDebug("Raw user list.")
         userList.forEach {

@@ -16,9 +16,9 @@ object PersonService {
         val count = personList.size
 
         itemRenderPerPage(page, per_page, count, object : AddItmeAction {
-            override fun onAddItemAction(it: Int) {
+            override fun onAddItemAction(itemIndex: Int) {
 
-                val person = personList[it].data
+                val person = personList[itemIndex].data
 
 
                 if (person.houseId != null) {

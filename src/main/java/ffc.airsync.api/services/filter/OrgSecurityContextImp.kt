@@ -15,7 +15,7 @@ class OrgSecurityContextImp(override val token: TokenMessage, override val orgId
 
         this.userPrincipal = object : Principal {
             override fun getName(): String {
-                return token.name ?: ""
+                return token.name
             }
 
         }

@@ -85,7 +85,6 @@ class PersonResource {
             @QueryParam("per_page") per_page: Int = 200,
             @PathParam("orgId") orgId: String,
             @Context req: HttpServletRequest): Response {
-        val httpHeader = req.buildHeaderMap()
 
         try {
             val personList = PersonService.get(

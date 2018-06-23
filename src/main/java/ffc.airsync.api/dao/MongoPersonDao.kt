@@ -87,7 +87,7 @@ class MongoPersonDao(host: String, port: Int, databaseName: String, collection: 
         printDebug("\t\thouseId=${person.houseId}")
 
 */
-        var i = 1
+        //var i = 1
         //printDebug("\t\t\t${i++}")
         val personDoc = Document("id", person.id)
         //printDebug("\t\t\t${i++}${orgUUID}")

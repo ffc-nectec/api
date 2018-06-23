@@ -51,7 +51,6 @@ class HouseResource {
                         @QueryParam("haveLocation") haveLocation: Boolean? = null,
                         @PathParam("orgId") orgId: String,
                         @Context req: HttpServletRequest): FeatureCollection<Address> {
-        val httpHeader = req.buildHeaderMap()
 
         printDebug("getGeoJsonHouse house method geoJson List")
 
@@ -110,7 +109,6 @@ class HouseResource {
                      @QueryParam("haveLocation") haveLocation: Boolean? = null,
                      @PathParam("orgId") orgId: String,
                      @Context req: HttpServletRequest): List<Address> {
-        val httpHeader = req.buildHeaderMap()
 
         printDebug("getGeoJsonHouse house method geoJson List paramete orgId $orgId page $page per_page $per_page hid $hid")
 
@@ -169,9 +167,6 @@ class HouseResource {
     ): FeatureCollection<Address> {
         printDebug("Call getGeoJsonHouse single geo json house by ip = " + req.remoteAddr + " OrgID $orgId House ID = $houseId")
 
-
-        val httpHeader = req.buildHeaderMap()
-
         val house: FeatureCollection<Address> = HouseService.getSingleGeo(orgId, houseId)
 
         return house
@@ -187,10 +182,6 @@ class HouseResource {
                   @PathParam("houseId") houseId: String
     ): Address {
         printDebug("Call getGeoJsonHouse single house by ip = " + req.remoteAddr + " OrgID $orgId House ID = $houseId")
-
-
-        val httpHeader = req.buildHeaderMap()
-
 
         val house: Address = HouseService.getSingle(orgId, houseId)
 
@@ -221,10 +212,6 @@ class HouseResource {
             it.haveChronics = null
             printDebug("house json = " + it.toJson())
         }
-
-        val httpHeader = req.buildHeaderMap()
-
-
 
         if (role == TokenMessage.TYPEROLE.ORG) {
             val houseReturn = HouseService.createByOrg(orgId, houseList)
@@ -267,8 +254,6 @@ class HouseResource {
         //val houseReturn = HouseService.createByOrg(orgId, house)
         //return Response.status(Response.Status.CREATED).entity(house).build()
 
-
-        val httpHeader = req.buildHeaderMap()
         if (role == TokenMessage.TYPEROLE.ORG) {
             val houseReturn = HouseService.createByOrg(orgId, house)
             return Response.status(Response.Status.CREATED).entity(house).build()
