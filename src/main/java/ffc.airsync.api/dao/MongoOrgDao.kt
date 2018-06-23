@@ -2,14 +2,18 @@ package ffc.airsync.api.dao
 
 
 import com.mongodb.BasicDBObject
+import com.mongodb.DuplicateKeyException
+import com.mongodb.MongoWriteException
 import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoCollection
+import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.get6DigiId
 import ffc.airsync.api.printDebug
 import ffc.entity.Organization
 import org.bson.Document
 import org.bson.types.ObjectId
 import java.util.*
+import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 
 class MongoOrgDao(host: String, port: Int, databaseName: String, collection: String) : OrgDao, MongoAbsConnect(host, port, databaseName, collection) {
@@ -19,12 +23,29 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
 
     }
 
-    private val couterColl: MongoCollection<Document>
+    lateinit var couterColl: MongoCollection<Document>
 
 
     init {
+        createOrgIdCouter()
 
+        createOrgIndex()
 
+    }
+
+    private fun createOrgIndex() {
+        try {
+            val orgUuidIndex = Document("orgUuid", 1)
+            coll2.createIndex(orgUuidIndex, IndexOptions().unique(true))
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            val exo = InternalServerErrorException(ex.message)
+            exo.stackTrace = ex.stackTrace
+            throw exo
+        }
+    }
+
+    private fun createOrgIdCouter() {
         try {
             if (mongoUrl.isEmpty() || mongoUrl.startsWith("null")) {
                 printDebug("\tCall create counter by object.")
@@ -43,9 +64,9 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
 
             try {
                 couterColl.insertOne(counterDoc)
-            } catch (ex: com.mongodb.DuplicateKeyException) {
+            } catch (ex: DuplicateKeyException) {
                 printDebug("Org Counter Duplicate.")
-            } catch (ex: com.mongodb.MongoWriteException) {
+            } catch (ex: MongoWriteException) {
                 printDebug("Org Counter Duplicate.")
                 //ex.printStackTrace()
             }
@@ -53,11 +74,10 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
             printDebug("\t\tInsert counter object.")
         } catch (ex: Exception) {
             ex.printStackTrace()
-            val exout = javax.ws.rs.InternalServerErrorException("Get collection org counter.")
+            val exout = InternalServerErrorException("Get collection org counter.")
             exout.stackTrace = ex.stackTrace
             throw exout
         }
-
     }
 
 
