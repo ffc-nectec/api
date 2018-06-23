@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package th.`in`.ffc.airsync.api.services
+package ffc.airsync.api
 
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory
@@ -23,7 +23,7 @@ import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory
 class SocketServlet : WebSocketServlet() {
     override fun configure(factory: WebSocketServletFactory?) {
         //factory.store(ApiSocket.class)
-        factory!!.getPolicy().setIdleTimeout(10000);
+        factory!!.getPolicy().setIdleTimeout(10000)
 
     }
 }
