@@ -36,11 +36,11 @@ import javax.ws.rs.NotFoundException
 class MongoHouseDao(host: String, port: Int, databaseName: String, collection: String) : HouseDao, MongoAbsConnect(host, port, databaseName, collection) {
 
     init {
+        mongoCreateHouseIndex()
+    }
 
+    private fun mongoCreateHouseIndex() {
         try {
-
-
-            //Create mongo index.
             val geoIndex = Document("location", "2dsphere")
             coll2.createIndex(geoIndex, IndexOptions().unique(false))
 
