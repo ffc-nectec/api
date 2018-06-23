@@ -17,7 +17,6 @@
 
 package th.`in`.ffc.airsync.api.services
 
-import ffc.airsync.api.websocket.ApiSocket
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory
 
@@ -25,7 +24,6 @@ class SocketServlet : WebSocketServlet() {
     override fun configure(factory: WebSocketServletFactory?) {
         //factory.store(ApiSocket.class)
         factory!!.getPolicy().setIdleTimeout(10000);
-        factory.register(ApiSocket::class.java)
 
     }
 }
