@@ -13,7 +13,7 @@ import javax.ws.rs.NotFoundException
 class MongoUserDao(host: String, port: Int, databaseName: String, collection: String) : UserDao, MongoAbsConnect(host, port, databaseName, collection) {
 
 
-    private val SALTPASS = """
+    private var SALT_PASS = """
 uxF3Ocv5eg4BoQBK9MmR
 rwPARiCL9ovpr3zmlJlj
 kIQnpzRIgEh8WLFNHyy1
@@ -35,6 +35,11 @@ f6zMttthJyQnrDBHGhma
 j1nrasD5fg9NxuwkdJq8
 ytF2v69RwtGYf7C6ygwD
 """
+
+    init {
+        val salt = System.getenv("FFC_SALT")
+        if (salt != null) SALT_PASS = salt
+    }
 
 
     override fun insert(user: User, orgId: String) {
@@ -124,7 +129,7 @@ ytF2v69RwtGYf7C6ygwD
     private fun getPass(password: String): String {
         val digest = MessageDigest.getInstance("SHA-256")
         val encoded = digest.digest(
-                ("$password$SALTPASS$password").toByteArray(StandardCharsets.UTF_8))
+                ("$password$SALT_PASS$password").toByteArray(StandardCharsets.UTF_8))
 
         val hexString = StringBuffer()
         for (i in 0 until encoded.size) {
