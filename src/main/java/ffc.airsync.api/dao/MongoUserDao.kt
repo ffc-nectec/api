@@ -96,14 +96,14 @@ ytF2v69RwtGYf7C6ygwD
     }
 
 
-    override fun isAllow(user: User, orgId: String): Boolean {
-        checkBlockUser(user)
+    override fun isAllow(name: String, pass: String, orgId: String): Boolean {
+        checkBlockUser(name)
 
         var userDoc: Document? = null
 
         val query = Document("orgId", orgId)
-                .append("name", user.name)
-                .append("pass", getPass(user.password))
+                .append("name", name)
+                .append("pass", getPass(pass))
 
         mongoSafe(object : MongoSafeRun {
             override fun run() {

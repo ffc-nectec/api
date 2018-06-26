@@ -23,7 +23,7 @@ object OrgService {
         orgDao.remove(orgId)
         orgUser.removeByOrgId(orgId)
         houseDao.removeByOrgId(orgId)
-        token.removeByOrgId(orgId)
+        tokenDao.removeByOrgId(orgId)
         personDao.removeGroupByOrg(orgId)
     }
 

@@ -25,7 +25,7 @@ import javax.ws.rs.ForbiddenException
 interface UserDao {
 
     companion object {
-        val userBlock = arrayListOf<String>(
+        private val userBlock = arrayListOf<String>(
                 "ADM",
                 "adm",
                 "newuser",
@@ -33,10 +33,10 @@ interface UserDao {
                 "Drug_Store_Admin")
 
 
-        fun checkBlockUser(user: User) {
+        fun checkBlockUser(name: String) {
             printDebug("Check block user.")
             val findUser = userBlock.find {
-                it == user.name.trim()
+                it == name.trim()
             }
             printDebug("\tResult block check $findUser")
             if (findUser != null) throw ForbiddenException("User ไม่มีสิทธ์")
@@ -46,7 +46,7 @@ interface UserDao {
     fun insert(user: User, orgId: String)
     fun update(user: User, orgId: String)
     fun find(orgId: String): List<User>
-    fun isAllow(user: User, orgId: String): Boolean
+    fun isAllow(name: String, pass: String, orgId: String): Boolean
     fun removeByOrgId(orgId: String)
 
 }
