@@ -22,6 +22,8 @@ import ffc.entity.Organization
 interface OrgDao {
     fun insert(organization: Organization): Organization
 
+    fun remove(orgId: String)
+
     fun findAll(): List<Organization>
     fun find(orgId: String): Organization
 

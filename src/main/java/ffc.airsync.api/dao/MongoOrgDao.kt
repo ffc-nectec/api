@@ -48,6 +48,11 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
     }
 
 
+    override fun remove(orgId: String) {
+        val query = Document("_id", ObjectId(orgId))
+        coll2.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบ Org $orgId ที่ต้องการลบ")
+    }
+
     override fun findAll(): List<Organization> {
         printDebug("Mongo findAll() org")
         val orgCursorList = coll2.find()
@@ -141,6 +146,17 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
 
     override fun removeFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
 
-        //TODO ("ทำตัวลบ Firebase Token")
+        val query = Document("orgId", orgId)
+
+        if (isOrg) {
+            val removeOrgFirebaseToken = Document("firebaseToken", null)
+            val removeOrgFirebaseTokenQuery = Document("\$set", removeOrgFirebaseToken)
+            coll2.updateOne(query, removeOrgFirebaseTokenQuery)
+        } else {
+            val removeMobileFirebaseToken = Document("mobileFirebaseToken", firebaseToken)
+            val removeMobileFirebaseTokenQuery = Document("\$pull", removeMobileFirebaseToken)
+            coll2.updateOne(query, removeMobileFirebaseTokenQuery)
+        }
+
     }
 }
