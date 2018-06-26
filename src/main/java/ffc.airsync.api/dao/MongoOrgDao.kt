@@ -15,7 +15,7 @@ import javax.ws.rs.NotFoundException
 
 class MongoOrgDao(host: String, port: Int, databaseName: String, collection: String) : OrgDao, MongoAbsConnect(host, port, databaseName, collection) {
 
-    override fun insert(organization: Organization) {
+    override fun insert(organization: Organization): Organization {
 
         printDebug("Call mongo insert organization")
         val generateId = ObjectId()
@@ -39,6 +39,12 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         insertObject.append("token", generateToken)
 
         coll2.insertOne(insertObject)
+
+
+        val queryNewOrg = Document("_id", generateId)
+        val newOrgDocument = coll2.find(queryNewOrg).first()
+
+        return newOrgDocument.toJson().parseTo()
     }
 
 
@@ -118,7 +124,6 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         printDebug("\tReturn updateToken")
         return newOrg
     }
-
 
 
     override fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {

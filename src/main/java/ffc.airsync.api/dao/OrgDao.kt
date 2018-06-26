@@ -20,7 +20,7 @@ package ffc.airsync.api.dao
 import ffc.entity.Organization
 
 interface OrgDao {
-    fun insert(organization: Organization)
+    fun insert(organization: Organization): Organization
 
     fun findAll(): List<Organization>
     fun find(orgId: String): Organization
