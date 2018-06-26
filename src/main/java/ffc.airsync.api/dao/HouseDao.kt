@@ -17,24 +17,19 @@
 
 package ffc.airsync.api.dao
 
-import ffc.entity.Address
-import ffc.entity.StorageOrg
-import java.util.*
+import ffc.entity.House
 
 interface HouseDao {
-    fun insert(orgUuid: UUID, house: Address): Address
+    fun insert(orgId: String, house: House): House
 
-    fun update(house: Address)
-    fun update(houseList: List<Address>)
+    fun update(house: House)
+    fun update(houseList: List<House>)
 
-    fun find(latlng: Boolean = true): List<StorageOrg<Address>>
+    fun delete(houseId: String)
 
-    fun find(orgUuid: UUID, haveLocation: Boolean? = true): List<StorageOrg<Address>>
+    fun findAll(orgId: String, haveLocation: Boolean? = true): List<House>
+    fun find(houseId: String): House
 
-    fun findByHouseId(orgUuid: UUID, hid: Int): StorageOrg<Address>?
 
-
-    fun findByHouse_Id(orgUuid: UUID, _id: String): StorageOrg<Address>?
-
-    fun removeByOrgUuid(orgUuid: UUID)
+    fun removeByOrgId(orgId: String)
 }

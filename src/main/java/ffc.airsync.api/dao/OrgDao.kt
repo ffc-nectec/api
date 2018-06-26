@@ -18,17 +18,16 @@
 package ffc.airsync.api.dao
 
 import ffc.entity.Organization
-import java.util.*
 
 interface OrgDao {
     fun insert(organization: Organization)
-    fun find(): List<Organization>
-    fun findByUuid(uuid: UUID): Organization
+
+    fun findAll(): List<Organization>
+    fun find(orgId: String): Organization
+
     fun findByIpAddress(ipAddress: String): List<Organization>
-    fun findByToken(token: UUID): Organization
-    fun findById(id: String): Organization
+    fun findByToken(token: String): Organization
     fun updateToken(organization: Organization): Organization
-    fun removeByOrgUuid(orgUUID: UUID)
 
     fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean = true)
     fun removeFirebase(orgId: String, firebaseToken: String, isOrg: Boolean = true)

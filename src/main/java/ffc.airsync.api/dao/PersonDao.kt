@@ -19,18 +19,17 @@ package ffc.airsync.api.dao
 
 import ffc.entity.People
 import ffc.entity.Person
-import ffc.entity.StorageOrg
-import java.util.*
+import java.util.ArrayList
 
 interface PersonDao {
-    fun insert(orgUUID: UUID, person: Person)
-    fun insert(orgUUID: UUID, personList: List<Person>)
+    fun insert(orgId: String, person: Person)
+    fun insert(orgId: String, personList: List<Person>)
 
-    fun find(orgUuid: UUID): List<StorageOrg<Person>>
-
-
-    fun getPeopleInHouse(orgUUID: UUID, houseId: Int): ArrayList<People>?
+    fun find(orgId: String): List<Person>
 
 
-    fun removeGroupByOrg(orgUUID: UUID)
+    fun getPeopleInHouse(houseId: String): ArrayList<People>?
+
+
+    fun removeGroupByOrg(orgId: String)
 }

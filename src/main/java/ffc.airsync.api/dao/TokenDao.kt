@@ -17,15 +17,12 @@
 
 package ffc.airsync.api.dao
 
-import ffc.entity.StorageOrg
-import ffc.entity.TokenMessage
-import java.util.*
+import ffc.entity.Token
 
 interface TokenDao {
-    fun insert(token: UUID, uuid: UUID, user: String, orgId: String, type: TokenMessage.TYPEROLE = TokenMessage.TYPEROLE.NOAUTH): TokenMessage
-    fun find(token: UUID): StorageOrg<TokenMessage>
-    fun findByOrgUuid(orgUUID: UUID): List<StorageOrg<TokenMessage>>
-    fun remove(token: UUID)
-    fun updateFirebaseToken(token: UUID, firebaseToken: String)
-    fun removeByOrgUuid(orgUUID: UUID)
+    fun create(user: String, orgId: String, type: Token.TYPEROLE = Token.TYPEROLE.NOAUTH): Token
+    fun find(token: String): Token
+    fun findByOrgId(orgId: String): List<Token>
+    fun remove(token: String)
+    fun removeByOrgUuid(orgId: String)
 }

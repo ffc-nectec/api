@@ -2,121 +2,48 @@ package ffc.airsync.api.dao
 
 
 import com.mongodb.BasicDBObject
-import com.mongodb.DuplicateKeyException
-import com.mongodb.MongoWriteException
 import com.mongodb.client.FindIterable
-import com.mongodb.client.MongoCollection
-import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.get6DigiId
 import ffc.airsync.api.printDebug
 import ffc.entity.Organization
+import ffc.entity.ffcGson
+import ffc.entity.parseTo
+import ffc.entity.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
-import java.util.*
-import javax.ws.rs.InternalServerErrorException
+import javax.ws.rs.BadRequestException
 import javax.ws.rs.NotFoundException
 
 class MongoOrgDao(host: String, port: Int, databaseName: String, collection: String) : OrgDao, MongoAbsConnect(host, port, databaseName, collection) {
 
-    companion object {
-        private val COUNTERNAME = "idorg"
-
-    }
-
-    lateinit var couterColl: MongoCollection<Document>
-
-
-    init {
-        createOrgIdCouter()
-
-        createOrgIndex()
-
-    }
-
-    private fun createOrgIndex() {
-        try {
-            val orgUuidIndex = Document("orgUuid", 1)
-            coll2.createIndex(orgUuidIndex, IndexOptions().unique(true))
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            val exo = InternalServerErrorException(ex.message)
-            exo.stackTrace = ex.stackTrace
-            throw exo
-        }
-    }
-
-    private fun createOrgIdCouter() {
-        try {
-            if (mongoUrl.isEmpty() || mongoUrl.startsWith("null")) {
-                printDebug("\tCall create counter by object.")
-                couterColl = getClient()!!.getDatabase(dbName).getCollection("counter")
-                printDebug("\t\tFinish call create counter.")
-            } else {
-                printDebug("\tCall create counter by url string parameter.")
-                val databaseName = System.getenv("MONGODB_DBNAME")
-                couterColl = getClient()!!.getDatabase(databaseName).getCollection("counter")
-                printDebug("\t\tFinish call create counter.")
-            }
-
-
-            val counterDoc = Document("_id", COUNTERNAME)
-                    .append("sec", 1)
-
-            try {
-                couterColl.insertOne(counterDoc)
-            } catch (ex: DuplicateKeyException) {
-                printDebug("Org Counter Duplicate.")
-            } catch (ex: MongoWriteException) {
-                printDebug("Org Counter Duplicate.")
-                //ex.printStackTrace()
-            }
-
-            printDebug("\t\tInsert counter object.")
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            val exout = InternalServerErrorException("Get collection org counter.")
-            exout.stackTrace = ex.stackTrace
-            throw exout
-        }
-    }
-
-
     override fun insert(organization: Organization) {
 
         printDebug("Call mongo insert organization")
-        //val queryRemove = Document("orgUuid", organization.uuid.toString())
-        //coll2.deleteOne(queryRemove)
+        val generateId = ObjectId()
 
-        val index: String
-
-        try {
-            val queryIndex = Document("_id", COUNTERNAME)
-            val updateIndex = Document("\$inc",
-                    Document("sec", 1))
-
-            val newIndex = couterColl.findOneAndUpdate(queryIndex, updateIndex)
-            index = newIndex["sec"].toString()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            throw ex
+        if (!organization.isTempId) {
+            throw BadRequestException("ไม่สามารถ Register ได้ โปรดตรวจสอบ id")
         }
 
-        printDebug("Counter counter $index")
+        val query = Document("name", organization.name)
+        val checkDuplicateName = coll2.find(query).first()
+        if (checkDuplicateName != null) {
+            throw BadRequestException("ไม่สามารถ Register ได้มีการใช้ชื่อ ${organization.name} ไปแล้ว")
+        }
+
+        val insertObject = Document.parse(ffcGson.toJson(organization))
 
 
+        insertObject.append("_id", generateId)
+        insertObject.append("lastKnownIp", organization.bundle["lastKnownIp"])
+        val generateToken = ObjectId()
+        insertObject.append("token", generateToken)
 
-        organization.id = index
-
-        //uuid id token ipaddress
-        val doc = createDoc(organization, ObjectId())
-        //coll.insert(doc)
-        coll2.insertOne(doc)
-
-
+        coll2.insertOne(insertObject)
     }
 
-    override fun find(): List<Organization> {
-        printDebug("Mongo find() org")
+
+    override fun findAll(): List<Organization> {
+        printDebug("Mongo findAll() org")
         val orgCursorList = coll2.find()
         val orgList = docListToObj(orgCursorList)
         if (orgList.isEmpty()) throw NotFoundException("ไม่พบรายการ org ลงทะเบียน ในระบบ")
@@ -129,7 +56,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         printDebug("\t\tLoad doc list.")
         list.forEach {
             printDebug("\t\t$it")
-            val organization = docToObj(it)
+            val organization: Organization = it.toJson().parseTo()
             orgList.add(organization)
         }
         printDebug("\tReturn docListToObj")
@@ -137,17 +64,18 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
 
     }
 
-    override fun findByUuid(uuid: UUID): Organization {
-        printDebug("Mongo find org uuid $uuid")
-        val query = Document("orgUuid", uuid.toString())
-        val doc = coll2.find(query).first() ?: throw NotFoundException("ไม่พบ uuid ${uuid.toString()} ที่ค้นหา")
-        val organization = docToObj(doc)
-
-        return organization
+    override fun find(orgId: String): Organization {
+        printDebug("Find by orgId = $orgId")
+        val query = Document("_id", ObjectId(orgId))
+        val orgDocument = coll2.find(query).first()
+        printDebug("\t$orgDocument")
+        return docToObj(orgDocument)
     }
 
+    private fun docToObj(orgDocument: Document): Organization = orgDocument.toString().parseTo()
+
     override fun findByIpAddress(ipAddress: String): List<Organization> {
-        printDebug("Mongo find org ip $ipAddress")
+        printDebug("Mongo findAll org ip $ipAddress")
         val query = Document("lastKnownIp", ipAddress)
         printDebug("\tCreate query object $query")
         val orgDoc = coll2.find(query)
@@ -159,99 +87,45 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         return orgList
     }
 
-    override fun findByToken(token: UUID): Organization {
-        printDebug("Mongo find org token $token")
-        val query = Document("token", token.toString())
-        val doc = coll2.find(query).first() ?: throw NotFoundException("ไม่พบ token ${token.toString()} ที่ค้นหา")
-        val organization = docToObj(doc)
+    override fun findByToken(token: String): Organization {
+        printDebug("Mongo findAll org token $token")
+        val query = Document("token", token)
+        val doc = coll2.find(query).first() ?: throw NotFoundException("ไม่พบ token $token ที่ค้นหา")
 
-        return organization
+        return docToObj(doc)
 
-    }
-
-    override fun findById(id: String): Organization {
-        printDebug("Mongo find org id $id")
-        val query = Document("idOrg", id)
-        val doc = coll2.find(query).first() ?: throw NotFoundException("ไม่พบ id org $id ที่ค้นหา")
-        val organization = docToObj(doc)
-
-        return organization
     }
 
     override fun updateToken(organization: Organization): Organization {
-        printDebug("Mongo update token orgobj=$organization")
-        val query = Document("orgUuid", organization.uuid.toString())
-        val oldDoc = coll2.find(query).first()
-                ?: throw NotFoundException("ไม่พบ Object organization ${organization.uuid} ให้ Update")
+        printDebug("Mongo update token orgobj=${organization.toJson()}")
+        val query = Document("_id", organization.id)
+        coll2.find(query).first()
+                ?: throw NotFoundException("ไม่พบ Object organization ${organization.id} ให้ Update")
 
 
-        organization.token = UUID.randomUUID()
-        val updateDoc = createDoc(organization, ObjectId(oldDoc["_id"].toString()))
+        val generateToken = ObjectId()
+        printDebug("\tGenerate Token ${generateToken.toHexString()}")
+        val tokenDocument = Document("token", generateToken)
+        val queryUpdate = Document("\$set", tokenDocument)
 
-        coll2.updateOne(oldDoc, updateDoc)
+        coll2.updateOne(query, queryUpdate)
+        printDebug("\tUpdate token.")
 
-        return organization
+
+        val newOrgDocument = coll2.find(query).first()
+        val newOrg = docToObj(newOrgDocument)
+
+        printDebug("\tReturn updateToken")
+        return newOrg
     }
 
-    override fun removeByOrgUuid(orgUUID: UUID) {
-        printDebug("Mongo remove org uuid $orgUUID")
-        val query = Document("orgUuid", orgUUID.toString())
-
-        coll2.findOneAndDelete(query) ?: throw NotFoundException()
-        coll2.deleteMany(query)
-
-    }
-
-    private fun createDoc(organization: Organization, objId: ObjectId): Document {
-
-        val shortId = objId.get6DigiId()
-
-        val doc = Document("_id", objId)
-                .append("_shortId", shortId)
-                .append("orgUuid", organization.uuid.toString())
-                .append("pcuCode", organization.pcuCode)
-                .append("name", organization.name)
-                .append("token", organization.token.toString())
-                .append("idOrg", organization.id)
-
-                .append("lastKnownIp", organization.lastKnownIp)
-                .append("firebaseToken", organization.firebaseToken)
-
-        return doc
-    }
-
-    private fun docToObj(doc: Document): Organization {
-
-
-        printDebug("\t\t\t1")
-        val organization = Organization(UUID.fromString(doc["orgUuid"].toString())) {
-            id = doc["idOrg"].toString()
-        }
-
-        printDebug("\t\t\t2")
-        organization.pcuCode = doc["pcuCode"].toString()
-        printDebug("\t\t\t3")
-        organization.name = doc["name"].toString()
-        printDebug("\t\t\t4")
-        organization.token = UUID.fromString(doc["token"].toString())
-        printDebug("\t\t\t5")
-        organization.id = doc["idOrg"].toString()
-        printDebug("\t\t\t6")
-
-        organization.lastKnownIp = doc["lastKnownIp"].toString()
-        printDebug("\t\t\t7")
-        organization.firebaseToken = doc["firebaseToken"]?.toString()
-        printDebug("\t\t\t8")
-
-        return organization
-    }
 
 
     override fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
         val query = Document("idOrg", orgId)
         if (isOrg) {
-            val firebaseToken = Document("firebaseToken", firebaseToken)
-            coll2.updateOne(query, BasicDBObject("\$set", firebaseToken))
+            val firebaseTokenDoc = Document("firebaseToken", firebaseToken)
+            coll2.updateOne(query, BasicDBObject("\$set", firebaseTokenDoc))
 
         } else {
             coll2.updateOne(query, BasicDBObject("\$push", BasicDBObject("mobileFirebaseToken", firebaseToken)))
@@ -261,6 +135,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
     }
 
     override fun removeFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+        //TODO ("ทำตัวลบ Firebase Token")
     }
 }

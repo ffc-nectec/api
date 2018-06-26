@@ -18,10 +18,7 @@
 package ffc.airsync.api.dao
 
 import ffc.airsync.api.printDebug
-import ffc.entity.Organization
 import ffc.entity.User
-import ffc.entity.UserStor
-import java.util.*
 import javax.ws.rs.ForbiddenException
 
 
@@ -39,18 +36,17 @@ interface UserDao {
         fun checkBlockUser(user: User) {
             printDebug("Check block user.")
             val findUser = userBlock.find {
-                it == user.username.trim()
+                it == user.name.trim()
             }
             printDebug("\tResult block check $findUser")
             if (findUser != null) throw ForbiddenException("User ไม่มีสิทธ์")
         }
     }
 
-    fun insert(user: User, org: Organization)
-    fun find(orgUuid: UUID): List<UserStor>
-    fun findById(id: String): List<UserStor>
-    fun isAllow(user: User, orgUuid: UUID): Boolean
-    fun isAllowById(user: User, orgId: String): Boolean
-    fun removeByOrgUuid(orgUUID: UUID)
+    fun insert(user: User, orgId: String)
+    fun update(user: User, orgId: String)
+    fun find(orgId: String): List<User>
+    fun isAllow(user: User, orgId: String): Boolean
+    fun removeByOrgId(orgId: String)
 
 }

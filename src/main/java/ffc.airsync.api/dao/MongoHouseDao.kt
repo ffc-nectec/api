@@ -17,19 +17,16 @@
 
 package ffc.airsync.api.dao
 
-import com.mongodb.BasicDBList
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.get6DigiId
 import ffc.airsync.api.printDebug
-import ffc.entity.Address
-import ffc.entity.StorageOrg
-import ffc.entity.fromJson
+import ffc.entity.House
+import ffc.entity.ffcGson
+import ffc.entity.parseTo
 import ffc.entity.toJson
-import me.piruin.geok.LatLng
-import me.piruin.geok.geometry.Point
 import org.bson.Document
 import org.bson.types.ObjectId
-import java.util.*
+import java.util.ArrayList
+import javax.ws.rs.ForbiddenException
 import javax.ws.rs.NotFoundException
 
 
@@ -44,54 +41,41 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
             val geoIndex = Document("location", "2dsphere")
             coll2.createIndex(geoIndex, IndexOptions().unique(false))
 
-
-            val houseNumberIndex = Document()
-                    .append("hid", 1)
-                    .append("orgUuid", 1)
-            coll2.createIndex(houseNumberIndex, IndexOptions().unique(true))
-
-
-            val orgUuidIndex = Document("orgUuid", 1)
-            coll2.createIndex(orgUuidIndex, IndexOptions().unique(false))
-
         } catch (ex: Exception) {
             ex.printStackTrace()
             throw ex
         }
     }
 
-    override fun insert(orgUuid: UUID, house: Address): Address {
+    override fun insert(orgId: String, house: House): House {
 
-        val query = Document("orgUuid", orgUuid.toString())
-                .append("hid", house.hid)
+        val generateId = ObjectId()
+        house.coordinates = null
 
-
-        val objId = ObjectId()
-        val shortId = objId.get6DigiId()
-        house._id = objId.toHexString()
-        //house._shortId = shortId
-
-        //{"type":"Point","coordinates":[100.6027899,14.0782897]}
-
-        var geoPoint: Document? = null
-        try {
-            geoPoint = Document("type", "Point")
-                    .append("coordinates", Arrays.asList(house.coordinates!!.longitude, house.coordinates!!.latitude))
-        } catch (ex: NullPointerException) {
-
+        val houseInsert: House
+        houseInsert = if (house.isTempId) {
+            house.copy(generateId.toHexString())
+        } else {
+            if (house.link != null) {
+                house.copy(generateId.toHexString())
+            } else {
+                throw ForbiddenException("ข้อมูลบ้านที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ link และ isTempId")
+            }
         }
 
-        val doc = createDocument(objId, orgUuid.toString(), house, geoPoint)
+        val docHouse = Document.parse(ffcGson.toJson(houseInsert))
+        docHouse.append("_id", generateId)
+        docHouse.append("orgId", orgId)
+        printDebug("Document insert = $docHouse")
 
+        val houseReturn: House
 
-        val houseReturn = house.clone()
-        house.coordinates = null
-        doc.append("property", house.toJson())
-        printDebug("Document insert = $doc")
-
-        //coll2.deleteOne(query)
         try {
-            coll2.insertOne(doc)
+            coll2.insertOne(docHouse)
+            val query = Document("_id", generateId)
+            val afterInsertDoc = coll2.find(query).first()
+            houseReturn = afterInsertDoc.toJson().parseTo()
+
         } catch (ex: Exception) {
             ex.printStackTrace()
             throw ex
@@ -100,52 +84,46 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
         return houseReturn
     }
 
-    private fun createDocument(objId: ObjectId, orgUuid: String, house: Address, geoPoint: Document?): Document {
-        val doc = Document("_id", objId)
-                //.append("_shortId", shortId)
-                .append("orgUuid", orgUuid)
-                .append("hid", house.hid)
-                .append("latitude", house.coordinates?.latitude)
-                .append("longitude", house.coordinates?.longitude)
-                .append("location", geoPoint)
-        return doc
+    private fun createGeoDocument(house: House): Document? {
+        var geoPoint: Document? = null
+
+        house.location?.let {
+            geoPoint = Document.parse(it.toString())
+        }
+        return geoPoint
+    }
+
+    private fun createDocument(objId: ObjectId, orgId: String, house: House, geoPoint: Document?): Document {
+        return Document("_id", objId)
     }
 
 
-    override fun update(house: Address) {
+    override fun update(house: House) {
         printDebug("Call MongoHouseDao.upldate ${house.toJson()}")
-        val query = Document("_id", ObjectId(house._id))
+        val query = Document("_id", ObjectId(house.id))
 
 
         printDebug("\tquery old house ")
-        val oldDoc = (coll2.find(query).first() ?: throw NotFoundException("ไม่พบ Object ให้ Update"))
+        val oldHouseDoc = (coll2.find(query).first() ?: throw NotFoundException("ไม่มีบ้านตาม id ให้ Update"))
 
 
-        val orgUuid = oldDoc["orgUuid"].toString()
-        printDebug("\tget orgUuid $orgUuid")
+        val orgId = oldHouseDoc["orgId"].toString()
+        printDebug("\tget orgId $orgId")
 
 
-        var geoPoint: Document? = null
-        try {
-            geoPoint = Document("type", "Point")
-                    .append("coordinates", Arrays.asList(house.coordinates!!.longitude, house.coordinates!!.latitude))
-        } catch (ex: NullPointerException) {
-
-        }
+        //val geoPoint: Document? = createGeoDocument(house)
 
 
         printDebug("\tcreate update doc")
-        val updateDoc = createDocument(ObjectId(house._id), orgUuid, house, geoPoint)
+        //val updateHouseDoc = createDocument(ObjectId(house.id), orgId, house, geoPoint)
 
-        printDebug("\t1")
-        house.coordinates = null
-        house.pcuCode = oldDoc["property"].toString().fromJson<Address>().pcuCode
-        printDebug("\t2")
-        updateDoc.append("property", house.toJson())
+        val updateDoc = Document.parse(ffcGson.toJson(house))
+        updateDoc.append("_id", ObjectId(house.id))
+        updateDoc.append("orgId", orgId)
 
 
         printDebug("\tcall collection.update (oldDoc, updateDoc)")
-        printDebug("\t\tOld doc =    $oldDoc")
+        printDebug("\t\tOld doc =    $oldHouseDoc")
         printDebug("\t\tUpdate doc = $updateDoc")
 
         try {
@@ -157,76 +135,45 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
             throw exo
         }
 
-        printDebug("\t3")
+        printDebug("\tDone mongo update house.")
     }
 
 
-    override fun update(houseList: List<Address>) {
+    override fun update(houseList: List<House>) {
         houseList.forEach {
             update(it)
         }
     }
 
 
-    override fun find(latlng: Boolean): List<StorageOrg<Address>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun delete(houseId: String) {
+        val query = Document("_id", houseId)
+        coll2.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบบ้าน id $houseId ให้ลบ")
+
+
     }
 
+    override fun findAll(orgId: String, haveLocation: Boolean?): List<House> {
+        val query = Document("orgId", orgId)
 
-    override fun find(orgUuid: UUID, haveLocation: Boolean?): List<StorageOrg<Address>> {
-        var query = Document("orgUuid", orgUuid.toString())
-
-
-
-        if (haveLocation == null) {
-        } else if (haveLocation) {
-
-            val or1 = BasicDBList()
-            or1.add(Document("longitude", Document("\$ne", null)))
-            or1.add(Document("longitude", Document("\$ne", 0.0)))
-            or1.add(Document("latitude", Document("\$ne", null)))
-            or1.add(Document("latitude", Document("\$ne", 0.0)))
-            query = query.append("\$and", or1)
-
-
-        } else {
-
-            val or1 = BasicDBList()
-            or1.add(Document("longitude", Document("\$eq", null)))
-            or1.add(Document("longitude", Document("\$eq", 0.0)))
-            or1.add(Document("latitude", Document("\$eq", null)))
-            or1.add(Document("latitude", Document("\$eq", 0.0)))
-            query = query.append("\$or", or1)
-
+        when {
+            haveLocation == null -> {
+            }
+            haveLocation -> query.append("location", Document("\$ne", null))
+            else -> query.append("location", Document("\$eq", null))
         }
 
-        val listHouse: ArrayList<StorageOrg<Address>> = arrayListOf()
+        val listHouse: ArrayList<House> = arrayListOf()
 
         mongoSafe(object : MongoSafeRun {
             override fun run() {
 
-                val cursor = coll2.find(query)
-                printDebug("getHouseInMongo size = ${cursor.count()}")
+                val houseListDocument = coll2.find(query)
+                printDebug("getHouseInMongo size = ${houseListDocument.count()}")
 
-                cursor.forEach {
-                    val property = it.get("property")
-                    //printDebug(property)
-
-                    val house: Address = property.toString().fromJson()
-                    try {
-                        house.coordinates = LatLng(it["latitude"].toString().toDouble(), it["longitude"].toString().toDouble())
-                        house.location = Point(LatLng(it["latitude"].toString().toDouble(), it["longitude"].toString().toDouble()))
-                    } catch (ex: java.lang.NullPointerException) {
-                        house.coordinates = null
-                        house.location = null
-                    } catch (ex: java.lang.NumberFormatException) {
-                        house.coordinates = null
-                        house.location = null
-                    }
-                    printDebug(house)
-
-
-                    listHouse.add(StorageOrg(orgUuid, house))
+                houseListDocument.forEach {
+                    val house: House = it.toJson().parseTo()
+                    listHouse.add(house)
                 }
 
             }
@@ -238,53 +185,17 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
     }
 
 
-    override fun findByHouseId(orgUuid: UUID, hid: Int): StorageOrg<Address>? {
-        printDebug("House mongo dao findByHouseId\n\torgUuid $orgUuid hid $hid")
-        val query = Document("orgUuid", orgUuid.toString())
-                .append("hid", hid)
+    override fun find(houseId: String): House {
+        printDebug("Call find in house dao.")
+        val query = Document("_id", houseId)
+        val houseJson = coll2.find(query).first().toJson()
 
-
-        val dbObj = coll2.find(query).first()
-        printDebug("\tQuery found=$dbObj")
-        if (dbObj == null) return null
-
-
-        printDebug("\t\tproperty = ${dbObj["property"]}")
-
-
-        val house: Address = dbObj["property"].toString().fromJson()
-        printDebug("\tset lat long")
-        house.coordinates = LatLng(dbObj.get("latitude").toString().toDouble(), dbObj["longitude"].toString().toDouble())
-
-
-        printDebug("\tReturn")
-        return StorageOrg(orgUuid, house)
+        return houseJson.parseTo()
     }
 
 
-    override fun findByHouse_Id(orgUuid: UUID, _id: String): StorageOrg<Address>? {
-        printDebug("House mongo dao findByHouse_Id\n\torgUuid $orgUuid _id $_id")
-        val query = Document("orgUuid", orgUuid.toString())
-                .append("_id", ObjectId(_id))
-
-        printDebug("\tcreate query object finish $query")
-
-        val dbObj = coll2.find(query).first() ?: throw NotFoundException("findByHouse_Id  ไม่พบ")
-        printDebug("\tQuery property = ${dbObj.get("property")}")
-
-
-        val house: Address = dbObj.get("property").toString().fromJson()
-        printDebug("\tset lat long")
-        house.coordinates = LatLng(dbObj.get("latitude").toString().toDouble(), dbObj.get("longitude").toString().toDouble())
-
-
-        printDebug("\tReturn")
-        return StorageOrg(orgUuid, house)
-    }
-
-
-    override fun removeByOrgUuid(orgUuid: UUID) {
-        val query = Document("orgUuid", orgUuid.toString())
+    override fun removeByOrgId(orgId: String) {
+        val query = Document("orgId", orgId)
         coll2.deleteMany(query)
 
     }
