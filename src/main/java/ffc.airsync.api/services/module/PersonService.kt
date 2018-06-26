@@ -7,8 +7,8 @@ object PersonService {
 
     fun get(orgId: String, page: Int, per_page: Int): List<Person> {
         //val tokenObj = getOrgByMobileToken(UUID.fromString(token.trim()), orgId)
-        val org = orgDao.findById(orgId)
-        val personList = personDao.find(org.uuid)
+        //val org = orgDao.find(orgId)
+        val personList = personDao.findByOrgId(orgId)
         printDebug("Person Service get list ${personList.size}")
         val personReturn = arrayListOf<Person>()
 
@@ -18,17 +18,8 @@ object PersonService {
         itemRenderPerPage(page, per_page, count, object : AddItmeAction {
             override fun onAddItemAction(itemIndex: Int) {
 
-                val person = personList[itemIndex].data
-
-
-                if (person.houseId != null) {
-                    val housePerson = houseDao.findByHouseId(org.uuid, person.houseId!!)
-                    printDebug("\thouse person $housePerson")
-                    person.house = housePerson?.data
-                }
-
+                val person = personList[itemIndex]
                 personReturn.add(person)
-
             }
         })
 
@@ -37,7 +28,6 @@ object PersonService {
 
 
     fun create(orgId: String, personList: List<Person>) {
-        val org = orgDao.findById(orgId)
-        personDao.insert(org.uuid, personList)
+        personDao.insert(orgId, personList)
     }
 }

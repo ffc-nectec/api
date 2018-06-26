@@ -26,7 +26,7 @@ class MongoPersonDao(host: String, port: Int, databaseName: String, collection: 
         }
     }
 
-    override fun find(orgId: String): List<Person> {
+    override fun findByOrgId(orgId: String): List<Person> {
         //printDebug("Mongo findAll persons in org $orgUuid")
         val personList = arrayListOf<Person>()
 

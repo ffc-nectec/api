@@ -17,15 +17,20 @@
 
 package ffc.airsync.api.services
 
-import ffc.airsync.api.dao.DaoFactory
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.filter.FfcSecurityContext
 import ffc.airsync.api.services.module.PersonService
 import ffc.entity.Person
-import java.util.*
 import javax.annotation.security.RolesAllowed
 import javax.servlet.http.HttpServletRequest
-import javax.ws.rs.*
+import javax.ws.rs.Consumes
+import javax.ws.rs.GET
+import javax.ws.rs.NotAuthorizedException
+import javax.ws.rs.POST
+import javax.ws.rs.Path
+import javax.ws.rs.PathParam
+import javax.ws.rs.Produces
+import javax.ws.rs.QueryParam
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -62,22 +67,6 @@ class PersonResource {
     }
 
 
-    @GET
-    @Path("/person/t")
-    fun getTemplate(): List<Person> {
-        val personDao = DaoFactory().buildPersonDao()
-        val personLit = personDao.find(UUID.fromString("00000000-0000-0000-0000-000000000010"))
-        val listReturn: ArrayList<Person> = arrayListOf()
-
-        personLit.forEach {
-            listReturn.add(it.data)
-        }
-
-
-        return listReturn
-    }
-
-
     @RolesAllowed("USER")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
@@ -86,15 +75,15 @@ class PersonResource {
             @PathParam("orgId") orgId: String,
             @Context req: HttpServletRequest): Response {
 
-        try {
+        return try {
             val personList = PersonService.get(
                     orgId,
                     if (page == 0) 1 else page,
                     if (per_page == 0) 200 else per_page)
 
-            return Response.status(Response.Status.OK).entity(personList).build()
+            Response.status(Response.Status.OK).entity(personList).build()
         } catch (ex: NotAuthorizedException) {
-            return Response.status(401).build()
+            Response.status(401).build()
         }
 
 
