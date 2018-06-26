@@ -24,5 +24,5 @@ interface TokenDao {
     fun find(token: String): Token
     fun findByOrgId(orgId: String): List<Token>
     fun remove(token: String)
-    fun removeByOrgUuid(orgId: String)
+    fun removeByOrgId(orgId: String)
 }

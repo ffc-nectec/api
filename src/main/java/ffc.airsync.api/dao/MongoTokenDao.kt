@@ -59,7 +59,7 @@ class MongoTokenDao(host: String, port: Int, databaseName: String, collection: S
 
     }
 
-    override fun removeByOrgUuid(orgId: String) {
+    override fun removeByOrgId(orgId: String) {
         val query = Document("orgId", orgId)
         coll2.deleteMany(query)
     }
