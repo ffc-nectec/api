@@ -20,7 +20,7 @@ package ffc.airsync.api.services.module
 import ffc.airsync.api.dao.DaoFactory
 
 val orgDao = DaoFactory().buildPcuDao()
-val tokenMobile = DaoFactory().buildTokenMobileMapDao()
+val token = DaoFactory().buildTokenMobileMapDao()
 
 val personDao = DaoFactory().buildPersonDao()
 val orgUser = DaoFactory().buildOrgUserDao()

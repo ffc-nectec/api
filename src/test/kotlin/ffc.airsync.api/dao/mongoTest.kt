@@ -21,7 +21,7 @@ import ffc.entity.Address
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.junit.Test
-import java.util.*
+import java.util.UUID
 
 
 class mongoTest {
@@ -55,7 +55,7 @@ class mongoTest {
 
     fun queryOrgUuid() {
         val mongoHouseDao = MongoHouseDao("127.0.0.1", 27017, "ffc", "organ")
-        val listHouse = mongoHouseDao.find(UUID.fromString("f247ead5-6383-5e74-2d9e-8ee1f50542be"))
+        val listHouse = mongoHouseDao.findAll(UUID.fromString("f247ead5-6383-5e74-2d9e-8ee1f50542be"))
         listHouse.forEach {
             println(it.data.tambon)
         }

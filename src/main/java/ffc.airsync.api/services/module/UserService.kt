@@ -1,9 +1,9 @@
 package ffc.airsync.api.services.module
 
 import ffc.airsync.api.printDebug
-import ffc.entity.TokenMessage
 import ffc.entity.User
-import java.util.*
+import java.util.ArrayList
+import java.util.UUID
 import javax.ws.rs.NotAuthorizedException
 
 object UserService {
@@ -25,7 +25,7 @@ object UserService {
             val org = orgDao.findById(orgId)
             val token = UUID.randomUUID()
 
-            val tokenObj = tokenMobile.insert(token = token,
+            val tokenObj = ffc.airsync.api.services.module.token.create(token = token,
                     uuid = org.uuid,
                     user = user,
                     orgId = orgId,

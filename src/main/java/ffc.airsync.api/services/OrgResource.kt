@@ -20,13 +20,19 @@ package ffc.airsync.api.services
 
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.module.OrgService
-import ffc.airsync.api.services.module.tokenMobile
+import ffc.airsync.api.services.module.token
 import ffc.entity.Organization
-import ffc.entity.TokenMessage
-import java.util.*
+import ffc.entity.Token
 import javax.annotation.security.RolesAllowed
 import javax.servlet.http.HttpServletRequest
-import javax.ws.rs.*
+import javax.ws.rs.Consumes
+import javax.ws.rs.DELETE
+import javax.ws.rs.GET
+import javax.ws.rs.POST
+import javax.ws.rs.Path
+import javax.ws.rs.PathParam
+import javax.ws.rs.Produces
+import javax.ws.rs.QueryParam
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -40,10 +46,7 @@ class OrgResource {
     //Register orgUuid.
     @POST
     fun create(@Context req: HttpServletRequest, organization: Organization): Response {
-        printDebug("Org register pcuCode = " + organization.pcuCode
-                + " Name = " + organization.name
-                + " UUID = " + organization.uuid)
-
+        printDebug("Org register ${organization.name}")
 
         printDebug("Create my org")
         var ipAddress = req.getHeader("X-Forwarded-For")
@@ -55,13 +58,17 @@ class OrgResource {
 
         printDebug("\tip address select = $ipAddress")
 
-        val orgUpdate = OrgService.register(organization, ipAddress)
-        printDebug("\tGen ip = " + orgUpdate.lastKnownIp
-                + " Org token = " + orgUpdate.token)
+        organization.bundle["lastKnownIp"] = ipAddress
+
+        val orgUpdate = OrgService.register(organization)
+        printDebug("\tGen ip = " + orgUpdate.bundle["lastKnownIp"]
+                + " Org token = " + orgUpdate.bundle["token"])
 
         printDebug("Create token")
-        tokenMobile.insert(orgId = orgUpdate.id, token = orgUpdate.token!!, type = TokenMessage.TYPEROLE.ORG, user = "Organization", uuid = orgUpdate.uuid)
 
+        token.create(user = orgUpdate.name,
+                orgId = orgUpdate.id,
+                type = Token.TYPEROLE.ORG)
 
         return Response.status(Response.Status.CREATED).entity(orgUpdate).build()
     }
@@ -97,21 +104,8 @@ class OrgResource {
         val httpHeader = req.buildHeaderMap()
         printDebug("getHeader $httpHeader")
 
-
         printDebug("Call removeOrg Service _id = $orgId")
         OrgService.remove(orgId)
         return Response.status(200).build()
     }
-
-    //Post username to central.
-
-
-    @GET
-    @Path("/orgtemp")
-    fun getOrgTemp(): Organization {
-        return Organization(
-                UUID.randomUUID())
-    }
-
-
 }

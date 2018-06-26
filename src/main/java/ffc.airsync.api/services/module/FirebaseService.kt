@@ -1,16 +1,12 @@
 package ffc.airsync.api.services.module
 
 import ffc.entity.firebase.FirebaseToken
-import java.util.*
+import java.util.UUID
 
 object FirebaseService {
     fun updateToken(token: UUID, orgId: String, firebaseToken: FirebaseToken) {
 
         try {
-            //val mobile = getOrgByMobileToken(token = token, orgId = orgId)
-            //printDebug("Update firebase token mobile $firebaseToken")
-            //mobile.data.firebaseToken = firebaseToken.firebasetoken
-            //tokenMobile.updateFirebaseToken(token, firebaseToken.firebasetoken)
             orgDao.createFirebase(orgId, firebaseToken.firebasetoken, false)
 
 

@@ -20,17 +20,18 @@ package ffc.airsync.api.services.module
 import com.google.firebase.messaging.Message
 import ffc.airsync.api.dao.DaoFactory
 import ffc.airsync.api.printDebug
-import ffc.entity.*
+import ffc.entity.Address
+import ffc.entity.People
+import ffc.entity.toJson
 import me.piruin.geok.LatLng
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import me.piruin.geok.geometry.Geometry
 import me.piruin.geok.geometry.Point
 import org.joda.time.DateTime
-import java.util.*
+import java.util.UUID
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.NotFoundException
-import kotlin.collections.ArrayList
 
 //val org = orgDao.findById(orgId)
 object HouseService {
@@ -99,7 +100,7 @@ object HouseService {
 
 
             if (role == TokenMessage.TYPEROLE.USER) {
-                listMessage = tokenMobile.findByOrgUuid(orgUuid)
+                listMessage = token.findByOrgId(orgUuid)
                 house._sync = false
                 house.dateUpdate = DateTime.now()
                 printDebug("\t\tFound mobile token")
@@ -107,7 +108,7 @@ object HouseService {
 
                 printDebug("\tFind org token")
                 house._sync = true
-                listMessage = tokenMobile.findByOrgUuid(orgUuid)
+                listMessage = token.findByOrgId(orgUuid)
                 printDebug("\t\tFound org token")
             }
 
@@ -153,12 +154,12 @@ object HouseService {
         }
 
         val org = orgDao.findById(orgId)
-        val orgUuid = org.uuid
+        val orgUuid = org.id
 
 
 
         printDebug("Search house match")
-        val listHouse: List<StorageOrg<Address>>
+        val listHouse: List<Address>
 
 
         if (hid > 0) {
@@ -167,7 +168,7 @@ object HouseService {
             listHouse = ArrayList()
             listHouse.add(house)
         } else {
-            listHouse = houseDao.find(orgUuid, haveLocation)
+            listHouse = houseDao.findAll(orgUuid, haveLocation)
         }
         printDebug("count house = ${listHouse.count()}")
 
