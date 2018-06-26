@@ -1,9 +1,9 @@
 package ffc.airsync.api.services.filter
 
-import ffc.entity.TokenMessage
+import ffc.entity.Token
 import javax.ws.rs.core.SecurityContext
 
 interface FfcSecurityContext : SecurityContext {
-    val token: TokenMessage?
+    val token: Token?
     val orgId: String?
 }

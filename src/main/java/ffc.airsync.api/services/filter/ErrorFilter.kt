@@ -27,13 +27,13 @@ class ErrorUserFilter : ExceptionMapper<ForbiddenException> {
     override fun toResponse(exception: ForbiddenException?): Response {
         exception!!.printStackTrace()
         var err = ErrorFilter.ErrorRes(exception.response.status, exception.message, exception)
-        if (exception.message == "User not authorized.") {
+        return if (exception.message == "User not authorized.") {
             val except = NotAuthorizedException("token not found")
             err = ErrorFilter.ErrorRes(401, except.message, except)
-            return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
+            Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
 
         } else {
-            return Response.status(exception.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
+            Response.status(exception.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
         }
     }
 }

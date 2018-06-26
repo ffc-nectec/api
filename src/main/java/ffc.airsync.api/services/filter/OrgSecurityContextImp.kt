@@ -1,9 +1,10 @@
 package ffc.airsync.api.services.filter
 
-import ffc.entity.TokenMessage
+import ffc.airsync.api.TokenMessage
+import ffc.entity.Token
 import java.security.Principal
 
-class OrgSecurityContextImp(override val token: TokenMessage, override val orgId: String? = null, scheme: String) : FfcSecurityContext {
+class OrgSecurityContextImp(override val token: Token, override val orgId: String? = null, scheme: String) : FfcSecurityContext {
 
     private var HTTPS = "https://"
     private var userPrincipal: Principal? = null
@@ -13,18 +14,13 @@ class OrgSecurityContextImp(override val token: TokenMessage, override val orgId
     init {
         this.scheme = scheme
 
-        this.userPrincipal = object : Principal {
-            override fun getName(): String {
-                return token.name
-            }
-
-        }
+        this.userPrincipal = Principal { token.name }
 
     }
 
 
     override fun isUserInRole(role: String?): Boolean {
-        return TokenMessage.TYPEROLE.ORG.toString().equals(role)
+        return TokenMessage.TYPEROLE.ORG.toString() == role
     }
 
     override fun getAuthenticationScheme(): String {

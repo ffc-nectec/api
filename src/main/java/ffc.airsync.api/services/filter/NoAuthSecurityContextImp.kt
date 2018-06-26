@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.filter
 
-import ffc.entity.TokenMessage
+import ffc.entity.Token
 import java.security.Principal
 
 class NoAuthSecurityContextImp : FfcSecurityContext {
@@ -9,18 +9,13 @@ class NoAuthSecurityContextImp : FfcSecurityContext {
 
     init {
 
-        this.userPrincipal = object : Principal {
-            override fun getName(): String {
-                return "NOAUTH"
-            }
-
-        }
+        this.userPrincipal = Principal { "NOAUTH" }
 
     }
 
 
     override fun isUserInRole(role: String?): Boolean {
-        return TokenMessage.TYPEROLE.NOAUTH.toString().equals(role)
+        return Token.TYPEROLE.NOAUTH.toString() == role
     }
 
     override fun getAuthenticationScheme(): String {
@@ -35,7 +30,7 @@ class NoAuthSecurityContextImp : FfcSecurityContext {
         return true
     }
 
-    override val token: TokenMessage?
+    override val token: Token?
         get() = null
 
 

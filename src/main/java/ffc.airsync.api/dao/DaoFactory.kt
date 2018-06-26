@@ -33,7 +33,7 @@ class DaoFactory(val dev: Boolean = true) {
 
     //fun buildPersonDao(): PersonDao = InMemoryPersonDao.instant
 
-    fun buildTokenMobileMapDao(): TokenDao = MongoTokenDao("127.0.0.1", 27017, "ffc", "token")
+    fun buildTokenMapDao(): TokenDao = MongoTokenDao("127.0.0.1", 27017, "ffc", "token")
 
 
 }

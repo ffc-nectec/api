@@ -2,9 +2,7 @@ package ffc.airsync.api.services.filter
 
 import ffc.airsync.api.dao.DaoFactory
 import ffc.airsync.api.printDebug
-import ffc.entity.StorageOrg
-import ffc.entity.TokenMessage
-import java.util.*
+import ffc.entity.Token
 import java.util.regex.Pattern
 import javax.annotation.Priority
 import javax.ws.rs.NotAuthorizedException
@@ -21,7 +19,7 @@ class BasicAuthFilter : ContainerRequestFilter {
 
 
     override fun filter(requestContext: ContainerRequestContext) {
-        val urlScheme = requestContext.getUriInfo().getBaseUri().getScheme()
+        val urlScheme = requestContext.uriInfo.baseUri.scheme
         val baseUrl = requestContext.uriInfo.path.toString()
 
 
@@ -48,23 +46,23 @@ class BasicAuthFilter : ContainerRequestFilter {
         val securityContext: SecurityContext
 
 
-        if (authenInfo.token.data.role == TokenMessage.TYPEROLE.USER) {
-            //if(authenInfo.token.id==orgId)
-            securityContext = UserSecurityContextImp(authenInfo.token.data, urlScheme, orgId)
-        } else if (authenInfo.token.data.role == TokenMessage.TYPEROLE.ORG) {
-            securityContext = OrgSecurityContextImp(authenInfo.token.data, urlScheme, orgId)
-        } else {
-            securityContext = NoAuthSecurityContextImp()
+        securityContext = when {
+            authenInfo.token.role == Token.TYPEROLE.USER ->
+                UserSecurityContextImp(authenInfo.token, urlScheme, orgId)
+            authenInfo.token.role == Token.TYPEROLE.ORG ->
+                OrgSecurityContextImp(authenInfo.token, urlScheme, orgId)
+            else ->
+                NoAuthSecurityContextImp()
         }
 
-        requestContext.setSecurityContext(securityContext)
+        requestContext.securityContext = securityContext
     }
 
 
     class TokenAuthInfo(requestContext: ContainerRequestContext) {
         val AUTHORIZATION_PROPERTY = "Authorization"
         val AUTHENTICATION_SCHEME = "Bearer "
-        val token: StorageOrg<TokenMessage>
+        val token: Token
 
         init {
             val authorization = requestContext.headers[AUTHORIZATION_PROPERTY]
@@ -74,14 +72,14 @@ class BasicAuthFilter : ContainerRequestFilter {
                 if (authorization[0].startsWith("Basic ")) {
                     throw NotAuthorizedException("is basic auth")
                 }
-                val tokenMobile = DaoFactory().buildTokenMobileMapDao()
+                val tokenDao = DaoFactory().buildTokenMapDao()
                 val tokenStr = authorization[0].replaceFirst(AUTHENTICATION_SCHEME, "").trim()
-                token = tokenMobile.find(token = UUID.fromString(tokenStr))
+                token = tokenDao.find(token = tokenStr)
 
-                if (token.data.isExpire) throw NotAuthorizedException("Token expire ${token.data.expireDate}")
+                if (token.isExpire) throw NotAuthorizedException("Token expire ${token.expireDate}")
 
             } else {
-                token = StorageOrg(UUID.randomUUID(), TokenMessage(UUID.randomUUID(), name = "NOAUTH"))
+                token = Token(token = "", name = "NOAUTH")
             }
 
         }
