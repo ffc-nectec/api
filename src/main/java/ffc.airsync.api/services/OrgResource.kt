@@ -20,7 +20,7 @@ package ffc.airsync.api.services
 
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.module.OrgService
-import ffc.airsync.api.services.module.token
+import ffc.airsync.api.services.module.tokenDao
 import ffc.entity.Organization
 import ffc.entity.Token
 import javax.annotation.security.RolesAllowed
@@ -66,7 +66,7 @@ class OrgResource {
 
         printDebug("Create token")
 
-        token.create(user = orgUpdate.name,
+        tokenDao.create(user = orgUpdate.name,
                 orgId = orgUpdate.id,
                 type = Token.TYPEROLE.ORG)
 
@@ -86,10 +86,10 @@ class OrgResource {
 
         printDebug("\tResult Org by ip = $ipAddress + my = $my")
 
-        if (my) {
-            return OrgService.getMy(ipAddress)
+        return if (my) {
+            OrgService.getMy(ipAddress)
         } else {
-            return OrgService.get()
+            OrgService.get()
         }
     }
 

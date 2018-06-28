@@ -17,8 +17,9 @@
 
 package ffc.airsync.api.services
 
-import ffc.entity.TokenMessage
-import java.util.*
+import ffc.entity.Token
+import java.util.Enumeration
+import java.util.HashMap
 import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.core.SecurityContext
 
@@ -36,12 +37,12 @@ fun HttpServletRequest.buildHeaderMap(): Map<String, String> {
 
 const val GEOJSONHeader = "application/vnd.geo+json"
 
-fun getTokenRole(context: SecurityContext): TokenMessage.TYPEROLE {
-    val roleList = TokenMessage.TYPEROLE.values()
+fun getTokenRole(context: SecurityContext): Token.TYPEROLE {
+    val roleList = Token.TYPEROLE.values()
 
     val role = roleList.find {
         context.isUserInRole(it.toString())
-    } ?: TokenMessage.TYPEROLE.NOAUTH
+    } ?: Token.TYPEROLE.NOAUTH
 
     return role
 }

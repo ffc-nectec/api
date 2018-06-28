@@ -26,6 +26,7 @@ import ffc.entity.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
 import java.util.ArrayList
+import javax.ws.rs.BadRequestException
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.NotFoundException
 
@@ -50,7 +51,9 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
     override fun insert(orgId: String, house: House): House {
 
         val generateId = ObjectId()
-        house.coordinates = null
+
+        if (house.coordinates != null) throw BadRequestException("ยกเลิกการใช้งาน house.coordinates แล้วเปลี่ยนไปใช้ house.location แทน")
+
 
         val houseInsert: House
         houseInsert = if (house.isTempId) {
@@ -84,22 +87,11 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
         return houseReturn
     }
 
-    private fun createGeoDocument(house: House): Document? {
-        var geoPoint: Document? = null
-
-        house.location?.let {
-            geoPoint = Document.parse(it.toString())
-        }
-        return geoPoint
-    }
-
-    private fun createDocument(objId: ObjectId, orgId: String, house: House, geoPoint: Document?): Document {
-        return Document("_id", objId)
-    }
-
 
     override fun update(house: House) {
         printDebug("Call MongoHouseDao.upldate ${house.toJson()}")
+        if (house.coordinates != null) throw BadRequestException("ยกเลิกการใช้งาน house.coordinates แล้วเปลี่ยนไปใช้ house.location แทน")
+
         val query = Document("_id", ObjectId(house.id))
 
 
@@ -159,6 +151,7 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
         when {
             haveLocation == null -> {
             }
+
             haveLocation -> query.append("location", Document("\$ne", null))
             else -> query.append("location", Document("\$eq", null))
         }
@@ -179,7 +172,6 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
             }
 
         })
-
 
         return listHouse
     }

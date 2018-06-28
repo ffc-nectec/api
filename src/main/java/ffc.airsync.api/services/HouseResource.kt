@@ -20,13 +20,24 @@ package ffc.airsync.api.services
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.module.HouseService
 import ffc.entity.Address
-import ffc.entity.TokenMessage
+import ffc.entity.House
+import ffc.entity.Token
 import ffc.entity.toJson
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import javax.annotation.security.RolesAllowed
 import javax.servlet.http.HttpServletRequest
-import javax.ws.rs.*
+import javax.ws.rs.BadRequestException
+import javax.ws.rs.Consumes
+import javax.ws.rs.ForbiddenException
+import javax.ws.rs.GET
+import javax.ws.rs.NotFoundException
+import javax.ws.rs.POST
+import javax.ws.rs.PUT
+import javax.ws.rs.Path
+import javax.ws.rs.PathParam
+import javax.ws.rs.Produces
+import javax.ws.rs.QueryParam
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -50,7 +61,7 @@ class HouseResource {
                         @QueryParam("hid") hid: Int = -1,
                         @QueryParam("haveLocation") haveLocation: Boolean? = null,
                         @PathParam("orgId") orgId: String,
-                        @Context req: HttpServletRequest): FeatureCollection<Address> {
+                        @Context req: HttpServletRequest): FeatureCollection<House> {
 
         printDebug("getGeoJsonHouse house method geoJson List")
 
@@ -60,10 +71,9 @@ class HouseResource {
                 orgId,
                 if (page == 0) 1 else page,
                 if (per_page == 0) 200 else per_page,
-                if (hid == 0) -1 else hid,
                 haveLocation, req.queryString ?: "")
 
-        val geoReturn = FeatureCollection<Address>()
+        val geoReturn = FeatureCollection<House>()
 
         try {
 
@@ -71,8 +81,8 @@ class HouseResource {
 
                 try {
                     val house = it.properties
-                    if (house!!.coordinates!!.latitude != 0.0 && house.coordinates!!.longitude != 0.0) {
 
+                    if (house!!.location != null) {
                         geoReturn.features.add(Feature(it.geometry, it.properties))
                     }
 
@@ -108,21 +118,17 @@ class HouseResource {
                      @QueryParam("hid") hid: Int = -1,
                      @QueryParam("haveLocation") haveLocation: Boolean? = null,
                      @PathParam("orgId") orgId: String,
-                     @Context req: HttpServletRequest): List<Address> {
+                     @Context req: HttpServletRequest): List<House> {
 
         printDebug("getGeoJsonHouse house method geoJson List paramete orgId $orgId page $page per_page $per_page hid $hid")
 
 
-        val jsonHouse = HouseService.getJsonHouse(
+
+        return HouseService.getJsonHouse(
                 orgId,
                 if (page == 0) 1 else page,
                 if (per_page == 0) 200 else per_page,
-                if (hid == 0) -1 else hid,
                 haveLocation, req.queryString ?: "")
-
-
-
-        return jsonHouse
     }
 
 
@@ -132,11 +138,11 @@ class HouseResource {
     fun update(@Context req: HttpServletRequest,
                @PathParam("orgId") orgId: String,
                @PathParam("houseId") houseId: String
-               , house: Address
+               , house: House
     ): Response {
         printDebug("Call put house by ip = " + req.remoteAddr + " OrgID $orgId")
 
-        printDebug("\thid ${house.hid} _id ${house._id} latLng ${house.coordinates}")
+        printDebug("\tid ${house.id} latLng ${house.location}")
 
         if (context == null) {
             printDebug("\tContext is null")
@@ -146,7 +152,7 @@ class HouseResource {
 
         printDebug("\t${context!!.userPrincipal}")
 
-        if (house.coordinates == null) throw javax.ws.rs.NotSupportedException("coordinates null")
+        //if (house.location == null) throw javax.ws.rs.NotSupportedException("coordinates null")
 
 
         HouseService.update(role, orgId, house, houseId)
@@ -164,10 +170,10 @@ class HouseResource {
     fun getSingleGeo(@Context req: HttpServletRequest,
                      @PathParam("orgId") orgId: String,
                      @PathParam("houseId") houseId: String
-    ): FeatureCollection<Address> {
+    ): FeatureCollection<House> {
         printDebug("Call getGeoJsonHouse single geo json house by ip = " + req.remoteAddr + " OrgID $orgId House ID = $houseId")
 
-        val house: FeatureCollection<Address> = HouseService.getSingleGeo(orgId, houseId)
+        val house: FeatureCollection<House> = HouseService.getSingleGeo(orgId, houseId)
 
         return house
 
@@ -195,7 +201,7 @@ class HouseResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/houses")
     fun create(@Context req: HttpServletRequest,
                @PathParam("orgId") orgId: String,
-               houseList: List<Address>?): Response {
+               houseList: List<House>?): Response {
         printDebug("\nCall create house by ip = " + req.remoteAddr)
         if (houseList == null) throw BadRequestException()
 
@@ -209,14 +215,15 @@ class HouseResource {
 
         houseList.forEach {
             it.people = null
-            it.haveChronics = null
+            //it.haveChronics = null
+            //it.haveChronic=null
             printDebug("house json = " + it.toJson())
         }
 
-        if (role == TokenMessage.TYPEROLE.ORG) {
+        if (role == Token.TYPEROLE.ORG) {
             val houseReturn = HouseService.createByOrg(orgId, houseList)
             return Response.status(Response.Status.CREATED).entity(houseReturn).build()
-        } else if (role == TokenMessage.TYPEROLE.USER) {
+        } else if (role == Token.TYPEROLE.USER) {
 
             val houseReturn = HouseService.createByUser(orgId, houseList)
             return Response.status(Response.Status.CREATED).entity(houseReturn).build()
@@ -233,7 +240,7 @@ class HouseResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
     fun createSingle(@Context req: HttpServletRequest,
                      @PathParam("orgId") orgId: String,
-                     house: Address?): Response {
+                     house: House?): Response {
         printDebug("\nCall create house by ip = " + req.remoteAddr)
         if (house == null) throw BadRequestException()
 
@@ -248,16 +255,16 @@ class HouseResource {
 
 
         house.people = null
-        house.haveChronics = null
+        //house.haveChronics = null
         printDebug("house json = " + house.toJson())
 
         //val houseReturn = HouseService.createByOrg(orgId, house)
         //return Response.status(Response.Status.CREATED).entity(house).build()
 
-        if (role == TokenMessage.TYPEROLE.ORG) {
+        if (role == Token.TYPEROLE.ORG) {
             val houseReturn = HouseService.createByOrg(orgId, house)
-            return Response.status(Response.Status.CREATED).entity(house).build()
-        } else if (role == TokenMessage.TYPEROLE.USER) {
+            return Response.status(Response.Status.CREATED).entity(houseReturn).build()
+        } else if (role == Token.TYPEROLE.USER) {
             val houseReturn = HouseService.createByUser(orgId, house)
             return Response.status(Response.Status.CREATED).entity(houseReturn).build()
         }
