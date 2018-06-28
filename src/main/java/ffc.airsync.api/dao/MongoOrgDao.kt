@@ -17,34 +17,44 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
 
     override fun insert(organization: Organization): Organization {
 
-        printDebug("Call mongo insert organization")
-        val generateId = ObjectId()
+        `ตรวจสอบความครบถ้วนของข้อมูล`(organization)
+        if (!organization.isTempId) throw BadRequestException("ไม่สามารถ Register ได้ โปรดตรวจสอบ id")
 
-        if (!organization.isTempId) {
-            throw BadRequestException("ไม่สามารถ Register ได้ โปรดตรวจสอบ id")
+        printDebug("Call mongo insert organization")
+        val genId = ObjectId()
+        val orgDoc = Document.parse(ffcGson.toJson(organization))
+
+        orgDoc.append("_id", genId)
+        orgDoc.append("lastKnownIp", organization.bundle["lastKnownIp"])
+
+        val genToken = ObjectId()
+        orgDoc.append("token", genToken)
+
+        coll2.insertOne(orgDoc)
+
+
+        val query = Document("_id", genId)
+        val newOrgDoc = coll2.find(query).first()
+
+        return newOrgDoc.toJson().parseTo()
+    }
+
+    private fun `ตรวจสอบความครบถ้วนของข้อมูล`(organization: Organization) {
+        if (organization.name.isEmpty()) throw BadRequestException("โปรระบุชื่อ หน่วยงานที่ต้องการลงทะเบียนลงในตัวแปร name")
+        if (organization.users.isEmpty()) throw BadRequestException("โปรดลงทะเบียน user ในตัวแปร user ในหน่วยงานที่ต้องการลงทะเบียน")
+
+        organization.users.forEach {
+            if (it.username?.isNotEmpty() == true) throw BadRequestException("ตัวแปร username ยกเลิกการใช้งานแล้ว")
+            if (it.name.isEmpty()) throw BadRequestException("พบค่าว่างในตัวแปร user.name")
+            if (it.password.isEmpty()) throw BadRequestException("พบค่าว่างในตัวแปร user.password")
         }
 
         val query = Document("name", organization.name)
         val checkDuplicateName = coll2.find(query).first()
         if (checkDuplicateName != null) {
-            throw BadRequestException("ไม่สามารถ Register ได้มีการใช้ชื่อ ${organization.name} ไปแล้ว")
+            throw BadRequestException()
         }
 
-        val insertObject = Document.parse(ffcGson.toJson(organization))
-
-
-        insertObject.append("_id", generateId)
-        insertObject.append("lastKnownIp", organization.bundle["lastKnownIp"])
-        val generateToken = ObjectId()
-        insertObject.append("token", generateToken)
-
-        coll2.insertOne(insertObject)
-
-
-        val queryNewOrg = Document("_id", generateId)
-        val newOrgDocument = coll2.find(queryNewOrg).first()
-
-        return newOrgDocument.toJson().parseTo()
     }
 
 
