@@ -5,6 +5,7 @@ import com.mongodb.BasicDBObject
 import com.mongodb.client.FindIterable
 import ffc.airsync.api.printDebug
 import ffc.entity.Organization
+import ffc.entity.User
 import ffc.entity.ffcGson
 import ffc.entity.parseTo
 import ffc.entity.toJson
@@ -13,7 +14,7 @@ import org.bson.types.ObjectId
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.NotFoundException
 
-class MongoOrgDao(host: String, port: Int, databaseName: String, collection: String) : OrgDao, MongoAbsConnect(host, port, databaseName, collection) {
+class MongoOrgDao(host: String, port: Int, databaseName: String, collection: String) : OrgDao, UserDao, MongoAbsConnect(host, port, databaseName, collection) {
 
     override fun insert(organization: Organization): Organization {
 
@@ -25,6 +26,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         val orgDoc = Document.parse(ffcGson.toJson(organization))
 
         orgDoc.append("_id", genId)
+        orgDoc["id"] = genId.toHexString()
         orgDoc.append("lastKnownIp", organization.bundle["lastKnownIp"])
 
         val genToken = ObjectId()
@@ -52,7 +54,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         val query = Document("name", organization.name)
         val checkDuplicateName = coll2.find(query).first()
         if (checkDuplicateName != null) {
-            throw BadRequestException()
+            throw BadRequestException("ลงทะเบียน Org ซ้ำ")
         }
 
     }
@@ -105,6 +107,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
 
         if (orgList.isEmpty()) throw NotFoundException("ไม่พบรายการลงทะเบียนในกลุ่มของ Org ip $ipAddress")
 
+
         return orgList
     }
 
@@ -119,7 +122,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
 
     override fun updateToken(organization: Organization): Organization {
         printDebug("Mongo update token orgobj=${organization.toJson()}")
-        val query = Document("_id", organization.id)
+        val query = Document("_id", ObjectId(organization.id))
         coll2.find(query).first()
                 ?: throw NotFoundException("ไม่พบ Object organization ${organization.id} ให้ Update")
 
@@ -142,7 +145,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
 
 
     override fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
-        val query = Document("idOrg", orgId)
+        val query = Document("_id", ObjectId(orgId))
         if (isOrg) {
             val firebaseTokenDoc = Document("firebaseToken", firebaseToken)
             coll2.updateOne(query, BasicDBObject("\$set", firebaseTokenDoc))
@@ -156,7 +159,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
 
     override fun removeFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
 
-        val query = Document("orgId", orgId)
+        val query = Document("_id", ObjectId(orgId))
 
         if (isOrg) {
             val removeOrgFirebaseToken = Document("firebaseToken", null)
@@ -187,5 +190,88 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         }
 
         return firebaseTokenList
+    }
+
+
+    override fun insertUser(user: User, orgId: String) {
+
+        val query = Document("_id", ObjectId(orgId))
+
+        val userDoc = Document.parse(ffcGson.toJson(user))
+        val userStruct = Document("users", userDoc)
+        val userPush = Document("\$push", userStruct)
+
+        if (haveUserInDb(orgId, user)) throw BadRequestException("มีการเพิ่มผู้ใช้ ${user.name} ซ้ำ")
+
+        coll2.updateOne(query, userPush)
+
+
+    }
+
+    private fun haveUserInDb(orgId: String, user: User): Boolean {
+        val query = Document("_id", ObjectId(orgId))
+        val userInDb = coll2.find(query).projection(Document("users", 1)).first()
+        val userList: Array<User> = userInDb.toJson().parseTo()
+        val userDuplicate = userList.find {
+            it.name == user.name
+        }
+        return (userDuplicate != null)
+    }
+
+    override fun updateUser(user: User, orgId: String) {
+        if (!haveUserInDb(orgId, user)) throw NotFoundException("ไม่พบผู้ใช้ ${user.name} ในระบบ")
+
+
+        //TODO("รอพัฒนาระบบ Update User")
+        val query = Document("_id", ObjectId(orgId))
+                .append("users", Document("name", user.name))
+
+        val updateUser = Document("_id", ObjectId(orgId))
+                .append("users", arrayListOf<User>().apply {
+                    this.add(user)
+                })
+
+
+        val oldUserDoc = coll2.find(query).first()
+
+
+        val updateDoc = Document("\$pull", oldUserDoc)
+
+        //coll2.updateOne(query,replace)
+    }
+
+    override fun findUser(orgId: String): List<User> {
+        printDebug("Find User in orgId $orgId")
+        val query = Document("_id", ObjectId(orgId))
+        val userDocList = coll2.find(query).projection(Document("users", 1)).first()
+
+        val userList = userDocList.get("users", List::class.java) as List<User>
+        userList.forEach {
+            printDebug("\t${it.name}")
+        }
+
+        return userList
+    }
+
+    override fun isAllowUser(name: String, pass: String, orgId: String): Boolean {
+        printDebug("Call isAllowUser in OrgMongoDao")
+
+        val query = Document("_id", ObjectId(orgId))
+
+
+        printDebug("\tQuery = ${query.toJson()}")
+        val orgDoc = coll2.find(query).first()
+        printDebug("\torgDoc = ${orgDoc.toJson()}")
+
+
+        val org = orgDoc.toJson().parseTo<Organization>()
+        printDebug("\torg = $org")
+
+        val user = org.users.find {
+            it.name == name && it.password == pass
+        }
+        //val user = coll2.find(query).first()
+        printDebug("\tuser query $user")
+        return user != null
     }
 }

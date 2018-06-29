@@ -25,7 +25,7 @@ import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.xcontent.XContentType
 
-fun TransportClient.insert(index: String, type: String, id: String, json: String): IndexResponse {
+fun TransportClient.insertUser(index: String, type: String, id: String, json: String): IndexResponse {
     return this
             .prepareIndex(index, type, id)
             .setSource(json, XContentType.JSON)

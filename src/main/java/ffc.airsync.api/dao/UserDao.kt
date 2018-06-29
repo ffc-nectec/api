@@ -43,10 +43,9 @@ interface UserDao {
         }
     }
 
-    fun insert(user: User, orgId: String)
-    fun update(user: User, orgId: String)
-    fun find(orgId: String): List<User>
-    fun isAllow(name: String, pass: String, orgId: String): Boolean
-    fun removeByOrgId(orgId: String)
+    fun insertUser(user: User, orgId: String)
+    fun updateUser(user: User, orgId: String)
+    fun findUser(orgId: String): List<User>
+    fun isAllowUser(name: String, pass: String, orgId: String): Boolean
 
 }

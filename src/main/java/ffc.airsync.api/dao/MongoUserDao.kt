@@ -1,6 +1,7 @@
 package ffc.airsync.api.dao
 
 import ffc.airsync.api.dao.UserDao.Companion.checkBlockUser
+import ffc.airsync.api.printDebug
 import ffc.entity.User
 import ffc.entity.parseTo
 import ffc.entity.toJson
@@ -42,7 +43,7 @@ ytF2v69RwtGYf7C6ygwD
     }
 
 
-    override fun insert(user: User, orgId: String) {
+    override fun insertUser(user: User, orgId: String) {
 
 
         mongoSafe(object : MongoSafeRun {
@@ -55,7 +56,7 @@ ytF2v69RwtGYf7C6ygwD
     }
 
 
-    override fun update(user: User, orgId: String) {
+    override fun updateUser(user: User, orgId: String) {
         mongoSafe(object : MongoSafeRun {
             override fun run() {
                 val query = Document.parse(user.toJson())
@@ -72,7 +73,7 @@ ytF2v69RwtGYf7C6ygwD
 
     }
 
-    override fun find(orgId: String): List<User> {
+    override fun findUser(orgId: String): List<User> {
         val listUser = arrayListOf<User>()
 
         val query = Document("orgId", orgId)
@@ -96,7 +97,7 @@ ytF2v69RwtGYf7C6ygwD
     }
 
 
-    override fun isAllow(name: String, pass: String, orgId: String): Boolean {
+    override fun isAllowUser(name: String, pass: String, orgId: String): Boolean {
         checkBlockUser(name)
 
         var userDoc: Document? = null
@@ -108,21 +109,11 @@ ytF2v69RwtGYf7C6ygwD
         mongoSafe(object : MongoSafeRun {
             override fun run() {
                 userDoc = coll2.find(query).first()
+                printDebug("\tQuery user in mongo $userDoc")
             }
         })
 
         return userDoc != null
-    }
-
-    override fun removeByOrgId(orgId: String) {
-
-        val query = Document("orgId", orgId)
-
-        mongoSafe(object : MongoSafeRun {
-            override fun run() {
-                coll2.deleteMany(query)
-            }
-        })
     }
 
 

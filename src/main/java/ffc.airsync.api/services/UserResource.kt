@@ -3,10 +3,15 @@ package ffc.airsync.api.services
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.module.UserService
 import ffc.entity.User
-import java.util.*
+import java.util.ArrayList
 import javax.annotation.security.RolesAllowed
 import javax.servlet.http.HttpServletRequest
-import javax.ws.rs.*
+import javax.ws.rs.Consumes
+import javax.ws.rs.NotAuthorizedException
+import javax.ws.rs.POST
+import javax.ws.rs.Path
+import javax.ws.rs.PathParam
+import javax.ws.rs.Produces
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -28,7 +33,7 @@ class UserResource {
 
         printDebug("Raw user list.")
         userList.forEach {
-            printDebug("User = " + it.username + " Pass = " + it.password)
+            printDebug("User = " + it.name + " Pass = " + it.password)
         }
 
         UserService.create(orgId, userList)

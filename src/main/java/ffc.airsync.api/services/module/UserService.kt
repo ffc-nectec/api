@@ -12,14 +12,15 @@ object UserService {
     fun create(orgId: String, userList: ArrayList<User>) {
         userList.forEach {
             printDebug("insert username " + orgId + " User = " + it.name)
-            orgUser.insert(it, orgId)
+            orgUser.insertUser(it, orgId)
+
         }
     }
 
 
     fun login(orgId: String, user: String, pass: String): Token {
 
-        if (orgUser.isAllow(user, pass, orgId)) {
+        if (orgUser.isAllowUser(user, pass, orgId)) {
             return tokenDao.create(user, orgId, Token.TYPEROLE.USER)
         }
         throw NotAuthorizedException("Not Auth")
