@@ -10,7 +10,10 @@ object OrgService {
 
     fun register(organization: Organization): Organization {
         printDebug("\t\tCall mongo insert organization ${organization.toJson()}")
+
         return orgDao.insert(organization)
+
+
     }
 
 

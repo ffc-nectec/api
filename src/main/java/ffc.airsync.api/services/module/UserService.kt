@@ -8,7 +8,7 @@ import javax.ws.rs.NotAuthorizedException
 
 object UserService {
 
-    const val ORGUSER = "airsync."
+    const val ORGUSER = "ORG"
 
     fun create(orgId: String, userList: ArrayList<User>) {
         userList.forEach {
@@ -23,12 +23,6 @@ object UserService {
 
         val user = orgUser.getUser(username, pass, orgId)
         if (user != null) {
-
-            if (user.name.endsWith(ORGUSER)) {
-                user.role = User.Role.ORG
-            }
-
-
             return tokenDao.create(user, orgId)
         }
         throw NotAuthorizedException("Not Auth")

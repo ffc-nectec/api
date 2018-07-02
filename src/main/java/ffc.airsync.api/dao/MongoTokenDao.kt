@@ -17,7 +17,6 @@ class MongoTokenDao(host: String, port: Int, databaseName: String, collection: S
 
         val generateToken = ObjectId()
 
-
         val tokenMessage = Token(token = generateToken.toHexString(), user = user)
 
         val tokenDoc = Document.parse(tokenMessage.toJson())

@@ -17,11 +17,9 @@ import javax.ws.rs.NotFoundException
 class MongoOrgDao(host: String, port: Int, databaseName: String, collection: String) : OrgDao, UserDao, MongoAbsConnect(host, port, databaseName, collection) {
 
     override fun insert(organization: Organization): Organization {
-
-        `ตรวจสอบความครบถ้วนของข้อมูล`(organization)
-        if (!organization.isTempId) throw BadRequestException("ไม่สามารถ Register ได้ โปรดตรวจสอบ id")
-
         printDebug("Call mongo insert organization")
+        `ตรวจสอบเงื่อนไขการลงทะเบียน Org`(organization)
+
         val genId = ObjectId()
         val orgDoc = Document.parse(ffcGson.toJson(organization))
 
@@ -34,14 +32,13 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
 
         coll2.insertOne(orgDoc)
 
-
         val query = Document("_id", genId)
         val newOrgDoc = coll2.find(query).first()
 
         return newOrgDoc.toJson().parseTo()
     }
 
-    private fun `ตรวจสอบความครบถ้วนของข้อมูล`(organization: Organization) {
+    private fun `ตรวจสอบเงื่อนไขการลงทะเบียน Org`(organization: Organization) {
         if (organization.name.isEmpty()) throw BadRequestException("โปรระบุชื่อ หน่วยงานที่ต้องการลงทะเบียนลงในตัวแปร name")
         if (organization.users.isEmpty()) throw BadRequestException("โปรดลงทะเบียน user ในตัวแปร user ในหน่วยงานที่ต้องการลงทะเบียน")
 
@@ -51,12 +48,18 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
             if (it.password.isEmpty()) throw BadRequestException("พบค่าว่างในตัวแปร user.password")
         }
 
+        organization.users.find {
+            it.role == User.Role.ORG
+        } ?: throw BadRequestException("ไม่มี User ที่เป็น Role ORG")
+
+
         val query = Document("name", organization.name)
         val checkDuplicateName = coll2.find(query).first()
         if (checkDuplicateName != null) {
             throw BadRequestException("ลงทะเบียน Org ซ้ำ")
         }
 
+        if (!organization.isTempId) throw BadRequestException("ไม่สามารถ Register ได้ โปรดตรวจสอบ id")
     }
 
 
