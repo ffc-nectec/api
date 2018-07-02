@@ -1,8 +1,10 @@
 package ffc.airsync.api.dao
 
+import ffc.airsync.api.printDebug
 import ffc.entity.Token
-import ffc.entity.parseTo
-import ffc.entity.toJson
+import ffc.entity.User
+import ffc.entity.gson.parseTo
+import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
 import javax.ws.rs.NotAuthorizedException
@@ -11,12 +13,12 @@ import javax.ws.rs.NotFoundException
 class MongoTokenDao(host: String, port: Int, databaseName: String, collection: String) : TokenDao, MongoAbsConnect(host, port, databaseName, collection) {
 
 
-    override fun create(user: String, orgId: String, type: Token.TYPEROLE): Token {
+    override fun create(user: User, orgId: String): Token {
 
         val generateToken = ObjectId()
 
 
-        val tokenMessage = Token(token = generateToken.toHexString(), name = user, role = type)
+        val tokenMessage = Token(token = generateToken.toHexString(), user = user)
 
         val tokenDoc = Document.parse(tokenMessage.toJson())
         tokenDoc.append("orgId", orgId)
@@ -28,9 +30,12 @@ class MongoTokenDao(host: String, port: Int, databaseName: String, collection: S
     }
 
     override fun find(token: String): Token {
+        printDebug("Token Dao find $token")
         val query = Document("token", token)
         val tokenDoc = coll2.find(query).first()
                 ?: throw NotAuthorizedException("Not auth can't find token in m token.")
+
+        printDebug("\tResult token find $tokenDoc")
 
         return tokenDoc.toJson().parseTo()
 
@@ -54,7 +59,7 @@ class MongoTokenDao(host: String, port: Int, databaseName: String, collection: S
     }
 
     override fun remove(token: String) {
-        val query = Document("token", token.toString())
+        val query = Document("token", token)
         coll2.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบรายการ token นี้")
 
     }

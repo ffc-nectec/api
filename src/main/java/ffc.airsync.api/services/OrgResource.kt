@@ -20,9 +20,7 @@ package ffc.airsync.api.services
 
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.module.OrgService
-import ffc.airsync.api.services.module.tokenDao
 import ffc.entity.Organization
-import ffc.entity.Token
 import javax.annotation.security.RolesAllowed
 import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.Consumes
@@ -66,10 +64,11 @@ class OrgResource {
 
         printDebug("Create token")
 
-        tokenDao.create(user = orgUpdate.name,
-                orgId = orgUpdate.id,
-                type = Token.TYPEROLE.ORG)
+        //val token = tokenDao.create(user = orgUpdate.name,
+        //        orgId = orgUpdate.id,
+        //        type = Token.TYPEROLE.ORG)
 
+        //return Response.status(Response.Status.CREATED).entity(orgUpdate).build()
         return Response.status(Response.Status.CREATED).entity(orgUpdate).build()
     }
 

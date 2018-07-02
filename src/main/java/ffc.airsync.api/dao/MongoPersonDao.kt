@@ -3,8 +3,8 @@ package ffc.airsync.api.dao
 import ffc.airsync.api.printDebug
 import ffc.entity.People
 import ffc.entity.Person
-import ffc.entity.parseTo
-import ffc.entity.toJson
+import ffc.entity.gson.parseTo
+import ffc.entity.gson.toJson
 import org.bson.Document
 import java.util.ArrayList
 

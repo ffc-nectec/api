@@ -2,7 +2,7 @@ package ffc.airsync.api.services.module
 
 import ffc.airsync.api.printDebug
 import ffc.entity.Organization
-import ffc.entity.toJson
+import ffc.entity.gson.toJson
 import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.NotFoundException
 

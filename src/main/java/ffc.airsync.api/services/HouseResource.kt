@@ -19,10 +19,9 @@ package ffc.airsync.api.services
 
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.module.HouseService
-import ffc.entity.Address
 import ffc.entity.House
-import ffc.entity.Token
-import ffc.entity.toJson
+import ffc.entity.User
+import ffc.entity.gson.toJson
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import javax.annotation.security.RolesAllowed
@@ -186,10 +185,10 @@ class HouseResource {
     fun getSingle(@Context req: HttpServletRequest,
                   @PathParam("orgId") orgId: String,
                   @PathParam("houseId") houseId: String
-    ): Address {
+    ): House {
         printDebug("Call getGeoJsonHouse single house by ip = " + req.remoteAddr + " OrgID $orgId House ID = $houseId")
 
-        val house: Address = HouseService.getSingle(orgId, houseId)
+        val house: House = HouseService.getSingle(orgId, houseId)
 
         return house
 
@@ -220,10 +219,10 @@ class HouseResource {
             printDebug("house json = " + it.toJson())
         }
 
-        if (role == Token.TYPEROLE.ORG) {
+        if (role == User.Role.ORG) {
             val houseReturn = HouseService.createByOrg(orgId, houseList)
             return Response.status(Response.Status.CREATED).entity(houseReturn).build()
-        } else if (role == Token.TYPEROLE.USER) {
+        } else if (role == User.Role.USER) {
 
             val houseReturn = HouseService.createByUser(orgId, houseList)
             return Response.status(Response.Status.CREATED).entity(houseReturn).build()
@@ -261,10 +260,10 @@ class HouseResource {
         //val houseReturn = HouseService.createByOrg(orgId, house)
         //return Response.status(Response.Status.CREATED).entity(house).build()
 
-        if (role == Token.TYPEROLE.ORG) {
+        if (role == User.Role.ORG) {
             val houseReturn = HouseService.createByOrg(orgId, house)
             return Response.status(Response.Status.CREATED).entity(houseReturn).build()
-        } else if (role == Token.TYPEROLE.USER) {
+        } else if (role == User.Role.USER) {
             val houseReturn = HouseService.createByUser(orgId, house)
             return Response.status(Response.Status.CREATED).entity(houseReturn).build()
         }

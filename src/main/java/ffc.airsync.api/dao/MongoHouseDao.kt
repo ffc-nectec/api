@@ -20,13 +20,12 @@ package ffc.airsync.api.dao
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.printDebug
 import ffc.entity.House
-import ffc.entity.ffcGson
-import ffc.entity.parseTo
-import ffc.entity.toJson
+import ffc.entity.gson.ffcGson
+import ffc.entity.gson.parseTo
+import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
 import java.util.ArrayList
-import javax.ws.rs.BadRequestException
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.NotFoundException
 
@@ -51,9 +50,6 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
     override fun insert(orgId: String, house: House): House {
 
         val generateId = ObjectId()
-
-        if (house.coordinates != null) throw BadRequestException("ยกเลิกการใช้งาน house.coordinates แล้วเปลี่ยนไปใช้ house.location แทน")
-
 
         val houseInsert: House
         houseInsert = if (house.isTempId) {
@@ -90,7 +86,7 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
 
     override fun update(house: House) {
         printDebug("Call MongoHouseDao.upldate ${house.toJson()}")
-        if (house.coordinates != null) throw BadRequestException("ยกเลิกการใช้งาน house.coordinates แล้วเปลี่ยนไปใช้ house.location แทน")
+        //if (house.coordinates != null) throw BadRequestException("ยกเลิกการใช้งาน house.coordinates แล้วเปลี่ยนไปใช้ house.location แทน")
 
         val query = Document("_id", ObjectId(house.id))
 

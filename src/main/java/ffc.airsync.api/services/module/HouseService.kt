@@ -20,8 +20,8 @@ package ffc.airsync.api.services.module
 import com.google.firebase.messaging.Message
 import ffc.airsync.api.printDebug
 import ffc.entity.House
-import ffc.entity.Token
-import ffc.entity.toJson
+import ffc.entity.User
+import ffc.entity.gson.toJson
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import me.piruin.geok.geometry.Geometry
@@ -65,7 +65,7 @@ object HouseService {
     }
 
 
-    fun update(role: Token.TYPEROLE, orgId: String, house: House, houseId: String) {
+    fun update(role: User.Role, orgId: String, house: House, houseId: String) {
 
         printDebug("Update house role $role orgid $orgId house_id $houseId house ${house.toJson()}")
 

@@ -18,9 +18,10 @@
 package ffc.airsync.api.dao
 
 import ffc.entity.Token
+import ffc.entity.User
 
 interface TokenDao {
-    fun create(user: String, orgId: String, type: Token.TYPEROLE = Token.TYPEROLE.NOAUTH): Token
+    fun create(user: User, orgId: String): Token
     fun find(token: String): Token
     fun findByOrgId(orgId: String): List<Token>
     fun remove(token: String)

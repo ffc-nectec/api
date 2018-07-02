@@ -17,32 +17,6 @@
 
 package ffc.airsync.api
 
-import org.joda.time.DateTime
-import java.util.*
-
-val USERDATEEXPIRE = 1
-val ORGDATEEXPIRE = 9000
-
-data class TokenMessage(val token: UUID, var firebaseToken: String? = null, val timestamp: DateTime = DateTime.now(), val role: TYPEROLE = TYPEROLE.NOAUTH, val name: String) {
-
-    // fun getExpireDate(temp :String? = null): DateTime = timestamp.plusDays(USERDATEEXPIRE)
-    var expireDate: DateTime
-
-    init {
-        when (role) {
-            TYPEROLE.USER -> expireDate = timestamp.plusDays(USERDATEEXPIRE)
-            TYPEROLE.ORG -> expireDate = timestamp.plusDays(ORGDATEEXPIRE)
-            else -> expireDate = timestamp
-        }
-    }
-
-    fun checkExpireTokem(): Boolean = expireDate.isBeforeNow
-
-
-    enum class TYPEROLE {
-        ORG, USER, NOAUTH
-    }
-}
 
 val debug = System.getenv("FFC_DEBUG")
 fun <T> printDebug(infoDebug: T) {

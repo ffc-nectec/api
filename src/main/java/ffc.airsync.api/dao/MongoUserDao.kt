@@ -3,8 +3,8 @@ package ffc.airsync.api.dao
 import ffc.airsync.api.dao.UserDao.Companion.checkBlockUser
 import ffc.airsync.api.printDebug
 import ffc.entity.User
-import ffc.entity.parseTo
-import ffc.entity.toJson
+import ffc.entity.gson.parseTo
+import ffc.entity.gson.toJson
 import org.bson.Document
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -97,7 +97,7 @@ ytF2v69RwtGYf7C6ygwD
     }
 
 
-    override fun isAllowUser(name: String, pass: String, orgId: String): Boolean {
+    override fun getUser(name: String, pass: String, orgId: String): User? {
         checkBlockUser(name)
 
         var userDoc: Document? = null
@@ -113,7 +113,7 @@ ytF2v69RwtGYf7C6ygwD
             }
         })
 
-        return userDoc != null
+        return userDoc?.toJson()?.parseTo()
     }
 
 

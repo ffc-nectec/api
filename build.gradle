@@ -47,7 +47,7 @@ dependencies {
 
     compile "org.eclipse.jetty.websocket:websocket-server:9.4.8.v20171121"
 
-    compile "com.github.ffc-nectec:entities:bbda2e107c"
+    compile "com.github.ffc-nectec:entities:1.0.0-alpha2"
 
     compile "joda-time:joda-time:2.9.9"
 

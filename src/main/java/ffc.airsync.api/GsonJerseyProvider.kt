@@ -18,15 +18,12 @@
 package ffc.airsync.api
 
 
-import com.fatboyindustrial.gsonjodatime.Converters
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import ffc.entity.Identity
-import ffc.entity.IdentityDeserializer
-import me.piruin.geok.LatLng
-import me.piruin.geok.gson.LatLngSerializer
-import me.piruin.geok.gson.adapterFor
-import java.io.*
+import ffc.entity.gson.ffcGson
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.OutputStream
+import java.io.OutputStreamWriter
 import java.lang.reflect.Type
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.Consumes
@@ -44,11 +41,7 @@ import javax.ws.rs.ext.Provider
 class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
 
 
-    private val gson: Gson
-        get() = Converters.registerAll(GsonBuilder())
-                .adapterFor<LatLng>(LatLngSerializer())
-                .adapterFor<Identity>(IdentityDeserializer())
-                .create()
+
 
     override fun isReadable(type: Class<*>?, genericType: Type?, annotations: Array<out Annotation>?, mediaType: MediaType?): Boolean {
         return true
@@ -62,7 +55,7 @@ class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
             InputStreamReader(entityStream, UTF_8)
                     .use {
                         try {
-                            return gson.fromJson<Any>(it, genericType)
+                            return ffcGson.fromJson<Any>(it, genericType)
                         } catch (ex: java.lang.NumberFormatException) {
                             ex.printStackTrace()
                             val errormess = BadRequestException("JSON error ${ex.message}")
@@ -93,7 +86,7 @@ class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
                          annotations: Array<Annotation>, mediaType: MediaType,
                          httpHeaders: MultivaluedMap<String, Any>,
                          entityStream: OutputStream) {
-        OutputStreamWriter(entityStream, UTF_8).use { writer -> gson.toJson(`object`, genericType, writer) }
+        OutputStreamWriter(entityStream, UTF_8).use { writer -> ffcGson.toJson(`object`, genericType, writer) }
     }
 
     companion object {

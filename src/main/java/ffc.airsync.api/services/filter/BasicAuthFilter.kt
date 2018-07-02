@@ -3,6 +3,7 @@ package ffc.airsync.api.services.filter
 import ffc.airsync.api.dao.DaoFactory
 import ffc.airsync.api.printDebug
 import ffc.entity.Token
+import ffc.entity.User
 import java.util.regex.Pattern
 import javax.annotation.Priority
 import javax.ws.rs.NotAuthorizedException
@@ -38,6 +39,7 @@ class BasicAuthFilter : ContainerRequestFilter {
 
         try {
             authenInfo = TokenAuthInfo(requestContext)
+            printDebug("Finish create TokenAuthInfo")
         } catch (ex: NotAuthorizedException) {
             return
         }
@@ -47,9 +49,9 @@ class BasicAuthFilter : ContainerRequestFilter {
 
 
         securityContext = when {
-            authenInfo.token.role == Token.TYPEROLE.USER ->
+            authenInfo.token.user.role == User.Role.USER ->
                 UserSecurityContextImp(authenInfo.token, urlScheme, orgId)
-            authenInfo.token.role == Token.TYPEROLE.ORG ->
+            authenInfo.token.user.role == User.Role.ORG ->
                 OrgSecurityContextImp(authenInfo.token, urlScheme, orgId)
             else ->
                 NoAuthSecurityContextImp()
@@ -65,6 +67,7 @@ class BasicAuthFilter : ContainerRequestFilter {
         val token: Token
 
         init {
+            printDebug("TokenAuthInfo class in filter")
             val authorization = requestContext.headers[AUTHORIZATION_PROPERTY]
 
             if (authorization != null) {
@@ -74,12 +77,14 @@ class BasicAuthFilter : ContainerRequestFilter {
                 }
                 val tokenDao = DaoFactory().buildTokenMapDao()
                 val tokenStr = authorization[0].replaceFirst(AUTHENTICATION_SCHEME, "").trim()
+                printDebug("\tFind token.")
                 token = tokenDao.find(token = tokenStr)
+                printDebug("\t\ttoken = $token")
 
                 if (token.isExpire) throw NotAuthorizedException("Token expire ${token.expireDate}")
 
             } else {
-                token = Token(token = "", name = "NOAUTH")
+                token = Token(token = "", user = User())
             }
 
         }

@@ -6,9 +6,9 @@ import com.mongodb.client.FindIterable
 import ffc.airsync.api.printDebug
 import ffc.entity.Organization
 import ffc.entity.User
-import ffc.entity.ffcGson
-import ffc.entity.parseTo
-import ffc.entity.toJson
+import ffc.entity.gson.ffcGson
+import ffc.entity.gson.parseTo
+import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
 import javax.ws.rs.BadRequestException
@@ -253,8 +253,8 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         return userList
     }
 
-    override fun isAllowUser(name: String, pass: String, orgId: String): Boolean {
-        printDebug("Call isAllowUser in OrgMongoDao")
+    override fun getUser(name: String, pass: String, orgId: String): User? {
+        printDebug("Call getUser in OrgMongoDao")
 
         val query = Document("_id", ObjectId(orgId))
 
@@ -272,6 +272,6 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         }
         //val user = coll2.find(query).first()
         printDebug("\tuser query $user")
-        return user != null
+        return user
     }
 }

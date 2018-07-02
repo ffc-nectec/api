@@ -3,15 +3,15 @@ package ffc.airsync.api.services.module
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
 import ffc.airsync.api.printDebug
-import ffc.entity.Address
+import ffc.entity.House
 import java.util.concurrent.ExecutionException
 
 
-fun Message.Builder.putHouseData(address: Address, registrationToken: String, orgId: String) {
+fun Message.Builder.putHouseData(address: House, registrationToken: String, orgId: String) {
     val message = Message.builder()
             .putData("type", "House")
-            .putData("_id", address._id)
-            .putData("url", "$orgId/place/house/${address._id}")
+            .putData("_id", address.id)
+            .putData("url", "$orgId/place/house/${address.id}")
             .setToken(registrationToken)
             .build()
 

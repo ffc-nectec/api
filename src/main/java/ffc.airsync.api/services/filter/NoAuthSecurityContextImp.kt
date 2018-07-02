@@ -15,7 +15,7 @@ class NoAuthSecurityContextImp : FfcSecurityContext {
 
 
     override fun isUserInRole(role: String?): Boolean {
-        return Token.TYPEROLE.NOAUTH.toString() == role
+        return "" == role
     }
 
     override fun getAuthenticationScheme(): String {

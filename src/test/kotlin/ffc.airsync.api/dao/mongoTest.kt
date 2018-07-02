@@ -17,49 +17,33 @@
 
 package ffc.airsync.api.dao
 
-import ffc.entity.Address
+import ffc.entity.House
 import org.bson.types.ObjectId
-import org.joda.time.DateTime
 import org.junit.Test
-import java.util.UUID
 
 
 class mongoTest {
 
 
+    @Test
     fun insertData() {
         val mongoHouseDao = MongoHouseDao("127.0.0.1", 27017, "ffc", "house")
-        val house = Address("ffffff", DateTime.now())
-        house.tambon = "เขาจันทร์ วาส"
-        house.hid = 1
+        val house = House(ObjectId().toHexString())
+        // house.tambon = "เขาจันทร์ วาส"
+        // house.hid = 1
 
-        val house2 = Address("aaaaaa", DateTime.now())
-        house2.tambon = "เขาขาด"
-        house2.hid = 2
+        val house2 = House(ObjectId().toHexString())
+        //house2.tambon = "เขาขาด"
+        //house2.hid = 2
 
-        mongoHouseDao.insert(UUID.fromString("f247ead5-6383-5e74-2d9e-8ee1f50542be"), house)
-        mongoHouseDao.insert(UUID.fromString("f247ead5-6383-5e74-2d9e-8ee1f50542be"), house2)
-
-    }
-
-
-    fun queryData() {
-        val mongoHouseDao = MongoHouseDao("127.0.0.1", 27017, "ffc", "house")
-
-        val houseStore = mongoHouseDao.findByHouseId(UUID.fromString("f247ead5-6383-5e74-2d9e-8ee1f50542be"), 2)
-        println(houseStore)
-        println(houseStore!!.data.tambon)
+        //mongoHouseDao.insert(UUID.fromString("f247ead5-6383-5e74-2d9e-8ee1f50542be"), house)
+        //mongoHouseDao.insert(UUID.fromString("f247ead5-6383-5e74-2d9e-8ee1f50542be"), house2)
 
     }
 
 
-    fun queryOrgUuid() {
-        val mongoHouseDao = MongoHouseDao("127.0.0.1", 27017, "ffc", "organ")
-        val listHouse = mongoHouseDao.findAll(UUID.fromString("f247ead5-6383-5e74-2d9e-8ee1f50542be"))
-        listHouse.forEach {
-            println(it.data.tambon)
-        }
-    }
+
+
 
 
     @Test

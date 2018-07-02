@@ -1,6 +1,6 @@
 package ffc.airsync.api
 
-import ffc.entity.toJson
+import ffc.entity.gson.toJson
 import me.piruin.geok.geometry.Point
 import org.junit.Test
 
