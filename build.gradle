@@ -73,3 +73,34 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+
+
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean
+
+jar {
+
+    from {
+        configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+
+    }
+
+    destinationDir = file("$rootDir/build/cloud/bin")
+
+    manifest { attributes 'Main-Class': 'ffc.airsync.api.FFCApiServer' }
+
+
+
+    exclude 'META-INF/*.RSA'
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/DEPENDENCIES'
+    exclude 'META-INF/NOTICE*'
+    exclude 'META-INF/LICENSE*'
+    exclude 'about.html'
+
+}
+
+sourceCompatibility = 1.8
