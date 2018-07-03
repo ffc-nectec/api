@@ -146,7 +146,7 @@ ytF2v69RwtGYf7C6ygwD
 
     override fun updateToken(organization: Organization): Organization {
         printDebug("Mongo update token orgobj=${organization.toJson()}")
-        val query = Document("_id", ObjectId(organization.id))
+        val query = Document("id", organization.id)
         coll2.find(query).first() ?: throw NotFoundException("ไม่พบ Object organization ${organization.id} ให้ Update")
 
         val generateToken = ObjectId()
@@ -165,7 +165,7 @@ ytF2v69RwtGYf7C6ygwD
     }
 
     override fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
-        val query = Document("_id", ObjectId(orgId))
+        val query = Document("id", orgId)
         if (isOrg) {
             val firebaseTokenDoc = Document("firebaseToken", firebaseToken)
             coll2.updateOne(query, BasicDBObject("\$set", firebaseTokenDoc))
@@ -176,7 +176,7 @@ ytF2v69RwtGYf7C6ygwD
 
     override fun removeFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
 
-        val query = Document("_id", ObjectId(orgId))
+        val query = Document("id", orgId)
 
         if (isOrg) {
             val removeOrgFirebaseToken = Document("firebaseToken", null)
@@ -191,7 +191,7 @@ ytF2v69RwtGYf7C6ygwD
 
     override fun getFirebaseToken(orgId: String): List<String> {
         val firebaseTokenList = arrayListOf<String>()
-        val query = Document("_id", ObjectId(orgId))
+        val query = Document("id", orgId)
         val firebaseOrgDoc = coll2.find(query).projection(Document("firebaseToken", 1)).projection(Document("mobileFirebaseToken", 1)).first()
         val firebaseMobile = firebaseOrgDoc["mobileFirebaseToken"] as List<*>
 
@@ -203,7 +203,7 @@ ytF2v69RwtGYf7C6ygwD
     }
 
     override fun insertUser(user: User, orgId: String) {
-        val query = Document("_id", ObjectId(orgId))
+        val query = Document("id", orgId)
         user.password = getPass(user.password, SALT_PASS)
         val userDoc = Document.parse(ffcGson.toJson(user))
         val userStruct = Document("users", userDoc)
@@ -214,7 +214,7 @@ ytF2v69RwtGYf7C6ygwD
     }
 
     private fun haveUserInDb(orgId: String, user: User): Boolean {
-        val query = Document("_id", ObjectId(orgId))
+        val query = Document("id", orgId)
         user.password = getPass(user.password, SALT_PASS)
         val userInDb = coll2.find(query).projection(Document("users", 1)).first()
         val userList: Array<User> = userInDb.toJson().parseTo()
@@ -247,7 +247,7 @@ ytF2v69RwtGYf7C6ygwD
     override fun getUser(name: String, pass: String, orgId: String): User? {
         printDebug("Call getUser in OrgMongoDao")
 
-        val query = Document("_id", ObjectId(orgId))
+        val query = Document("id", orgId)
         printDebug("\tQuery = ${query.toJson()}")
         val orgDoc = coll2.find(query).first()
         printDebug("\torgDoc = ${orgDoc.toJson()}")

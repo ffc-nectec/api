@@ -13,10 +13,10 @@ object OrgService {
     }
 
     fun remove(orgId: String) {
-        //val org = orgDao.find(orgId)
+        // val org = orgDao.find(orgId)
 
-        //printDebug("Remove org id = $orgId == ${org.id}")
-        //if (org.id != orgId) throw NotAuthorizedException("ไม่เจอ Org")
+        // printDebug("Remove org id = $orgId == ${org.id}")
+        // if (org.id != orgId) throw NotAuthorizedException("ไม่เจอ Org")
 
         orgDao.remove(orgId)
         // orgUser.removeByOrgId(orgId)

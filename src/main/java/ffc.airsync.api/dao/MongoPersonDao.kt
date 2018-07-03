@@ -44,7 +44,7 @@ class MongoPersonDao(host: String, port: Int, databaseName: String, collection: 
     override fun getPeopleInHouse(houseId: String): ArrayList<Person>? {
         val personInHouse = arrayListOf<Person>()
 
-        val query = Document("_id", houseId)
+        val query = Document("id", houseId)
 
         val personInHouseDoc = coll2.find(query)
         personInHouseDoc.forEach {
