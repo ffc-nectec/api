@@ -6,66 +6,41 @@ plugins {
 group 'ffc.api'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
-
 repositories {
     mavenCentral()
     jcenter()
     maven { url 'https://jitpack.io' }
     maven { url "https://dl.bintray.com/blazei/maven" }
-    maven {
-        url "https://maven.google.com" // Google's Maven repository
-    }
+    maven { url "https://maven.google.com" }
 }
 
 dependencies {
     def jettyVersion = "9.4.1.v20170120"
     def jerseyVersion = "2.25.1"
 
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "com.google.code.gson:gson:2.8.1"
+    implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
+    implementation "org.eclipse.jetty:jetty-servlet:$jettyVersion"
+    implementation "org.eclipse.jetty:jetty-http:$jettyVersion"
+    implementation "org.glassfish.jersey.containers:jersey-container-servlet-core:$jerseyVersion"
+    implementation "org.glassfish.jersey.containers:jersey-container-jetty-servlet:$jerseyVersion"
+    implementation "org.glassfish.jersey.media:jersey-media-json-jackson:$jerseyVersion"
+    implementation 'com.google.firebase:firebase-admin:5.11.0'
+    implementation "args4j:args4j:2.33"
+    implementation 'me.piruin:geok-gson:1.0.0-alpha-2'
+    implementation "com.github.ffc-nectec:entities:1.0.0-alpha2"
+    implementation "joda-time:joda-time:2.9.9"
+    implementation "org.mongodb:mongo-java-driver:3.6.3"
 
-    compile "com.google.code.gson:gson:2.8.1"
-    compile "org.eclipse.jetty:jetty-server:$jettyVersion"
-    compile "org.eclipse.jetty:jetty-servlet:$jettyVersion"
-    compile "org.eclipse.jetty:jetty-http:$jettyVersion"
-    compile "org.glassfish.jersey.containers:jersey-container-servlet-core:$jerseyVersion"
-    compile "org.glassfish.jersey.containers:jersey-container-jetty-servlet:$jerseyVersion"
-    compile "org.glassfish.jersey.media:jersey-media-json-jackson:$jerseyVersion"
-    compile 'com.google.firebase:firebase-admin:5.11.0'
-
-    compile "args4j:args4j:2.33"
-    compile 'me.piruin:geok-gson:1.0.0-alpha-2'
-
-    compile "org.elasticsearch.client:transport:6.2.1"
-
-
-    compile "org.eclipse.jetty.websocket:websocket-client:9.4.8.v20171121"
-
-    compile "io.searchbox:jest:2.4.0"
-
-
-    compile "org.eclipse.jetty.websocket:websocket-server:9.4.8.v20171121"
-
-    compile "com.github.ffc-nectec:entities:1.0.0-alpha2"
-
-    compile "joda-time:joda-time:2.9.9"
-
-    compile "org.mongodb:mongo-java-driver:3.6.3"
-
-
-    compile "org.apache.logging.log4j:log4j-api:2.11.0"
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
-
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-
-
-
-    testCompile "org.mockito:mockito-core:2.19.0"
-    testImplementation("org.amshove.kluent:kluent:1.34")
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-
+    testImplementation "org.mockito:mockito-core:2.19.0"
+    testImplementation "org.amshove.kluent:kluent:1.34"
+    testImplementation "junit:junit:4.12"
 }
+
+sourceCompatibility = 1.8
 
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
@@ -74,24 +49,18 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-
-
 task stage(dependsOn: ['build', 'clean'])
+
 build.mustRunAfter clean
 
 jar {
-
     from {
         configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-
     }
 
     destinationDir = file("$rootDir/build/cloud/bin")
-
     manifest { attributes 'Main-Class': 'ffc.airsync.api.FFCApiServer' }
-
-
 
     exclude 'META-INF/*.RSA'
     exclude 'META-INF/*.SF'
@@ -100,7 +69,5 @@ jar {
     exclude 'META-INF/NOTICE*'
     exclude 'META-INF/LICENSE*'
     exclude 'about.html'
-
 }
 
-sourceCompatibility = 1.8
