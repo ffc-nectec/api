@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 package ffc.airsync.api.dao
-import ffc.entity.House
 import org.bson.types.ObjectId
 import org.junit.Test
+
 class mongoTest {
 
     @Test
     fun insertData() {
-        val mongoHouseDao = MongoHouseDao("127.0.0.1", 27017, "ffc", "house")
-        val house = House(ObjectId().toHexString())
+        // val mongoHouseDao = MongoHouseDao("127.0.0.1", 27017, "ffc", "house")
+        // val house = House(ObjectId().toHexString())
         // house.tambon = "เขาจันทร์ วาส"
         // house.hid = 1
 
-        val house2 = House(ObjectId().toHexString())
+        // val house2 = House(ObjectId().toHexString())
         // house2.tambon = "เขาขาด"
         // house2.hid = 2
 
