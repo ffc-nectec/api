@@ -8,7 +8,9 @@ import ffc.airsync.api.printDebug
 import org.bson.Document
 import java.util.Arrays
 
-abstract class MongoAbsConnect(private val host: String, private val port: Int, private val dbName: String, private val collection: String, private val mongoInitRun: MongoInitRun? = null) {
+typealias mongoInit = () -> Unit
+
+abstract class MongoAbsConnect(private val host: String, private val port: Int, private val dbName: String, private val collection: String, private val mongoInitRun: mongoInit? = null) {
 
     protected lateinit var coll2: MongoCollection<Document>
 
@@ -19,18 +21,14 @@ abstract class MongoAbsConnect(private val host: String, private val port: Int, 
     }
 
     init {
-        if (mongoInitRun != null) connectToMongo(mongoInitRun)
-    }
-
-    interface MongoInitRun {
-        fun run()
+        connectToMongo()
     }
 
     protected fun getClient(): MongoClient? {
         return mongoClient
     }
 
-    protected fun connectToMongo(initRun: MongoInitRun) {
+    protected fun connectToMongo() {
         try {
             getMongoClient()
             getDbCollection()
@@ -41,7 +39,7 @@ abstract class MongoAbsConnect(private val host: String, private val port: Int, 
             throw exOut
         }
 
-        initRun.run()
+        mongoInitRun?.invoke()
     }
 
     private fun getDbCollection() {
