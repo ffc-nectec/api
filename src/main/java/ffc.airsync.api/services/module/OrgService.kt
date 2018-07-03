@@ -10,12 +10,8 @@ object OrgService {
 
     fun register(organization: Organization): Organization {
         printDebug("\t\tCall mongo insert organization ${organization.toJson()}")
-
         return orgDao.insert(organization)
-
-
     }
-
 
     fun remove(orgId: String) {
         val org = orgDao.find(orgId)
@@ -24,22 +20,17 @@ object OrgService {
         if (org.id != orgId) throw NotAuthorizedException("ไม่เจอ Org")
 
         orgDao.remove(orgId)
-        //orgUser.removeByOrgId(orgId)
+        // orgUser.removeByOrgId(orgId)
         houseDao.removeByOrgId(orgId)
         tokenDao.removeByOrgId(orgId)
         personDao.removeGroupByOrg(orgId)
     }
 
-
     fun getMy(ipAddress: String): List<Organization> {
-
         printDebug("Get my org $ipAddress")
         val orgList = orgDao.findByIpAddress(ipAddress)
         val orgReturn = hiddenPrivate(orgList)
-        if (orgReturn.isEmpty())
-            throw NotFoundException("ไม่มีข้อมูลลงทะเบียน")
-
-
+        if (orgReturn.isEmpty()) throw NotFoundException("ไม่มีข้อมูลลงทะเบียน")
         return orgReturn
     }
 
@@ -60,12 +51,8 @@ object OrgService {
     fun get(): List<Organization> {
         printDebug("Get all org")
         val orgList = orgDao.findAll()
-
         val orgReturn = hiddenPrivate(orgList)
-
-
         if (orgReturn.isEmpty()) throw NotFoundException("ไม่มีข้อมูลลงทะเบียน")
-
         return orgReturn
     }
 }

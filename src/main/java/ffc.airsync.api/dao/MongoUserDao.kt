@@ -10,9 +10,7 @@ import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import javax.ws.rs.NotFoundException
 
-
 class MongoUserDao(host: String, port: Int, databaseName: String, collection: String) : UserDao, MongoAbsConnect(host, port, databaseName, collection) {
-
 
     private var SALT_PASS = """
 uxF3Ocv5eg4BoQBK9MmR
@@ -42,9 +40,7 @@ ytF2v69RwtGYf7C6ygwD
         if (salt != null) SALT_PASS = salt
     }
 
-
     override fun insertUser(user: User, orgId: String) {
-
 
         mongoSafe(object : MongoSafeRun {
             override fun run() {
@@ -55,12 +51,10 @@ ytF2v69RwtGYf7C6ygwD
         })
     }
 
-
     override fun updateUser(user: User, orgId: String) {
         mongoSafe(object : MongoSafeRun {
             override fun run() {
-                val query = Document.parse(user.toJson())
-                        .append("orgId", orgId)
+                val query = Document.parse(user.toJson()).append("orgId", orgId)
                 query["password"] = null
 
                 val userDoc = Document.parse(user.toJson())
@@ -69,8 +63,6 @@ ytF2v69RwtGYf7C6ygwD
                 coll2.findOneAndReplace(query, userDoc) ?: throw NotFoundException("ไม่พบ User ${user.name} ให้ Update")
             }
         })
-
-
     }
 
     override fun findUser(orgId: String): List<User> {
@@ -89,22 +81,14 @@ ytF2v69RwtGYf7C6ygwD
                 }
             }
         })
-
-
-
-
         return listUser
     }
-
-
     override fun getUser(name: String, pass: String, orgId: String): User? {
         checkBlockUser(name)
 
         var userDoc: Document? = null
 
-        val query = Document("orgId", orgId)
-                .append("name", name)
-                .append("pass", getPass(pass))
+        val query = Document("orgId", orgId).append("name", name).append("pass", getPass(pass))
 
         mongoSafe(object : MongoSafeRun {
             override fun run() {
@@ -115,12 +99,9 @@ ytF2v69RwtGYf7C6ygwD
 
         return userDoc?.toJson()?.parseTo()
     }
-
-
     private fun getPass(password: String): String {
         val digest = MessageDigest.getInstance("SHA-256")
-        val encoded = digest.digest(
-                ("$password$SALT_PASS$password").toByteArray(StandardCharsets.UTF_8))
+        val encoded = digest.digest(("$password$SALT_PASS$password").toByteArray(StandardCharsets.UTF_8))
 
         val hexString = StringBuffer()
         for (i in 0 until encoded.size) {
@@ -130,6 +111,4 @@ ytF2v69RwtGYf7C6ygwD
         }
         return hexString.toString()
     }
-
-
 }

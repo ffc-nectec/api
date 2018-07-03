@@ -31,10 +31,8 @@ class ErrorUserFilter : ExceptionMapper<ForbiddenException> {
             val except = NotAuthorizedException("token not found")
             err = ErrorFilter.ErrorRes(401, except.message, except)
             Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
-
         } else {
             Response.status(exception.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
         }
     }
 }
-

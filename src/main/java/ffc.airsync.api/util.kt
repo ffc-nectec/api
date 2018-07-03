@@ -17,9 +17,7 @@
 
 package ffc.airsync.api
 
-
 val debug = System.getenv("FFC_DEBUG")
 fun <T> printDebug(infoDebug: T) {
-    if (debug == null)
-        println(infoDebug)
+    if (debug == null) println(infoDebug)
 }

@@ -35,57 +35,37 @@ import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
-
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/org")
 class PersonResource {
-
-
     @Context
     private var context: FfcSecurityContext? = null
-
 
     @RolesAllowed("ORG")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
-    fun create(@Context req: HttpServletRequest,
-               @PathParam("orgId") orgId: String,
-               personList: List<Person>): Response {
+    fun create(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String, personList: List<Person>): Response {
         printDebug("\nCall create person by ip = " + req.remoteAddr)
 
         personList.forEach {
             printDebug(it)
         }
-
-        //val httpHeader = req.buildHeaderMap()
-
-
         PersonService.create(orgId, personList)
         return Response.status(Response.Status.CREATED).build()
-
     }
-
 
     @RolesAllowed("USER")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
-    fun get(@QueryParam("page") page: Int = 1,
-            @QueryParam("per_page") per_page: Int = 200,
-            @PathParam("orgId") orgId: String,
-            @Context req: HttpServletRequest): Response {
+    fun get(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @PathParam("orgId") orgId: String): Response {
 
         return try {
-            val personList = PersonService.get(
-                    orgId,
-                    if (page == 0) 1 else page,
-                    if (per_page == 0) 200 else per_page)
+            val personList = PersonService.get(orgId, if (page == 0) 1 else page, if (per_page == 0) 200 else per_page)
 
             Response.status(Response.Status.OK).entity(personList).build()
         } catch (ex: NotAuthorizedException) {
             Response.status(401).build()
         }
-
-
     }
 }

@@ -10,10 +10,7 @@ class NoAuthSecurityContextImp : FfcSecurityContext {
     init {
 
         this.userPrincipal = Principal { "NOAUTH" }
-
     }
-
-
     override fun isUserInRole(role: String?): Boolean {
         return "" == role
     }
@@ -32,8 +29,6 @@ class NoAuthSecurityContextImp : FfcSecurityContext {
 
     override val token: Token?
         get() = null
-
-
     override val orgId: String?
         get() = null
 }

@@ -4,7 +4,6 @@ import org.junit.Test
 
 class EtcTest {
 
-
     class TESSS(val str: String) {
         var ii = 0
 
@@ -24,6 +23,4 @@ class EtcTest {
         objTest1.printDD()
         objTest1.printDD()
     }
-
-
 }

@@ -9,16 +9,11 @@ class OrgSecurityContextImp(override val token: Token, override val orgId: Strin
     private var HTTPS = "https://"
     private var userPrincipal: Principal? = null
     private var scheme: String? = null
-
-
     init {
         this.scheme = scheme
 
         this.userPrincipal = Principal { token.user.name }
-
     }
-
-
     override fun isUserInRole(role: String?): Boolean {
         return User.Role.ORG.toString() == role
     }

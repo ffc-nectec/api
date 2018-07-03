@@ -13,8 +13,7 @@ fun itemRenderPerPage(page: Int, per_page: Int, count: Int, onAddItemAction: Add
     val fromItem = ((page - 1) * per_page) + 1
     var toItem = (page) * per_page
 
-    if (fromItem > count)
-        throw NotFoundException("ไม่พบ")
+    if (fromItem > count) throw NotFoundException("ไม่พบ")
     if (toItem > count) {
         toItem = count
     }

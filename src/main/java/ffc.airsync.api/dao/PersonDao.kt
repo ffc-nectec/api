@@ -26,10 +26,6 @@ interface PersonDao {
     fun insert(orgId: String, personList: List<Person>)
 
     fun findByOrgId(orgId: String): List<Person>
-
-
     fun getPeopleInHouse(houseId: String): ArrayList<People>?
-
-
     fun removeGroupByOrg(orgId: String)
 }

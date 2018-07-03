@@ -28,8 +28,6 @@ import org.bson.types.ObjectId
 import java.util.ArrayList
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.NotFoundException
-
-
 class MongoHouseDao(host: String, port: Int, databaseName: String, collection: String) : HouseDao, MongoAbsConnect(host, port, databaseName, collection) {
 
     init {
@@ -40,7 +38,6 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
         try {
             val geoIndex = Document("location", "2dsphere")
             coll2.createIndex(geoIndex, IndexOptions().unique(false))
-
         } catch (ex: Exception) {
             ex.printStackTrace()
             throw ex
@@ -74,7 +71,6 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
             val query = Document("_id", generateId)
             val afterInsertDoc = coll2.find(query).first()
             houseReturn = afterInsertDoc.toJson().parseTo()
-
         } catch (ex: Exception) {
             ex.printStackTrace()
             throw ex
@@ -82,33 +78,22 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
 
         return houseReturn
     }
-
-
     override fun update(house: House) {
         printDebug("Call MongoHouseDao.upldate ${house.toJson()}")
-        //if (house.coordinates != null) throw BadRequestException("ยกเลิกการใช้งาน house.coordinates แล้วเปลี่ยนไปใช้ house.location แทน")
 
         val query = Document("_id", ObjectId(house.id))
-
 
         printDebug("\tquery old house ")
         val oldHouseDoc = (coll2.find(query).first() ?: throw NotFoundException("ไม่มีบ้านตาม id ให้ Update"))
 
-
         val orgId = oldHouseDoc["orgId"].toString()
         printDebug("\tget orgId $orgId")
-
-
-        //val geoPoint: Document? = createGeoDocument(house)
-
-
         printDebug("\tcreate update doc")
-        //val updateHouseDoc = createDocument(ObjectId(house.id), orgId, house, geoPoint)
+        // val updateHouseDoc = createDocument(ObjectId(house.id), orgId, house, geoPoint)
 
         val updateDoc = Document.parse(ffcGson.toJson(house))
         updateDoc.append("_id", ObjectId(house.id))
         updateDoc.append("orgId", orgId)
-
 
         printDebug("\tcall collection.update (oldDoc, updateDoc)")
         printDebug("\t\tOld doc =    $oldHouseDoc")
@@ -122,10 +107,8 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
             exo.stackTrace = ex.stackTrace
             throw exo
         }
-
         printDebug("\tDone mongo update house.")
     }
-
 
     override fun update(houseList: List<House>) {
         houseList.forEach {
@@ -133,21 +116,16 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
         }
     }
 
-
     override fun delete(houseId: String) {
         val query = Document("_id", houseId)
         coll2.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบบ้าน id $houseId ให้ลบ")
-
-
     }
 
     override fun findAll(orgId: String, haveLocation: Boolean?): List<House> {
         val query = Document("orgId", orgId)
-
         when {
             haveLocation == null -> {
             }
-
             haveLocation -> query.append("location", Document("\$ne", null))
             else -> query.append("location", Document("\$eq", null))
         }
@@ -164,28 +142,19 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
                     val house: House = it.toJson().parseTo()
                     listHouse.add(house)
                 }
-
             }
-
         })
-
         return listHouse
     }
-
-
     override fun find(houseId: String): House {
         printDebug("Call find in house dao.")
         val query = Document("_id", houseId)
         val houseJson = coll2.find(query).first().toJson()
-
         return houseJson.parseTo()
     }
-
 
     override fun removeByOrgId(orgId: String) {
         val query = Document("orgId", orgId)
         coll2.deleteMany(query)
-
     }
-
 }

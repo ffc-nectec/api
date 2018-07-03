@@ -16,8 +16,6 @@
  */
 
 package ffc.airsync.api
-
-
 import ffc.entity.gson.ffcGson
 import java.io.IOException
 import java.io.InputStream
@@ -39,30 +37,23 @@ import javax.ws.rs.ext.Provider
 @Produces(MediaType.APPLICATION_JSON, "application/vnd.geo+json")
 @Consumes(MediaType.APPLICATION_JSON, "application/vnd.geo+json")
 class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
-
-
-
-
     override fun isReadable(type: Class<*>?, genericType: Type?, annotations: Array<out Annotation>?, mediaType: MediaType?): Boolean {
         return true
     }
 
     @Throws(IOException::class)
-    override fun readFrom(type: Class<Any>, genericType: Type,
-                          annotations: Array<Annotation>, mediaType: MediaType,
-                          httpHeaders: MultivaluedMap<String, String>, entityStream: InputStream): Any? {
+    override fun readFrom(type: Class<Any>, genericType: Type, annotations: Array<Annotation>, mediaType: MediaType, httpHeaders: MultivaluedMap<String, String>, entityStream: InputStream): Any? {
         try {
-            InputStreamReader(entityStream, UTF_8)
-                    .use {
-                        try {
-                            return ffcGson.fromJson<Any>(it, genericType)
-                        } catch (ex: java.lang.NumberFormatException) {
-                            ex.printStackTrace()
-                            val errormess = BadRequestException("JSON error ${ex.message}")
-                            errormess.stackTrace = ex.stackTrace
-                            throw errormess
-                        }
-                    }
+            InputStreamReader(entityStream, UTF_8).use {
+                try {
+                    return ffcGson.fromJson<Any>(it, genericType)
+                } catch (ex: java.lang.NumberFormatException) {
+                    ex.printStackTrace()
+                    val errormess = BadRequestException("JSON error ${ex.message}")
+                    errormess.stackTrace = ex.stackTrace
+                    throw errormess
+                }
+            }
         } catch (e: com.google.gson.JsonSyntaxException) {
 
             // Log exception
@@ -71,21 +62,16 @@ class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
         return null
     }
 
-    override fun isWriteable(type: Class<*>, genericType: Type,
-                             annotations: Array<Annotation>, mediaType: MediaType): Boolean {
+    override fun isWriteable(type: Class<*>, genericType: Type, annotations: Array<Annotation>, mediaType: MediaType): Boolean {
         return true
     }
 
-    override fun getSize(`object`: Any, type: Class<*>, genericType: Type,
-                         annotations: Array<Annotation>, mediaType: MediaType): Long {
+    override fun getSize(`object`: Any, type: Class<*>, genericType: Type, annotations: Array<Annotation>, mediaType: MediaType): Long {
         return -1
     }
 
     @Throws(IOException::class, WebApplicationException::class)
-    override fun writeTo(`object`: Any, type: Class<*>, genericType: Type,
-                         annotations: Array<Annotation>, mediaType: MediaType,
-                         httpHeaders: MultivaluedMap<String, Any>,
-                         entityStream: OutputStream) {
+    override fun writeTo(`object`: Any, type: Class<*>, genericType: Type, annotations: Array<Annotation>, mediaType: MediaType, httpHeaders: MultivaluedMap<String, Any>, entityStream: OutputStream) {
         OutputStreamWriter(entityStream, UTF_8).use { writer -> ffcGson.toJson(`object`, genericType, writer) }
     }
 

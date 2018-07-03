@@ -15,8 +15,6 @@ class MongoPersonDao(host: String, port: Int, databaseName: String, collection: 
         val personDoc = Document.parse(person.toJson())
         personDoc.append("orgId", person.bundle["orgId"])
         personDoc.append("houseId", person.bundle["houseId"])
-
-
         coll2.insertOne(personDoc)
     }
 
@@ -27,7 +25,7 @@ class MongoPersonDao(host: String, port: Int, databaseName: String, collection: 
     }
 
     override fun findByOrgId(orgId: String): List<Person> {
-        //printDebug("Mongo findAll persons in org $orgUuid")
+        // printDebug("Mongo findAll persons in org $orgUuid")
         val personList = arrayListOf<Person>()
 
         val query = Document("orgId", orgId)
@@ -35,33 +33,26 @@ class MongoPersonDao(host: String, port: Int, databaseName: String, collection: 
 
         printDebug("\tPerson in list ${docPersonList.count()}")
         docPersonList.forEach {
-            //val person = docToObj(it)
+            // val person = docToObj(it)
             val person: Person = it.toJson().parseTo()
             personList.add(person)
-
         }
 
         printDebug("Person find finish list size ${personList.size}")
         return personList
     }
-
-
     override fun getPeopleInHouse(houseId: String): ArrayList<People>? {
         val personInHouse = arrayListOf<People>()
 
         val query = Document("_id", houseId)
 
         val personInHouseDoc = coll2.find(query)
-
-
         personInHouseDoc.forEach {
             val personDoc = it
             val person: Person = personDoc.toJson().parseTo()
             val people = People(person.id, "${person.prename} ${person.firstname} ${person.lastname}")
             personInHouse.add(people)
         }
-
-
         return personInHouse
     }
 
@@ -69,5 +60,4 @@ class MongoPersonDao(host: String, port: Int, databaseName: String, collection: 
         val query = Document("orgId", orgId)
         coll2.deleteMany(query)
     }
-
 }
