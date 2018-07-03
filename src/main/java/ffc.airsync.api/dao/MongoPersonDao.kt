@@ -1,7 +1,6 @@
 package ffc.airsync.api.dao
 
 import ffc.airsync.api.printDebug
-import ffc.entity.People
 import ffc.entity.Person
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
@@ -41,8 +40,9 @@ class MongoPersonDao(host: String, port: Int, databaseName: String, collection: 
         printDebug("Person find finish list size ${personList.size}")
         return personList
     }
-    override fun getPeopleInHouse(houseId: String): ArrayList<People>? {
-        val personInHouse = arrayListOf<People>()
+
+    override fun getPeopleInHouse(houseId: String): ArrayList<Person>? {
+        val personInHouse = arrayListOf<Person>()
 
         val query = Document("_id", houseId)
 
@@ -50,8 +50,7 @@ class MongoPersonDao(host: String, port: Int, databaseName: String, collection: 
         personInHouseDoc.forEach {
             val personDoc = it
             val person: Person = personDoc.toJson().parseTo()
-            val people = People(person.id, "${person.prename} ${person.firstname} ${person.lastname}")
-            personInHouse.add(people)
+            personInHouse.add(person)
         }
         return personInHouse
     }
