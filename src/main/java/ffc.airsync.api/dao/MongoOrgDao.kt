@@ -249,7 +249,7 @@ ytF2v69RwtGYf7C6ygwD
 
         val query = Document("id", orgId)
         printDebug("\tQuery = ${query.toJson()}")
-        val orgDoc = coll2.find(query).first()
+        val orgDoc = coll2.find(query).first() ?: throw NotFoundException("ไม่พบ Org id $orgId")
         printDebug("\torgDoc = ${orgDoc.toJson()}")
         val org = orgDoc.toJson().parseTo<Organization>()
         printDebug("\torg = $org")
