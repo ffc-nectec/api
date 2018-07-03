@@ -17,14 +17,14 @@ class MongoTokenDao(host: String, port: Int, databaseName: String, collection: S
         val tokenDoc = Document.parse(tokenMessage.toJson())
         tokenDoc.append("orgId", orgId)
         tokenDoc.append("_id", generateToken)
-        coll2.insertOne(tokenDoc)
+        dbCollection.insertOne(tokenDoc)
         return tokenMessage
     }
 
     override fun find(token: String): Token {
         printDebug("Token Dao find $token")
         val query = Document("token", token)
-        val tokenDoc = coll2.find(query).first()
+        val tokenDoc = dbCollection.find(query).first()
                 ?: throw NotAuthorizedException("Not auth can't find token in m token.")
 
         printDebug("\tResult token find $tokenDoc")
@@ -37,7 +37,7 @@ class MongoTokenDao(host: String, port: Int, databaseName: String, collection: S
         val tokenList = arrayListOf<Token>()
 
         val query = Document("orgId", orgId)
-        val tokenListDoc = coll2.find(query) ?: throw NotFoundException("ไม่พบรายการ token ใน org นี้")
+        val tokenListDoc = dbCollection.find(query) ?: throw NotFoundException("ไม่พบรายการ token ใน org นี้")
 
         tokenListDoc.forEach {
 
@@ -50,11 +50,11 @@ class MongoTokenDao(host: String, port: Int, databaseName: String, collection: S
 
     override fun remove(token: String) {
         val query = Document("token", token)
-        coll2.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบรายการ token นี้")
+        dbCollection.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบรายการ token นี้")
     }
 
     override fun removeByOrgId(orgId: String) {
         val query = Document("orgId", orgId)
-        coll2.deleteMany(query)
+        dbCollection.deleteMany(query)
     }
 }

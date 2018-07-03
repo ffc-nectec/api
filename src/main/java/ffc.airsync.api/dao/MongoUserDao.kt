@@ -17,7 +17,7 @@ class MongoUserDao(host: String, port: Int, databaseName: String, collection: St
             override fun run() {
                 val userDoc = Document.parse(user.toJson())
                 userDoc.append("orgId", orgId)
-                coll2.insertOne(userDoc)
+                dbCollection.insertOne(userDoc)
             }
         })
     }
@@ -31,7 +31,8 @@ class MongoUserDao(host: String, port: Int, databaseName: String, collection: St
                 val userDoc = Document.parse(user.toJson())
                 userDoc.append("orgId", orgId)
 
-                coll2.findOneAndReplace(query, userDoc) ?: throw NotFoundException("ไม่พบ User ${user.name} ให้ Update")
+                dbCollection.findOneAndReplace(query, userDoc)
+                        ?: throw NotFoundException("ไม่พบ User ${user.name} ให้ Update")
             }
         })
     }
@@ -43,7 +44,7 @@ class MongoUserDao(host: String, port: Int, databaseName: String, collection: St
 
         mongoSafe(object : MongoSafeRun {
             override fun run() {
-                val userListDoc = coll2.find(query)
+                val userListDoc = dbCollection.find(query)
 
                 userListDoc.forEach {
                     val userDoc = it
@@ -63,7 +64,7 @@ class MongoUserDao(host: String, port: Int, databaseName: String, collection: St
 
         mongoSafe(object : MongoSafeRun {
             override fun run() {
-                userDoc = coll2.find(query).first()
+                userDoc = dbCollection.find(query).first()
                 printDebug("\tQuery user in mongo $userDoc")
             }
         })

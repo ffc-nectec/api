@@ -14,7 +14,7 @@ class MongoPersonDao(host: String, port: Int, databaseName: String, collection: 
         val personDoc = Document.parse(person.toJson())
         personDoc.append("orgId", person.bundle["orgId"])
         personDoc.append("houseId", person.bundle["houseId"])
-        coll2.insertOne(personDoc)
+        dbCollection.insertOne(personDoc)
     }
 
     override fun insert(orgId: String, personList: List<Person>) {
@@ -28,7 +28,7 @@ class MongoPersonDao(host: String, port: Int, databaseName: String, collection: 
         val personList = arrayListOf<Person>()
 
         val query = Document("orgId", orgId)
-        val docPersonList = coll2.find(query)
+        val docPersonList = dbCollection.find(query)
 
         printDebug("\tPerson in list ${docPersonList.count()}")
         docPersonList.forEach {
@@ -46,7 +46,7 @@ class MongoPersonDao(host: String, port: Int, databaseName: String, collection: 
 
         val query = Document("id", houseId)
 
-        val personInHouseDoc = coll2.find(query)
+        val personInHouseDoc = dbCollection.find(query)
         personInHouseDoc.forEach {
             val personDoc = it
             val person: Person = personDoc.toJson().parseTo()
@@ -57,6 +57,6 @@ class MongoPersonDao(host: String, port: Int, databaseName: String, collection: 
 
     override fun removeGroupByOrg(orgId: String) {
         val query = Document("orgId", orgId)
-        coll2.deleteMany(query)
+        dbCollection.deleteMany(query)
     }
 }
