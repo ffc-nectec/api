@@ -12,7 +12,7 @@ typealias mongoInit = () -> Unit
 
 abstract class MongoAbsConnect(private val host: String, private val port: Int, private val dbName: String, private val collection: String, private val mongoInitRun: mongoInit? = null) {
 
-    protected lateinit var coll2: MongoCollection<Document>
+    protected lateinit var dbCollection: MongoCollection<Document>
 
     val mongoUrl = System.getenv("MONGODB_URI") + "?maxPoolSize=2&maxIdleTimeMS=20000&connectTimeoutMS=30000&socketTimeoutMS=30000"
 
@@ -47,11 +47,11 @@ abstract class MongoAbsConnect(private val host: String, private val port: Int, 
         printDebug("\tDebug mongoClient = $mongoClient")
         if (mongoUrl.isEmpty() || mongoUrl.startsWith("null")) {
             printDebug("\t MongoUrl is null")
-            this.coll2 = mongoClient!!.getDatabase(dbName).getCollection(collection)
+            this.dbCollection = mongoClient!!.getDatabase(dbName).getCollection(collection)
         } else {
             printDebug("\t mongoUrl != null get systemenv ${System.getenv("MONGODB_DBNAME")}")
             val databaseName = System.getenv("MONGODB_DBNAME")
-            this.coll2 = mongoClient!!.getDatabase(databaseName).getCollection(collection)
+            this.dbCollection = mongoClient!!.getDatabase(databaseName).getCollection(collection)
 
             printDebug("\tSuccess create and connect db collection.")
         }

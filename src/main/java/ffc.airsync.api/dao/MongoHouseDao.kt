@@ -37,7 +37,7 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
     private fun mongoCreateHouseIndex() {
         try {
             val geoIndex = Document("location", "2dsphere")
-            coll2.createIndex(geoIndex, IndexOptions().unique(false))
+            dbCollection.createIndex(geoIndex, IndexOptions().unique(false))
         } catch (ex: Exception) {
             ex.printStackTrace()
             throw ex
@@ -67,9 +67,9 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
         val houseReturn: House
 
         try {
-            coll2.insertOne(docHouse)
+            dbCollection.insertOne(docHouse)
             val query = Document("_id", generateId)
-            val afterInsertDoc = coll2.find(query).first()
+            val afterInsertDoc = dbCollection.find(query).first()
             houseReturn = afterInsertDoc.toJson().parseTo()
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -84,7 +84,7 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
         val query = Document("id", house.id)
 
         printDebug("\tquery old house ")
-        val oldHouseDoc = (coll2.find(query).first() ?: throw NotFoundException("ไม่มีบ้านตาม id ให้ Update"))
+        val oldHouseDoc = (dbCollection.find(query).first() ?: throw NotFoundException("ไม่มีบ้านตาม id ให้ Update"))
 
         val orgId = oldHouseDoc["orgId"].toString()
         printDebug("\tget orgId $orgId")
@@ -100,7 +100,7 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
         printDebug("\t\tUpdate doc = $updateDoc")
 
         try {
-            coll2.replaceOne(query, updateDoc)
+            dbCollection.replaceOne(query, updateDoc)
         } catch (ex: Exception) {
             ex.printStackTrace()
             val exo = javax.ws.rs.InternalServerErrorException(ex.message)
@@ -118,7 +118,7 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
 
     override fun delete(houseId: String) {
         val query = Document("id", houseId)
-        coll2.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบบ้าน id $houseId ให้ลบ")
+        dbCollection.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบบ้าน id $houseId ให้ลบ")
     }
 
     override fun findAll(orgId: String, haveLocation: Boolean?): List<House> {
@@ -135,7 +135,7 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
         mongoSafe(object : MongoSafeRun {
             override fun run() {
 
-                val houseListDocument = coll2.find(query)
+                val houseListDocument = dbCollection.find(query)
                 printDebug("getHouseInMongo size = ${houseListDocument.count()}")
 
                 houseListDocument.forEach {
@@ -149,12 +149,12 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
     override fun find(houseId: String): House {
         printDebug("Call find in house dao.")
         val query = Document("id", houseId)
-        val houseJson = coll2.find(query).first().toJson()
+        val houseJson = dbCollection.find(query).first().toJson()
         return houseJson.parseTo()
     }
 
     override fun removeByOrgId(orgId: String) {
         val query = Document("orgId", orgId)
-        coll2.deleteMany(query)
+        dbCollection.deleteMany(query)
     }
 }
