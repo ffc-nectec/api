@@ -31,8 +31,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class FFCApiServer {
-
-
     protected static final int DEFAULT_PORT = 8080;
     protected static final String DEFAULT_HOST = "0.0.0.0";
     public static FirebaseApp firebaseApp = null;
@@ -57,22 +55,16 @@ public class FFCApiServer {
         instance = new FFCApiServer(args);
         instance.run();
     }
-
-
     private void run() {
-
-
         try {
             FileInputStream serviceAccount =
                     new FileInputStream("D:\\workspace\\airsync\\airsync-api\\src\\main\\java\\ffc\\airsync\\api\\ffc-nectec-firebase-adminsdk-4ogjg-88a2843d02.json");
-
-
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .setDatabaseUrl("https://ffc-nectec.firebaseio.com")
                     .build();
             firebaseApp = FirebaseApp.initializeApp(options);
-            //logger.log(Level.FINE, "Load config firebase from file.");
+            // logger.log(Level.FINE, "Load config firebase from file.");
         } catch (IOException e) {
 
             e.printStackTrace();
@@ -92,10 +84,8 @@ public class FFCApiServer {
             }
 
             firebaseApp = FirebaseApp.initializeApp(options);
-            //logger.log(Level.FINE, "Load config firebase from system env.");
+            // logger.log(Level.FINE, "Load config firebase from system env.");
         }
-
-
         System.out.println("Start main process");
         ServletContextHandler context = ServletContextBuilder.build();
 
@@ -113,6 +103,4 @@ public class FFCApiServer {
             e.printStackTrace();
         }
     }
-
-
 }

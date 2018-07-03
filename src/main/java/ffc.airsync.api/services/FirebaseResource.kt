@@ -24,9 +24,7 @@ class FirebaseResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/firebasetoken")
-    fun updateToken(@Context req: HttpServletRequest,
-                    @PathParam("orgId") orgId: String,
-                    firebaseToken: FirebaseToken): Response {
+    fun updateToken(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String, firebaseToken: FirebaseToken): Response {
 
         printDebug("Call update Firebase Token by ip = " + req.remoteAddr + " OrgID $orgId Firebase Token = ${firebaseToken.firebasetoken}")
 
@@ -35,20 +33,16 @@ class FirebaseResource {
         return Response.status(200).build()
     }
 
-
     @RolesAllowed("USER")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/mobilefirebasetoken")
-    fun createToken(@Context req: HttpServletRequest,
-                    @PathParam("orgId") orgId: String,
-                    firebaseToken: FirebaseToken): Response {
+    fun createToken(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String, firebaseToken: FirebaseToken): Response {
 
         printDebug("Call update Firebase Token by ip = " + req.remoteAddr + " OrgID $orgId Firebase Token = ${firebaseToken.firebasetoken}")
         FirebaseService.createMobileToken(orgId, firebaseToken)
 
         return Response.status(200).build()
     }
-
 }

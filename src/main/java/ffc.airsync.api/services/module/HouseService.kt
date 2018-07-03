@@ -29,22 +29,18 @@ import me.piruin.geok.geometry.Point
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.NotFoundException
 
-//val org = orgDao.findById(orgId)
 object HouseService {
 
     fun createByOrg(orgId: String, houseList: List<House>): List<House> {
-
         val houseReturn = arrayListOf<House>()
         houseList.forEach {
             val houseUpdate = createByOrg(orgId, it)
             houseReturn.add(houseUpdate)
         }
-
         return houseReturn
     }
 
     fun createByOrg(orgId: String, house: House): House {
-
         if (house.link == null) throw BadRequestException("เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link")
         return houseDao.insert(orgId, house)
     }
@@ -55,7 +51,6 @@ object HouseService {
             val houseUpdate = createByUser(orgId, it)
             houseReturn.add(houseUpdate)
         }
-
         return houseReturn
     }
 
@@ -64,16 +59,13 @@ object HouseService {
         return houseDao.insert(orgId, house)
     }
 
-
     fun update(role: User.Role, orgId: String, house: House, houseId: String) {
-
         printDebug("Update house role $role orgid $orgId house_id $houseId house ${house.toJson()}")
 
         if (houseId != house.id) throw BadRequestException("เลขบ้านที่ระบุใน url part ไม่ตรงกับข้อมูล id ที่ต้องการแก้ไข")
         if (house.id == "") throw BadRequestException("ไม่มี id ไม่มีการใช้ตัวแปร _id แล้ว")
 
         house.people = null
-
 
         val firebaseTokenGropOrg = orgDao.getFirebaseToken(orgId)
 
@@ -82,22 +74,18 @@ object HouseService {
         printDebug("Call send notification size list token = ${firebaseTokenGropOrg.size} ")
         firebaseTokenGropOrg.forEach {
             printDebug("\ttoken=$it")
-            if (it.isNotEmpty())
-                Message.builder().putHouseData(house, it, orgId)
+            if (it.isNotEmpty()) Message.builder().putHouseData(house, it, orgId)
         }
 
         Thread.sleep(200)
     }
 
-
     fun getGeoJsonHouse(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?, urlString: String): FeatureCollection<House> {
-
         printDebug("haveLocation = $haveLocation Url query = $urlString")
         if (haveLocation == false) {
             if (urlString.trimEnd().endsWith("haveLocation=") || urlString.trimEnd().endsWith("haveLocation")) {
                 throw javax.ws.rs.InternalServerErrorException("Parameter query $urlString")
             }
-
         }
 
         printDebug("Search house match")
@@ -105,93 +93,66 @@ object HouseService {
 
         printDebug("count house = ${listHouse.count()}")
 
-
         val geoJson = FeatureCollection<House>()
         val count = listHouse.count()
 
         itemRenderPerPage(page, per_page, count, object : AddItmeAction {
             override fun onAddItemAction(itemIndex: Int) {
                 try {
-                    //printDebug("Loop count $it")
+                    // printDebug("Loop count $it")
                     val house = listHouse[itemIndex]
 
                     val feture: Feature<House> = createGeoFeature(house)
 
                     geoJson.features.add(feture)
-                    //printDebug("Add feture success")
+                    // printDebug("Add feture success")
                 } catch (ex: kotlin.KotlinNullPointerException) {
                     ex.printStackTrace()
                 }
             }
         })
-
-
         return geoJson
     }
 
-
     fun getJsonHouse(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?, urlString: String): List<House> {
-
         val geoJsonHouse = getGeoJsonHouse(orgId, page, per_page, haveLocation, urlString)
-
-
         val houseList = arrayListOf<House>()
-
 
         geoJsonHouse.features.forEach {
             val house = it.properties
-            if (house != null)
-                houseList.add(house)
+            if (house != null) houseList.add(house)
         }
-
         return houseList
-
     }
 
     fun getSingle(orgId: String, houseId: String): House {
-
         val singleHouseGeo = getSingleGeo(orgId, houseId)
-
-        val house = singleHouseGeo.features.get(0).properties
-
+        val house = singleHouseGeo.features[0].properties
         return house ?: throw NotFoundException("ไม่มีรายการบ้าน ที่ระบุ")
     }
 
     fun getSingleGeo(orgId: String, houseId: String): FeatureCollection<House> {
-
         printDebug("\thouse findBy_ID OrgUuid = $orgId houseId = $houseId")
-        //val org = orgDao.findById(orgId)
-        //val orgUuid = org.uuid
 
         val geoJson = FeatureCollection<House>()
         val house: House = houseDao.find(houseId)
-
 
         printDebug("\t\t$house")
         val feature = createGeoFeature(house)
         geoJson.features.add(feature)
 
-
         return geoJson
     }
-
 
     private fun createGeoFeature(house: House): Feature<House> {
         var point: Geometry = Point(0.0, 0.0)
 
         try {
             val coordinates = house.location?.coordinates
-
             point = Point(coordinates!!.latitude, coordinates.longitude)
-
         } catch (ex: NullPointerException) {
             ex.printStackTrace()
         }
-
-
         return Feature(geometry = point, properties = house)
     }
-
 }
-
-

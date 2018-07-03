@@ -17,7 +17,6 @@
 
 package ffc.airsync.api.services
 
-
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.module.OrgService
 import ffc.entity.Organization
@@ -39,9 +38,7 @@ import javax.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/org")
 class OrgResource {
-
-
-    //Register orgUuid.
+    // Register orgUuid.
     @POST
     fun create(@Context req: HttpServletRequest, organization: Organization): Response {
         printDebug("Org register ${organization.name}")
@@ -59,22 +56,20 @@ class OrgResource {
         organization.bundle["lastKnownIp"] = ipAddress
 
         val orgUpdate = OrgService.register(organization)
-        printDebug("\tGen ip = " + orgUpdate.bundle["lastKnownIp"]
-                + " Org token = " + orgUpdate.bundle["token"])
+        printDebug("\tGen ip = " + orgUpdate.bundle["lastKnownIp"] + " Org token = " + orgUpdate.bundle["token"])
 
         printDebug("Create token")
 
-        //val token = tokenDao.create(user = orgUpdate.name,
+        // val token = tokenDao.create(user = orgUpdate.name,
         //        orgId = orgUpdate.id,
         //        type = Token.TYPEROLE.ORG)
 
-        //return Response.status(Response.Status.CREATED).entity(orgUpdate).build()
+        // return Response.status(Response.Status.CREATED).entity(orgUpdate).build()
         return Response.status(Response.Status.CREATED).entity(orgUpdate).build()
     }
 
     @GET
-    fun getMy(@QueryParam("my") my: Boolean = false,
-              @Context req: HttpServletRequest): List<Organization> {
+    fun getMy(@QueryParam("my") my: Boolean = false, @Context req: HttpServletRequest): List<Organization> {
         printDebug("Get org my")
         var ipAddress = req.getHeader("X-Forwarded-For")
         printDebug("\tGet ip address from header X-Forwarded-For = $ipAddress")
@@ -82,7 +77,6 @@ class OrgResource {
         if (ipAddress == null) {
             ipAddress = req.remoteAddr
         }
-
         printDebug("\tResult Org by ip = $ipAddress + my = $my")
 
         return if (my) {
@@ -92,12 +86,10 @@ class OrgResource {
         }
     }
 
-
     @RolesAllowed("ORG")
     @DELETE
     @Path("/{orgId:([\\dabcdefABCDEF]+)}")
-    fun remove(@PathParam("orgId") orgId: String,
-               @Context req: HttpServletRequest): Response {
+    fun remove(@PathParam("orgId") orgId: String, @Context req: HttpServletRequest): Response {
 
         printDebug("Remove org $orgId")
         val httpHeader = req.buildHeaderMap()

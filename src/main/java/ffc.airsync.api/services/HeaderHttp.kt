@@ -23,8 +23,6 @@ import java.util.HashMap
 import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.core.SecurityContext
-
-
 fun HttpServletRequest.buildHeaderMap(): Map<String, String> {
     val map = HashMap<String, String>()
     val headerNames: Enumeration<String> = this.headerNames

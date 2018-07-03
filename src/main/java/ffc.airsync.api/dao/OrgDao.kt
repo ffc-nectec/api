@@ -34,6 +34,4 @@ interface OrgDao {
     fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean = true)
     fun removeFirebase(orgId: String, firebaseToken: String, isOrg: Boolean = true)
     fun getFirebaseToken(orgId: String): List<String>
-
-
 }

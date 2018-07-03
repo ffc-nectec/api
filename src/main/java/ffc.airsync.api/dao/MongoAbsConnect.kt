@@ -6,28 +6,21 @@ import com.mongodb.ServerAddress
 import com.mongodb.client.MongoCollection
 import ffc.airsync.api.printDebug
 import org.bson.Document
-import java.util.*
+import java.util.Arrays
 
-abstract class MongoAbsConnect(val host: String, val port: Int, val dbName: String, val collection: String, val mongoInitRun: MongoInitRun = object : MongoInitRun {
-    override fun run() {
-    }
-}) {
+abstract class MongoAbsConnect(private val host: String, private val port: Int, private val dbName: String, private val collection: String, private val mongoInitRun: MongoInitRun? = null) {
 
     protected lateinit var coll2: MongoCollection<Document>
 
-    //protected var instant: MongoAbsConnect? = null
     val mongoUrl = System.getenv("MONGODB_URI") + "?maxPoolSize=2&maxIdleTimeMS=20000&connectTimeoutMS=30000&socketTimeoutMS=30000"
-
 
     companion object {
         protected var mongoClient: MongoClient? = null
     }
 
-
     init {
-        connectToMongo(mongoInitRun)
+        if (mongoInitRun != null) connectToMongo(mongoInitRun)
     }
-
 
     interface MongoInitRun {
         fun run()
@@ -38,7 +31,6 @@ abstract class MongoAbsConnect(val host: String, val port: Int, val dbName: Stri
     }
 
     protected fun connectToMongo(initRun: MongoInitRun) {
-
         try {
             getMongoClient()
             getDbCollection()
@@ -50,29 +42,21 @@ abstract class MongoAbsConnect(val host: String, val port: Int, val dbName: Stri
         }
 
         initRun.run()
-
     }
 
     private fun getDbCollection() {
         printDebug("Mongo getCollection $collection")
         printDebug("\tDebug mongoClient = $mongoClient")
         if (mongoUrl.isEmpty() || mongoUrl.startsWith("null")) {
-
             printDebug("\t MongoUrl is null")
             this.coll2 = mongoClient!!.getDatabase(dbName).getCollection(collection)
-
-
-
         } else {
             printDebug("\t mongoUrl != null get systemenv ${System.getenv("MONGODB_DBNAME")}")
-
-
             val databaseName = System.getenv("MONGODB_DBNAME")
             this.coll2 = mongoClient!!.getDatabase(databaseName).getCollection(collection)
 
             printDebug("\tSuccess create and connect db collection.")
         }
-
     }
 
     private fun getMongoClient() {
@@ -81,34 +65,23 @@ abstract class MongoAbsConnect(val host: String, val port: Int, val dbName: Stri
         if (mongoClient == null) {
             if (mongoUrl.isEmpty() || mongoUrl.startsWith("null")) {
                 printDebug("Create mongo client localhost")
-                mongoClient = MongoClient(Arrays.asList(
-                        ServerAddress(host, port)
-                )
-
+                mongoClient = MongoClient(Arrays.asList(ServerAddress(host, port))
                         /*,Arrays.asList(credential)*/)
-
-                //printDebug("\t mongoUrl=nul")
-
-
+                // printDebug("\t mongoUrl=nul")
             } else {
                 printDebug("Create mongo clinet by uri")
                 mongoClient = MongoClient(MongoClientURI(mongoUrl))
                 printDebug("\tFinish create mongo clinet by uri.")
             }
-
-
-            //mongoClient!!.writeConcern = WriteConcern.JOURNALED
-
-            //instant = this
+            // mongoClient!!.writeConcern = WriteConcern.JOURNALED
+            // instant = this
         }
     }
-
 
     protected fun disconnetMongo() {
         try {
             mongoClient!!.close()
         } catch (ex: Exception) {
-
         }
     }
 
@@ -118,10 +91,10 @@ abstract class MongoAbsConnect(val host: String, val port: Int, val dbName: Stri
 
     protected fun mongoSafe(codeWorking: MongoSafeRun) {
         try {
-            //disconnetMongo()
-            //connectToMongo()
+            // disconnetMongo()
+            // connectToMongo()
             codeWorking.run()
-            //disconnetMongo()
+            // disconnetMongo()
         } catch (ex: Exception) {
             ex.printStackTrace()
             throw ex
@@ -129,8 +102,5 @@ abstract class MongoAbsConnect(val host: String, val port: Int, val dbName: Stri
             ex.printStackTrace()
             throw ex
         }
-
     }
-
-
 }

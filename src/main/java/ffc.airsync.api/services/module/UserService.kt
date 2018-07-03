@@ -14,10 +14,8 @@ object UserService {
         userList.forEach {
             printDebug("insert username " + orgId + " User = " + it.name)
             orgUser.insertUser(it, orgId)
-
         }
     }
-
 
     fun login(orgId: String, username: String, pass: String): Token {
 

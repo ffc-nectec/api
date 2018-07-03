@@ -20,19 +20,10 @@ package ffc.airsync.api.dao
 import ffc.airsync.api.printDebug
 import ffc.entity.User
 import javax.ws.rs.ForbiddenException
-
-
 interface UserDao {
 
     companion object {
-        private val userBlock = arrayListOf<String>(
-                "ADM",
-                "adm",
-                "newuser",
-                "usr_db",
-                "Drug_Store_Admin")
-
-
+        private val userBlock = arrayListOf<String>("ADM", "adm", "newuser", "usr_db", "Drug_Store_Admin")
         fun checkBlockUser(name: String) {
             printDebug("Check block user.")
             val findUser = userBlock.find {
@@ -47,5 +38,4 @@ interface UserDao {
     fun updateUser(user: User, orgId: String)
     fun findUser(orgId: String): List<User>
     fun getUser(name: String, pass: String, orgId: String): User?
-
 }

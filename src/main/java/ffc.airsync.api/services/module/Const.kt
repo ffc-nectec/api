@@ -25,4 +25,3 @@ val tokenDao = DaoFactory().buildTokenMapDao()
 val personDao = DaoFactory().buildPersonDao()
 val orgUser = DaoFactory().buildOrgUserDao()
 val houseDao = DaoFactory().buildHouseDao()
-

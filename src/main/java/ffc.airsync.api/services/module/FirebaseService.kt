@@ -10,5 +10,4 @@ object FirebaseService {
     fun createMobileToken(orgId: String, firebaseToken: FirebaseToken) {
         orgDao.createFirebase(orgId, firebaseToken.firebasetoken, false)
     }
-
 }

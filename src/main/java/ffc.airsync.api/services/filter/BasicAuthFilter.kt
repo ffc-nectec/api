@@ -17,13 +17,9 @@ import javax.ws.rs.ext.Provider
 @Provider
 class BasicAuthFilter : ContainerRequestFilter {
     private val pattern = Pattern.compile("""^org/(?<orgId>[\w\d]+)/.*$""")
-
-
     override fun filter(requestContext: ContainerRequestContext) {
         val urlScheme = requestContext.uriInfo.baseUri.scheme
         val baseUrl = requestContext.uriInfo.path.toString()
-
-
         val matcher = pattern.matcher(baseUrl)
 
         var orgId: String = ""
@@ -33,8 +29,6 @@ class BasicAuthFilter : ContainerRequestFilter {
         }
         printDebug("Auth filter parth url $baseUrl")
         printDebug("\t Org id = $orgId")
-
-
         val authenInfo: TokenAuthInfo
 
         try {
@@ -43,24 +37,15 @@ class BasicAuthFilter : ContainerRequestFilter {
         } catch (ex: NotAuthorizedException) {
             return
         }
-
-
         val securityContext: SecurityContext
-
-
         securityContext = when {
-            authenInfo.token.user.role == User.Role.USER ->
-                UserSecurityContextImp(authenInfo.token, urlScheme, orgId)
-            authenInfo.token.user.role == User.Role.ORG ->
-                OrgSecurityContextImp(authenInfo.token, urlScheme, orgId)
-            else ->
-                NoAuthSecurityContextImp()
+            authenInfo.token.user.role == User.Role.USER -> UserSecurityContextImp(authenInfo.token, urlScheme, orgId)
+            authenInfo.token.user.role == User.Role.ORG -> OrgSecurityContextImp(authenInfo.token, urlScheme, orgId)
+            else -> NoAuthSecurityContextImp()
         }
 
         requestContext.securityContext = securityContext
     }
-
-
     class TokenAuthInfo(requestContext: ContainerRequestContext) {
         val AUTHORIZATION_PROPERTY = "Authorization"
         val AUTHENTICATION_SCHEME = "Bearer "
@@ -82,16 +67,9 @@ class BasicAuthFilter : ContainerRequestFilter {
                 printDebug("\t\ttoken = $token")
 
                 if (token.isExpire) throw NotAuthorizedException("Token expire ${token.expireDate}")
-
             } else {
                 token = Token(token = "", user = User())
             }
-
         }
     }
-
-
 }
-
-
-
