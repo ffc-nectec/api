@@ -15,6 +15,34 @@ import javax.ws.rs.NotFoundException
 
 class MongoOrgDao(host: String, port: Int, databaseName: String, collection: String) : OrgDao, UserDao, MongoAbsConnect(host, port, databaseName, collection) {
 
+    private var SALT_PASS = """
+uxF3Ocv5eg4BoQBK9MmR
+rwPARiCL9ovpr3zmlJlj
+kIQnpzRIgEh8WLFNHyy1
+ALqs9ES1aQlsc47DlG5f
+SbAOMWzMd1T03dyigoHR
+7hox2nDJ7tMJRHab5gsy
+Ux2VxiCIvJtfPAobOxYW
+HazJzQEGdXpmeM2aK6MD
+mpOARM2427A6CY14uomK
+Cxe9aEkJEFtlLLo6NaNW
+yLkbHUfMNDwWeu2BRXuS
+m7BHwYSyKGFJdLnq4jJd
+sr4QI6aK7g3GCm8vG6Pd
+RAtlJZFto0bi9OZta5b4
+DLrNTZXXtB3Ci17sepXU
+HSYUuw11GJmeuiLKgJYZ
+PCHuw2hpoozErKVxEv86
+f6zMttthJyQnrDBHGhma
+j1nrasD5fg9NxuwkdJq8
+ytF2v69RwtGYf7C6ygwD
+"""
+
+    init {
+        val salt = System.getenv("FFC_SALT")
+        if (salt != null) SALT_PASS = salt
+    }
+
     override fun insert(organization: Organization): Organization {
         printDebug("Call mongo insert organization")
         `ตรวจสอบเงื่อนไขการลงทะเบียน Org`(organization)
@@ -171,6 +199,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
 
     override fun insertUser(user: User, orgId: String) {
         val query = Document("_id", ObjectId(orgId))
+        user.password = getPass(user.password, SALT_PASS)
         val userDoc = Document.parse(ffcGson.toJson(user))
         val userStruct = Document("users", userDoc)
         val userPush = Document("\$push", userStruct)
@@ -181,6 +210,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
 
     private fun haveUserInDb(orgId: String, user: User): Boolean {
         val query = Document("_id", ObjectId(orgId))
+        user.password = getPass(user.password, SALT_PASS)
         val userInDb = coll2.find(query).projection(Document("users", 1)).first()
         val userList: Array<User> = userInDb.toJson().parseTo()
         val userDuplicate = userList.find {
@@ -219,8 +249,10 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         val org = orgDoc.toJson().parseTo<Organization>()
         printDebug("\torg = $org")
 
+        val passwordSalt = getPass(pass, SALT_PASS)
+
         val user = org.users.find {
-            it.name == name && it.password == pass
+            it.name == name && it.password == passwordSalt
         }
         // val user = coll2.find(query).first()
         printDebug("\tuser query $user")

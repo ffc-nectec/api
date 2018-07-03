@@ -19,7 +19,10 @@ package ffc.airsync.api.dao
 
 import ffc.airsync.api.printDebug
 import ffc.entity.User
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 import javax.ws.rs.ForbiddenException
+
 interface UserDao {
 
     companion object {
@@ -38,4 +41,17 @@ interface UserDao {
     fun updateUser(user: User, orgId: String)
     fun findUser(orgId: String): List<User>
     fun getUser(name: String, pass: String, orgId: String): User?
+
+    fun getPass(password: String, SALT_PASS: String): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val encoded = digest.digest(("$password$SALT_PASS$password").toByteArray(StandardCharsets.UTF_8))
+
+        val hexString = StringBuffer()
+        for (i in 0 until encoded.size) {
+            val hex = Integer.toHexString(0xff and encoded[i].toInt())
+            if (hex.length == 1) hexString.append('0')
+            hexString.append(hex)
+        }
+        return hexString.toString()
+    }
 }
