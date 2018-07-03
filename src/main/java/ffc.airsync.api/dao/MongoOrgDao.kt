@@ -203,21 +203,34 @@ ytF2v69RwtGYf7C6ygwD
     }
 
     override fun insertUser(user: User, orgId: String) {
+        printDebug("Call MongoOrd insert User ${user.toJson()}")
+        if (!user.isTempId) throw BadRequestException("รุปแบบ id ต้องใช้ TempId ในการสร้าง User")
+
+        val generateId = ObjectId()
+        val userInsert = user.copy<User>(generateId.toHexString())
+        printDebug("\tCreate new user object")
+
+        printDebug("\tCheck user dupp.")
+        if (haveUserInDb(orgId, user)) throw BadRequestException("มีการเพิ่มผู้ใช้ ${userInsert.name} ซ้ำ")
+
         val query = Document("id", orgId)
-        user.password = getPass(user.password, SALT_PASS)
-        val userDoc = Document.parse(ffcGson.toJson(user))
+        userInsert.password = getPass(userInsert.password, SALT_PASS)
+        val userDoc = Document.parse(userInsert.toJson())
         val userStruct = Document("users", userDoc)
         val userPush = Document("\$push", userStruct)
 
-        if (haveUserInDb(orgId, user)) throw BadRequestException("มีการเพิ่มผู้ใช้ ${user.name} ซ้ำ")
+
+        printDebug("\tCreate user in mongo")
         coll2.updateOne(query, userPush)
     }
 
     private fun haveUserInDb(orgId: String, user: User): Boolean {
+        printDebug("\t\t\tCall haveUserInDb")
         val query = Document("id", orgId)
-        user.password = getPass(user.password, SALT_PASS)
         val userInDb = coll2.find(query).projection(Document("users", 1)).first()
-        val userList: Array<User> = userInDb.toJson().parseTo()
+        printDebug("\t\t\tOrg in haveUserInDb = $userInDb")
+        val userList: Array<User> = userInDb["users"]!!.toJson().parseTo()
+        printDebug("\t\t\tUser obj = ${userList.toJson()}")
         val userDuplicate = userList.find {
             it.name == user.name
         }
