@@ -47,6 +47,10 @@ ytF2v69RwtGYf7C6ygwD
         printDebug("Call mongo insert organization")
         `ตรวจสอบเงื่อนไขการลงทะเบียน Org`(organization)
 
+        organization.users.forEach {
+            it.password = getPass(it.password, SALT_PASS)
+        }
+
         val genId = ObjectId()
         val orgDoc = Document.parse(ffcGson.toJson(organization))
 
@@ -87,7 +91,8 @@ ytF2v69RwtGYf7C6ygwD
     }
 
     override fun remove(orgId: String) {
-        val query = Document("_id", ObjectId(orgId))
+        printDebug("Call OrgMongoDao remove $orgId")
+        val query = Document("id", orgId)
         coll2.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบ Org $orgId ที่ต้องการลบ")
     }
 
@@ -113,7 +118,7 @@ ytF2v69RwtGYf7C6ygwD
 
     override fun find(orgId: String): Organization {
         printDebug("Find by orgId = $orgId")
-        val query = Document("_id", ObjectId(orgId))
+        val query = Document("id", orgId)
         val orgDocument = coll2.find(query).first()
         printDebug("\t$orgDocument")
         return docToObj(orgDocument)
@@ -250,8 +255,10 @@ ytF2v69RwtGYf7C6ygwD
         printDebug("\torg = $org")
 
         val passwordSalt = getPass(pass, SALT_PASS)
+        printDebug("Salt Pass = $passwordSalt")
 
         val user = org.users.find {
+            printDebug("\t\tUser= ${it.toJson()}")
             it.name == name && it.password == passwordSalt
         }
         // val user = coll2.find(query).first()
