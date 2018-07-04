@@ -29,7 +29,7 @@ interface OrgDao {
 
     fun findByIpAddress(ipAddress: String): List<Organization>
 
-    fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean = true)
-    fun removeFirebase(orgId: String, firebaseToken: String, isOrg: Boolean = true)
+    fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean)
+    fun removeFirebase(orgId: String, firebaseToken: String, isOrg: Boolean)
     fun getFirebaseToken(orgId: String): List<String>
 }
