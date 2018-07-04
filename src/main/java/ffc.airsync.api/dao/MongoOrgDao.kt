@@ -93,11 +93,11 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         printDebug("Find by orgId = $orgId")
         val query = Document("id", orgId)
         val orgDocument = dbCollection.find(query).first()
-        printDebug("\t$orgDocument")
+        printDebug("\torgDoc ${orgDocument.toJson()}")
         return docToObj(orgDocument)
     }
 
-    private fun docToObj(orgDocument: Document): Organization = orgDocument.toString().parseTo()
+    private fun docToObj(orgDocument: Document): Organization = orgDocument.toJson().parseTo()
 
     override fun findByIpAddress(ipAddress: String): List<Organization> {
         printDebug("Mongo findAll org ip $ipAddress")
@@ -108,34 +108,6 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         val orgList = docListToObj(orgDoc)
         if (orgList.isEmpty()) throw NotFoundException("ไม่พบรายการลงทะเบียนในกลุ่มของ Org ip $ipAddress")
         return orgList
-    }
-
-    override fun findByToken(token: String): Organization {
-        printDebug("Mongo findAll org token $token")
-        val query = Document("token", token)
-        val doc = dbCollection.find(query).first() ?: throw NotFoundException("ไม่พบ token $token ที่ค้นหา")
-        return docToObj(doc)
-    }
-
-    override fun updateToken(organization: Organization): Organization {
-        printDebug("Mongo update token orgobj=${organization.toJson()}")
-        val query = Document("id", organization.id)
-        dbCollection.find(query).first()
-                ?: throw NotFoundException("ไม่พบ Object organization ${organization.id} ให้ Update")
-
-        val generateToken = ObjectId()
-        printDebug("\tGenerate Token ${generateToken.toHexString()}")
-        val tokenDocument = Document("token", generateToken)
-        val queryUpdate = Document("\$set", tokenDocument)
-
-        dbCollection.updateOne(query, queryUpdate)
-        printDebug("\tUpdate token.")
-
-        val newOrgDocument = dbCollection.find(query).first()
-        val newOrg = docToObj(newOrgDocument)
-
-        printDebug("\tReturn updateToken")
-        return newOrg
     }
 
     override fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
@@ -166,7 +138,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
     override fun getFirebaseToken(orgId: String): List<String> {
         val firebaseTokenList = arrayListOf<String>()
         val query = Document("id", orgId)
-        val firebaseOrgDoc = dbCollection.find(query).projection(Document("firebaseToken", 1)).projection(Document("mobileFirebaseToken", 1)).first()
+        val firebaseOrgDoc = dbCollection.find(query).first()
         val firebaseMobile = firebaseOrgDoc["mobileFirebaseToken"] as List<*>
 
         firebaseTokenList.add(firebaseOrgDoc["firebaseToken"].toString())
