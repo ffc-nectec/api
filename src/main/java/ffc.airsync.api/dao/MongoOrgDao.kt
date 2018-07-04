@@ -73,7 +73,6 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         printDebug("Mongo findAll() org")
         val orgCursorList = dbCollection.find()
         val orgList = docListToObj(orgCursorList)
-        if (orgList.isEmpty()) throw NotFoundException("ไม่พบรายการ org ลงทะเบียน ในระบบ")
         return orgList
     }
 
@@ -89,7 +88,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         return orgList
     }
 
-    override fun find(orgId: String): Organization {
+    override fun findById(orgId: String): Organization {
         printDebug("Find by orgId = $orgId")
         val query = Document("id", orgId)
         val orgDocument = dbCollection.find(query).first()
