@@ -25,7 +25,7 @@ interface OrgDao {
     fun remove(orgId: String)
 
     fun findAll(): List<Organization>
-    fun find(orgId: String): Organization
+    fun findById(orgId: String): Organization
 
     fun findByIpAddress(ipAddress: String): List<Organization>
 
