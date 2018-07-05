@@ -30,7 +30,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class OrgMongoTest {
+class MongoOrgTest {
 
     val DATABASE_NAME = "ffcTest"
     val DB_COLLECTION = "organ"
