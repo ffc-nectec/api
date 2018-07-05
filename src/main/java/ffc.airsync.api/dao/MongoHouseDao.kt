@@ -28,6 +28,7 @@ import org.bson.types.ObjectId
 import java.util.ArrayList
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.NotFoundException
+
 class MongoHouseDao(host: String, port: Int, databaseName: String, collection: String) : HouseDao, MongoAbsConnect(host, port, databaseName, collection) {
 
     init {
@@ -59,7 +60,7 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
             }
         }
 
-        val docHouse = Document.parse(ffcGson.toJson(houseInsert))
+        val docHouse = Document.parse(houseInsert.toJson())
         docHouse.append("_id", generateId)
         docHouse.append("orgId", orgId)
         printDebug("Document insert = $docHouse")
@@ -70,6 +71,7 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
             dbCollection.insertOne(docHouse)
             val query = Document("_id", generateId)
             val afterInsertDoc = dbCollection.find(query).first()
+            printDebug("\t\tUpdate doc = ${afterInsertDoc.toJson()}")
             houseReturn = afterInsertDoc.toJson().parseTo()
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -78,6 +80,7 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
 
         return houseReturn
     }
+
     override fun update(house: House) {
         printDebug("Call MongoHouseDao.upldate ${house.toJson()}")
 
@@ -146,11 +149,12 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
         })
         return listHouse
     }
-    override fun find(houseId: String): House {
+
+    override fun find(houseId: String): House? {
         printDebug("Call find in house dao.")
         val query = Document("id", houseId)
-        val houseJson = dbCollection.find(query).first().toJson()
-        return houseJson.parseTo()
+        val houseJson = dbCollection.find(query)?.first()?.toJson()
+        return houseJson?.parseTo()
     }
 
     override fun removeByOrgId(orgId: String) {

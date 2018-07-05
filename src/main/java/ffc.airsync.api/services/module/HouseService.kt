@@ -135,7 +135,7 @@ object HouseService {
         printDebug("\thouse findBy_ID OrgUuid = $orgId houseId = $houseId")
 
         val geoJson = FeatureCollection<House>()
-        val house: House = houseDao.find(houseId)
+        val house: House = houseDao.find(houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
 
         printDebug("\t\t$house")
         val feature = createGeoFeature(house)

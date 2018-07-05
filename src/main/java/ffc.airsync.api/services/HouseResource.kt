@@ -183,6 +183,7 @@ class HouseResource {
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
     fun createSingle(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String, house: House?): Response {
+
         printDebug("\nCall create house by ip = " + req.remoteAddr)
         if (house == null) throw BadRequestException()
         if (context == null) {

@@ -38,7 +38,7 @@ dependencies {
     compile 'com.google.firebase:firebase-admin:5.11.0'
     compile "args4j:args4j:2.33"
     compile 'me.piruin:geok-gson:1.0.0-alpha-2'
-    compile "com.github.ffc-nectec:entities:1.0.0-alpha2"
+    compile "com.github.ffc-nectec:entities:80420e7ef1"
     compile "joda-time:joda-time:2.9.9"
     compile "org.mongodb:mongo-java-driver:3.6.3"
 
