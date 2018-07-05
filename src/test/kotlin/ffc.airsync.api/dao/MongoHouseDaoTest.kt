@@ -73,7 +73,6 @@ class MongoHouseDaoTest {
             sex = if (nameStruct[0].trim() == "นาย") Person.Sex.MALE else Person.Sex.FEMALE
             birthDate = LocalDate.now().minusMonths(240)
             chronics.add(Chronic("dx001"))
-
         }
     }
 
