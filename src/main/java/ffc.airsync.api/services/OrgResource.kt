@@ -60,11 +60,6 @@ class OrgResource {
 
         printDebug("Create token")
 
-        // val token = tokenDao.create(user = orgUpdate.name,
-        //        orgId = orgUpdate.id,
-        //        type = Token.TYPEROLE.ORG)
-
-        // return Response.status(Response.Status.CREATED).entity(orgUpdate).build()
         return Response.status(Response.Status.CREATED).entity(orgUpdate).build()
     }
 

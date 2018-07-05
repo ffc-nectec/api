@@ -18,6 +18,9 @@ abstract class MongoAbsConnect(private val host: String, private val port: Int, 
 
     companion object {
         protected var mongoClient: MongoClient? = null
+        fun setClient(mongo: MongoClient) {
+            mongoClient = mongo
+        }
     }
 
     init {
