@@ -66,9 +66,8 @@ class MongoOrgTest {
                 this.name = name
                 users.add(User("maxkung", User.Role.ORG))
                 users.add(User("cat"))
-                bundle["lastKnownIp"] = ip //"203.111.222.123"
+                bundle["lastKnownIp"] = ip // "203.111.222.123"
             }
-
 
     fun User(name: String, role: User.Role = User.Role.USER): User =
             User().apply {
@@ -87,8 +86,6 @@ class MongoOrgTest {
             bundle["lastKnownIp"] = "192.168.99.3"
         }
     }
-
-
 
     @Test
     fun findAll() {
@@ -139,7 +136,7 @@ class MongoOrgTest {
         firebaseHahahaList.size `should be equal to` 2
     }
 
-
+    @Suppress("UNCHECKED_CAST")
     var Organization.firebaseToken: MutableList<String>
         set(value) {
             bundle.put("firebaseToken", value)
@@ -148,18 +145,18 @@ class MongoOrgTest {
 
     @Test
     fun removeFirebase() {
-        dao!!.createFirebase(nectecOrg.id, "abcdef001", true)
-        dao!!.createFirebase(nectecOrg.id, "abcdef007", false)
+        dao.createFirebase(nectecOrg.id, "abcdef001", true)
+        dao.createFirebase(nectecOrg.id, "abcdef007", false)
 
-        dao!!.createFirebase(hahahaOrg.id, "abcdef002", true)
-        dao!!.createFirebase(hahahaOrg.id, "abcdef003", false)
+        dao.createFirebase(hahahaOrg.id, "abcdef002", true)
+        dao.createFirebase(hahahaOrg.id, "abcdef003", false)
 
-        dao!!.removeFirebase(nectecOrg.id, "abcdef001", true)
-        val firebaseNectecList = dao!!.getFirebaseToken(nectecOrg.id)
+        dao.removeFirebase(nectecOrg.id, "abcdef001", true)
+        val firebaseNectecList = dao.getFirebaseToken(nectecOrg.id)
         firebaseNectecList.find { it == "abcdef001" } `should equal` null
 
-        dao!!.removeFirebase(hahahaOrg.id, "abcdef003", false)
-        val firebaseHahahaList = dao!!.getFirebaseToken(hahahaOrg.id)
+        dao.removeFirebase(hahahaOrg.id, "abcdef003", false)
+        val firebaseHahahaList = dao.getFirebaseToken(hahahaOrg.id)
         firebaseHahahaList.forEach {
             println(it)
         }
