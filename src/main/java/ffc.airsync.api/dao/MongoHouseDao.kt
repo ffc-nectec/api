@@ -52,12 +52,10 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
         val houseInsert: House
         houseInsert = if (house.isTempId) {
             house.copy(generateId.toHexString())
+        } else if (house.link != null) {
+            house.copy<House>(generateId.toHexString())
         } else {
-            if (house.link != null) {
-                house.copy(generateId.toHexString())
-            } else {
-                throw ForbiddenException("ข้อมูลบ้านที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ link และ isTempId")
-            }
+            throw ForbiddenException("ข้อมูลบ้านที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ link และ isTempId")
         }
 
         val docHouse = Document.parse(houseInsert.toJson())
