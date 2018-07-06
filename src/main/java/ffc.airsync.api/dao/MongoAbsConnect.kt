@@ -10,7 +10,13 @@ import java.util.Arrays
 
 typealias mongoInit = () -> Unit
 
-abstract class MongoAbsConnect(private val host: String, private val port: Int, private val dbName: String, private val collection: String, private val mongoInitRun: mongoInit? = null) {
+abstract class MongoAbsConnect(
+    private val host: String,
+    private val port: Int,
+    private val dbName: String,
+    private val collection: String,
+    private val mongoInitRun: mongoInit? = null
+) {
 
     protected lateinit var dbCollection: MongoCollection<Document>
 

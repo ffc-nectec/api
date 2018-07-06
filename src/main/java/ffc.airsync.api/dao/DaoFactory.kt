@@ -19,7 +19,7 @@ package ffc.airsync.api.dao
 
 class DaoFactory(val dev: Boolean = true) {
     fun buildPcuDao(): OrgDao = MongoOrgDao("127.0.0.1", 27017, "ffc", "organ")
-    fun buildOrgUserDao(): UserDao = MongoOrgDao("127.0.0.1", 27017, "ffc", "organ")
+    fun buildOrgUserDao(): UserDao = MongoUserDao("127.0.0.1", 27017, "ffc", "organ")
     fun buildHouseDao(): HouseDao = MongoHouseDao("127.0.0.1", 27017, "ffc", "house")
     fun buildPersonDao(): PersonDao = MongoPersonDao("127.0.0.1", 27017, "ffc", "person")
     fun buildTokenMapDao(): TokenDao = MongoTokenDao("127.0.0.1", 27017, "ffc", "token")
