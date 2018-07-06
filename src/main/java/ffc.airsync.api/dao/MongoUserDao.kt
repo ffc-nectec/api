@@ -31,6 +31,7 @@ class MongoUserDao(host: String, port: Int, databaseName: String, collection: St
         val query = Document("id", orgId)
         userInsert.password = getPass(userInsert.password)
         val userDoc = Document.parse(userInsert.toJson())
+        userDoc.append("password", userInsert.password)
         val userStruct = Document("users", userDoc)
         val userPush = Document("\$push", userStruct)
 
@@ -96,6 +97,7 @@ class MongoUserDao(host: String, port: Int, databaseName: String, collection: St
         val passwordSalt = getPass(pass)
         printDebug("Salt Pass = $passwordSalt")
 
+        printDebug("\t\tOrg = ${org.toJson()}")
         val user = org.users.find {
             printDebug("\t\tUser= ${it.toJson()}")
             it.name == name && it.password == passwordSalt

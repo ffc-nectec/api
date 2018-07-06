@@ -85,6 +85,7 @@ class MongoUserTest {
         println(user.toString())
 
         user.name `should be equal to` "Sommai"
+        user.password `should not equal` null
     }
 
     @Test
