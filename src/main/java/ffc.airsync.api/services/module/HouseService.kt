@@ -32,10 +32,18 @@ import javax.ws.rs.NotFoundException
 object HouseService {
 
     fun createByOrg(orgId: String, houseList: List<House>): List<House> {
+        printDebug("create house by org.")
         val houseReturn = arrayListOf<House>()
-        houseList.forEach {
-            val houseUpdate = createByOrg(orgId, it)
-            houseReturn.add(houseUpdate)
+        try {
+            houseList.forEach {
+                println("\tHouse original ${it.toJson()}")
+                val houseUpdate = createByOrg(orgId, it)
+                println("\tHouse update ${houseUpdate.toJson()}")
+                houseReturn.add(houseUpdate)
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw ex
         }
         return houseReturn
     }
