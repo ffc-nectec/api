@@ -47,7 +47,7 @@ ytF2v69RwtGYf7C6ygwD
             if (hex.length == 1) hexString.append('0')
             hexString.append(hex)
         }
-        printDebug("\t\tSalt pass ${hexString.toString()}")
+        printDebug("\t\tSalt pass $hexString")
         return hexString.toString()
     }
 }
