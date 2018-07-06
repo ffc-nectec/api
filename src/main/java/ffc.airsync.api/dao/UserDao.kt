@@ -19,24 +19,23 @@ package ffc.airsync.api.dao
 
 import ffc.airsync.api.printDebug
 import ffc.entity.User
-import javax.ws.rs.ForbiddenException
 
 interface UserDao {
 
     companion object {
         private val userBlock = arrayListOf<String>("ADM", "adm", "newuser", "usr_db", "Drug_Store_Admin")
-        fun checkBlockUser(name: String) {
+        fun isBlockUser(name: String): Boolean {
             printDebug("Check block user.")
             val findUser = userBlock.find {
                 it == name.trim()
             }
             printDebug("\tResult block check $findUser")
-            if (findUser != null) throw ForbiddenException("User ไม่มีสิทธ์")
+            return (findUser != null)
         }
     }
 
-    fun insertUser(user: User, orgId: String)
-    fun updateUser(user: User, orgId: String)
+    fun insertUser(user: User, orgId: String): User
+    fun updateUser(user: User, orgId: String): User
     fun findUser(orgId: String): List<User>
     fun getUser(name: String, pass: String, orgId: String): User?
 }
