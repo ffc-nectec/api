@@ -1,5 +1,6 @@
 package ffc.airsync.api.dao
 
+import ffc.airsync.api.printDebug
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 
@@ -46,6 +47,7 @@ ytF2v69RwtGYf7C6ygwD
             if (hex.length == 1) hexString.append('0')
             hexString.append(hex)
         }
+        printDebug("\t\tSalt pass ${hexString.toString()}")
         return hexString.toString()
     }
 }

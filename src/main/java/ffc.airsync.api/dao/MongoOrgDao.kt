@@ -8,6 +8,7 @@ import ffc.entity.Organization
 import ffc.entity.User
 import ffc.entity.gson.ffcGson
 import ffc.entity.gson.parseTo
+import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
 import javax.ws.rs.BadRequestException
@@ -18,10 +19,24 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
     override fun insert(organization: Organization): Organization {
         printDebug("Call mongo insert organization")
         `ตรวจสอบเงื่อนไขการลงทะเบียน Org`(organization)
-        SetUpObjectOrganization(organization)
+
+        val userListDoc = arrayListOf<Document>()
+        organization.users.forEach {
+            if (it.isTempId) {
+                val user = it.copy<User>(ObjectId().toHexString())
+                user.password = getPass(user.password)
+                printDebug("\t\tNew user create = ${user.toJson()}")
+
+                val userDoc = Document.parse(user.toJson())
+                userDoc.append("password", user.password)
+                userListDoc.add(userDoc)
+            } else throw BadRequestException("ข้อมูลที่จะสร้างใหม่จำเป็นต้องใช้ TempId")
+        }
 
         val genId = ObjectId()
         val orgDoc = Document.parse(ffcGson.toJson(organization))
+
+        orgDoc.append("users", userListDoc)
 
         orgDoc.append("_id", genId)
         orgDoc["id"] = genId.toHexString()
@@ -36,18 +51,6 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         val newOrgDoc = dbCollection.find(query).first()
 
         return newOrgDoc.toJson().parseTo()
-    }
-
-    private fun SetUpObjectOrganization(organization: Organization) {
-        val userList = arrayListOf<User>()
-        organization.users.forEach {
-            if (it.isTempId) {
-                val user = it.copy<User>(ObjectId().toHexString())
-                user.password = getPass(user.password)
-                userList.add(user)
-            } else throw BadRequestException("ข้อมูลที่จะสร้างใหม่จำเป็นต้องใช้ TempId")
-        }
-        organization.users = userList
     }
 
     private fun `ตรวจสอบเงื่อนไขการลงทะเบียน Org`(organization: Organization) {
