@@ -18,10 +18,7 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
     override fun insert(organization: Organization): Organization {
         printDebug("Call mongo insert organization")
         `ตรวจสอบเงื่อนไขการลงทะเบียน Org`(organization)
-
-        organization.users.forEach {
-            it.password = getPass(it.password)
-        }
+        SetUpObjectOrganization(organization)
 
         val genId = ObjectId()
         val orgDoc = Document.parse(ffcGson.toJson(organization))
@@ -39,6 +36,18 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
         val newOrgDoc = dbCollection.find(query).first()
 
         return newOrgDoc.toJson().parseTo()
+    }
+
+    private fun SetUpObjectOrganization(organization: Organization) {
+        val userList = arrayListOf<User>()
+        organization.users.forEach {
+            if (it.isTempId) {
+                val user = it.copy<User>(ObjectId().toHexString())
+                user.password = getPass(user.password)
+                userList.add(user)
+            } else throw BadRequestException("ข้อมูลที่จะสร้างใหม่จำเป็นต้องใช้ TempId")
+        }
+        organization.users = userList
     }
 
     private fun `ตรวจสอบเงื่อนไขการลงทะเบียน Org`(organization: Organization) {
