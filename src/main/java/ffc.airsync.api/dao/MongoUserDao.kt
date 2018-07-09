@@ -86,7 +86,6 @@ class MongoUserDao(host: String, port: Int, databaseName: String, collection: St
 
     override fun getUser(name: String, pass: String, orgId: String): User? {
         printDebug("Call getUser in OrgMongoDao")
-        if (UserDao.isBlockUser(name)) return null
         val query = Document("id", orgId)
         printDebug("\tQuery = ${query.toJson()}")
         val orgDoc = dbCollection.find(query).first() ?: throw NotFoundException("ไม่พบ Org id $orgId")
