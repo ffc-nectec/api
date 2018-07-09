@@ -153,9 +153,15 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
             val firebaseOrgDoc = dbCollection.find(query).first()
             val firebaseMobile = firebaseOrgDoc["mobileFirebaseToken"] as List<*>?
 
-            firebaseTokenList.add(firebaseOrgDoc["firebaseToken"].toString())
+            val orgFirebase = firebaseOrgDoc["firebaseToken"].toString()
+            if (orgFirebase != "null")
+                firebaseTokenList.add(orgFirebase)
+
             firebaseMobile?.forEach {
-                firebaseTokenList.add(it.toString())
+                if (it != "null") {
+                    printDebug("\t\t\t\t\t$it")
+                    firebaseTokenList.add(it.toString())
+                }
             }
             return firebaseTokenList
         } catch (ex: Exception) {
