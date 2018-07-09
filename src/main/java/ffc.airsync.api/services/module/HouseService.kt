@@ -67,7 +67,7 @@ object HouseService {
         return houseDao.insert(orgId, house)
     }
 
-    fun update(role: User.Role, orgId: String, house: House, houseId: String) {
+    fun update(role: User.Role, orgId: String, house: House, houseId: String): House {
         printDebug("Update house role $role orgid $orgId house_id $houseId house ${house.toJson()}")
 
         if (houseId != house.id) throw BadRequestException("เลขบ้านที่ระบุใน url part ไม่ตรงกับข้อมูล id ที่ต้องการแก้ไข")
@@ -79,7 +79,18 @@ object HouseService {
         val firebaseTokenGropOrg = orgDao.getFirebaseToken(orgId)
 
         printDebug("\tUpdate house to dao.")
-        houseDao.update(house.copy<House>())
+
+        if (role == User.Role.ORG) {
+            house.update<House> {
+                house.link?.isSynced = true
+            }
+        } else if (role == User.Role.USER) {
+            house.update<House> {
+                house.link?.isSynced = false
+            }
+        }
+
+        val houseUpdate = houseDao.update(house.copy<House>())
 
         printDebug("Call send notification size list token = ${firebaseTokenGropOrg.size} ")
         try {
@@ -91,6 +102,7 @@ object HouseService {
             ex.printStackTrace()
         }
         // Thread.sleep(200)
+        return houseUpdate!!
     }
 
     fun getGeoJsonHouse(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?, urlString: String): FeatureCollection<House> {
