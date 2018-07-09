@@ -28,7 +28,7 @@ import java.util.ArrayList
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.NotFoundException
 
-class MongoHouseDao(host: String, port: Int, databaseName: String, collection: String) : HouseDao, MongoAbsConnect(host, port, databaseName, collection) {
+class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnect(host, port, "ffc", "house") {
 
     init {
         mongoCreateHouseIndex()

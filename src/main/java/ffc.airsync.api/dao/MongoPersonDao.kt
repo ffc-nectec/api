@@ -7,7 +7,7 @@ import ffc.entity.gson.toJson
 import org.bson.Document
 import java.util.ArrayList
 
-class MongoPersonDao(host: String, port: Int, databaseName: String, collection: String) : PersonDao, MongoAbsConnect(host, port, databaseName, collection) {
+class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConnect(host, port, "ffc", "person") {
 
     override fun insert(orgId: String, person: Person) {
 

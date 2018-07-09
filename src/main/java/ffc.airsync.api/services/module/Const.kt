@@ -18,10 +18,14 @@
 package ffc.airsync.api.services.module
 
 import ffc.airsync.api.dao.DaoFactory
+import ffc.airsync.api.dao.HouseDao
+import ffc.airsync.api.dao.OrgDao
+import ffc.airsync.api.dao.PersonDao
+import ffc.airsync.api.dao.TokenDao
+import ffc.airsync.api.dao.UserDao
 
-val orgDao = DaoFactory().buildPcuDao()
-val tokenDao = DaoFactory().buildTokenMapDao()
-
-val personDao = DaoFactory().buildPersonDao()
-val orgUser = DaoFactory().buildOrgUserDao()
-val houseDao = DaoFactory().buildHouseDao()
+val orgDao = DaoFactory().build<OrgDao>()
+val tokenDao = DaoFactory().build<TokenDao>()
+val personDao = DaoFactory().build<PersonDao>()
+val userDao = DaoFactory().build<UserDao>()
+val houseDao = DaoFactory().build<HouseDao>()

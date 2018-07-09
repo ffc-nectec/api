@@ -19,7 +19,7 @@ object OrgService {
         // if (org.id != orgId) throw NotAuthorizedException("ไม่เจอ Org")
 
         orgDao.remove(orgId)
-        // orgUser.removeByOrgId(orgId)
+        // userDao.removeByOrgId(orgId)
         houseDao.removeByOrgId(orgId)
         tokenDao.removeByOrgId(orgId)
         personDao.removeGroupByOrg(orgId)

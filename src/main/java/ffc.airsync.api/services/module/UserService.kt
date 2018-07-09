@@ -15,13 +15,13 @@ object UserService {
     fun create(orgId: String, userList: ArrayList<User>) {
         userList.forEach {
             printDebug("insert username " + orgId + " User = " + it.name)
-            orgUser.insertUser(it, orgId)
+            userDao.insertUser(it, orgId)
         }
     }
 
     fun login(orgId: String, username: String, pass: String): Token {
         if (UserDao.isBlockUser(username)) throw ForbiddenException("User ไม่มีสิทธิ์ในการใช้งาน")
-        val user = orgUser.getUser(username, pass, orgId)
+        val user = userDao.getUser(username, pass, orgId)
         if (user != null) {
             return tokenDao.create(user, orgId)
         }

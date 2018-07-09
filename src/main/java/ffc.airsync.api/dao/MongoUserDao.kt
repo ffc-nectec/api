@@ -14,8 +14,8 @@ import javax.ws.rs.BadRequestException
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 
-class MongoUserDao(host: String, port: Int, databaseName: String, collection: String)
-    : UserDao, MongoAbsConnect(host, port, databaseName, collection) {
+class MongoUserDao(host: String, port: Int)
+    : UserDao, MongoAbsConnect(host, port, "ffc", "organ") {
 
     override fun insertUser(user: User, orgId: String): User {
         printDebug("Call MongoOrd insert User ${user.toJson()}")

@@ -19,7 +19,7 @@ package ffc.airsync.api.dao
 
 import ffc.entity.House
 
-interface HouseDao {
+interface HouseDao : Dao {
     fun insert(orgId: String, house: House): House
 
     fun update(house: House): House?
