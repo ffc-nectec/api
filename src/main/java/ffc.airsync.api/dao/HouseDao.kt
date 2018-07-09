@@ -22,8 +22,8 @@ import ffc.entity.House
 interface HouseDao {
     fun insert(orgId: String, house: House): House
 
-    fun update(house: House)
-    fun update(houseList: List<House>)
+    fun update(house: House): House?
+    fun update(houseList: List<House>): List<House>
 
     fun delete(houseId: String)
 

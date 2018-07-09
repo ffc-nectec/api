@@ -20,7 +20,6 @@ package ffc.airsync.api.dao
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.printDebug
 import ffc.entity.House
-import ffc.entity.gson.ffcGson
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
@@ -79,7 +78,7 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
         return houseReturn
     }
 
-    override fun update(house: House) {
+    override fun update(house: House): House? {
         printDebug("Call MongoHouseDao.upldate ${house.toJson()}")
 
         val query = Document("id", house.id)
@@ -92,7 +91,7 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
         printDebug("\tcreate update doc")
         // val updateHouseDoc = createDocument(ObjectId(house.id), orgId, house, geoPoint)
 
-        val updateDoc = Document.parse(ffcGson.toJson(house))
+        val updateDoc = Document.parse(house.toJson())
         updateDoc.append("id", house.id)
         updateDoc.append("orgId", orgId)
 
@@ -109,12 +108,17 @@ class MongoHouseDao(host: String, port: Int, databaseName: String, collection: S
             throw exo
         }
         printDebug("\tDone mongo update house.")
+        return find(house.id)
     }
 
-    override fun update(houseList: List<House>) {
+    override fun update(houseList: List<House>): List<House> {
+        val houseUpdate = arrayListOf<House>()
         houseList.forEach {
-            update(it)
+            val house = update(it)
+            if (house != null)
+                houseUpdate.add(house)
         }
+        return houseUpdate
     }
 
     override fun delete(houseId: String) {

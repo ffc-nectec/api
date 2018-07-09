@@ -119,9 +119,9 @@ class HouseResource {
         printDebug("\t${context!!.userPrincipal}")
 
         // if (house.location == null) throw javax.ws.rs.NotSupportedException("coordinates null")
-        HouseService.update(role, orgId, house, houseId)
+        val houseUpdate = HouseService.update(role, orgId, house, houseId)
 
-        return Response.status(200).build()
+        return Response.status(200).entity(houseUpdate).build()
     }
 
     @RolesAllowed("USER", "ORG")
