@@ -68,7 +68,7 @@ class BasicAuthFilter : ContainerRequestFilter {
 
                 if (token.isExpire) throw NotAuthorizedException("Token expire ${token.expireDate}")
             } else {
-                token = Token(token = "", user = User())
+                throw NotAuthorizedException("โปรด Login เพื่อขอ Token")
             }
         }
     }
