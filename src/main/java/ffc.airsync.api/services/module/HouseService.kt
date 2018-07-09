@@ -75,17 +75,22 @@ object HouseService {
 
         house.people = null
 
+        printDebug("\t\tGet firebase token.")
         val firebaseTokenGropOrg = orgDao.getFirebaseToken(orgId)
 
+        printDebug("\tUpdate house to dao.")
         houseDao.update(house.copy<House>())
 
         printDebug("Call send notification size list token = ${firebaseTokenGropOrg.size} ")
-        firebaseTokenGropOrg.forEach {
-            printDebug("\ttoken=$it")
-            if (it.isNotEmpty()) Message.builder().putHouseData(house, it, orgId)
+        try {
+            firebaseTokenGropOrg.forEach {
+                printDebug("\ttoken=$it")
+                if (it.isNotEmpty()) Message.builder().putHouseData(house, it, orgId)
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
-
-        Thread.sleep(200)
+        // Thread.sleep(200)
     }
 
     fun getGeoJsonHouse(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?, urlString: String): FeatureCollection<House> {

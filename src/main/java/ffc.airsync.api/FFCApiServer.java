@@ -58,7 +58,7 @@ public class FFCApiServer {
     private void run() {
         try {
             FileInputStream serviceAccount =
-                    new FileInputStream("D:\\workspace\\airsync\\airsync-api\\src\\main\\java\\ffc\\airsync\\api\\ffc-nectec-firebase-adminsdk-4ogjg-88a2843d02.json");
+                    new FileInputStream("D:\\workspace\\FFC API\\src\\main\\java\\ffc.airsync.api\\ffc-nectec-firebase-adminsdk-4ogjg-88a2843d02.json");
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .setDatabaseUrl("https://ffc-nectec.firebaseio.com")
