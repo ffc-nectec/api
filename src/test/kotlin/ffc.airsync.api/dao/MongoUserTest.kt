@@ -8,7 +8,6 @@ import ffc.entity.Organization
 import ffc.entity.User
 import ffc.entity.gson.toJson
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should equal`
 import org.amshove.kluent.`should not equal`
 import org.junit.After
 import org.junit.Before
@@ -90,13 +89,13 @@ class MongoUserTest {
 
     @Test
     fun loginBlockUser() {
-        dao.getUser("maxkung", "catbite", nectecOrg.id) `should not equal` null
-        dao.getUser("cat", "catbite", nectecOrg.id) `should not equal` null
-        dao.getUser("dog", "catbite", nectecOrg.id) `should not equal` null
-        dao.getUser("adm", "catbite", nectecOrg.id) `should equal` null
-        dao.getUser("ADM", "catbite", nectecOrg.id) `should equal` null
-        dao.getUser("newuser", "catbite", nectecOrg.id) `should equal` null
-        dao.getUser("usr_db", "catbite", nectecOrg.id) `should equal` null
-        dao.getUser("Drug_Store_Admin", "catbite", nectecOrg.id) `should equal` null
+        UserDao.isBlockUser("maxkung") `should be equal to` false
+        UserDao.isBlockUser("cat") `should be equal to` false
+        UserDao.isBlockUser("dog") `should be equal to` false
+        UserDao.isBlockUser("adm") `should be equal to` true
+        UserDao.isBlockUser("ADM") `should be equal to` true
+        UserDao.isBlockUser("newuser") `should be equal to` true
+        UserDao.isBlockUser("usr_db") `should be equal to` true
+        UserDao.isBlockUser("Drug_Store_Admin") `should be equal to` true
     }
 }
