@@ -146,15 +146,21 @@ class MongoOrgDao(host: String, port: Int, databaseName: String, collection: Str
     }
 
     override fun getFirebaseToken(orgId: String): List<String> {
-        val firebaseTokenList = arrayListOf<String>()
-        val query = Document("id", orgId)
-        val firebaseOrgDoc = dbCollection.find(query).first()
-        val firebaseMobile = firebaseOrgDoc["mobileFirebaseToken"] as List<*>
+        try {
+            printDebug("Get firebase token.")
+            val firebaseTokenList = arrayListOf<String>()
+            val query = Document("id", orgId)
+            val firebaseOrgDoc = dbCollection.find(query).first()
+            val firebaseMobile = firebaseOrgDoc["mobileFirebaseToken"] as List<*>?
 
-        firebaseTokenList.add(firebaseOrgDoc["firebaseToken"].toString())
-        firebaseMobile.forEach {
-            firebaseTokenList.add(it.toString())
+            firebaseTokenList.add(firebaseOrgDoc["firebaseToken"].toString())
+            firebaseMobile?.forEach {
+                firebaseTokenList.add(it.toString())
+            }
+            return firebaseTokenList
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw ex
         }
-        return firebaseTokenList
     }
 }
