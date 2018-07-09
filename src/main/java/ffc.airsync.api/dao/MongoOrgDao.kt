@@ -104,10 +104,8 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
         val query = Document("id", orgId)
         val orgDocument = dbCollection.find(query).first()
         printDebug("\torgDoc ${orgDocument.toJson()}")
-        return docToObj(orgDocument)
+        return orgDocument.toJson().parseTo()
     }
-
-    private fun docToObj(orgDocument: Document): Organization = orgDocument.toJson().parseTo()
 
     override fun findByIpAddress(ipAddress: String): List<Organization> {
         printDebug("Mongo findAll org ip $ipAddress")
