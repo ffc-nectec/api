@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.filter
 
 import ffc.airsync.api.dao.DaoFactory
+import ffc.airsync.api.dao.MongoTokenDao
 import ffc.airsync.api.printDebug
 import ffc.entity.Token
 import ffc.entity.User
@@ -60,7 +61,7 @@ class BasicAuthFilter : ContainerRequestFilter {
                 if (authorization[0].startsWith("Basic ")) {
                     throw NotAuthorizedException("is basic auth")
                 }
-                val tokenDao = DaoFactory().buildTokenMapDao()
+                val tokenDao = DaoFactory().build<MongoTokenDao>()
                 val tokenStr = authorization[0].replaceFirst(AUTHENTICATION_SCHEME, "").trim()
                 printDebug("\tFind token.")
                 token = tokenDao.find(token = tokenStr)

@@ -10,7 +10,7 @@ import org.bson.types.ObjectId
 import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.NotFoundException
 
-class MongoTokenDao(host: String, port: Int, databaseName: String, collection: String) : TokenDao, MongoAbsConnect(host, port, databaseName, collection) {
+class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnect(host, port, "ffc", "token") {
     override fun create(user: User, orgId: String): Token {
         val generateToken = ObjectId()
         val tokenMessage = Token(token = generateToken.toHexString(), user = user)

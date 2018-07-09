@@ -19,7 +19,7 @@ package ffc.airsync.api.dao
 
 import ffc.entity.Organization
 
-interface OrgDao {
+interface OrgDao : Dao {
     fun insert(organization: Organization): Organization
 
     fun remove(orgId: String)

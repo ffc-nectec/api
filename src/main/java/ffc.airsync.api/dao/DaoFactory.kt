@@ -17,10 +17,18 @@
 
 package ffc.airsync.api.dao
 
-class DaoFactory(val dev: Boolean = true) {
-    fun buildPcuDao(): OrgDao = MongoOrgDao("127.0.0.1", 27017, "ffc", "organ")
-    fun buildOrgUserDao(): UserDao = MongoUserDao("127.0.0.1", 27017, "ffc", "organ")
-    fun buildHouseDao(): HouseDao = MongoHouseDao("127.0.0.1", 27017, "ffc", "house")
-    fun buildPersonDao(): PersonDao = MongoPersonDao("127.0.0.1", 27017, "ffc", "person")
-    fun buildTokenMapDao(): TokenDao = MongoTokenDao("127.0.0.1", 27017, "ffc", "token")
+class DaoFactory {
+    @Suppress("IMPLICIT_CAST_TO_ANY")
+    inline fun <reified T : Dao> build(host: String = "127.0.0.1", port: Int = 27017): T {
+
+        return when (T::class) {
+            OrgDao::class -> MongoOrgDao(host, port)
+            UserDao::class -> MongoUserDao(host, port)
+            HouseDao::class -> MongoHouseDao(host, port)
+            PersonDao::class -> MongoPersonDao(host, port)
+            TokenDao::class -> MongoTokenDao(host, port)
+
+            else -> throw IllegalArgumentException("ไม่สามารถสร้าง dao นี้ได้")
+        } as T
+    }
 }

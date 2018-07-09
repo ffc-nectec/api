@@ -20,7 +20,7 @@ package ffc.airsync.api.dao
 import ffc.entity.Person
 import java.util.ArrayList
 
-interface PersonDao {
+interface PersonDao : Dao {
     fun insert(orgId: String, person: Person)
     fun insert(orgId: String, personList: List<Person>)
 
