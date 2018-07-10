@@ -21,7 +21,7 @@ object UserService {
 
     fun login(orgId: String, username: String, pass: String): Token {
         if (UserDao.isBlockUser(username)) throw ForbiddenException("User ไม่มีสิทธิ์ในการใช้งาน")
-        val user = userDao.getUser(username, pass, orgId)
+        val user = userDao.findThat(orgId, username, pass)
         if (user != null) {
             return tokenDao.create(user, orgId)
         }
