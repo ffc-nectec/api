@@ -50,6 +50,7 @@ object HouseService {
 
     fun createByOrg(orgId: String, house: House): House {
         if (house.link == null) throw BadRequestException("เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link")
+        house.link!!.isSynced = true
         return houseDao.insert(orgId, house)
     }
 
