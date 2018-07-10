@@ -85,10 +85,6 @@ class HouseResource {
         }
 
         printDebug("Print feture before return to rest")
-        // geoJso.features.forEach {
-        //     printDebug(it.geometry)
-        // }
-
         if (geoReturn.features.isEmpty()) throw NotFoundException("ไม่มีรายการบ้าน")
         return geoReturn
     }
@@ -96,17 +92,22 @@ class HouseResource {
     @RolesAllowed("USER", "ORG")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
-    fun getJsonHouse(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @QueryParam("hid") hid: Int = -1, @QueryParam("haveLocation") haveLocation: Boolean? = null, @PathParam("orgId") orgId: String, @Context req: HttpServletRequest): List<House> {
+    fun getJsonHouse(@Context req: HttpServletRequest, @QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @QueryParam("hid") hid: Int = -1, @QueryParam("haveLocation") haveLocation: Boolean? = null, @PathParam("orgId") orgId: String): List<House> {
         printDebug("getGeoJsonHouse house method geoJson List paramete orgId $orgId page $page per_page $per_page hid $hid")
-        return HouseService.getJsonHouse(orgId, if (page == 0) 1 else page, if (per_page == 0) 200 else per_page, haveLocation, req.queryString
-                ?: "")
+        return HouseService.getJsonHouse(
+                orgId,
+                if (page == 0) 1 else page,
+                if (per_page == 0) 200 else per_page,
+                haveLocation,
+                req.queryString
+                        ?: "")
     }
 
     @RolesAllowed("USER", "ORG")
     @PUT
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house/{houseId:([\\dabcdefABCDEF]{24})}")
-    fun update(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String, @PathParam("houseId") houseId: String, house: House): Response {
-        printDebug("Call put house by ip = " + req.remoteAddr + " OrgID $orgId")
+    fun update(@PathParam("orgId") orgId: String, @PathParam("houseId") houseId: String, house: House): Response {
+        printDebug("Call put house by ip OrgID $orgId")
 
         printDebug("\tid ${house.id} latLng ${house.location}")
 
@@ -129,8 +130,8 @@ class HouseResource {
     @Consumes(GEOJSONHeader)
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house/{houseId:([\\dabcdefABCDEF]{24})}")
-    fun getSingleGeo(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String, @PathParam("houseId") houseId: String): FeatureCollection<House> {
-        printDebug("Call getGeoJsonHouse single geo json house by ip = " + req.remoteAddr + " OrgID $orgId House ID = $houseId")
+    fun getSingleGeo(@PathParam("orgId") orgId: String, @PathParam("houseId") houseId: String): FeatureCollection<House> {
+        printDebug("Call getGeoJsonHouse single geo json OrgID $orgId House ID = $houseId")
         val house: FeatureCollection<House> = HouseService.getSingleGeo(orgId, houseId)
 
         return house
@@ -139,8 +140,8 @@ class HouseResource {
     @RolesAllowed("USER", "ORG")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house/{houseId:([\\dabcdefABCDEF]{24})}")
-    fun getSingle(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String, @PathParam("houseId") houseId: String): House {
-        printDebug("Call getGeoJsonHouse single house by ip = " + req.remoteAddr + " OrgID $orgId House ID = $houseId")
+    fun getSingle(@PathParam("orgId") orgId: String, @PathParam("houseId") houseId: String): House {
+        printDebug("Call getGeoJsonHouse single house OrgID $orgId House ID = $houseId")
         val house: House = HouseService.getSingle(orgId, houseId)
 
         return house
@@ -149,8 +150,8 @@ class HouseResource {
     @RolesAllowed("ORG", "USER")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/houses")
-    fun create(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String, houseList: List<House>?): Response {
-        printDebug("\nCall create house by ip = " + req.remoteAddr)
+    fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
+        printDebug("\nCall create house")
         if (houseList == null) throw BadRequestException()
 
         if (context == null) {
@@ -182,9 +183,9 @@ class HouseResource {
     @RolesAllowed("ORG", "USER")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
-    fun createSingle(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String, house: House?): Response {
+    fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
 
-        printDebug("\nCall create house by ip = " + req.remoteAddr)
+        printDebug("\nCall create house")
         if (house == null) throw BadRequestException()
         if (context == null) {
             printDebug("\tContext is null")
@@ -196,9 +197,6 @@ class HouseResource {
         house.people = null
         // house.haveChronics = null
         printDebug("house json = " + house.toJson())
-
-        // val houseReturn = HouseService.createByOrg(orgId, house)
-        // return Response.status(Response.Status.CREATED).entity(house).build()
 
         if (role == User.Role.ORG) {
             val houseReturn = HouseService.createByOrg(orgId, house)

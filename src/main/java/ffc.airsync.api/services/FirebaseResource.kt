@@ -4,13 +4,11 @@ import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.module.FirebaseService
 import ffc.entity.firebase.FirebaseToken
 import javax.annotation.security.RolesAllowed
-import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.Consumes
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
-import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
@@ -24,9 +22,9 @@ class FirebaseResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/firebasetoken")
-    fun updateToken(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String, firebaseToken: FirebaseToken): Response {
+    fun updateToken(@PathParam("orgId") orgId: String, firebaseToken: FirebaseToken): Response {
 
-        printDebug("Call update Firebase Token by ip = " + req.remoteAddr + " OrgID $orgId Firebase Token = ${firebaseToken.firebasetoken}")
+        printDebug("Call update Firebase Token OrgID $orgId Firebase Token = ${firebaseToken.firebasetoken}")
 
         FirebaseService.createOrgToken(orgId, firebaseToken)
 
@@ -38,9 +36,9 @@ class FirebaseResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/mobilefirebasetoken")
-    fun createToken(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String, firebaseToken: FirebaseToken): Response {
+    fun createToken(@PathParam("orgId") orgId: String, firebaseToken: FirebaseToken): Response {
 
-        printDebug("Call update Firebase Token by ip = " + req.remoteAddr + " OrgID $orgId Firebase Token = ${firebaseToken.firebasetoken}")
+        printDebug("Call update Firebase Token by OrgID $orgId Firebase Token = ${firebaseToken.firebasetoken}")
         FirebaseService.createMobileToken(orgId, firebaseToken)
 
         return Response.status(200).build()

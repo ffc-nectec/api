@@ -22,7 +22,6 @@ import ffc.airsync.api.services.filter.FfcSecurityContext
 import ffc.airsync.api.services.module.PersonService
 import ffc.entity.Person
 import javax.annotation.security.RolesAllowed
-import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.NotAuthorizedException
@@ -45,8 +44,8 @@ class PersonResource {
     @RolesAllowed("ORG")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
-    fun create(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String, personList: List<Person>): Response {
-        printDebug("\nCall create person by ip = " + req.remoteAddr)
+    fun create(@PathParam("orgId") orgId: String, personList: List<Person>): Response {
+        printDebug("\nCall create person by ip = ")
 
         personList.forEach {
             printDebug(it)
