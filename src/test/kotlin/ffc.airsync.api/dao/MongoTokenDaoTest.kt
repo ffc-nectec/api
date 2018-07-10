@@ -55,16 +55,20 @@ class MongoTokenDaoTest {
 
     @Test
     fun createAndFindToken() {
-        dao.find(tokenMax.token).token `should be equal to` tokenMax.token
+        val token = dao.find(tokenMax.token)
+
+        token `should not be` null
+        token!!.token `should be equal to` tokenMax.token
     }
 
     @Test
     fun createAndCheckProperty() {
-        val findToken = dao.find(tokenMax.token)
+        val token = dao.find(tokenMax.token)
 
-        findToken.user.name `should be equal to` "Thanachai"
-        tokenMax.createDate `should equal` findToken.createDate
-        tokenMax.expireDate `should equal` findToken.expireDate
+        token `should not be` null
+        token!!.user.name `should be equal to` "Thanachai"
+        tokenMax.createDate `should equal` token.createDate
+        tokenMax.expireDate `should equal` token.expireDate
     }
 
     @Test
@@ -74,11 +78,12 @@ class MongoTokenDaoTest {
         tokenList.size `should be equal to` 2
         tokenList.find { it.user.name == "Thanachai" } `should not be` null
         tokenList.find { it.user.name == "Morakot" } `should not be` null
+        tokenList.find { it.user.name == "Phutipong" } `should equal` null
     }
 
-    @Test(expected = javax.ws.rs.NotAuthorizedException::class)
+    @Test
     fun removeToken() {
-        dao.remove(tokenMax.token)
+        dao.remove(tokenMax.token) `should be equal to` true
         dao.find(tokenBee.token) `should not be` null
         dao.find(tokenMax.token)
     }

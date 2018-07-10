@@ -7,8 +7,6 @@ import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
-import javax.ws.rs.NotAuthorizedException
-import javax.ws.rs.NotFoundException
 
 class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnect(host, port, "ffc", "token") {
     override fun create(user: User, orgId: String): Token {
@@ -21,14 +19,12 @@ class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnect(host, p
         return tokenMessage
     }
 
-    override fun find(token: String): Token {
+    override fun find(token: String): Token? {
         printDebug("Token Dao find $token")
         val query = Document("token", token)
         val tokenDoc = dbCollection.find(query).first()
-                ?: throw NotAuthorizedException("Not auth can't find token in m token.")
-
         printDebug("\tResult token find $tokenDoc")
-
+        if (tokenDoc == null) return null
         return tokenDoc.toJson().parseTo()
     }
 
@@ -37,7 +33,7 @@ class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnect(host, p
         val tokenList = arrayListOf<Token>()
 
         val query = Document("orgId", orgId)
-        val tokenListDoc = dbCollection.find(query) ?: throw NotFoundException("ไม่พบรายการ token ใน org นี้")
+        val tokenListDoc = dbCollection.find(query)
 
         tokenListDoc.forEach {
 
@@ -48,9 +44,10 @@ class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnect(host, p
         return tokenList
     }
 
-    override fun remove(token: String) {
+    override fun remove(token: String): Boolean {
         val query = Document("token", token)
-        dbCollection.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบรายการ token นี้")
+        val tokenDoc = dbCollection.findOneAndDelete(query)
+        return tokenDoc != null
     }
 
     override fun removeByOrgId(orgId: String) {
