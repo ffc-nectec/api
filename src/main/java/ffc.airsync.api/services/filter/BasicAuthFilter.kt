@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.filter
 
 import ffc.airsync.api.dao.DaoFactory
-import ffc.airsync.api.dao.MongoTokenDao
+import ffc.airsync.api.dao.TokenDao
 import ffc.airsync.api.printDebug
 import ffc.entity.Token
 import ffc.entity.User
@@ -47,27 +47,37 @@ class BasicAuthFilter : ContainerRequestFilter {
 
         requestContext.securityContext = securityContext
     }
+
     class TokenAuthInfo(requestContext: ContainerRequestContext) {
         val AUTHORIZATION_PROPERTY = "Authorization"
         val AUTHENTICATION_SCHEME = "Bearer "
         val token: Token
 
         init {
+
             printDebug("TokenAuthInfo class in filter")
             val authorization = requestContext.headers[AUTHORIZATION_PROPERTY]
 
             if (authorization != null) {
+                try {
+                    printDebug("\t\tCheck Basic auth start with Basic")
+                    if (authorization[0].startsWith("Basic ")) {
+                        throw NotAuthorizedException("is basic auth")
+                    }
 
-                if (authorization[0].startsWith("Basic ")) {
-                    throw NotAuthorizedException("is basic auth")
+                    val tokenDao = DaoFactory().build<TokenDao>()
+
+                    printDebug("\t\tCheck Basic auth start with $AUTHENTICATION_SCHEME")
+                    val tokenStr = authorization[0].replaceFirst(AUTHENTICATION_SCHEME, "").trim()
+                    printDebug("\tFind token.")
+                    token = tokenDao.find(token = tokenStr) ?: throw NotAuthorizedException("โปรด Login เพื่อขอ Token")
+                    printDebug("\t\ttoken = $token")
+
+                    if (token.isExpire) throw NotAuthorizedException("Token expire ${token.expireDate}")
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    throw e
                 }
-                val tokenDao = DaoFactory().build<MongoTokenDao>()
-                val tokenStr = authorization[0].replaceFirst(AUTHENTICATION_SCHEME, "").trim()
-                printDebug("\tFind token.")
-                token = tokenDao.find(token = tokenStr) ?: throw NotAuthorizedException("โปรด Login เพื่อขอ Token")
-                printDebug("\t\ttoken = $token")
-
-                if (token.isExpire) throw NotAuthorizedException("Token expire ${token.expireDate}")
             } else {
                 throw NotAuthorizedException("โปรด Login เพื่อขอ Token")
             }
