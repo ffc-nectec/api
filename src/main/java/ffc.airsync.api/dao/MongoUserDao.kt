@@ -84,8 +84,8 @@ class MongoUserDao(host: String, port: Int)
         return this.get(key)?.toJson(gson)?.parseTo()
     }
 
-    override fun getUser(name: String, pass: String, orgId: String): User? {
-        printDebug("Call getUser in OrgMongoDao")
+    override fun findThat(orgId: String, name: String, pass: String): User? {
+        printDebug("Call findThat in OrgMongoDao")
         val query = Document("id", orgId)
         printDebug("\tQuery = ${query.toJson()}")
         val orgDoc = dbCollection.find(query).first() ?: throw NotFoundException("ไม่พบ Org id $orgId")
