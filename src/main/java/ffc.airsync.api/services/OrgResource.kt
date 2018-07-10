@@ -39,8 +39,11 @@ import javax.ws.rs.core.Response
 @Path("/org")
 class OrgResource {
     // Register orgUuid.
+    @Context
+    lateinit var req: HttpServletRequest
+
     @POST
-    fun create(@Context req: HttpServletRequest, organization: Organization): Response {
+    fun create(organization: Organization): Response {
         printDebug("Org register ${organization.name}")
 
         printDebug("Create my org")
@@ -64,7 +67,7 @@ class OrgResource {
     }
 
     @GET
-    fun getMy(@QueryParam("my") my: Boolean = false, @Context req: HttpServletRequest): List<Organization> {
+    fun getMy(@QueryParam("my") my: Boolean = false): List<Organization> {
         printDebug("Get org my")
         var ipAddress = req.getHeader("X-Forwarded-For")
         printDebug("\tGet ip address from header X-Forwarded-For = $ipAddress")
@@ -84,14 +87,11 @@ class OrgResource {
     @RolesAllowed("ORG")
     @DELETE
     @Path("/{orgId:([\\dabcdefABCDEF]+)}")
-    fun remove(@PathParam("orgId") orgId: String, @Context req: HttpServletRequest): Response {
-
+    fun remove(@PathParam("orgId") orgId: String): Response {
         printDebug("Remove org $orgId")
-        val httpHeader = req.buildHeaderMap()
-        printDebug("getHeader $httpHeader")
 
-        printDebug("Call removeOrg Service _id = $orgId")
         OrgService.remove(orgId)
+
         return Response.status(200).build()
     }
 }
