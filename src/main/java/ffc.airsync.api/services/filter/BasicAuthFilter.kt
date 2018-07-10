@@ -64,7 +64,7 @@ class BasicAuthFilter : ContainerRequestFilter {
                 val tokenDao = DaoFactory().build<MongoTokenDao>()
                 val tokenStr = authorization[0].replaceFirst(AUTHENTICATION_SCHEME, "").trim()
                 printDebug("\tFind token.")
-                token = tokenDao.find(token = tokenStr)
+                token = tokenDao.find(token = tokenStr) ?: throw NotAuthorizedException("โปรด Login เพื่อขอ Token")
                 printDebug("\t\ttoken = $token")
 
                 if (token.isExpire) throw NotAuthorizedException("Token expire ${token.expireDate}")
