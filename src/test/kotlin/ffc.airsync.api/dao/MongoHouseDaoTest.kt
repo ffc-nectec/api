@@ -118,7 +118,7 @@ class MongoHouseDaoTest {
     }
 
     @Test
-    fun findAllAndremoveByOrgId() {
+    fun removeByOrgId() {
         dao.findAll(ORG_ID).size `should be equal to` 2
 
         dao.removeByOrgId(ORG_ID)
