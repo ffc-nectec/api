@@ -17,4 +17,7 @@
 
 package ffc.airsync.api.dao
 
-interface Dao
+import org.bson.Document
+
+internal infix fun String.equal(param: Any): Document = Document(this, param)
+
