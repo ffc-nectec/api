@@ -14,8 +14,6 @@ import org.junit.Before
 import org.junit.Test
 
 class MongoTokenDaoTest {
-    val DATABASE_NAME = "ffcTest"
-    val DB_COLLECTION = "token"
     private val ORG_ID = "abcdeff"
 
     lateinit var dao: TokenDao

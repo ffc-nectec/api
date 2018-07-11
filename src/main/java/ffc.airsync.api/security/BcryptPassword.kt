@@ -13,3 +13,5 @@ class BcryptPassword : Password {
         return BCrypt.checkpw(plain, hash)
     }
 }
+
+fun password(): Password = BcryptPassword()

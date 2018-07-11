@@ -32,9 +32,6 @@ import org.junit.Test
 
 class MongoOrgTest {
 
-    val DATABASE_NAME = "ffcTest"
-    val DB_COLLECTION = "organ"
-
     lateinit var dao: OrgDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer
