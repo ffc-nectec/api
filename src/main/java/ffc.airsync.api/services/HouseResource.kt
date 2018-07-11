@@ -107,12 +107,9 @@ class HouseResource {
         }
         val role = getTokenRole(context!!)
         printDebug("\tRole $role")
-
         printDebug("\t${context!!.userPrincipal}")
 
-        // if (house.location == null) throw javax.ws.rs.NotSupportedException("coordinates null")
         val houseUpdate = HouseService.update(role, orgId, house, houseId)
-
         return Response.status(200).entity(houseUpdate).build()
     }
 
@@ -155,8 +152,6 @@ class HouseResource {
 
         houseList.forEach {
             it.people = null
-            // it.haveChronics = null
-            // it.haveChronic=null
             printDebug("house json = " + it.toJson())
         }
 
@@ -186,7 +181,6 @@ class HouseResource {
 
         printDebug("\t${context!!.userPrincipal}")
         house.people = null
-        // house.haveChronics = null
         printDebug("house json = " + house.toJson())
 
         if (role == User.Role.ORG) {
