@@ -20,8 +20,6 @@ import org.junit.Before
 import org.junit.Test
 
 class MongoHouseDaoTest {
-    val DATABASE_NAME = "ffcTest"
-    val DB_COLLECTION = "house"
     val ORG_ID = "87543432abcf432123456785"
 
     lateinit var dao: HouseDao

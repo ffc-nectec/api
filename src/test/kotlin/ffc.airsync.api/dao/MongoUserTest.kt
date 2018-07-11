@@ -15,9 +15,6 @@ import org.junit.Test
 
 class MongoUserTest {
 
-    val DATABASE_NAME = "ffcTest"
-    val DB_COLLECTION = "user"
-
     lateinit var nectecOrg: Organization
     lateinit var dao: UserDao
     lateinit var client: MongoClient
