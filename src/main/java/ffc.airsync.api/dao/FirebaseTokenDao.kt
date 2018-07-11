@@ -1,5 +1,6 @@
 package ffc.airsync.api.dao
 
+// TODO("สำหรับใช้งาน Firebase รอการพัฒนา")
 interface FirebaseTokenDao : Dao {
 
     fun addMobileToken(orgId: String, token: String)
