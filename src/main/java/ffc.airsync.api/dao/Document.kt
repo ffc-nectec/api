@@ -20,4 +20,3 @@ package ffc.airsync.api.dao
 import org.bson.Document
 
 internal infix fun String.equal(param: Any): Document = Document(this, param)
-

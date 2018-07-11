@@ -90,4 +90,3 @@ class MongoUserDao(host: String, port: Int)
         return if (user != null && password().check(password, user.password)) user else null
     }
 }
-
