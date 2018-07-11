@@ -66,22 +66,13 @@ class HouseResource {
 
         val geoReturn = FeatureCollection<House>()
 
-        try {
-
+        if (geoJso.features.isNotEmpty()) {
             geoJso.features.forEach {
-
-                try {
-                    val house = it.properties
-
-                    if (house!!.location != null) {
-                        geoReturn.features.add(Feature(it.geometry, it.properties))
-                    }
-                } catch (ex: Exception) {
-                    // ex.printStackTrace()
+                val house = it.properties
+                if (house!!.location != null) {
+                    geoReturn.features.add(Feature(it.geometry, it.properties))
                 }
             }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
         }
 
         printDebug("Print feture before return to rest")
