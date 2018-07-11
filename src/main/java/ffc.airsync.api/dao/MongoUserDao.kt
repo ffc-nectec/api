@@ -1,8 +1,8 @@
 package ffc.airsync.api.dao
 
 import com.google.gson.Gson
-import ffc.airsync.api.dao.PasswordSalt.getPass
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.security.password
 import ffc.entity.Organization
 import ffc.entity.User
 import ffc.entity.gson.ffcGson
@@ -10,42 +10,22 @@ import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
-import javax.ws.rs.BadRequestException
-import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 
 class MongoUserDao(host: String, port: Int)
     : UserDao, MongoAbsConnect(host, port, "ffc", "organ") {
 
     override fun insertUser(user: User, orgId: String): User {
-        printDebug("Call MongoOrd insert User ${user.toJson()}")
-        if (!user.isTempId) throw BadRequestException("รุปแบบ id ต้องใช้ TempId ในการสร้าง User")
+        if (!user.isTempId) throw IllegalArgumentException("รุปแบบ id ต้องใช้ TempId ในการสร้าง User")
+        if (haveUserInDb(orgId, user)) throw IllegalArgumentException("มีการเพิ่มผู้ใช้ ${user.name} ซ้ำ")
 
-        val generateId = ObjectId()
-        val userInsert = user.copy<User>(generateId.toHexString())
-        printDebug("\tCreate new user object")
-
-        printDebug("\tCheck user dupp.")
-        if (haveUserInDb(orgId, user)) throw BadRequestException("มีการเพิ่มผู้ใช้ ${userInsert.name} ซ้ำ")
-
-        val query = Document("id", orgId)
-        userInsert.password = getPass(userInsert.password)
-        val userDoc = Document.parse(userInsert.toJson())
-        userDoc.append("password", userInsert.password)
-        val userStruct = Document("users", userDoc)
+        val userStruct = Document("users", user.toDocument())
         val userPush = Document("\$push", userStruct)
 
-        printDebug("\tCreate user in mongo")
-        dbCollection.updateOne(query, userPush)
+        dbCollection.updateOne(Document("id", orgId), userPush)
 
-        findUser(orgId).forEach {
-            println("\t\tuser $it")
-        }
-        printDebug("\tcall regis user new update.")
-
-        return findUser(orgId).find {
-            it.name == user.name
-        } ?: throw InternalServerErrorException("Server Error in call dev")
+        return findUser(orgId).find { it.name == user.name }
+                ?: throw IllegalStateException("Server Error in call dev")
     }
 
     private fun haveUserInDb(orgId: String, user: User): Boolean {
@@ -84,25 +64,13 @@ class MongoUserDao(host: String, port: Int)
         return this.get(key)?.toJson(gson)?.parseTo()
     }
 
-    override fun findThat(orgId: String, name: String, pass: String): User? {
-        printDebug("Call findThat in OrgMongoDao")
-        val query = Document("id", orgId)
-        printDebug("\tQuery = ${query.toJson()}")
-        val orgDoc = dbCollection.find(query).first() ?: throw NotFoundException("ไม่พบ Org id $orgId")
-        printDebug("\torgDoc = ${orgDoc.toJson()}")
+    override fun findThat(orgId: String, name: String, password: String): User? {
+        val orgDoc = dbCollection.find(Document("id", orgId)).first() ?: return null
         val org = orgDoc.toJson().parseTo<Organization>()
-        printDebug("\torg = $org")
 
-        val passwordSalt = getPass(pass)
-        printDebug("Salt Pass = $passwordSalt")
+        val user = org.users.find { it.name == name }
 
-        printDebug("\t\tOrg = ${org.toJson()}")
-        val user = org.users.find {
-            printDebug("\t\tUser= ${it.toJson()}")
-            it.name == name && it.password == passwordSalt
-        }
-        // val user = dbCollection.find(query).first()
-        printDebug("\tuser query $user")
-        return user
+        return if (user != null && password().check(password, user.password)) user else null
     }
 }
+

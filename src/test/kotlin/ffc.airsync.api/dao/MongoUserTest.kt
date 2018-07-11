@@ -6,8 +6,8 @@ import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
 import ffc.entity.Organization
 import ffc.entity.User
-import ffc.entity.gson.toJson
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should equal`
 import org.amshove.kluent.`should not equal`
 import org.junit.After
 import org.junit.Before
@@ -29,16 +29,7 @@ class MongoUserTest {
         val orgDao: OrgDao = DaoFactory().build(serverAddress.hostString, serverAddress.port)
 
         dao = DaoFactory().build(serverAddress.hostString, serverAddress.port)
-
         nectecOrg = orgDao.insert(Org("รพ.สต.Nectec", "192.168.99.3"))
-        orgDao.findAll().forEach {
-            println("Org = ${it.toJson()}")
-        }
-
-        dao.findUser(nectecOrg.id).forEach {
-            println("User = ${it.name}")
-        }
-        dao.findUser(nectecOrg.id)
     }
 
     @After
@@ -82,6 +73,13 @@ class MongoUserTest {
 
         user.name `should be equal to` "Sommai"
         user.password `should not equal` null
+    }
+
+    @Test
+    fun login() {
+        val user = dao.findThat(nectecOrg.id, "maxkung", "catbite")
+
+        user!!.name `should equal` "maxkung"
     }
 
     @Test
