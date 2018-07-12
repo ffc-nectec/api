@@ -115,7 +115,12 @@ object HouseService {
         }
 
         printDebug("Search house match")
-        val listHouse = houseDao.findAll(orgId, haveLocation)
+        val listHouse = arrayListOf<House>().apply {
+            addAll(houseDao.findAll(orgId, haveLocation))
+            removeIf {
+                it.location?.coordinates?.longitude == 0.0
+            }
+        }
 
         printDebug("count house = ${listHouse.count()}")
 
