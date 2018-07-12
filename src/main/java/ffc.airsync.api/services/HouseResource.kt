@@ -25,7 +25,6 @@ import me.piruin.geok.geometry.FeatureCollection
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.Consumes
-import javax.ws.rs.DefaultValue
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.GET
 import javax.ws.rs.NotFoundException
@@ -55,7 +54,6 @@ class HouseResource {
     fun getGeoJsonHouse(
         @QueryParam("page") page: Int = 1,
         @QueryParam("per_page") per_page: Int = 200,
-        @QueryParam("hid") hid: Int = -1,
         @PathParam("orgId") orgId: String
     ): FeatureCollection<House> {
 
@@ -73,7 +71,12 @@ class HouseResource {
     @RolesAllowed("USER", "ORG")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
-    fun getJsonHouse(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @QueryParam("hid") hid: Int = -1, @DefaultValue("null") @QueryParam("haveLocation") haveLocationQuery: String = "null", @PathParam("orgId") orgId: String): List<House> {
+    fun getJsonHouse(
+        @QueryParam("page") page: Int = 1,
+        @QueryParam("per_page") per_page: Int = 200,
+        @QueryParam("haveLocation") haveLocationQuery: String = "null",
+        @PathParam("orgId") orgId: String
+    ): List<House> {
         val haveLocation: Boolean? = when (haveLocationQuery) {
             "true" -> true
             "false" -> false
