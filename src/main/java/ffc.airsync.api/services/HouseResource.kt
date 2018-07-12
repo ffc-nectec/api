@@ -30,6 +30,7 @@ import javax.ws.rs.BadRequestException
 import javax.ws.rs.Consumes
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.GET
+import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 import javax.ws.rs.POST
 import javax.ws.rs.PUT
@@ -60,9 +61,8 @@ class HouseResource {
         printDebug("getGeoJsonHouse house method geoJson List")
 
         printDebug("\tParamete orgId $orgId page $page per_page $per_page hid $hid haveLocation $haveLocation")
-
-        val geoJso = HouseService.getGeoJsonHouse(orgId, if (page == 0) 1 else page, if (per_page == 0) 200 else per_page, haveLocation, req.queryString
-                ?: "")
+        checkParameterLocationWrong(haveLocation, req.queryString)
+        val geoJso = HouseService.getGeoJsonHouse(orgId, if (page == 0) 1 else page, if (per_page == 0) 200 else per_page, haveLocation)
 
         val geoReturn = FeatureCollection<House>()
 
@@ -85,13 +85,12 @@ class HouseResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
     fun getJsonHouse(@Context req: HttpServletRequest, @QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @QueryParam("hid") hid: Int = -1, @QueryParam("haveLocation") haveLocation: Boolean? = null, @PathParam("orgId") orgId: String): List<House> {
         printDebug("getGeoJsonHouse house method geoJson List paramete orgId $orgId page $page per_page $per_page hid $hid")
+        checkParameterLocationWrong(haveLocation, req.queryString)
         return HouseService.getJsonHouse(
                 orgId,
                 if (page == 0) 1 else page,
                 if (per_page == 0) 200 else per_page,
-                haveLocation,
-                req.queryString
-                        ?: "")
+                haveLocation)
     }
 
     @RolesAllowed("USER", "ORG")
@@ -191,5 +190,13 @@ class HouseResource {
             return Response.status(Response.Status.CREATED).entity(houseReturn).build()
         }
         throw ForbiddenException("ไม่มีสิทธ์ ในการสร้างบ้าน")
+    }
+
+    private fun checkParameterLocationWrong(haveLocation: Boolean?, urlString: String) {
+        if (haveLocation == false) {
+            if (urlString.trimEnd().endsWith("haveLocation=") || urlString.trimEnd().endsWith("haveLocation")) {
+                throw InternalServerErrorException("Parameter query $urlString")
+            }
+        }
     }
 }
