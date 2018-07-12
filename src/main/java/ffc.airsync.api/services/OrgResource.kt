@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2561 NECTEC
+ * Copyright (c) 2018 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,7 @@ import ffc.airsync.api.services.module.OrgService
 import ffc.entity.Organization
 import javax.annotation.security.RolesAllowed
 import javax.servlet.http.HttpServletRequest
+import javax.ws.rs.BadRequestException
 import javax.ws.rs.Consumes
 import javax.ws.rs.DELETE
 import javax.ws.rs.GET
@@ -38,47 +39,25 @@ import javax.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/org")
 class OrgResource {
-    // Register orgUuid.
+
     @Context
     lateinit var req: HttpServletRequest
 
+    val HttpServletRequest.ipAddress: String
+        get() = getHeader("X-Forwarded-For") ?: remoteAddr
+
     @POST
-    fun create(organization: Organization): Response {
-        printDebug("Org register ${organization.name}")
-
-        printDebug("Create my org")
-        var ipAddress = req.getHeader("X-Forwarded-For")
-        printDebug("\tGet ip address from header X-Forwarded-For = $ipAddress")
-        printDebug("\tGet from req.remoteAddr = ${req.remoteAddr}")
-        if (ipAddress == null) {
-            ipAddress = req.remoteAddr
-        }
-
-        printDebug("\tip address select = $ipAddress")
-
-        organization.bundle["lastKnownIp"] = ipAddress
-
-        val orgUpdate = OrgService.register(organization)
-        printDebug("\tGen ip = " + orgUpdate.bundle["lastKnownIp"] + " Org token = " + orgUpdate.bundle["token"])
-
-        printDebug("Create token")
-
-        return Response.status(Response.Status.CREATED).entity(orgUpdate).build()
+    fun create(organization: Organization): Organization = try {
+        OrgService.register(organization.apply { bundle["lastKnownIp"] = req.ipAddress })
+    } catch (ex: IllegalArgumentException) {
+        throw BadRequestException("ไม่สามารถลงทะเบียนได้เนื่องจากหน่วยงานซ้ำ")
     }
 
     @GET
     fun getMy(@QueryParam("my") my: Boolean = false): List<Organization> {
-        printDebug("Get org my")
-        var ipAddress = req.getHeader("X-Forwarded-For")
-        printDebug("\tGet ip address from header X-Forwarded-For = $ipAddress")
-        printDebug("\tGet from req.remoteAddr = ${req.remoteAddr}")
-        if (ipAddress == null) {
-            ipAddress = req.remoteAddr
-        }
-        printDebug("\tResult Org by ip = $ipAddress + my = $my")
-
         return if (my) {
-            OrgService.getMy(ipAddress)
+            printDebug("Find Organization with ip-address = ${req.ipAddress}")
+            OrgService.getMy(req.ipAddress)
         } else {
             OrgService.get()
         }
@@ -89,9 +68,7 @@ class OrgResource {
     @Path("/{orgId:([\\dabcdefABCDEF]+)}")
     fun remove(@PathParam("orgId") orgId: String): Response {
         printDebug("Remove org $orgId")
-
         OrgService.remove(orgId)
-
         return Response.status(200).build()
     }
 }
