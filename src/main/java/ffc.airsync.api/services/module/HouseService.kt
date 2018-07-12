@@ -115,12 +115,7 @@ object HouseService {
         }
 
         printDebug("Search house match")
-        val listHouse = arrayListOf<House>().apply {
-            addAll(houseDao.findAll(orgId, haveLocation))
-            removeIf {
-                it.location?.coordinates?.longitude == 0.0
-            }
-        }
+        val listHouse = getHouseList(orgId, haveLocation)
 
         printDebug("count house = ${listHouse.count()}")
 
@@ -145,15 +140,34 @@ object HouseService {
         return geoJson
     }
 
-    fun getJsonHouse(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?, urlString: String): List<House> {
-        val geoJsonHouse = getGeoJsonHouse(orgId, page, per_page, haveLocation, urlString)
-        val houseList = arrayListOf<House>()
-
-        geoJsonHouse.features.forEach {
-            val house = it.properties
-            if (house != null) houseList.add(house)
+    private fun getHouseList(orgId: String, haveLocation: Boolean?): ArrayList<House> {
+        val listHouse = arrayListOf<House>().apply {
+            addAll(houseDao.findAll(orgId, haveLocation))
+            if (haveLocation == true)
+                removeIf {
+                    it.location?.coordinates?.longitude == 0.0
+                }
         }
-        return houseList
+        return listHouse
+    }
+
+    fun getJsonHouse(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?, urlString: String): List<House> {
+
+        val listHouse = getHouseList(orgId, haveLocation)
+        val listHouseReturn = arrayListOf<House>()
+
+        itemRenderPerPage(page, per_page, listHouse.count(), object : AddItmeAction {
+            override fun onAddItemAction(itemIndex: Int) {
+                try {
+                    val house = listHouse[itemIndex]
+                    listHouseReturn.add(house)
+                } catch (ex: kotlin.KotlinNullPointerException) {
+                    ex.printStackTrace()
+                }
+            }
+        })
+
+        return listHouseReturn
     }
 
     fun getSingle(orgId: String, houseId: String): House {
