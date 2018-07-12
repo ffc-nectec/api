@@ -91,11 +91,10 @@ class HouseResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house/{houseId:([\\dabcdefABCDEF]{24})}")
     fun update(
         @PathParam("orgId") orgId: String,
-        @PathParam("houseId") houseId:
-        String, house: House
+        @PathParam("houseId") houseId: String,
+        house: House
     ): Response {
         val role = getTokenRole(context!!)
-
         val houseUpdate = HouseService.update(role, orgId, house, houseId)
         return Response.status(200).entity(houseUpdate).build()
     }
