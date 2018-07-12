@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.dao
+package ffc.airsync.api
 
-interface Dao
+fun Any.resourceFile(filename: String) =
+        this::class.java.classLoader.getResource(filename).readText()

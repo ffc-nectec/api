@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2561 NECTEC
+ * Copyright (c) 2018 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@
 package ffc.airsync.api.dao
 
 class DaoFactory {
+
     @Suppress("IMPLICIT_CAST_TO_ANY")
     inline fun <reified T : Dao> build(host: String = "127.0.0.1", port: Int = 27017): T {
 

@@ -15,6 +15,11 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.dao
+package ffc.airsync.api.security
 
-interface Dao
+interface Password {
+
+    fun hash(plain: String): String
+
+    fun check(plain: String, hash: String): Boolean
+}

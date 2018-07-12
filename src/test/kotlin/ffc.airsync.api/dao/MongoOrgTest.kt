@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2561 NECTEC
+ * Copyright (c) 2018 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http:// www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,8 +20,10 @@ import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.airsync.api.resourceFile
 import ffc.entity.Organization
 import ffc.entity.User
+import ffc.entity.gson.parseTo
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should equal`
@@ -81,6 +83,20 @@ class MongoOrgTest {
             name `should be equal to` "รพสต.AAA"
             isTempId `should be` false
             bundle["lastKnownIp"] = "192.168.99.3"
+        }
+    }
+
+    @Test
+    fun insertFromJson() {
+        val org = resourceFile("organization.json").parseTo<Organization>()
+
+        val returnOrg = dao.insert(org)
+
+        with(returnOrg) {
+            print(id)
+            name `should be equal to` org.name
+            link `should equal` org.link
+            isTempId `should be` false
         }
     }
 

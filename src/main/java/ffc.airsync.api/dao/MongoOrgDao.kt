@@ -1,77 +1,78 @@
+/*
+ * Copyright (c) 2018 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package ffc.airsync.api.dao
 
 import com.mongodb.BasicDBObject
 import com.mongodb.client.FindIterable
-import ffc.airsync.api.dao.PasswordSalt.getPass
 import ffc.airsync.api.printDebug
 import ffc.entity.Organization
 import ffc.entity.User
-import ffc.entity.gson.ffcGson
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
-import javax.ws.rs.BadRequestException
 import javax.ws.rs.NotFoundException
 
 class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port, "ffc", "organ") {
 
     override fun insert(organization: Organization): Organization {
-        printDebug("Call mongo insert organization")
-        `ตรวจสอบเงื่อนไขการลงทะเบียน Org`(organization)
+
+        validate(organization)
+        checkDuplication(organization)
 
         val userListDoc = arrayListOf<Document>()
         organization.users.forEach {
-            if (it.isTempId) {
-                val user = it.copy<User>(ObjectId().toHexString())
-                user.password = getPass(user.password)
-                printDebug("\t\tNew user create = ${user.toJson()}")
+            require(it.name.isNotEmpty()) { "พบค่าว่างในตัวแปร user.name" }
+            require(it.password.isNotEmpty()) { "พบค่าว่างในตัวแปร user.password" }
+            require(it.isTempId) { "ข้อมูลที่จะสร้างใหม่จำเป็นต้องใช้ TempId" }
 
-                val userDoc = Document.parse(user.toJson())
-                userDoc.append("password", user.password)
-                userListDoc.add(userDoc)
-            } else throw BadRequestException("ข้อมูลที่จะสร้างใหม่จำเป็นต้องใช้ TempId")
+            userListDoc.add(it.toDocument())
         }
 
         val genId = ObjectId()
-        val orgDoc = Document.parse(ffcGson.toJson(organization))
-
+        val orgDoc = Document.parse(organization.toJson())
         orgDoc.append("users", userListDoc)
-
         orgDoc.append("_id", genId)
         orgDoc["id"] = genId.toHexString()
         orgDoc.append("lastKnownIp", organization.bundle["lastKnownIp"])
-
-        val genToken = ObjectId()
-        orgDoc.append("token", genToken)
+        orgDoc.append("token", ObjectId())
 
         dbCollection.insertOne(orgDoc)
 
-        val query = Document("_id", genId)
-        val newOrgDoc = dbCollection.find(query).first()
+        val newOrgDoc = dbCollection.find("_id" equal genId).first()
 
         return newOrgDoc.toJson().parseTo()
     }
 
-    private fun `ตรวจสอบเงื่อนไขการลงทะเบียน Org`(organization: Organization) {
-        if (organization.name.isEmpty()) throw BadRequestException("โปรระบุชื่อ หน่วยงานที่ต้องการลงทะเบียนลงในตัวแปร name")
-        if (organization.users.isEmpty()) throw BadRequestException("โปรดลงทะเบียน user ในตัวแปร user ในหน่วยงานที่ต้องการลงทะเบียน")
-
-        organization.users.forEach {
-            @Suppress("DEPRECATION") if (it.username?.isNotEmpty() == true) throw BadRequestException("ตัวแปร username ยกเลิกการใช้งานแล้ว")
-            if (it.name.isEmpty()) throw BadRequestException("พบค่าว่างในตัวแปร user.name")
-            if (it.password.isEmpty()) throw BadRequestException("พบค่าว่างในตัวแปร user.password")
+    private fun checkDuplication(organization: Organization) {
+        val name = dbCollection.find("name" equal organization.name).first()
+        if (name != null) {
+            throw IllegalArgumentException("ลงทะเบียน Org ซ้ำ")
         }
+    }
 
-        organization.users.find {
-            it.role == User.Role.ORG
-        } ?: throw BadRequestException("ไม่มี User ที่เป็น Role ORG")
-        val query = Document("name", organization.name)
-        val checkDuplicateName = dbCollection.find(query).first()
-        if (checkDuplicateName != null) {
-            throw BadRequestException("ลงทะเบียน Org ซ้ำ")
+    private fun validate(organization: Organization) {
+        with(organization) {
+            require(isTempId) { "ไม่สามารถ Register ได้ โปรดตรวจสอบ id" }
+            require(name.isNotEmpty()) { "โปรระบุชื่อ หน่วยงานที่ต้องการลงทะเบียนลงในตัวแปร name" }
+            require(users.isNotEmpty()) { "โปรดลงทะเบียน user ในตัวแปร user ในหน่วยงานที่ต้องการลงทะเบียน" }
+            require(users.find { it.role == User.Role.ORG } != null) { "ไม่มี User ที่เป็น Role ORG" }
         }
-        if (!organization.isTempId) throw BadRequestException("ไม่สามารถ Register ได้ โปรดตรวจสอบ id")
     }
 
     override fun remove(orgId: String) {
