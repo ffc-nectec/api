@@ -27,6 +27,7 @@ import me.piruin.geok.geometry.FeatureCollection
 import me.piruin.geok.geometry.Geometry
 import me.piruin.geok.geometry.Point
 import javax.ws.rs.BadRequestException
+import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 
 object HouseService {
@@ -108,11 +109,7 @@ object HouseService {
 
     fun getGeoJsonHouse(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?, urlString: String): FeatureCollection<House> {
         printDebug("haveLocation = $haveLocation Url query = $urlString")
-        if (haveLocation == false) {
-            if (urlString.trimEnd().endsWith("haveLocation=") || urlString.trimEnd().endsWith("haveLocation")) {
-                throw javax.ws.rs.InternalServerErrorException("Parameter query $urlString")
-            }
-        }
+        checkParameterLocationWrong(haveLocation, urlString)
 
         printDebug("Search house match")
         val listHouse = getHouseList(orgId, haveLocation)
@@ -140,6 +137,14 @@ object HouseService {
         return geoJson
     }
 
+    private fun checkParameterLocationWrong(haveLocation: Boolean?, urlString: String) {
+        if (haveLocation == false) {
+            if (urlString.trimEnd().endsWith("haveLocation=") || urlString.trimEnd().endsWith("haveLocation")) {
+                throw InternalServerErrorException("Parameter query $urlString")
+            }
+        }
+    }
+
     private fun getHouseList(orgId: String, haveLocation: Boolean?): ArrayList<House> {
         val listHouse = arrayListOf<House>().apply {
             addAll(houseDao.findAll(orgId, haveLocation))
@@ -153,6 +158,7 @@ object HouseService {
 
     fun getJsonHouse(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?, urlString: String): List<House> {
 
+        checkParameterLocationWrong(haveLocation, urlString)
         val listHouse = getHouseList(orgId, haveLocation)
         val listHouseReturn = arrayListOf<House>()
 
