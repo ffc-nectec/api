@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2561 NECTEC
+ * Copyright (c) 2018 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,10 +24,7 @@ import ffc.entity.User
 import ffc.entity.gson.toJson
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
-import me.piruin.geok.geometry.Geometry
-import me.piruin.geok.geometry.Point
 import javax.ws.rs.BadRequestException
-import javax.ws.rs.NotFoundException
 
 object HouseService {
 
@@ -102,100 +99,36 @@ object HouseService {
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-        // Thread.sleep(200)
         return houseUpdate!!
     }
 
-    fun getGeoJsonHouse(orgId: String, page: Int = 1, per_page: Int = 200): FeatureCollection<House> {
-        printDebug("Search house match")
-        val listHouse = getHouseList(orgId, true)
-
-        printDebug("count house = ${listHouse.count()}")
-
-        val geoJson = FeatureCollection<House>()
-        val count = listHouse.count()
-
-        itemRenderPerPage(page, per_page, count, object : AddItmeAction {
-            override fun onAddItemAction(itemIndex: Int) {
-                try {
-                    // printDebug("Loop count $it")
-                    val house = listHouse[itemIndex]
-
-                    val feture: Feature<House> = createGeoFeature(house)
-
-                    geoJson.features.add(feture)
-                    // printDebug("Add feture success")
-                } catch (ex: kotlin.KotlinNullPointerException) {
-                    ex.printStackTrace()
-                }
-            }
-        })
-        return geoJson
-    }
-
-    private fun getHouseList(orgId: String, haveLocation: Boolean?): ArrayList<House> {
-        return arrayListOf<House>().apply {
-            addAll(houseDao.findAll(orgId, haveLocation))
-            when (haveLocation) {
-                null -> {
-                }
-                true -> removeIf {
-                    it.location == null
-                }
-                false -> removeIf {
-                    it.location != null
-                }
+    private fun queryHouse(orgId: String, haveLocationFilter: Boolean?): List<House> {
+        return houseDao.findAll(orgId, haveLocationFilter).toMutableList().apply {
+            when (haveLocationFilter) {
+                true -> removeIf { it.location == null }
+                false -> removeIf { it.location != null }
             }
         }
     }
 
-    fun getJsonHouse(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?): List<House> {
-
-        val listHouse = getHouseList(orgId, haveLocation)
-        val listHouseReturn = arrayListOf<House>()
-
-        itemRenderPerPage(page, per_page, listHouse.count(), object : AddItmeAction {
-            override fun onAddItemAction(itemIndex: Int) {
-                try {
-                    val house = listHouse[itemIndex]
-                    listHouseReturn.add(house)
-                } catch (ex: kotlin.KotlinNullPointerException) {
-                    ex.printStackTrace()
-                }
-            }
-        })
-
-        return listHouseReturn
+    fun getHouses(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?): List<House> {
+        return queryHouse(orgId, haveLocation).paging(page, per_page)
     }
 
-    fun getSingle(orgId: String, houseId: String): House {
-        val singleHouseGeo = getSingleGeo(orgId, houseId)
-        val house = singleHouseGeo.features[0].properties
-        return house ?: throw NotFoundException("ไม่มีรายการบ้าน ที่ระบุ")
+    fun getSingle(houseId: String): House? {
+        return houseDao.find(houseId) ?: return null
     }
 
-    fun getSingleGeo(orgId: String, houseId: String): FeatureCollection<House> {
-        printDebug("\thouse findBy_ID OrgUuid = $orgId houseId = $houseId")
+    fun getSingleGeo(orgId: String, houseId: String): FeatureCollection<House>? {
+        val house = getSingle(houseId) ?: return null
+        if (house.location == null) return null
 
         val geoJson = FeatureCollection<House>()
-        val house: House = houseDao.find(houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
-
-        printDebug("\t\t$house")
-        val feature = createGeoFeature(house)
-        geoJson.features.add(feature)
-
+        geoJson.features.add(house.toGeoJsonFeature())
         return geoJson
     }
+}
 
-    private fun createGeoFeature(house: House): Feature<House> {
-        var point: Geometry = Point(0.0, 0.0)
-
-        try {
-            val coordinates = house.location?.coordinates
-            point = Point(coordinates!!.latitude, coordinates.longitude)
-        } catch (ex: NullPointerException) {
-            ex.printStackTrace()
-        }
-        return Feature(geometry = point, properties = house)
-    }
+private fun House.toGeoJsonFeature(): Feature<House> {
+    return Feature(this.location!!, this)
 }

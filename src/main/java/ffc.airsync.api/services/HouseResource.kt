@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2561 NECTEC
+ * Copyright (c) 2018 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,11 +17,9 @@
 
 package ffc.airsync.api.services
 
-import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.module.HouseService
 import ffc.entity.House
 import ffc.entity.User
-import ffc.entity.gson.toJson
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import javax.annotation.security.RolesAllowed
@@ -44,7 +42,6 @@ import javax.ws.rs.core.SecurityContext
 
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-
 @Path("/org")
 class HouseResource {
 
@@ -55,27 +52,21 @@ class HouseResource {
     @Produces(GEOJSONHeader)
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
-    fun getGeoJsonHouse(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @QueryParam("hid") hid: Int = -1, @PathParam("orgId") orgId: String): FeatureCollection<House> {
+    fun getGeoJsonHouse(
+        @QueryParam("page") page: Int = 1,
+        @QueryParam("per_page") per_page: Int = 200,
+        @QueryParam("hid") hid: Int = -1,
+        @PathParam("orgId") orgId: String
+    ): FeatureCollection<House> {
 
-        printDebug("getGeoJsonHouse house method geoJson List")
-
-        printDebug("\tParamete orgId $orgId page $page per_page $per_page hid $hid")
-        // checkParameterLocationWrong(haveLocation, req.queryString)
-        val geoJso = HouseService.getGeoJsonHouse(orgId, if (page == 0) 1 else page, if (per_page == 0) 200 else per_page)
+        val houses = HouseService.getHouses(orgId,
+                if (page == 0) 1 else page,
+                if (per_page == 0) 200 else per_page,
+                haveLocation = true)
+        if (houses.isEmpty()) throw NotFoundException("ไม่มีรายการบ้าน")
 
         val geoReturn = FeatureCollection<House>()
-
-        if (geoJso.features.isNotEmpty()) {
-            geoJso.features.forEach {
-                val house = it.properties
-                if (house!!.location != null) {
-                    geoReturn.features.add(Feature(it.geometry, it.properties))
-                }
-            }
-        }
-
-        printDebug("Print feture before return to rest")
-        if (geoReturn.features.isEmpty()) throw NotFoundException("ไม่มีรายการบ้าน")
+        geoReturn.features.addAll(houses.map { Feature(it.location!!, it) })
         return geoReturn
     }
 
@@ -83,17 +74,12 @@ class HouseResource {
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
     fun getJsonHouse(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @QueryParam("hid") hid: Int = -1, @DefaultValue("null") @QueryParam("haveLocation") haveLocationQuery: String = "null", @PathParam("orgId") orgId: String): List<House> {
-        printDebug("getGeoJsonHouse house method geoJson List paramete orgId $orgId page $page per_page $per_page hid $hid haveLocation $haveLocationQuery")
-        // checkParameterLocationWrong(haveLocation, req.queryString)
-
         val haveLocation: Boolean? = when (haveLocationQuery) {
             "true" -> true
             "false" -> false
             else -> null
         }
-        printDebug("HaveLocation $haveLocation")
-
-        return HouseService.getJsonHouse(
+        return HouseService.getHouses(
                 orgId,
                 if (page == 0) 1 else page,
                 if (per_page == 0) 200 else per_page,
@@ -103,17 +89,12 @@ class HouseResource {
     @RolesAllowed("USER", "ORG")
     @PUT
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house/{houseId:([\\dabcdefABCDEF]{24})}")
-    fun update(@PathParam("orgId") orgId: String, @PathParam("houseId") houseId: String, house: House): Response {
-        printDebug("Call put house by ip OrgID $orgId")
-
-        printDebug("\tid ${house.id} latLng ${house.location}")
-
-        if (context == null) {
-            printDebug("\tContext is null")
-        }
+    fun update(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId:
+        String, house: House
+    ): Response {
         val role = getTokenRole(context!!)
-        printDebug("\tRole $role")
-        printDebug("\t${context!!.userPrincipal}")
 
         val houseUpdate = HouseService.update(role, orgId, house, houseId)
         return Response.status(200).entity(houseUpdate).build()
@@ -121,89 +102,67 @@ class HouseResource {
 
     @RolesAllowed("USER", "ORG")
     @Produces(GEOJSONHeader)
-    @Consumes(GEOJSONHeader)
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house/{houseId:([\\dabcdefABCDEF]{24})}")
-    fun getSingleGeo(@PathParam("orgId") orgId: String, @PathParam("houseId") houseId: String): FeatureCollection<House> {
-        printDebug("Call getGeoJsonHouse single geo json OrgID $orgId House ID = $houseId")
-        val house: FeatureCollection<House> = HouseService.getSingleGeo(orgId, houseId)
-
-        return house
+    fun getSingleGeo(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String
+    ): FeatureCollection<House> {
+        return HouseService.getSingleGeo(orgId, houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
     }
 
     @RolesAllowed("USER", "ORG")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house/{houseId:([\\dabcdefABCDEF]{24})}")
-    fun getSingle(@PathParam("orgId") orgId: String, @PathParam("houseId") houseId: String): House {
-        printDebug("Call getGeoJsonHouse single house OrgID $orgId House ID = $houseId")
-        val house: House = HouseService.getSingle(orgId, houseId)
-
-        return house
+    fun getSingle(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String
+    ): House {
+        return HouseService.getSingle(houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
     }
 
     @RolesAllowed("ORG", "USER")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/houses")
-    fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
-        printDebug("\nCall create house")
+    fun create(
+        @PathParam("orgId") orgId: String,
+        houseList: List<House>?
+    ): Response {
         if (houseList == null) throw BadRequestException()
 
-        if (context == null) {
-            printDebug("\tContext is null")
-        }
         val role = getTokenRole(context!!)
-        printDebug("\tRole $role")
+        houseList.forEach { it.people = null }
 
-        printDebug("\t${context!!.userPrincipal}")
-
-        houseList.forEach {
-            it.people = null
-            printDebug("house json = " + it.toJson())
+        return when (role) {
+            User.Role.ORG -> {
+                val houseReturn = HouseService.createByOrg(orgId, houseList)
+                Response.status(Response.Status.CREATED).entity(houseReturn).build()
+            }
+            User.Role.USER -> {
+                val houseReturn = HouseService.createByUser(orgId, houseList)
+                Response.status(Response.Status.CREATED).entity(houseReturn).build()
+            }
+            else -> throw ForbiddenException("ไม่มีสิทธ์ ในการสร้างบ้าน")
         }
-
-        if (role == User.Role.ORG) {
-            val houseReturn = HouseService.createByOrg(orgId, houseList)
-            return Response.status(Response.Status.CREATED).entity(houseReturn).build()
-        } else if (role == User.Role.USER) {
-
-            val houseReturn = HouseService.createByUser(orgId, houseList)
-            return Response.status(Response.Status.CREATED).entity(houseReturn).build()
-        }
-        throw ForbiddenException("ไม่มีสิทธ์ ในการสร้างบ้าน")
     }
 
     @RolesAllowed("ORG", "USER")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
     fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
-
-        printDebug("\nCall create house")
         if (house == null) throw BadRequestException()
-        if (context == null) {
-            printDebug("\tContext is null")
-        }
-        val role = getTokenRole(context!!)
-        printDebug("\tRole $role")
-
-        printDebug("\t${context!!.userPrincipal}")
         house.people = null
-        printDebug("house json = " + house.toJson())
-
-        if (role == User.Role.ORG) {
-            val houseReturn = HouseService.createByOrg(orgId, house)
-            return Response.status(Response.Status.CREATED).entity(houseReturn).build()
-        } else if (role == User.Role.USER) {
-            val houseReturn = HouseService.createByUser(orgId, house)
-            return Response.status(Response.Status.CREATED).entity(houseReturn).build()
-        }
-        throw ForbiddenException("ไม่มีสิทธ์ ในการสร้างบ้าน")
-    }
-
-    /*private fun checkParameterLocationWrong(haveLocation: Boolean?, urlString: String) {
-        if (haveLocation == false) {
-            if (urlString.trimEnd().endsWith("haveLocation=") || urlString.trimEnd().endsWith("haveLocation")) {
-                throw InternalServerErrorException("Parameter query $urlString")
+        val role = getTokenRole(context!!)
+        return when (role) {
+            User.Role.ORG -> {
+                val houseReturn = HouseService.createByOrg(orgId, house)
+                Response.status(Response.Status.CREATED).entity(houseReturn).build()
             }
+            User.Role.USER -> {
+                val houseReturn = HouseService.createByUser(orgId, house)
+                Response.status(Response.Status.CREATED).entity(houseReturn).build()
+            }
+            else -> throw ForbiddenException("ไม่มีสิทธ์ ในการสร้างบ้าน")
         }
-    }*/
+    }
 }
