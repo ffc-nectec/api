@@ -74,7 +74,7 @@ class HouseResource {
     fun getJsonHouse(
         @QueryParam("page") page: Int = 1,
         @QueryParam("per_page") per_page: Int = 200,
-        @QueryParam("haveLocation") haveLocationQuery: String = "null",
+        @QueryParam("haveLocation") haveLocationQuery: String? = null,
         @PathParam("orgId") orgId: String
     ): List<House> {
         val haveLocation: Boolean? = when (haveLocationQuery) {
