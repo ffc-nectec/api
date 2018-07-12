@@ -106,11 +106,9 @@ object HouseService {
         return houseUpdate!!
     }
 
-    fun getGeoJsonHouse(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?): FeatureCollection<House> {
-        printDebug("haveLocation = $haveLocation")
-
+    fun getGeoJsonHouse(orgId: String, page: Int = 1, per_page: Int = 200): FeatureCollection<House> {
         printDebug("Search house match")
-        val listHouse = getHouseList(orgId, haveLocation)
+        val listHouse = getHouseList(orgId, true)
 
         printDebug("count house = ${listHouse.count()}")
 
@@ -136,14 +134,19 @@ object HouseService {
     }
 
     private fun getHouseList(orgId: String, haveLocation: Boolean?): ArrayList<House> {
-        val listHouse = arrayListOf<House>().apply {
+        return arrayListOf<House>().apply {
             addAll(houseDao.findAll(orgId, haveLocation))
-            if (haveLocation == true)
-                removeIf {
-                    it.location?.coordinates?.longitude == 0.0
+            when (haveLocation) {
+                null -> {
                 }
+                true -> removeIf {
+                    it.location == null
+                }
+                false -> removeIf {
+                    it.location != null
+                }
+            }
         }
-        return listHouse
     }
 
     fun getJsonHouse(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?): List<House> {

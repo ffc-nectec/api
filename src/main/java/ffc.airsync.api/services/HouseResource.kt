@@ -25,12 +25,11 @@ import ffc.entity.gson.toJson
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import javax.annotation.security.RolesAllowed
-import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.Consumes
+import javax.ws.rs.DefaultValue
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.GET
-import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 import javax.ws.rs.POST
 import javax.ws.rs.PUT
@@ -56,13 +55,13 @@ class HouseResource {
     @Produces(GEOJSONHeader)
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
-    fun getGeoJsonHouse(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @QueryParam("hid") hid: Int = -1, @QueryParam("haveLocation") haveLocation: Boolean? = null, @PathParam("orgId") orgId: String, @Context req: HttpServletRequest): FeatureCollection<House> {
+    fun getGeoJsonHouse(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @QueryParam("hid") hid: Int = -1, @PathParam("orgId") orgId: String): FeatureCollection<House> {
 
         printDebug("getGeoJsonHouse house method geoJson List")
 
-        printDebug("\tParamete orgId $orgId page $page per_page $per_page hid $hid haveLocation $haveLocation")
-        checkParameterLocationWrong(haveLocation, req.queryString)
-        val geoJso = HouseService.getGeoJsonHouse(orgId, if (page == 0) 1 else page, if (per_page == 0) 200 else per_page, haveLocation)
+        printDebug("\tParamete orgId $orgId page $page per_page $per_page hid $hid")
+        // checkParameterLocationWrong(haveLocation, req.queryString)
+        val geoJso = HouseService.getGeoJsonHouse(orgId, if (page == 0) 1 else page, if (per_page == 0) 200 else per_page)
 
         val geoReturn = FeatureCollection<House>()
 
@@ -83,9 +82,17 @@ class HouseResource {
     @RolesAllowed("USER", "ORG")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
-    fun getJsonHouse(@Context req: HttpServletRequest, @QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @QueryParam("hid") hid: Int = -1, @QueryParam("haveLocation") haveLocation: Boolean? = null, @PathParam("orgId") orgId: String): List<House> {
-        printDebug("getGeoJsonHouse house method geoJson List paramete orgId $orgId page $page per_page $per_page hid $hid")
-        checkParameterLocationWrong(haveLocation, req.queryString)
+    fun getJsonHouse(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @QueryParam("hid") hid: Int = -1, @DefaultValue("null") @QueryParam("haveLocation") haveLocationQuery: String = "null", @PathParam("orgId") orgId: String): List<House> {
+        printDebug("getGeoJsonHouse house method geoJson List paramete orgId $orgId page $page per_page $per_page hid $hid haveLocation $haveLocationQuery")
+        // checkParameterLocationWrong(haveLocation, req.queryString)
+
+        val haveLocation: Boolean? = when (haveLocationQuery) {
+            "true" -> true
+            "false" -> false
+            else -> null
+        }
+        printDebug("HaveLocation $haveLocation")
+
         return HouseService.getJsonHouse(
                 orgId,
                 if (page == 0) 1 else page,
@@ -192,11 +199,11 @@ class HouseResource {
         throw ForbiddenException("ไม่มีสิทธ์ ในการสร้างบ้าน")
     }
 
-    private fun checkParameterLocationWrong(haveLocation: Boolean?, urlString: String) {
+    /*private fun checkParameterLocationWrong(haveLocation: Boolean?, urlString: String) {
         if (haveLocation == false) {
             if (urlString.trimEnd().endsWith("haveLocation=") || urlString.trimEnd().endsWith("haveLocation")) {
                 throw InternalServerErrorException("Parameter query $urlString")
             }
         }
-    }
+    }*/
 }
