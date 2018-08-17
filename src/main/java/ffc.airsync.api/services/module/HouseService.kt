@@ -79,7 +79,7 @@ object HouseService {
         printDebug("\tUpdate house to dao.")
 
         if (role == User.Role.ORG) {
-            house.update<House> {
+            house.update<House>(house.timestamp) {
                 house.link?.isSynced = true
             }
         } else if (role == User.Role.USER) {
@@ -87,12 +87,9 @@ object HouseService {
                 house.link?.isSynced = false
             }
         }
+        printDebug("Update house ${house.toJson()}")
 
-        val houseInsert = house.copy<House>()
-        houseInsert.update<House>(timestamp = house.timestamp, block = {})
-        printDebug("\tHouse update ${houseInsert.toJson()}")
-
-        val houseUpdate = houseDao.update(houseInsert)
+        val houseUpdate = houseDao.update(house.copy<House>())
 
         printDebug("Call send notification size list token = ${firebaseTokenGropOrg.size} ")
         try {
