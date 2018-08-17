@@ -88,7 +88,10 @@ object HouseService {
             }
         }
 
-        val houseUpdate = houseDao.update(house.copy<House>())
+        val houseInsert = house.copy<House>()
+        houseInsert.update<House>(timestamp = house.timestamp, block = {})
+
+        val houseUpdate = houseDao.update(houseInsert)
 
         printDebug("Call send notification size list token = ${firebaseTokenGropOrg.size} ")
         try {
