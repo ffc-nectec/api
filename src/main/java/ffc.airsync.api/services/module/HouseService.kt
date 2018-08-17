@@ -90,6 +90,7 @@ object HouseService {
 
         val houseInsert = house.copy<House>()
         houseInsert.update<House>(timestamp = house.timestamp, block = {})
+        printDebug("\tHouse update ${houseInsert.toJson()}")
 
         val houseUpdate = houseDao.update(houseInsert)
 
