@@ -17,11 +17,9 @@
 
 package ffc.airsync.api.services
 
-import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.module.HouseService
 import ffc.entity.House
 import ffc.entity.User
-import ffc.entity.gson.toJson
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import javax.annotation.security.RolesAllowed
@@ -99,10 +97,8 @@ class HouseResource {
         @PathParam("houseId") houseId: String,
         house: House
     ): Response {
-        printDebug("Put house input ${house.toJson()}")
         val role = getTokenRole(context!!)
         val houseUpdate = HouseService.update(role, orgId, house, houseId)
-        printDebug("Put house update ${houseUpdate.toJson()}")
         return Response.status(200).entity(houseUpdate).build()
     }
 

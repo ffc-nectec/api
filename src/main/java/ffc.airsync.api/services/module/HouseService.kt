@@ -87,7 +87,6 @@ object HouseService {
                 house.link?.isSynced = false
             }
         }
-        printDebug("Update house ${house.toJson()}")
 
         val houseUpdate = houseDao.update(house.copy<House>())
 
