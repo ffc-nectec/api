@@ -79,7 +79,7 @@ object HouseService {
         printDebug("\tUpdate house to dao.")
 
         if (role == User.Role.ORG) {
-            house.update<House> {
+            house.update<House>(house.timestamp) {
                 house.link?.isSynced = true
             }
         } else if (role == User.Role.USER) {
