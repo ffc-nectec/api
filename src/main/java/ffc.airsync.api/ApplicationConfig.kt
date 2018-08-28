@@ -15,19 +15,18 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api;
+package ffc.airsync.api
 
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-public class ApplicationConfig extends ResourceConfig {
+import org.glassfish.jersey.server.ResourceConfig
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature
 
-    public ApplicationConfig() {
-        packages("ffc.airsync.api");
+class ApplicationConfig : ResourceConfig() {
+    init {
+        packages("ffc.airsync.api")
 
         // store(ApiWebSocks.class);
         // store(JacksonFeature.class);
-        register(RolesAllowedDynamicFeature.class);
+        register(RolesAllowedDynamicFeature::class.java)
         // store(CsrfProtectionFilter.class);
     }
 }
-
