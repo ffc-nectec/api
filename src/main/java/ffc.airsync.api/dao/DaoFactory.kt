@@ -28,6 +28,7 @@ class DaoFactory {
             HouseDao::class -> MongoHouseDao(host, port)
             PersonDao::class -> MongoPersonDao(host, port)
             TokenDao::class -> MongoTokenDao(host, port)
+            DiseaseDao::class -> MongoDiseaseDao(host, port)
 
             else -> throw IllegalArgumentException("ไม่สามารถสร้าง dao นี้ได้")
         } as T
