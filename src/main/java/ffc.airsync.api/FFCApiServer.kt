@@ -46,6 +46,26 @@ class FFCApiServer(args: Array<String>) {
     }
 
     fun run() {
+        getFirebaseParameter()
+
+        println("Start main process")
+        val context = ServletContextBuilder.build()
+        val server = Server(JettyServerTuning.threadPool)
+
+        server.connectors = JettyServerTuning.getConnectors(server, host, port)
+        server.handler = context
+        server.addBean(JettyServerTuning.getMonitor(server))
+        try {
+            println("Start server bind port $port")
+            server.start()
+            println("Running process")
+            server.join()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun getFirebaseParameter() {
         try {
             val serviceAccount =
                 FileInputStream("D:\\workspace\\FFC API\\src\\main\\java\\ffc.airsync.api\\ffc-nectec-firebase-adminsdk-4ogjg-88a2843d02.json")
@@ -75,23 +95,6 @@ class FFCApiServer(args: Array<String>) {
 
             firebaseApp = FirebaseApp.initializeApp(options!!)
             // logger.log(Level.FINE, "Load config firebase from system env.");
-        }
-
-        println("Start main process")
-        val context = ServletContextBuilder.build()
-
-        val server = Server(JettyServerTuning.threadPool)
-
-        server.connectors = JettyServerTuning.getConnectors(server, host, port)
-        server.handler = context
-        server.addBean(JettyServerTuning.getMonitor(server))
-        try {
-            println("Start server bind port $port")
-            server.start()
-            println("Running process")
-            server.join()
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
