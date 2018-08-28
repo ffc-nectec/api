@@ -4,9 +4,11 @@ import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.entity.Chronic
 import ffc.entity.Person
 import ffc.entity.ThaiCitizenId
+import ffc.entity.healthcare.Chronic
+import ffc.entity.healthcare.Disease
+import ffc.entity.util.generateTempId
 import org.joda.time.LocalDate
 import org.junit.After
 import org.junit.Before
@@ -37,8 +39,8 @@ class MongoPersonTest {
             lastname = "โคตรกระบือ"
             sex = Person.Sex.MALE
             birthDate = LocalDate.now().minusYears(20)
-            chronics.add(Chronic("dxabc00x"))
-            chronics.add(Chronic("abcffe982"))
+            chronics.add(Chronic(Disease(generateTempId(), "fair", "dxabc00x")))
+            chronics.add(Chronic(Disease(generateTempId(), "fair", "abcffe982")))
         }
 
         dao.insert(ORG_ID, maxPerson)

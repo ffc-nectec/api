@@ -1,13 +1,11 @@
 package ffc.airsync.api.services.module
 
-import ffc.entity.firebase.FirebaseToken
-
 object FirebaseService {
-    fun createOrgToken(orgId: String, firebaseToken: FirebaseToken) {
-        orgDao.createFirebase(orgId, firebaseToken.firebasetoken, true)
+    fun createOrgToken(orgId: String, firebaseToken: String) {
+        orgDao.createFirebase(orgId, firebaseToken, true)
     }
 
-    fun createMobileToken(orgId: String, firebaseToken: FirebaseToken) {
-        orgDao.createFirebase(orgId, firebaseToken.firebasetoken, false)
+    fun createMobileToken(orgId: String, firebaseToken: String) {
+        orgDao.createFirebase(orgId, firebaseToken, false)
     }
 }

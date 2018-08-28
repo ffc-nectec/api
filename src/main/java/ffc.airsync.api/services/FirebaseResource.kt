@@ -2,7 +2,6 @@ package ffc.airsync.api.services
 
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.module.FirebaseService
-import ffc.entity.firebase.FirebaseToken
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
 import javax.ws.rs.POST
@@ -22,11 +21,11 @@ class FirebaseResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/firebasetoken")
-    fun updateToken(@PathParam("orgId") orgId: String, firebaseToken: FirebaseToken): Response {
+    fun updateToken(@PathParam("orgId") orgId: String, firebaseToken: HashMap<String, String>): Response {
 
-        printDebug("Call update Firebase Token OrgID $orgId Firebase Token = ${firebaseToken.firebasetoken}")
+        printDebug("Call update Firebase Token OrgID $orgId Firebase Token = ${firebaseToken["firebasetoken"]}")
 
-        FirebaseService.createOrgToken(orgId, firebaseToken)
+        FirebaseService.createOrgToken(orgId, firebaseToken["firebasetoken"]!!)
 
         return Response.status(200).build()
     }
@@ -36,10 +35,10 @@ class FirebaseResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/mobilefirebasetoken")
-    fun createToken(@PathParam("orgId") orgId: String, firebaseToken: FirebaseToken): Response {
+    fun createToken(@PathParam("orgId") orgId: String, firebaseToken: HashMap<String, String>): Response {
 
-        printDebug("Call update Firebase Token by OrgID $orgId Firebase Token = ${firebaseToken.firebasetoken}")
-        FirebaseService.createMobileToken(orgId, firebaseToken)
+        printDebug("Call update Firebase Token by OrgID $orgId Firebase Token = ${firebaseToken["firebasetoken"]}")
+        FirebaseService.createMobileToken(orgId, firebaseToken["firebasetoken"]!!)
 
         return Response.status(200).build()
     }

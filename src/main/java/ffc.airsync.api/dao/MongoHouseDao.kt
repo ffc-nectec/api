@@ -20,6 +20,7 @@ package ffc.airsync.api.dao
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.printDebug
 import ffc.entity.House
+import ffc.entity.copy
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document

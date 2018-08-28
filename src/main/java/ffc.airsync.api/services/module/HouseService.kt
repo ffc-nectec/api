@@ -21,7 +21,9 @@ import com.google.firebase.messaging.Message
 import ffc.airsync.api.printDebug
 import ffc.entity.House
 import ffc.entity.User
+import ffc.entity.copy
 import ffc.entity.gson.toJson
+import ffc.entity.update
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import javax.ws.rs.BadRequestException

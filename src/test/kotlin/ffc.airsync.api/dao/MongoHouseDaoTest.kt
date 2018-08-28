@@ -4,12 +4,15 @@ import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.entity.Chronic
 import ffc.entity.House
 import ffc.entity.Person
 import ffc.entity.ThaiCitizenId
 import ffc.entity.ThaiHouseholdId
 import ffc.entity.gson.toJson
+import ffc.entity.healthcare.Chronic
+import ffc.entity.healthcare.Disease
+import ffc.entity.update
+import ffc.entity.util.generateTempId
 import me.piruin.geok.geometry.Point
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
@@ -70,7 +73,7 @@ class MongoHouseDaoTest {
             lastname = nameStruct[2]
             sex = if (nameStruct[0].trim() == "นาย") Person.Sex.MALE else Person.Sex.FEMALE
             birthDate = LocalDate.now().minusMonths(240)
-            chronics.add(Chronic("dx001"))
+            chronics.add(Chronic(Disease(generateTempId(), "fair", "dx001")))
         }
     }
 
