@@ -46,7 +46,7 @@ class FFCApiServer(args: Array<String>) {
     }
 
     fun run() {
-        getFirebaseParameter()
+        // getFirebaseParameter()
 
         println("Start main process")
         val context = ServletContextBuilder.build()

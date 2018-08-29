@@ -25,7 +25,6 @@ import javax.ws.rs.core.Response
 class RootPart {
     @GET
     fun getRootPart(): Response {
-
         return Response.status(200).entity(Runtime.getRuntime().freeMemory()).build()
     }
 }
