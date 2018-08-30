@@ -33,7 +33,7 @@ class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, port, "ff
         dbCollection.deleteMany(query)
         dbCollection.insertOne(docDisease)
 
-        val result = dbCollection.find(Document(query)).first()
+        val result = dbCollection.find(query).first()
         val newDisease = result.toJson().parseTo<Disease>()
 
         return newDisease
@@ -44,7 +44,7 @@ class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, port, "ff
         val countAll = disease.count()
         val newDisease = arrayListOf<Disease>()
         disease.forEach {
-            printDebug("Insert A:=$countAll P:${count++}")
+            printDebug("Insert disease A:=$countAll P:${count++}")
             newDisease.add(insert(it))
         }
         return newDisease
@@ -52,11 +52,13 @@ class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, port, "ff
 
     override fun find(query: String): List<Disease> {
         val result = arrayListOf<Disease>()
+        val regexQuery = Document("\$regex", query).append("\$options", "i")
+
         val listQuery = BasicBSONList().apply {
 
-            add(Document("translation.th", Document("\$regex", query).append("\$options", "i")))
-            add(Document("icd10", Document("\$regex", query).append("\$options", "i")))
-            add(Document("name", Document("\$regex", query).append("\$options", "i")))
+            add(Document("translation.th", regexQuery))
+            add(Document("icd10", regexQuery))
+            add(Document("name", regexQuery))
         }
 
         val resultQuery = dbCollection.find(Document("\$or", listQuery)).limit(20)

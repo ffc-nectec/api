@@ -1,0 +1,57 @@
+package ffc.airsync.api.dao
+
+import ffc.airsync.api.printDebug
+import ffc.entity.gson.parseTo
+import ffc.entity.gson.toJson
+import org.bson.Document
+import org.bson.types.BasicBSONList
+
+class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "homeHealthType"),
+    HomeHealthTypeDao {
+
+    override fun insert(homeHealthTypee: Map<String, String>): Map<String, String> {
+        val query = Document("code", homeHealthTypee["code"])
+
+        val docHomeHealthType = Document.parse(homeHealthTypee.toJson())
+        dbCollection.deleteMany(query)
+        dbCollection.insertOne(docHomeHealthType)
+
+        val result = dbCollection.find(query).first()
+        result.remove("_id")
+
+        return result.toJson().parseTo()
+    }
+
+    override fun insert(homeHealthTypee: List<Map<String, String>>): List<Map<String, String>> {
+        val result = arrayListOf<Map<String, String>>()
+        var count = 1
+        val countAll = homeHealthTypee.count()
+        homeHealthTypee.forEach {
+            printDebug("Insert home health type A:=$countAll P:${count++}")
+            result.add(insert(it))
+        }
+        return result
+    }
+
+    override fun find(query: String): List<Map<String, String>> {
+
+        val result = arrayListOf<Map<String, String>>()
+        val regexQuery = Document("\$regex", query).append("\$options", "i")
+
+        val query = BasicBSONList().apply {
+            add(Document("code", regexQuery))
+            add(Document("mean", regexQuery))
+            add(Document("map", regexQuery))
+        }
+
+        val resultQuery = dbCollection.find(Document("\$or", query)).limit(20)
+
+        resultQuery.forEach {
+            it.remove("_id")
+            val healthMap = it.toJson().parseTo<Map<String, String>>()
+            result.add(healthMap)
+        }
+
+        return result
+    }
+}
