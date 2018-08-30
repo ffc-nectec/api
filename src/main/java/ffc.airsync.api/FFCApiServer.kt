@@ -46,7 +46,7 @@ class FFCApiServer(args: Array<String>) {
     }
 
     fun run() {
-        // getFirebaseParameter()
+        getFirebaseParameter()
 
         println("Start main process")
         val context = ServletContextBuilder.build()
@@ -68,7 +68,7 @@ class FFCApiServer(args: Array<String>) {
     private fun getFirebaseParameter() {
         try {
             val serviceAccount =
-                FileInputStream("D:\\workspace\\FFC API\\src\\main\\java\\ffc.airsync.api\\ffc-nectec-firebase-adminsdk-4ogjg-88a2843d02.json")
+                FileInputStream("ffc-nectec-firebase-adminsdk-4ogjg-88a2843d02.json")
             val options = FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .setDatabaseUrl("https://ffc-nectec.firebaseio.com")
