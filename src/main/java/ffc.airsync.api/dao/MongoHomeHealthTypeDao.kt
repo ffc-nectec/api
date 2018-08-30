@@ -1,5 +1,6 @@
 package ffc.airsync.api.dao
 
+import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.printDebug
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
@@ -8,6 +9,14 @@ import org.bson.types.BasicBSONList
 
 class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "homeHealthType"),
     HomeHealthTypeDao {
+
+    init {
+        val insertIndex = Document("code", 1)
+        try {
+            dbCollection.createIndex(insertIndex, IndexOptions().unique(false))
+        } catch (ignore: Exception) {
+        }
+    }
 
     override fun insert(homeHealthTypee: Map<String, String>): Map<String, String> {
         val query = Document("code", homeHealthTypee["code"])

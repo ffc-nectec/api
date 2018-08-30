@@ -6,8 +6,6 @@ import java.io.FileReader
 
 object DiseaseService {
 
-    var deseaseInsert = false
-
     fun query(query: String): List<Disease> {
         return diseaseDao.find(query)
     }
@@ -16,8 +14,7 @@ object DiseaseService {
 
         val classloader = Thread.currentThread().contextClassLoader
         val data = classloader.getResource("Disease.json")
-        if (!deseaseInsert) {
-            deseaseInsert = true
+        if (query("").count() < 5) {
             val data2 = FileReader("${data.file}").readText()
             val listDisease = data2.parseTo<List<Disease>>()
 

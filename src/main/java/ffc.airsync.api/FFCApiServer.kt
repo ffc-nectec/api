@@ -20,6 +20,8 @@ package ffc.airsync.api
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
+import ffc.airsync.api.services.module.DiseaseService
+import ffc.airsync.api.services.module.HomeHealthTypeService
 import org.eclipse.jetty.server.Server
 import org.kohsuke.args4j.CmdLineException
 import org.kohsuke.args4j.CmdLineParser
@@ -47,6 +49,9 @@ class FFCApiServer(args: Array<String>) {
 
     fun run() {
         getFirebaseParameter()
+
+        DiseaseService.init()
+        HomeHealthTypeService.init()
 
         println("Start main process")
         val context = ServletContextBuilder.build()

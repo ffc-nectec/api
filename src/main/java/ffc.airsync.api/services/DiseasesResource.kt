@@ -7,17 +7,9 @@ import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.QueryParam
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
 
 @Path("/")
 class DiseasesResource {
-
-    @GET
-    @Path("/init")
-    fun init(): Response {
-        DiseaseService.init()
-        return Response.ok().build()
-    }
 
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/disease")

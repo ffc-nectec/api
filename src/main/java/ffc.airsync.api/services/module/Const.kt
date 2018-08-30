@@ -19,6 +19,7 @@ package ffc.airsync.api.services.module
 
 import ffc.airsync.api.dao.DaoFactory
 import ffc.airsync.api.dao.DiseaseDao
+import ffc.airsync.api.dao.HomeHealthTypeDao
 import ffc.airsync.api.dao.HouseDao
 import ffc.airsync.api.dao.OrgDao
 import ffc.airsync.api.dao.PersonDao
@@ -31,3 +32,4 @@ val personDao = DaoFactory().build<PersonDao>()
 val userDao = DaoFactory().build<UserDao>()
 val houseDao = DaoFactory().build<HouseDao>()
 val diseaseDao = DaoFactory().build<DiseaseDao>()
+val homeHealtyTypeDao = DaoFactory().build<HomeHealthTypeDao>()
