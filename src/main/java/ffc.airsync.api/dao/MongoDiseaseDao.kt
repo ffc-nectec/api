@@ -14,20 +14,12 @@ class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, port, "ff
         val searchIndex = Document("icd10", "text")
         searchIndex.append("name", "text")
         searchIndex.append("translation.th", "text")
-
         val insertIndex = Document("icd10", 1)
 
         try {
             dbCollection.createIndex(searchIndex, IndexOptions().unique(false))
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            throw ex
-        }
-        try {
             dbCollection.createIndex(insertIndex, IndexOptions().unique(false))
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            throw ex
+        } catch (ignore: Exception) {
         }
     }
 
