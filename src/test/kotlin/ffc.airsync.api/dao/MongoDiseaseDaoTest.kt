@@ -23,7 +23,7 @@ class MongoDiseaseDaoTest {
         val serverAddress = server.bind()
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
-        dao = DaoFactory().build(serverAddress.hostString, serverAddress.port)
+        dao = diseases(serverAddress.hostString, serverAddress.port)
 
         dao.insert(Disease(generateTempId(), "Fall", "HHXX001Y"))
         dao.insert(Disease(generateTempId(), "Fall2", "HHXX002Y", isNCD = true, isChronic = true, isEpimedic = true))

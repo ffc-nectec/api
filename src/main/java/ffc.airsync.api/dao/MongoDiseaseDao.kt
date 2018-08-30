@@ -8,7 +8,7 @@ import ffc.entity.healthcare.Disease
 import org.bson.Document
 import org.bson.types.BasicBSONList
 
-class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "disease"), DiseaseDao {
+internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "disease"), DiseaseDao {
 
     init {
         val searchIndex = Document("icd10", "text")

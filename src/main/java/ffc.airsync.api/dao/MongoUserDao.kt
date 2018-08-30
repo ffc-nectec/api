@@ -29,7 +29,7 @@ import org.bson.Document
 import org.bson.types.ObjectId
 import javax.ws.rs.NotFoundException
 
-class MongoUserDao(host: String, port: Int)
+internal class MongoUserDao(host: String, port: Int)
     : UserDao, MongoAbsConnect(host, port, "ffc", "organ") {
 
     override fun insertUser(user: User, orgId: String): User {

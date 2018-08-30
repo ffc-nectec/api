@@ -20,7 +20,7 @@ class MongoHomeHealthTypeDaoTest {
         val serverAddress = server.bind()
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
-        dao = DaoFactory().build(serverAddress.hostString, serverAddress.port)
+        dao = homeHealthTypes(serverAddress.hostString, serverAddress.port)
 
         dao.insert(HashMap<String, String>().apply {
             put("code", "1A001")

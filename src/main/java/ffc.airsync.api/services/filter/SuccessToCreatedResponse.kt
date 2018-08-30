@@ -32,7 +32,7 @@ class SuccessToCreatedResponse : ContainerResponseFilter {
         requestContext: ContainerRequestContext,
         responseContext: ContainerResponseContext
     ) {
-        val isPost = requestContext.method.equals("post", ignoreCase = true)
+        val isPost = requestContext.method.equals("port", ignoreCase = true)
         if (isPost && responseContext.status == 200) {
             responseContext.status = 201
         }

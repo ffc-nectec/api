@@ -28,7 +28,7 @@ import org.bson.Document
 import org.bson.types.ObjectId
 import javax.ws.rs.NotFoundException
 
-class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port, "ffc", "organ") {
+internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port, "ffc", "organ") {
 
     override fun insert(organization: Organization): Organization {
 

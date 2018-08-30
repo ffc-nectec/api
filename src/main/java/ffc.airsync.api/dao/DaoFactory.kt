@@ -17,21 +17,19 @@
 
 package ffc.airsync.api.dao
 
-class DaoFactory {
+internal class DaoFactory {
 
-    @Suppress("IMPLICIT_CAST_TO_ANY")
-    inline fun <reified T : Dao> build(host: String = "127.0.0.1", port: Int = 27017): T {
-
-        return when (T::class) {
-            OrgDao::class -> MongoOrgDao(host, port)
-            UserDao::class -> MongoUserDao(host, port)
-            HouseDao::class -> MongoHouseDao(host, port)
-            PersonDao::class -> MongoPersonDao(host, port)
-            TokenDao::class -> MongoTokenDao(host, port)
-            DiseaseDao::class -> MongoDiseaseDao(host, port)
-            HomeHealthTypeDao::class -> MongoHomeHealthTypeDao(host, port)
-
-            else -> throw IllegalArgumentException("ไม่สามารถสร้าง dao นี้ได้")
-        } as T
+    companion object {
+        var host = "127.0.0.1"
+        var port = 27017
     }
 }
+
+fun orgs(host: String = DaoFactory.host, port: Int = DaoFactory.port): OrgDao = MongoOrgDao(host, port)
+fun users(host: String = DaoFactory.host, port: Int = DaoFactory.port): UserDao = MongoUserDao(host, port)
+fun houses(host: String = DaoFactory.host, port: Int = DaoFactory.port): HouseDao = MongoHouseDao(host, port)
+fun persons(host: String = DaoFactory.host, port: Int = DaoFactory.port): PersonDao = MongoPersonDao(host, port)
+fun tokens(host: String = DaoFactory.host, port: Int = DaoFactory.port): TokenDao = MongoTokenDao(host, port)
+fun diseases(host: String = DaoFactory.host, port: Int = DaoFactory.port): DiseaseDao = MongoDiseaseDao(host, port)
+fun homeHealthTypes(host: String = DaoFactory.host, port: Int = DaoFactory.port): HomeHealthTypeDao =
+    MongoHomeHealthTypeDao(host, port)

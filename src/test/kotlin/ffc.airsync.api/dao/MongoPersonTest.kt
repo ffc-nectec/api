@@ -30,7 +30,7 @@ class MongoPersonTest {
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
 
-        dao = DaoFactory().build(serverAddress.hostString, serverAddress.port)
+        dao = persons(serverAddress.hostString, serverAddress.port)
 
         val maxPerson = Person().apply {
             identities.add(ThaiCitizenId("1231233123421"))

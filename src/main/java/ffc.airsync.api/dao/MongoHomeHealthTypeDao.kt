@@ -7,7 +7,7 @@ import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.BasicBSONList
 
-class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "homeHealthType"),
+internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "homeHealthType"),
     HomeHealthTypeDao {
 
     init {
