@@ -16,7 +16,7 @@ object HomeHealthTypeService {
 
         if (query("").count() < 5) {
             val data2 = FileReader("${data.file}").readText()
-            val listDisease = data2.parseTo<List<Map<String, String>>>()
+            val listDisease = data2.parseTo<List<CommunityServiceType>>()
 
             homeHealtyTypeDao.insert(listDisease)
         }

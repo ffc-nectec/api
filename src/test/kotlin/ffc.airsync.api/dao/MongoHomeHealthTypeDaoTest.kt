@@ -4,6 +4,7 @@ import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.entity.healthcare.CommunityServiceType
 import org.amshove.kluent.`should equal`
 import org.junit.After
 import org.junit.Before
@@ -22,16 +23,8 @@ class MongoHomeHealthTypeDaoTest {
         MongoAbsConnect.setClient(client)
         dao = homeHealthTypes(serverAddress.hostString, serverAddress.port)
 
-        dao.insert(HashMap<String, String>().apply {
-            put("code", "1A001")
-            put("mean", "เยี่ยมผู้ป่วยโรคเบาหวาน ")
-            put("map", "1A001")
-        })
-        dao.insert(HashMap<String, String>().apply {
-            put("code", "1D01300")
-            put("mean", "ให้ทันตสุขศึกษาหญิงตั้งครรภ์")
-            put("map", "1D02")
-        })
+        dao.insert(CommunityServiceType("1A001", "เยี่ยมผู้ป่วยโรคเบาหวาน "))
+        dao.insert(CommunityServiceType("1D01300", "ให้ทันตสุขศึกษาหญิงตั้งครรภ์"))
     }
 
     @After
@@ -42,13 +35,15 @@ class MongoHomeHealthTypeDaoTest {
 
     @Test
     fun insertReturnResult() {
-        val result = dao.insert(HashMap<String, String>().apply {
-            put("code", "1E11")
-            put("mean", "การตรวจคัดกรองภาวะอ้วนในประชาชนอายุ 15 ปีขึ้นไป โดยการวัดเส้นรอบเอว หรือประเมินค่าดัชนีมวลกาย")
-            put("map", "1E11")
-        })
 
-        result["code"] `should equal` "1E11"
+        val result = dao.insert(
+            CommunityServiceType(
+                "1E11",
+                "การตรวจคัดกรองภาวะอ้วนในประชาชนอายุ 15 ปีขึ้นไป โดยการวัดเส้นรอบเอว หรือประเมินค่าดัชนีมวลกาย"
+            )
+        )
+
+        result.id `should equal` "1E11"
     }
 
     @Test

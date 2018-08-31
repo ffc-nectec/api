@@ -13,15 +13,15 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
     HomeHealthTypeDao {
 
     init {
-        val insertIndex = Document("code", 1)
+        val insertIndex = Document("id", 1)
         try {
             dbCollection.createIndex(insertIndex, IndexOptions().unique(false))
         } catch (ignore: Exception) {
         }
     }
 
-    override fun insert(homeHealthTypee: Map<String, String>): Map<String, String> {
-        val query = Document("code", homeHealthTypee["code"])
+    override fun insert(homeHealthTypee: CommunityServiceType): CommunityServiceType {
+        val query = Document("id", homeHealthTypee.id)
 
         val docHomeHealthType = Document.parse(homeHealthTypee.toJson())
         dbCollection.deleteMany(query)
@@ -33,8 +33,8 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
         return result.toJson().parseTo()
     }
 
-    override fun insert(homeHealthTypee: List<Map<String, String>>): List<Map<String, String>> {
-        val result = arrayListOf<Map<String, String>>()
+    override fun insert(homeHealthTypee: List<CommunityServiceType>): List<CommunityServiceType> {
+        val result = arrayListOf<CommunityServiceType>()
         var count = 1
         val countAll = homeHealthTypee.count()
         homeHealthTypee.forEach {
@@ -44,22 +44,21 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
         return result
     }
 
-    private fun findMongo(query: String): List<Map<String, String>> {
+    private fun findMongo(query: String): List<CommunityServiceType> {
 
-        val result = arrayListOf<Map<String, String>>()
+        val result = arrayListOf<CommunityServiceType>()
         val regexQuery = Document("\$regex", query).append("\$options", "i")
 
         val query = BasicBSONList().apply {
-            add(Document("code", regexQuery))
-            add(Document("mean", regexQuery))
-            add(Document("map", regexQuery))
+            add(Document("id", regexQuery))
+            add(Document("name", regexQuery))
         }
 
         val resultQuery = dbCollection.find(Document("\$or", query)).limit(20)
 
         resultQuery.forEach {
             it.remove("_id")
-            val healthMap = it.toJson().parseTo<Map<String, String>>()
+            val healthMap = it.toJson().parseTo<CommunityServiceType>()
             result.add(healthMap)
         }
 
@@ -71,15 +70,10 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
         val result = arrayListOf<CommunityServiceType>()
 
         find.forEach {
-            val id = it["code"]
-            val name = it["mean"]
-
-            if ((id != null) && (name != null)) {
-                val communityServiceType = CommunityServiceType(id, name).apply {
-                    translation[Lang.th] = name
-                }
-                result.add(communityServiceType)
+            val communityServiceType = CommunityServiceType(it.id, it.name).apply {
+                translation[Lang.th] = name
             }
+            result.add(communityServiceType)
         }
         return result
     }
