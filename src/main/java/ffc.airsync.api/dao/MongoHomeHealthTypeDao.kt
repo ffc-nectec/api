@@ -2,6 +2,7 @@ package ffc.airsync.api.dao
 
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.printDebug
+import ffc.entity.Lang
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import ffc.entity.healthcare.CommunityServiceType
@@ -74,7 +75,9 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
             val name = it["mean"]
 
             if ((id != null) && (name != null)) {
-                val communityServiceType = CommunityServiceType(id, name)
+                val communityServiceType = CommunityServiceType(id, name).apply {
+                    translation[Lang.th] = name
+                }
                 result.add(communityServiceType)
             }
         }
