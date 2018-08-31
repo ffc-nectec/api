@@ -14,7 +14,7 @@ class HomeHealthTypeResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/homehealth")
     @GET
-    fun query(@QueryParam("query") query: String): List<CommunityServiceType> {
-        return HomeHealthTypeService.query(query)
+    fun query(@QueryParam("query") query: String?): List<CommunityServiceType> {
+        return HomeHealthTypeService.query(query ?: "")
     }
 }
