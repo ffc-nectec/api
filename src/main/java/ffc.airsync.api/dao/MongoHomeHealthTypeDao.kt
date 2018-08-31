@@ -4,6 +4,7 @@ import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.printDebug
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
+import ffc.entity.healthcare.CommunityServiceType
 import org.bson.Document
 import org.bson.types.BasicBSONList
 
@@ -42,7 +43,7 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
         return result
     }
 
-    override fun find(query: String): List<Map<String, String>> {
+    private fun findMongo(query: String): List<Map<String, String>> {
 
         val result = arrayListOf<Map<String, String>>()
         val regexQuery = Document("\$regex", query).append("\$options", "i")
@@ -61,6 +62,22 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
             result.add(healthMap)
         }
 
+        return result
+    }
+
+    override fun find(query: String): List<CommunityServiceType> {
+        val find = findMongo(query)
+        val result = arrayListOf<CommunityServiceType>()
+
+        find.forEach {
+            val id = it["code"]
+            val name = it["mean"]
+
+            if ((id != null) && (name != null)) {
+                val communityServiceType = CommunityServiceType(id, name)
+                result.add(communityServiceType)
+            }
+        }
         return result
     }
 }

@@ -1,11 +1,12 @@
 package ffc.airsync.api.services.module
 
 import ffc.entity.gson.parseTo
+import ffc.entity.healthcare.CommunityServiceType
 import java.io.FileReader
 
 object HomeHealthTypeService {
 
-    fun query(query: String): List<Map<String, String>> {
+    fun query(query: String): List<CommunityServiceType> {
         return homeHealtyTypeDao.find(query)
     }
 
