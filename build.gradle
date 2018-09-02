@@ -75,7 +75,8 @@ jar {
         configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
-    archiveName = "${project.name}.jar"
+    /* archiveName = "${project.name}.jar" */
+    archiveName = "ffc-api.jar"
     destinationDir = file("$rootDir/build/bin")
     manifest { attributes 'Main-Class': 'ffc.airsync.api.FFCApiServer' }
 
