@@ -70,15 +70,19 @@ task stage(dependsOn: ['build', 'clean'])
 
 build.mustRunAfter clean
 
+
 jar {
     from {
         configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
-    /* archiveName = "${project.name}.jar" */
-    archiveName = "ffc-api.jar"
+    archiveName = "${project.name}.jar"
     destinationDir = file("$rootDir/build/bin")
-    manifest { attributes 'Main-Class': 'ffc.airsync.api.FFCApiServerKt' }
+
+    manifest { attributes 'Main-Class': 'ffc.airsync.api.FFCApiServer' }
+
+    include '*/Disease.json'
+    include '*/HomeHealthType.json'
 
     exclude 'META-INF/*.RSA'
     exclude 'META-INF/*.SF'
