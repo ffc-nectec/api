@@ -78,7 +78,7 @@ jar {
     /* archiveName = "${project.name}.jar" */
     archiveName = "ffc-api.jar"
     destinationDir = file("$rootDir/build/bin")
-    manifest { attributes 'Main-Class': 'ffc.airsync.api.FFCApiServer' }
+    manifest { attributes 'Main-Class': 'ffc.airsync.api.FFCApiServerKt' }
 
     exclude 'META-INF/*.RSA'
     exclude 'META-INF/*.SF'
