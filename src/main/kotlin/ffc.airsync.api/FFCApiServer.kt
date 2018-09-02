@@ -30,7 +30,7 @@ import java.io.ByteArrayInputStream
 import java.io.FileInputStream
 import java.io.IOException
 
-class FFCApiServer(args: Array<String>) {
+internal class FFCApiServer(args: Array<String>) {
     @Option(name = "-dev", usage = "mode")
     protected var dev = false
     @Option(name = "-port", usage = "port destination ownAction start server")

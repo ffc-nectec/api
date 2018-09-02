@@ -70,6 +70,10 @@ task stage(dependsOn: ['build', 'clean'])
 
 build.mustRunAfter clean
 
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin/'
+    test.java.srcDirs += 'src/test/kotlin/'
+}
 
 jar {
     from {
@@ -79,10 +83,7 @@ jar {
     archiveName = "${project.name}.jar"
     destinationDir = file("$rootDir/build/bin")
 
-    manifest { attributes 'Main-Class': 'ffc.airsync.api.FFCApiServer' }
-
-    include '*/Disease.json'
-    include '*/HomeHealthType.json'
+    manifest { attributes 'Main-Class': 'ffc.airsync.api.FFCApiServerKt' }
 
     exclude 'META-INF/*.RSA'
     exclude 'META-INF/*.SF'
