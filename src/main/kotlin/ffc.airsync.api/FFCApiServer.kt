@@ -50,8 +50,11 @@ internal class FFCApiServer(args: Array<String>) {
     fun run() {
         getFirebaseParameter()
 
-        DiseaseService.init()
-        HomeHealthTypeService.init()
+        Thread {
+            DiseaseService.init()
+            HomeHealthTypeService.init()
+        }.start()
+
 
         println("Start main process")
         val context = ServletContextBuilder.build()
