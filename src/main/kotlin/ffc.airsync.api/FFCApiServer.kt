@@ -55,7 +55,6 @@ internal class FFCApiServer(args: Array<String>) {
             HomeHealthTypeService.init()
         }.start()
 
-
         println("Start main process")
         val context = ServletContextBuilder.build()
         val server = Server(JettyServerTuning.threadPool)
