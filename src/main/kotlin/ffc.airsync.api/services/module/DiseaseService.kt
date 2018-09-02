@@ -13,12 +13,12 @@ object DiseaseService {
     fun init() {
 
         val classloader = Thread.currentThread().contextClassLoader
-        val data = classloader.getResourceAsStream("Disease.json")
+        val file = classloader.getResourceAsStream("Disease.json")
             .bufferedReader(Charset.forName("UTF-8"))
 
         if (query("").count() < 5) {
-            val data2 = data.readText()
-            val listDisease = data2.parseTo<List<Disease>>()
+            val stringData = file.readText()
+            val listDisease = stringData.parseTo<List<Disease>>()
 
             diseaseDao.insert(listDisease)
         }

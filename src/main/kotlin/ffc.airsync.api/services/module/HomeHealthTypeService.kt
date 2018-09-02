@@ -12,12 +12,12 @@ object HomeHealthTypeService {
 
     fun init() {
         val classloader = Thread.currentThread().contextClassLoader
-        val data = classloader.getResourceAsStream("HomeHealthType.json")
+        val file = classloader.getResourceAsStream("HomeHealthType.json")
             .bufferedReader(Charset.forName("UTF-8"))
 
         if (query("").count() < 5) {
-            val data2 = data.readText()
-            val listDisease = data2.parseTo<List<CommunityServiceType>>()
+            val stringData = file.readText()
+            val listDisease = stringData.parseTo<List<CommunityServiceType>>()
 
             homeHealtyTypeDao.insert(listDisease)
         }
