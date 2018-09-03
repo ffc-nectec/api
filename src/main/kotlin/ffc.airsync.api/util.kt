@@ -17,8 +17,10 @@
 
 package ffc.airsync.api
 
+import ffc.entity.Lang
 import ffc.entity.gson.parseTo
 import java.nio.charset.Charset
+import java.util.Locale
 
 val debug = System.getenv("FFC_DEBUG")
 fun <T> printDebug(infoDebug: T) {
@@ -31,4 +33,11 @@ inline fun <reified T> getResourceAs(filename: String): T {
         .bufferedReader(Charset.forName("UTF-8"))
 
     return file.readText().parseTo()
+}
+
+fun Locale.toLang(): Lang {
+    return when (language) {
+        "th" -> Lang.th
+        else -> Lang.en
+    }
 }

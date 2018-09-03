@@ -66,5 +66,6 @@ class MongoDiseaseDaoTest {
     @Test
     fun queryLang() {
         dao.find("HHXX001Y", Lang.th).last().name `should equal` "อ้วนซ้ำซ้อน"
+        dao.find("HHXX001Y", Lang.en).last().name `should equal` "Fall"
     }
 }
