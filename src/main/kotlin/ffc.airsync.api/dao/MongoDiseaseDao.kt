@@ -83,6 +83,7 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
             val disease = Disease(it.id, nameLang).apply {
                 this.translation.putAll(it.translation)
                 this.translation[Lang.en] = nameEn
+                this.translation.remove(lang)
             }
             returnResult.add(disease)
         }
