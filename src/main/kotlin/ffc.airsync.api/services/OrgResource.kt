@@ -47,10 +47,13 @@ class OrgResource {
         get() = getHeader("X-Forwarded-For") ?: remoteAddr
 
     @POST
-    fun create(organization: Organization): Organization = try {
-        OrgService.register(organization.apply { bundle["lastKnownIp"] = req.ipAddress })
-    } catch (ex: IllegalArgumentException) {
-        throw BadRequestException("ไม่สามารถลงทะเบียนได้เนื่องจากหน่วยงานซ้ำ")
+    fun create(organization: Organization): Response {
+        try {
+            val org = OrgService.register(organization.apply { bundle["lastKnownIp"] = req.ipAddress })
+            return Response.status(201).entity(org).build()
+        } catch (ex: IllegalArgumentException) {
+            throw BadRequestException("ไม่สามารถลงทะเบียนได้เนื่องจากหน่วยงานซ้ำ")
+        }
     }
 
     @GET
