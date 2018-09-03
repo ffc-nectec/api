@@ -17,7 +17,18 @@
 
 package ffc.airsync.api
 
+import ffc.entity.gson.parseTo
+import java.nio.charset.Charset
+
 val debug = System.getenv("FFC_DEBUG")
 fun <T> printDebug(infoDebug: T) {
     if (debug == null) println(infoDebug)
+}
+
+inline fun <reified T> getResourceAs(filename: String): T {
+    val classloader = Thread.currentThread().contextClassLoader
+    val file = classloader.getResourceAsStream(filename)
+        .bufferedReader(Charset.forName("UTF-8"))
+
+    return file.readText().parseTo()
 }
