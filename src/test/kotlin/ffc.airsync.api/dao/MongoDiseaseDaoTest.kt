@@ -45,6 +45,26 @@ class MongoDiseaseDaoTest {
     }
 
     @Test
+    fun query() {
+        val find = dao.find("HHXX002Y", Lang.th).last()
+
+        find.icd10 `should equal` "HHXX002Y"
+        find.isChronic `should equal` true
+        find.isEpimedic `should equal` true
+        find.isNCD `should equal` true
+    }
+
+    @Test
+    fun queryDefaultObject() {
+        val find = dao.find("HHXX001Y", Lang.th).last()
+
+        find.icd10 `should equal` "HHXX001Y"
+        find.isChronic `should equal` false
+        find.isEpimedic `should equal` false
+        find.isNCD `should equal` false
+    }
+
+    @Test
     fun insertReturnResult() {
         val result = dao.insert(Disease(generateTempId(), "Fall99", "HHXX099Y"))
 
