@@ -54,7 +54,7 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
             add(Document("name", regexQuery))
         }
 
-        val resultQuery = dbCollection.find(Document("\$or", query)).limit(100)
+        val resultQuery = dbCollection.find(Document("\$or", query))
 
         resultQuery.forEach {
             it.remove("_id")
