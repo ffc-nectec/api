@@ -84,8 +84,24 @@ class MongoDiseaseDaoTest {
     }
 
     @Test
-    fun queryLang() {
-        dao.find("HHXX001Y", Lang.th).last().name `should equal` "อ้วนซ้ำซ้อน"
-        dao.find("HHXX001Y", Lang.en).last().name `should equal` "Fall"
+    fun queryLangTh() {
+        val find = dao.find("HHXX001Y", Lang.th).last()
+
+        find.name `should equal` "อ้วนซ้ำซ้อน"
+        find.icd10 `should equal` "HHXX001Y"
+        find.isChronic `should equal` false
+        find.isEpimedic `should equal` false
+        find.isNCD `should equal` false
+    }
+
+    @Test
+    fun queryLangEn() {
+        val find = dao.find("HHXX002Y", Lang.en).last()
+
+        find.name `should equal` "Fall2"
+        find.icd10 `should equal` "HHXX002Y"
+        find.isChronic `should equal` true
+        find.isEpimedic `should equal` true
+        find.isNCD `should equal` true
     }
 }
