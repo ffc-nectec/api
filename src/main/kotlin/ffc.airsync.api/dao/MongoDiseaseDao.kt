@@ -2,6 +2,7 @@ package ffc.airsync.api.dao
 
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.printDebug
+import ffc.entity.Lang
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import ffc.entity.healthcare.Disease
@@ -61,12 +62,29 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
             add(Document("name", regexQuery))
         }
 
-        val resultQuery = dbCollection.find(Document("\$or", listQuery)).limit(20)
+        val resultQuery = dbCollection.find(Document("\$or", listQuery)).limit(100)
         resultQuery.forEach {
             val disease = it.toJson().parseTo<Disease>()
             result.add(disease)
         }
 
         return result
+    }
+
+    override fun find(query: String, lang: Lang): List<Disease> {
+
+        val queryResult = find(query)
+        val returnResult = arrayListOf<Disease>()
+
+        queryResult.forEach {
+
+            val nameLang = it.translation[lang] ?: it.name
+            val nameEn = it.name
+            val disease = Disease(it.id, nameLang).apply {
+                this.translation[Lang.en] = nameEn
+            }
+            returnResult.add(disease)
+        }
+        return returnResult
     }
 }

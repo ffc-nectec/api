@@ -6,7 +6,11 @@ import ffc.entity.healthcare.CommunityServiceType
 object HomeHealthTypeService {
 
     fun query(query: String): List<CommunityServiceType> {
-        return homeHealtyTypeDao.find(query)
+        val communityServiceType = homeHealtyTypeDao.find(query)
+        communityServiceType.forEach {
+            it.translation.clear()
+        }
+        return communityServiceType
     }
 
     fun init() {

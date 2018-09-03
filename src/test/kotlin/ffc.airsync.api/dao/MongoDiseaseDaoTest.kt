@@ -4,6 +4,7 @@ import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.entity.Lang
 import ffc.entity.healthcare.Disease
 import ffc.entity.util.generateTempId
 import org.amshove.kluent.`should equal`
@@ -25,8 +26,16 @@ class MongoDiseaseDaoTest {
         MongoAbsConnect.setClient(client)
         dao = diseases(serverAddress.hostString, serverAddress.port)
 
-        dao.insert(Disease(generateTempId(), "Fall", "HHXX001Y"))
-        dao.insert(Disease(generateTempId(), "Fall2", "HHXX002Y", isNCD = true, isChronic = true, isEpimedic = true))
+        dao.insert(Disease(generateTempId(), "Fall", "HHXX001Y").apply { translation[Lang.th] = "อ้วนซ้ำซ้อน" })
+        dao.insert(
+            Disease(
+                generateTempId(),
+                "Fall2",
+                "HHXX002Y",
+                isNCD = true,
+                isChronic = true,
+                isEpimedic = true
+            ).apply { translation[Lang.th] = "กินไม่หยุด" })
     }
 
     @After
@@ -52,5 +61,10 @@ class MongoDiseaseDaoTest {
 
         dao.find("HHXX003T").last().name `should equal` "Fall3"
         dao.find("HHXX004T").last().name `should equal` "Fall4"
+    }
+
+    @Test
+    fun queryLang() {
+        dao.find("HHXX001Y", Lang.th).last().name `should equal` "อ้วนซ้ำซ้อน"
     }
 }
