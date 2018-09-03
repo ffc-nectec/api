@@ -48,13 +48,17 @@ class MongoHomeHealthTypeDaoTest {
 
     @Test
     fun findByCode() {
-        dao.find("1A").first().id `should equal` "1A001"
-        dao.find("1A").first().name `should equal` "เยี่ยมผู้ป่วยโรคเบาหวาน "
+        val find = dao.find("1A").first()
+
+        find.id `should equal` "1A001"
+        find.name `should equal` "เยี่ยมผู้ป่วยโรคเบาหวาน "
     }
 
     @Test
     fun findByMean() {
-        dao.find("สุข").first().id `should equal` "1D01300"
-        dao.find("สุข").first().name `should equal` "ให้ทันตสุขศึกษาหญิงตั้งครรภ์"
+        val find = dao.find("สุข").first()
+
+        find.id `should equal` "1D01300"
+        find.name `should equal` "ให้ทันตสุขศึกษาหญิงตั้งครรภ์"
     }
 }
