@@ -8,12 +8,11 @@ import javax.ws.rs.container.ResourceInfo
 import javax.ws.rs.core.Context
 import javax.ws.rs.ext.Provider
 
-@Cache
 @Provider
 class CacheFilter : ContainerResponseFilter {
 
     @Context
-    private val resourceInfo: ResourceInfo? = null
+    private lateinit var resourceInfo: ResourceInfo
 
     override fun filter(requestContext: ContainerRequestContext, responseContext: ContainerResponseContext) {
         if (!isCacheable(responseContext)) {
