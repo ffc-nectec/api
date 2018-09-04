@@ -1,5 +1,6 @@
 package ffc.airsync.api.services
 
+import ffc.airsync.api.services.filter.Cache
 import ffc.airsync.api.services.module.DiseaseService
 import ffc.airsync.api.toLang
 import ffc.entity.healthcare.Disease
@@ -18,6 +19,7 @@ class DiseasesResource {
     @Context
     lateinit var req: HttpServletRequest
 
+    @Cache(maxAge = 3600)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/disease")
     @GET
