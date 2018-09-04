@@ -5,6 +5,7 @@ import ffc.airsync.api.toLang
 import ffc.entity.healthcare.Disease
 import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.GET
+import javax.ws.rs.NotFoundException
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.QueryParam
@@ -21,6 +22,8 @@ class DiseasesResource {
     @Path("/disease")
     @GET
     fun query(@QueryParam("query") query: String?): List<Disease> {
-        return DiseaseService.query(query ?: "", req.locale.toLang())
+        val disease = DiseaseService.query(query ?: "", req.locale.toLang())
+        if (disease.isEmpty()) throw NotFoundException("ไม่พบข้อมูล")
+        return disease
     }
 }
