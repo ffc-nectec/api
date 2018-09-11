@@ -17,6 +17,7 @@
 
 package ffc.airsync.api
 
+import com.mongodb.client.MongoCollection
 import ffc.entity.Entity
 import ffc.entity.Lang
 import ffc.entity.copy
@@ -52,7 +53,7 @@ fun <T : Entity> Entity.buildInsertObject(): T {
     val generateId = ObjectId()
 
     return if (isTempId)
-        copy(generateId.toHexString()) as T
+        copy(generateId.toHexString().trim()) as T
     else
         throw ForbiddenException("ข้อมูลบ้านที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ isTempId")
 }
@@ -64,4 +65,12 @@ fun Entity.buildBsonDoc(): Document {
     doc.append("_id", generateId)
 
     return doc
+}
+
+inline fun <reified T> MongoCollection<Document>.ffcInsert(doc: Document): T {
+    insertOne(doc)
+    val query = Document("_id", doc["_id"] as ObjectId)
+    val result = find(query).first()
+
+    return result.toJson().parseTo()
 }

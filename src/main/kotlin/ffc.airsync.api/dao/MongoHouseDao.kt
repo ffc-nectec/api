@@ -18,15 +18,15 @@
 package ffc.airsync.api.dao
 
 import com.mongodb.client.model.IndexOptions
+import ffc.airsync.api.buildBsonDoc
+import ffc.airsync.api.buildInsertObject
+import ffc.airsync.api.ffcInsert
 import ffc.airsync.api.printDebug
 import ffc.entity.House
-import ffc.entity.copy
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
-import org.bson.types.ObjectId
 import java.util.ArrayList
-import javax.ws.rs.ForbiddenException
 import javax.ws.rs.NotFoundException
 
 internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnect(host, port, "ffc", "house") {
@@ -47,36 +47,13 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
 
     override fun insert(orgId: String, house: House): House {
 
-        val generateId = ObjectId()
+        val houseInsert: House = house.buildInsertObject()
 
-        val houseInsert: House
-        houseInsert = if (house.isTempId) {
-            house.copy(generateId.toHexString())
-        } else if (house.link != null) {
-            house.copy<House>(generateId.toHexString())
-        } else {
-            throw ForbiddenException("ข้อมูลบ้านที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ link และ isTempId")
-        }
-
-        val docHouse = Document.parse(houseInsert.toJson())
-        docHouse.append("_id", generateId)
+        val docHouse = houseInsert.buildBsonDoc()
         docHouse.append("orgId", orgId)
         printDebug("Document insert = $docHouse")
 
-        val houseReturn: House
-
-        try {
-            dbCollection.insertOne(docHouse)
-            val query = Document("_id", generateId)
-            val afterInsertDoc = dbCollection.find(query).first()
-            printDebug("\t\tUpdate doc = ${afterInsertDoc.toJson()}")
-            houseReturn = afterInsertDoc.toJson().parseTo()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            throw ex
-        }
-
-        return houseReturn
+        return dbCollection.ffcInsert(docHouse)
     }
 
     override fun update(house: House): House? {

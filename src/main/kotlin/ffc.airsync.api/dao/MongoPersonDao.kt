@@ -1,26 +1,32 @@
 package ffc.airsync.api.dao
 
+import ffc.airsync.api.buildBsonDoc
+import ffc.airsync.api.buildInsertObject
+import ffc.airsync.api.ffcInsert
 import ffc.airsync.api.printDebug
 import ffc.entity.Person
 import ffc.entity.gson.parseTo
-import ffc.entity.gson.toJson
 import org.bson.Document
 import java.util.ArrayList
 
 internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConnect(host, port, "ffc", "person") {
 
-    override fun insert(orgId: String, person: Person) {
+    override fun insert(orgId: String, person: Person): Person {
 
-        val personDoc = Document.parse(person.toJson())
+        val personDoc = person.buildInsertObject<Person>().buildBsonDoc()
         personDoc.append("orgId", person.bundle["orgId"])
         personDoc.append("houseId", person.bundle["houseId"])
-        dbCollection.insertOne(personDoc)
+
+        return dbCollection.ffcInsert(personDoc)
     }
 
-    override fun insert(orgId: String, personList: List<Person>) {
-        personList.forEach {
-            insert(orgId, it)
+    override fun insert(orgId: String, persons: List<Person>): List<Person> {
+        val personsUpdate = arrayListOf<Person>()
+
+        persons.forEach {
+            personsUpdate.add(insert(orgId, it))
         }
+        return personsUpdate
     }
 
     override fun findByOrgId(orgId: String): List<Person> {

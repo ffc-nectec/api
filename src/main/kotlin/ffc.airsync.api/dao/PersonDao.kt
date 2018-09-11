@@ -21,8 +21,8 @@ import ffc.entity.Person
 import java.util.ArrayList
 
 interface PersonDao : Dao {
-    fun insert(orgId: String, person: Person)
-    fun insert(orgId: String, personList: List<Person>)
+    fun insert(orgId: String, person: Person): Person
+    fun insert(orgId: String, personList: List<Person>): List<Person>
 
     fun findByOrgId(orgId: String): List<Person>
     fun getPeopleInHouse(houseId: String): ArrayList<Person>?
