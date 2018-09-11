@@ -17,10 +17,16 @@
 
 package ffc.airsync.api
 
+import ffc.entity.Entity
 import ffc.entity.Lang
+import ffc.entity.copy
 import ffc.entity.gson.parseTo
+import ffc.entity.gson.toJson
+import org.bson.Document
+import org.bson.types.ObjectId
 import java.nio.charset.Charset
 import java.util.Locale
+import javax.ws.rs.ForbiddenException
 
 val debug = System.getenv("FFC_DEBUG")
 fun <T> printDebug(infoDebug: T) {
@@ -40,4 +46,22 @@ fun Locale.toLang(): Lang {
         "th" -> Lang.th
         else -> Lang.en
     }
+}
+
+fun <T : Entity> Entity.buildInsertObject(): T {
+    val generateId = ObjectId()
+
+    return if (isTempId)
+        copy(generateId.toHexString()) as T
+    else
+        throw ForbiddenException("ข้อมูลบ้านที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ isTempId")
+}
+
+fun Entity.buildBsonDoc(): Document {
+    val generateId = ObjectId(id)
+    val json = toJson()
+    val doc = Document.parse(json)
+    doc.append("_id", generateId)
+
+    return doc
 }
