@@ -29,7 +29,6 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
         query.put("icd10", disease.icd10)
 
         val docDisease = Document.parse(disease.toJson())
-        // docDisease.append("name-th", disease.translation[Lang.th])
 
         dbCollection.deleteMany(query)
         dbCollection.insertOne(docDisease)
@@ -74,8 +73,16 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
     override fun find(query: String, lang: Lang): List<Disease> {
 
         val queryResult = find(query)
-        val returnResult = arrayListOf<Disease>()
+        val returnResult = translate(queryResult, lang)
+        return returnResult
+    }
 
+    private fun translate(
+        queryResult: List<Disease>,
+        lang: Lang
+    ): ArrayList<Disease> {
+
+        val returnResult = arrayListOf<Disease>()
         queryResult.forEach {
 
             val nameLang = it.translation[lang] ?: it.name

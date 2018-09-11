@@ -68,6 +68,12 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
     override fun find(query: String): List<CommunityServiceType> {
 
         val find = findMongo(query)
+        val result = groupingResult(find)
+
+        return result.toSet().toList()
+    }
+
+    private fun groupingResult(find: List<CommunityServiceType>): ArrayList<CommunityServiceType> {
         val result = arrayListOf<CommunityServiceType>()
 
         find.forEach {
@@ -79,11 +85,10 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
             }
             result.add(communityServiceType)
         }
-
-        return result.toSet().toList()
+        return result
     }
 
-    fun List<CommunityServiceType>.findLastMap(communityServiceType: CommunityServiceType): CommunityServiceType? {
+    private fun List<CommunityServiceType>.findLastMap(communityServiceType: CommunityServiceType): CommunityServiceType? {
         return this.find {
             try {
                 it.id == communityServiceType.link!!.keys["map"]
