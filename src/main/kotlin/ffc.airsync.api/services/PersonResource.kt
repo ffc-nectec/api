@@ -50,8 +50,8 @@ class PersonResource {
         personList.forEach {
             printDebug(it)
         }
-        PersonService.create(orgId, personList)
-        return Response.status(Response.Status.CREATED).build()
+        val persons = PersonService.create(orgId, personList)
+        return Response.status(Response.Status.CREATED).entity(persons).build()
     }
 
     @RolesAllowed("USER")

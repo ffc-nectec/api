@@ -25,7 +25,7 @@ object PersonService {
         return personReturn
     }
 
-    fun create(orgId: String, personList: List<Person>) {
-        personDao.insert(orgId, personList)
+    fun create(orgId: String, personList: List<Person>): List<Person> {
+        return personDao.insert(orgId, personList)
     }
 }
