@@ -12,11 +12,13 @@ object UserService {
 
     const val ORGUSER = "ORG"
 
-    fun create(orgId: String, userList: ArrayList<User>) {
-        userList.forEach {
+    fun create(orgId: String, users: ArrayList<User>): List<User> {
+        val usersUpdate = arrayListOf<User>()
+        users.forEach {
             printDebug("insert username " + orgId + " User = " + it.name)
-            userDao.insertUser(it, orgId)
+            usersUpdate.add(userDao.insertUser(it, orgId))
         }
+        return usersUpdate
     }
 
     fun login(orgId: String, username: String, pass: String): Token {

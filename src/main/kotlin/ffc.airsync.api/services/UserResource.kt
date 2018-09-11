@@ -25,13 +25,13 @@ class UserResource {
     @RolesAllowed("ORG")
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
-    fun create(@PathParam("orgUuid") orgId: String, userList: ArrayList<User>): Response {
+    fun create(@PathParam("orgUuid") orgId: String, users: ArrayList<User>): Response {
         printDebug("Raw user list.")
-        userList.forEach {
+        users.forEach {
             printDebug("User = " + it.name + " Pass = " + it.password)
         }
-        UserService.create(orgId, userList)
-        return Response.status(Response.Status.CREATED).build()
+        val usersUpdate = UserService.create(orgId, users)
+        return Response.status(Response.Status.CREATED).entity(usersUpdate).build()
     }
 
     @POST
@@ -40,7 +40,7 @@ class UserResource {
 
         val httpHeader = req.buildHeaderMap()
         val token = httpHeader["Authorization"]?.replaceFirst("Basic ", "")
-                ?: throw NotAuthorizedException("Not Authorization")
+            ?: throw NotAuthorizedException("Not Authorization")
         val userpass = DatatypeConverter.parseBase64Binary(token).toString(charset("UTF-8")).split(":")
         val user = userpass.get(index = 0)
         val pass = userpass.get(index = 1)
