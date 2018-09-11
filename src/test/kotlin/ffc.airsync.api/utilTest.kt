@@ -4,6 +4,7 @@ import ffc.entity.Link
 import ffc.entity.Person
 import ffc.entity.System
 import ffc.entity.ThaiCitizenId
+import ffc.entity.copy
 import ffc.entity.update
 import ffc.entity.util.generateTempId
 import org.amshove.kluent.`should be equal to`
@@ -12,7 +13,7 @@ import org.joda.time.LocalDate
 import org.junit.Test
 
 class utilTest {
-    val person = Person(generateTempId()).update(DateTime.parse("2018-06-25T14:09:07.815+07:00")) {
+    val person = Person("e079e175c75a44f180e8eaeb").update(DateTime.parse("2018-06-25T14:09:07.815+07:00")) {
         identities.add(ThaiCitizenId("1154801544875"))
         prename = "นาย"
         firstname = "พิรุณ"
@@ -33,6 +34,8 @@ class utilTest {
 
     @Test
     fun checkCreateCondition() {
+        val person = person.copy(generateTempId())
+
         val personInsert: Person = person.buildInsertObject()
 
         personInsert.isTempId `should be equal to` false
