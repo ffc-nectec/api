@@ -49,16 +49,17 @@ fun Locale.toLang(): Lang {
     }
 }
 
-fun <T : Entity> Entity.buildInsertObject(): T {
+fun Entity.buildInsertBson(): Document {
     val generateId = ObjectId()
 
-    return if (isTempId)
-        copy(generateId.toHexString().trim()) as T
-    else
+    return if (isTempId) {
+        val insertObj = copy(generateId.toHexString().trim())
+        return insertObj.buildBsonDoc()
+    } else
         throw ForbiddenException("ข้อมูลบ้านที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ isTempId")
 }
 
-fun Entity.buildBsonDoc(): Document {
+private fun Entity.buildBsonDoc(): Document {
     val generateId = ObjectId(id)
     val json = toJson()
     val doc = Document.parse(json)

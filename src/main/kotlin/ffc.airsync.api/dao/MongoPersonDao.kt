@@ -1,7 +1,6 @@
 package ffc.airsync.api.dao
 
-import ffc.airsync.api.buildBsonDoc
-import ffc.airsync.api.buildInsertObject
+import ffc.airsync.api.buildInsertBson
 import ffc.airsync.api.ffcInsert
 import ffc.airsync.api.printDebug
 import ffc.entity.Person
@@ -13,7 +12,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
 
     override fun insert(orgId: String, person: Person): Person {
 
-        val personDoc = person.buildInsertObject<Person>().buildBsonDoc()
+        val personDoc = person.buildInsertBson()
         personDoc.append("orgId", person.bundle["orgId"])
         personDoc.append("houseId", person.bundle["houseId"])
 

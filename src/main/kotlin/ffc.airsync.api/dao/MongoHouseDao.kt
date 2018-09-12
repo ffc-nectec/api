@@ -18,8 +18,7 @@
 package ffc.airsync.api.dao
 
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.buildBsonDoc
-import ffc.airsync.api.buildInsertObject
+import ffc.airsync.api.buildInsertBson
 import ffc.airsync.api.ffcInsert
 import ffc.airsync.api.printDebug
 import ffc.entity.House
@@ -46,10 +45,7 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
     }
 
     override fun insert(orgId: String, house: House): House {
-
-        val houseInsert: House = house.buildInsertObject()
-
-        val docHouse = houseInsert.buildBsonDoc()
+        val docHouse = house.buildInsertBson()
         docHouse.append("orgId", orgId)
         printDebug("Document insert = $docHouse")
 
