@@ -39,6 +39,8 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import javax.ws.rs.core.SecurityContext
 
+const val PART_HOUSESERVICE = "place/house"
+
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/org")
@@ -50,7 +52,7 @@ class HouseResource {
     @RolesAllowed("USER", "ORG")
     @Produces(GEOJSONHeader)
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
     fun getGeoJsonHouse(
         @QueryParam("page") page: Int = 1,
         @QueryParam("per_page") per_page: Int = 200,
@@ -70,7 +72,7 @@ class HouseResource {
 
     @RolesAllowed("USER", "ORG")
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
     fun getJsonHouse(
         @QueryParam("page") page: Int = 1,
         @QueryParam("per_page") per_page: Int = 200,
@@ -91,7 +93,7 @@ class HouseResource {
 
     @RolesAllowed("USER", "ORG")
     @PUT
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house/{houseId:([\\dabcdefABCDEF]{24})}")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     fun update(
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String,
@@ -105,7 +107,7 @@ class HouseResource {
     @RolesAllowed("USER", "ORG")
     @Produces(GEOJSONHeader)
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house/{houseId:([\\dabcdefABCDEF]{24})}")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     fun getSingleGeo(
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
@@ -115,7 +117,7 @@ class HouseResource {
 
     @RolesAllowed("USER", "ORG")
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house/{houseId:([\\dabcdefABCDEF]{24})}")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     fun getSingle(
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
@@ -125,7 +127,7 @@ class HouseResource {
 
     @RolesAllowed("ORG", "USER")
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/houses")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/${PART_HOUSESERVICE}s")
     fun create(
         @PathParam("orgId") orgId: String,
         houseList: List<House>?
@@ -150,7 +152,7 @@ class HouseResource {
 
     @RolesAllowed("ORG", "USER")
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/place/house")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
     fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
         if (house == null) throw BadRequestException()
         house.people = null
