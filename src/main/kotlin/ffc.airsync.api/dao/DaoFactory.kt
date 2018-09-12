@@ -33,3 +33,6 @@ fun tokens(host: String = DaoFactory.host, port: Int = DaoFactory.port): TokenDa
 fun diseases(host: String = DaoFactory.host, port: Int = DaoFactory.port): DiseaseDao = MongoDiseaseDao(host, port)
 fun homeHealthTypes(host: String = DaoFactory.host, port: Int = DaoFactory.port): HomeHealthTypeDao =
     MongoHomeHealthTypeDao(host, port)
+
+fun healthCareServices(host: String = DaoFactory.host, port: Int = DaoFactory.port): HealthCareServiceDao =
+    MongoHealthCareServiceDao(host, port)
