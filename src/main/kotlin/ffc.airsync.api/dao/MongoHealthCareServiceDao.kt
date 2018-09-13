@@ -10,15 +10,17 @@ import org.bson.types.ObjectId
 class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
     MongoAbsConnect(host, port, "ffc", "healthcareservice") {
 
-    override fun insert(healthCareService: HealthCareService): HealthCareService {
+    override fun insert(healthCareService: HealthCareService, orgId: String): HealthCareService {
 
         val insertVisit = healthCareService.buildInsertBson()
+            .append("orgId", orgId)
 
         return dbCollection.ffcInsert(insertVisit)
     }
 
-    override fun find(id: String): HealthCareService? {
+    override fun find(id: String, orgId: String): HealthCareService? {
         val query = Document("_id", ObjectId(id))
+            .append("orgId", orgId)
 
         val result = dbCollection.find(query).first()
 

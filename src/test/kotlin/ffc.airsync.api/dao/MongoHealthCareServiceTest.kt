@@ -84,7 +84,7 @@ class MongoHealthCareServiceTest {
 
     @Test
     fun insert() {
-        val result = dao.insert(visit)
+        val result = dao.insert(visit, "23232324ddef")
 
         result.height `should equal` visit.height
         (result as HomeVisit).nextAppoint `should equal` LocalDate.parse("2019-09-21")
@@ -92,8 +92,8 @@ class MongoHealthCareServiceTest {
 
     @Test
     fun find() {
-        val result = dao.insert(visit)
-        val find = dao.find(result.id)
+        val result = dao.insert(visit, "abxxa")
+        val find = dao.find(result.id, "abxxa")
 
         result.id `should equal` find!!.id
         (find as HomeVisit).nextAppoint `should equal` LocalDate.parse("2019-09-21")

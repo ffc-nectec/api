@@ -8,7 +8,7 @@ object HomeVisitService {
     fun create(homeVisit: HomeVisit, orgId: String): HomeVisit {
 
         val firebaseToken = orgDao.getFirebaseToken(orgId)
-        val result = healthCareServices.insert(homeVisit) as HomeVisit
+        val result = healthCareServices.insert(homeVisit, orgId) as HomeVisit
 
         Message.builder().broadcastVisit(result, firebaseToken, orgId)
 
@@ -16,7 +16,7 @@ object HomeVisitService {
     }
 
     fun get(orgId: String, id: String): HomeVisit {
-        val result = healthCareServices.find(id)
+        val result = healthCareServices.find(id, orgId)
 
         return if (result != null)
             result as HomeVisit
