@@ -17,7 +17,7 @@ class VisitResource {
 
     @RolesAllowed("USER", "ORG")
     @POST
-    @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE")
     fun create(
         @PathParam("orgId") orgId: String,
         healthCareService: HealthCareService
@@ -32,7 +32,7 @@ class VisitResource {
 
     @RolesAllowed("USER", "ORG")
     @GET
-    @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE/{visitId:([\\dabcdefABCDEF].*)}")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE/{visitId:([\\dabcdefABCDEF].*)}")
     fun get(
         @PathParam("orgId") orgId: String,
         @PathParam("visitId") visitId: String
