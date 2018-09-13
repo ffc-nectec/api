@@ -22,22 +22,14 @@ import com.google.firebase.messaging.Message
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.PART_HEALTHCARESERVICE
 import ffc.airsync.api.services.PART_HOUSESERVICE
+import ffc.entity.Entity
 import ffc.entity.House
 import ffc.entity.gson.toJson
 import ffc.entity.healthcare.HealthCareService
 
 fun Message.Builder.putHouseData(address: House, registrationToken: String, orgId: String) {
     printDebug("Org id = $orgId FB token = $registrationToken House = ${address.toJson()}")
-    if (registrationToken.trim().isEmpty()) {
-        return
-    }
-    val message = Message.builder()
-        .putData("type", "House")
-        .putData("id", address.id)
-        .putData("url", "$orgId/$PART_HOUSESERVICE/${address.id}").setToken(registrationToken).build()
-    val response = FirebaseMessaging.getInstance().sendAsync(message).get()
-
-    printDebug("Successfully sent message: $response")
+    putEntityToFirebase(address, registrationToken, orgId, PART_HOUSESERVICE, "House")
 }
 
 fun Message.Builder.broadcastVisit(
@@ -49,16 +41,29 @@ fun Message.Builder.broadcastVisit(
 
     try {
         registrationToken.forEach {
-            if (it.trim().isNotEmpty()) {
-                val message = Message.builder()
-                    .putData("type", "HealthCare")
-                    .putData("id", healthCareService.id)
-                    .putData("url", "$orgId/$PART_HEALTHCARESERVICE/${healthCareService.id}")
-                val response = FirebaseMessaging.getInstance().sendAsync(message.build()).get()
-                printDebug("Firebase successfully sent message: $response")
-            }
+            putEntityToFirebase(healthCareService, it, orgId, PART_HEALTHCARESERVICE, "HealthCare")
         }
     } catch (ex: Exception) {
         ex.printStackTrace()
     }
+}
+
+private fun putEntityToFirebase(
+    entity: Entity,
+    registrationToken: String,
+    orgId: String,
+    urlPart: String,
+    type: String
+) {
+
+    if (registrationToken.trim().isEmpty()) {
+        return
+    }
+    val message = Message.builder()
+        .putData("type", type)
+        .putData("id", entity.id)
+        .putData("url", "$orgId/$urlPart/${entity.id}").setToken(registrationToken).build()
+    val response = FirebaseMessaging.getInstance().sendAsync(message).get()
+
+    printDebug("Successfully sent message: $response")
 }
