@@ -13,7 +13,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     override fun insert(orgId: String, person: Person): Person {
 
         val personDoc = person.buildInsertBson()
-        personDoc.append("orgId", person.bundle["orgId"])
+        personDoc.append("orgId", orgId)
         personDoc.append("houseId", person.bundle["houseId"])
 
         return dbCollection.ffcInsert(personDoc)
