@@ -6,6 +6,7 @@ import ffc.airsync.api.printDebug
 import ffc.entity.Person
 import ffc.entity.gson.parseTo
 import org.bson.Document
+import org.bson.types.BasicBSONList
 import java.util.ArrayList
 
 internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConnect(host, port, "ffc", "person") {
@@ -49,7 +50,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     override fun getPeopleInHouse(houseId: String): ArrayList<Person>? {
         val personInHouse = arrayListOf<Person>()
 
-        val query = Document("id", houseId)
+        val query = Document("houseId", houseId)
 
         val personInHouseDoc = dbCollection.find(query)
         personInHouseDoc.forEach {
@@ -63,5 +64,36 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     override fun removeGroupByOrg(orgId: String) {
         val query = Document("orgId", orgId)
         dbCollection.deleteMany(query)
+    }
+
+    override fun find(query: String, orgId: String): List<Person> {
+        return findMongo(query, orgId)
+    }
+
+    private fun findMongo(query: String, orgId: String): List<Person> {
+
+        val result = arrayListOf<Person>()
+        val regexQuery = Document("\$regex", query).append("\$options", "i")
+
+        val queryTextCondition = BasicBSONList().apply {
+            add(Document("firstname", regexQuery))
+            add(Document("lastname", regexQuery))
+        }
+        val queryTextReg = Document("\$or", queryTextCondition)
+
+        val queryFixOrgIdDoc = Document("orgId", orgId)
+        val fullQuery = BasicBSONList().apply {
+            add(queryTextReg)
+            add(queryFixOrgIdDoc)
+        }
+        val resultQuery = dbCollection.find(Document("\$and", fullQuery))
+
+        resultQuery.forEach {
+            it.remove("_id")
+            val personMap = it.toJson().parseTo<Person>()
+            result.add(personMap)
+        }
+
+        return result
     }
 }
