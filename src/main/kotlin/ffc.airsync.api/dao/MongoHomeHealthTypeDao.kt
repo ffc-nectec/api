@@ -33,14 +33,13 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
     }
 
     override fun insert(homeHealthTypee: List<CommunityServiceType>): List<CommunityServiceType> {
-        val result = arrayListOf<CommunityServiceType>()
         var count = 1
         val countAll = homeHealthTypee.count()
-        homeHealthTypee.forEach {
+
+        return homeHealthTypee.map {
             printDebug("Insert home health type A:=$countAll P:${count++}")
-            result.add(insert(it))
+            insert(it)
         }
-        return result
     }
 
     private fun findMongo(query: String): List<CommunityServiceType> {

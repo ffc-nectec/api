@@ -41,12 +41,11 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
     override fun insert(disease: List<Disease>): List<Disease> {
         var count = 1
         val countAll = disease.count()
-        val newDisease = arrayListOf<Disease>()
-        disease.forEach {
+
+        return disease.map {
             printDebug("Insert disease A:=$countAll P:${count++}")
-            newDisease.add(insert(it))
+            insert(it)
         }
-        return newDisease
     }
 
     override fun find(query: String): List<Disease> {
