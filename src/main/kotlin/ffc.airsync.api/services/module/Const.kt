@@ -19,11 +19,11 @@ package ffc.airsync.api.services.module
 
 import ffc.airsync.api.dao.DaoFactory
 
-val orgDao = DaoFactory().orgs()
-val tokenDao = DaoFactory().tokens()
-val personDao = DaoFactory().persons()
-val userDao = DaoFactory().users()
-val houseDao = DaoFactory().houses()
-val diseaseDao = DaoFactory().diseases()
-val homeHealtyTypeDao = DaoFactory().homeHealthTypes()
+val orgs = DaoFactory().orgs()
+val tokens = DaoFactory().tokens()
+val persons = DaoFactory().persons()
+val users = DaoFactory().users()
+val houses = DaoFactory().houses()
+val diseases = DaoFactory().diseases()
+val homeHealtyTypes = DaoFactory().homeHealthTypes()
 val healthCareServices = ffc.airsync.api.dao.DaoFactory().healthCareServices()

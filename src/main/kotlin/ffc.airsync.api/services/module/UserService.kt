@@ -15,16 +15,16 @@ object UserService {
         val usersUpdate = arrayListOf<User>()
         users.forEach {
             printDebug("insert username " + orgId + " User = " + it.name)
-            usersUpdate.add(userDao.insertUser(it, orgId))
+            usersUpdate.add(ffc.airsync.api.services.module.users.insertUser(it, orgId))
         }
         return usersUpdate
     }
 
     fun login(orgId: String, username: String, pass: String): Token {
         if (UserDao.isBlockUser(username)) throw ForbiddenException("User ไม่มีสิทธิ์ในการใช้งาน")
-        val user = userDao.findThat(orgId, username, pass)
+        val user = users.findThat(orgId, username, pass)
         if (user != null) {
-            return tokenDao.create(user, orgId)
+            return tokens.create(user, orgId)
         }
         throw NotAuthorizedException("Not Auth")
     }

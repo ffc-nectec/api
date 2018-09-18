@@ -49,7 +49,7 @@ object HouseService {
     fun createByOrg(orgId: String, house: House): House {
         if (house.link == null) throw BadRequestException("เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link")
         house.link!!.isSynced = true
-        return houseDao.insert(orgId, house)
+        return houses.insert(orgId, house)
     }
 
     fun createByUser(orgId: String, houseList: List<House>): List<House> {
@@ -63,7 +63,7 @@ object HouseService {
 
     fun createByUser(orgId: String, house: House): House {
         if (house.link != null) throw BadRequestException("เมื่อสร้างด้วย user ไม่ต้องมีข้อมูล link")
-        return houseDao.insert(orgId, house)
+        return houses.insert(orgId, house)
     }
 
     fun update(role: User.Role, orgId: String, house: House, houseId: String): House {
@@ -75,7 +75,7 @@ object HouseService {
         house.people = null
 
         printDebug("\t\tGet firebase token.")
-        val firebaseTokenGropOrg = orgDao.getFirebaseToken(orgId)
+        val firebaseTokenGropOrg = orgs.getFirebaseToken(orgId)
 
         printDebug("\tUpdate house to dao.")
 
@@ -89,7 +89,7 @@ object HouseService {
             }
         }
 
-        val houseUpdate = houseDao.update(house.copy<House>())
+        val houseUpdate = houses.update(house.copy<House>())
 
         printDebug("Call send notification size list token = ${firebaseTokenGropOrg.size} ")
         try {
@@ -104,7 +104,7 @@ object HouseService {
     }
 
     private fun queryHouse(orgId: String, haveLocationFilter: Boolean?): List<House> {
-        return houseDao.findAll(orgId, haveLocationFilter).toMutableList().apply {
+        return houses.findAll(orgId, haveLocationFilter).toMutableList().apply {
             when (haveLocationFilter) {
                 true -> removeIf { it.location == null }
                 false -> removeIf { it.location != null }
@@ -117,7 +117,7 @@ object HouseService {
     }
 
     fun getSingle(houseId: String): House? {
-        return houseDao.find(houseId) ?: return null
+        return houses.find(houseId) ?: return null
     }
 
     fun getSingleGeo(orgId: String, houseId: String): FeatureCollection<House>? {

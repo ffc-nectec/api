@@ -1,7 +1,7 @@
 package ffc.airsync.api.dao
 
-import ffc.airsync.api.services.module.orgDao
-import ffc.airsync.api.services.module.userDao
+import ffc.airsync.api.services.module.orgs
+import ffc.airsync.api.services.module.users
 import ffc.entity.Organization
 import ffc.entity.User
 import org.amshove.kluent.`should be equal to`
@@ -14,11 +14,11 @@ class RealTest {
 
     @Test
     fun insertUser() {
-        nectecOrg = orgDao.insert(Org("รพ.สต.Nectec", "192.168.99.3"))
-        val user = userDao.insertUser(User("Sommai"), nectecOrg.id)
+        nectecOrg = orgs.insert(Org("รพ.สต.Nectec", "192.168.99.3"))
+        val user = users.insertUser(User("Sommai"), nectecOrg.id)
         println(user.toString())
         user.name `should be equal to` "Sommai"
-        orgDao.remove(nectecOrg.id)
+        orgs.remove(nectecOrg.id)
     }
 
     fun Org(name: String = "NECTEC", ip: String = "127.0.01"): Organization =

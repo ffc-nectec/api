@@ -6,8 +6,8 @@ import ffc.entity.Person
 object PersonService {
     fun get(orgId: String, page: Int, per_page: Int): List<Person> {
         // val tokenObj = getOrgByMobileToken(UUID.fromString(token.trim()), orgId)
-        // val org = orgDao.find(orgId)
-        val personList = personDao.findByOrgId(orgId)
+        // val org = orgs.find(orgId)
+        val personList = persons.findByOrgId(orgId)
         printDebug("Person Service get list ${personList.size}")
         val personReturn = arrayListOf<Person>()
 
@@ -24,6 +24,6 @@ object PersonService {
     }
 
     fun create(orgId: String, personList: List<Person>): List<Person> {
-        return personDao.insert(orgId, personList)
+        return persons.insert(orgId, personList)
     }
 }

@@ -5,7 +5,7 @@ import ffc.entity.healthcare.CommunityServiceType
 
 object HomeHealthTypeService {
     fun query(query: String): List<CommunityServiceType> {
-        val communityServiceType = homeHealtyTypeDao.find(query)
+        val communityServiceType = homeHealtyTypes.find(query)
         communityServiceType.forEach {
             it.translation.clear()
         }
@@ -14,7 +14,7 @@ object HomeHealthTypeService {
 
     fun init() {
         if (query("").count() < 5) {
-            homeHealtyTypeDao.insert(getResourceAs<List<CommunityServiceType>>("HomeHealthType.json"))
+            homeHealtyTypes.insert(getResourceAs<List<CommunityServiceType>>("HomeHealthType.json"))
         }
     }
 }

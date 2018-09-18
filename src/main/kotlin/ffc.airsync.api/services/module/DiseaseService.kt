@@ -6,12 +6,12 @@ import ffc.entity.healthcare.Disease
 
 object DiseaseService {
     fun query(query: String, lang: Lang): List<Disease> {
-        return diseaseDao.find(query, lang)
+        return diseases.find(query, lang)
     }
 
     fun init() {
-        if (diseaseDao.find("").count() < 5) {
-            diseaseDao.insert(getResourceAs<List<Disease>>("Disease.json"))
+        if (diseases.find("").count() < 5) {
+            diseases.insert(getResourceAs<List<Disease>>("Disease.json"))
         }
     }
 }
