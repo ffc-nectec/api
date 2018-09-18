@@ -38,10 +38,18 @@ class BasicAuthFilter : ContainerRequestFilter {
             return
         }
         val securityContext: SecurityContext
+        val token = authenInfo.token
         securityContext = when {
-            authenInfo.token.user.role == User.Role.USER -> UserSecurityContextImp(authenInfo.token, urlScheme, orgId)
-            authenInfo.token.user.role == User.Role.ORG -> OrgSecurityContextImp(authenInfo.token, urlScheme, orgId)
+            token.user.role == User.Role.USER -> UserSecurityContextImp(token, urlScheme, orgId)
+            token.user.role == User.Role.ORG -> OrgSecurityContextImp(token, urlScheme, orgId)
             else -> NoAuthSecurityContextImp()
+        }
+
+        val securityRoles = arrayListOf<SecurityContext>()
+        User.Role.values().forEach {
+            /*val securityContext = when{
+                BuildSecurityContext(token = authenInfo.token,scheme = urlScheme,orgId = orgId,role = it)
+            }*/
         }
 
         requestContext.securityContext = securityContext
@@ -53,7 +61,6 @@ class BasicAuthFilter : ContainerRequestFilter {
         val token: Token
 
         init {
-
             printDebug("TokenAuthInfo class in filter")
             val authorization = requestContext.headers[AUTHORIZATION_PROPERTY]
 
