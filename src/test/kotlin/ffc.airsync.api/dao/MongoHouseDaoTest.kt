@@ -38,7 +38,7 @@ class MongoHouseDaoTest {
         val serverAddress = server.bind()
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
-        dao = houses(serverAddress.hostString, serverAddress.port)
+        dao = DaoFactory().houses(serverAddress.hostString, serverAddress.port)
 
         val house = createHouse("12348764532", "999/888")
         println("house obj = ${house.toJson()}")

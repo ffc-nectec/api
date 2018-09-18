@@ -21,7 +21,7 @@ class MongoHomeHealthTypeDaoTest {
         val serverAddress = server.bind()
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
-        dao = homeHealthTypes(serverAddress.hostString, serverAddress.port)
+        dao = DaoFactory().homeHealthTypes(serverAddress.hostString, serverAddress.port)
 
         dao.insert(CommunityServiceType("1A001", "เยี่ยมผู้ป่วยโรคเบาหวาน "))
         dao.insert(CommunityServiceType("1D01300", "ให้ทันตสุขศึกษาหญิงตั้งครรภ์"))

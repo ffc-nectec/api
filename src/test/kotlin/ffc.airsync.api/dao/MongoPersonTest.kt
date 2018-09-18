@@ -40,7 +40,7 @@ class MongoPersonTest {
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
 
-        dao = persons(serverAddress.hostString, serverAddress.port)
+        dao = DaoFactory().persons(serverAddress.hostString, serverAddress.port)
     }
 
     @After

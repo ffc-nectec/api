@@ -47,7 +47,7 @@ class MongoOrgTest {
         val serverAddress = server.bind()
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
-        dao = orgs(serverAddress.hostString, serverAddress.port)
+        dao = DaoFactory().orgs(serverAddress.hostString, serverAddress.port)
 
         hahahaOrg = dao.insert(Org("รพ.สต.HAHAHA", "203.111.222.123"))
         nectecOrg = dao.insert(Org("รพ.สต.Nectec", "192.168.99.3"))

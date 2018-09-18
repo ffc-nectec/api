@@ -79,7 +79,7 @@ class MongoHealthCareServiceTest {
         val serverAddress = server.bind()
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
-        dao = healthCareServices(serverAddress.hostString, serverAddress.port)
+        dao = DaoFactory().healthCareServices(serverAddress.hostString, serverAddress.port)
     }
 
     @Test

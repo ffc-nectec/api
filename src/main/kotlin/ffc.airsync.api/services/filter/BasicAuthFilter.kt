@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.filter
 
-import ffc.airsync.api.dao.tokens
+import ffc.airsync.api.dao.DaoFactory
 import ffc.airsync.api.printDebug
 import ffc.entity.Token
 import ffc.entity.User
@@ -71,7 +71,7 @@ class BasicAuthFilter : ContainerRequestFilter {
                         throw NotAuthorizedException("is basic auth")
                     }
 
-                    val tokenDao = tokens()
+                    val tokenDao = DaoFactory().tokens()
 
                     printDebug("\t\tCheck Basic auth start with $AUTHENTICATION_SCHEME")
                     val tokenStr = authorization[0].replaceFirst(AUTHENTICATION_SCHEME, "").trim()

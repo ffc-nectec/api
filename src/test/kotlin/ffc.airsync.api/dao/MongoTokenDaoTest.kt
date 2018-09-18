@@ -30,7 +30,7 @@ class MongoTokenDaoTest {
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
 
-        dao = tokens(serverAddress.hostString, serverAddress.port)
+        dao = DaoFactory().tokens(serverAddress.hostString, serverAddress.port)
 
         tokenMax = dao.create(User("Thanachai", User.Role.ORG), ORG_ID)
         tokenBee = dao.create(User("Morakot", User.Role.USER), ORG_ID)
