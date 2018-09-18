@@ -9,7 +9,6 @@ import javax.ws.rs.ForbiddenException
 import javax.ws.rs.NotAuthorizedException
 
 object UserService {
-
     const val ORGUSER = "ORG"
 
     fun create(orgId: String, users: ArrayList<User>): List<User> {

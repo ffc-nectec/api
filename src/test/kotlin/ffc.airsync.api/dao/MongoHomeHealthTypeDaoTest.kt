@@ -35,7 +35,6 @@ class MongoHomeHealthTypeDaoTest {
 
     @Test
     fun insertReturnResult() {
-
         val result = dao.insert(
             CommunityServiceType(
                 "1E11",

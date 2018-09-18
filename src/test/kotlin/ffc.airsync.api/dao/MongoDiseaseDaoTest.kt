@@ -13,7 +13,6 @@ import org.junit.Before
 import org.junit.Test
 
 class MongoDiseaseDaoTest {
-
     lateinit var dao: DiseaseDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer

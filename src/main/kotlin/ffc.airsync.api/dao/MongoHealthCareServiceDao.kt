@@ -9,9 +9,7 @@ import org.bson.types.ObjectId
 
 class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
     MongoAbsConnect(host, port, "ffc", "healthcareservice") {
-
     override fun insert(healthCareService: HealthCareService, orgId: String): HealthCareService {
-
         val insertVisit = healthCareService.buildInsertBson()
             .append("orgId", orgId)
 

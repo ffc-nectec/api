@@ -7,7 +7,6 @@ import ffc.entity.gson.toJson
 import javax.ws.rs.NotFoundException
 
 object OrgService {
-
     fun register(organization: Organization): Organization {
         printDebug("\t\tCall mongo insert organization ${organization.toJson()}")
         return orgDao.insert(organization)

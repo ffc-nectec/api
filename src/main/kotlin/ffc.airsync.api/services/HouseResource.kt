@@ -45,7 +45,6 @@ const val PART_HOUSESERVICE = "place/house"
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/org")
 class HouseResource {
-
     @Context
     private var context: SecurityContext? = null
 
@@ -58,7 +57,6 @@ class HouseResource {
         @QueryParam("per_page") per_page: Int = 200,
         @PathParam("orgId") orgId: String
     ): FeatureCollection<House> {
-
         val houses = HouseService.getHouses(orgId,
                 if (page == 0) 1 else page,
                 if (per_page == 0) 200 else per_page,

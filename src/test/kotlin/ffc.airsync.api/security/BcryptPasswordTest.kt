@@ -25,7 +25,6 @@ import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
 class BcryptPasswordTest(val plain: String) {
-
     val password: Password = BcryptPassword()
 
     companion object {

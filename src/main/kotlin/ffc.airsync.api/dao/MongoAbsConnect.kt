@@ -17,7 +17,6 @@ abstract class MongoAbsConnect(
     private val collection: String,
     private val mongoInitRun: mongoInit? = null
 ) {
-
     protected lateinit var dbCollection: MongoCollection<Document>
 
     val mongoUrl = System.getenv("MONGODB_URI") + "?maxPoolSize=2&maxIdleTimeMS=20000&connectTimeoutMS=30000&socketTimeoutMS=30000"
@@ -67,7 +66,6 @@ abstract class MongoAbsConnect(
     }
 
     private fun getMongoClient() {
-
         printDebug("Mongo Uri $mongoUrl")
         if (mongoClient == null) {
             if (mongoUrl.isEmpty() || mongoUrl.startsWith("null")) {

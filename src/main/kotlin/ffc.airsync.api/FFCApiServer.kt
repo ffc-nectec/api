@@ -83,7 +83,6 @@ internal class FFCApiServer(args: Array<String>) {
             firebaseApp = FirebaseApp.initializeApp(options)
             // logger.log(Level.FINE, "Load config firebase from file.");
         } catch (e: IOException) {
-
             e.printStackTrace()
 
             val firebaseConfigString = System.getenv("FIREBASE_CONFIG")

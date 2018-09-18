@@ -11,7 +11,6 @@ import javax.ws.rs.ext.Provider
 
 @Provider
 class ErrorFilter : ExceptionMapper<WebApplicationException> {
-
     override fun toResponse(exception: WebApplicationException?): Response {
         printDebug("Api wrong")
         exception!!.printStackTrace()

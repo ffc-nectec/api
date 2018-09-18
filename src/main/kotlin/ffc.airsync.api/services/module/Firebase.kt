@@ -55,7 +55,6 @@ private fun putEntityToFirebase(
     urlPart: String,
     type: String
 ) {
-
     if (registrationToken.trim().isEmpty()) {
         return
     }

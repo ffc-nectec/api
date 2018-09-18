@@ -11,7 +11,6 @@ import org.bson.types.BasicBSONList
 
 internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "homeHealthType"),
     HomeHealthTypeDao {
-
     init {
         val insertIndex = Document("id", 1)
         try {
@@ -45,7 +44,6 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
     }
 
     private fun findMongo(query: String): List<CommunityServiceType> {
-
         val result = arrayListOf<CommunityServiceType>()
         val regexQuery = Document("\$regex", query).append("\$options", "i")
 
@@ -66,7 +64,6 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
     }
 
     override fun find(query: String): List<CommunityServiceType> {
-
         val find = findMongo(query)
         val result = groupingResult(find)
 
@@ -77,7 +74,6 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
         val result = arrayListOf<CommunityServiceType>()
 
         find.forEach {
-
             val it = find.findLastMap(it) ?: it
 
             val communityServiceType = CommunityServiceType(it.id, it.name).apply {

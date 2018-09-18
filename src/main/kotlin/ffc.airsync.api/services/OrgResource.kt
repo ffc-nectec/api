@@ -39,7 +39,6 @@ import javax.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/org")
 class OrgResource {
-
     @Context
     lateinit var req: HttpServletRequest
 

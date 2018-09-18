@@ -21,7 +21,6 @@ import ffc.airsync.api.printDebug
 import ffc.entity.User
 
 interface UserDao : Dao {
-
     companion object {
         private val userBlock = arrayListOf<String>("ADM", "adm", "newuser", "usr_db", "Drug_Store_Admin")
         fun isBlockUser(name: String): Boolean {

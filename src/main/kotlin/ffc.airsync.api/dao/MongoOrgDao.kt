@@ -29,9 +29,7 @@ import org.bson.types.ObjectId
 import javax.ws.rs.NotFoundException
 
 internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port, "ffc", "organ") {
-
     override fun insert(organization: Organization): Organization {
-
         validate(organization)
         checkDuplication(organization)
 
@@ -130,7 +128,6 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
     }
 
     override fun removeFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
-
         val query = Document("id", orgId)
 
         if (isOrg) {

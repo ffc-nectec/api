@@ -29,7 +29,6 @@ import java.util.ArrayList
 import javax.ws.rs.NotFoundException
 
 internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnect(host, port, "ffc", "house") {
-
     init {
         mongoCreateHouseIndex()
     }
@@ -113,7 +112,6 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
 
         mongoSafe(object : MongoSafeRun {
             override fun run() {
-
                 val houseListDocument = dbCollection.find(query)
                 printDebug("getHouseInMongo size = ${houseListDocument.count()}")
 

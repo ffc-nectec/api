@@ -5,7 +5,6 @@ import ffc.entity.Lang
 import ffc.entity.healthcare.Disease
 
 object DiseaseService {
-
     fun query(query: String, lang: Lang): List<Disease> {
         return diseaseDao.find(query, lang)
     }

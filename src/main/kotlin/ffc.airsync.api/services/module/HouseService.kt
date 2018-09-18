@@ -29,7 +29,6 @@ import me.piruin.geok.geometry.FeatureCollection
 import javax.ws.rs.BadRequestException
 
 object HouseService {
-
     fun createByOrg(orgId: String, houseList: List<House>): List<House> {
         printDebug("create house by org.")
         val houseReturn = arrayListOf<House>()

@@ -4,7 +4,6 @@ import ffc.airsync.api.printDebug
 import ffc.entity.Person
 
 object PersonService {
-
     fun get(orgId: String, page: Int, per_page: Int): List<Person> {
         // val tokenObj = getOrgByMobileToken(UUID.fromString(token.trim()), orgId)
         // val org = orgDao.find(orgId)
@@ -16,7 +15,6 @@ object PersonService {
 
         itemRenderPerPage(page, per_page, count, object : AddItmeAction {
             override fun onAddItemAction(itemIndex: Int) {
-
                 val person = personList[itemIndex]
                 personReturn.add(person)
             }

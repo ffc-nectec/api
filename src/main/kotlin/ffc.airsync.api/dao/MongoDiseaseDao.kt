@@ -10,7 +10,6 @@ import org.bson.Document
 import org.bson.types.BasicBSONList
 
 internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "disease"), DiseaseDao {
-
     init {
         val searchIndex = Document("icd10", "text")
         searchIndex.append("name", "text")
@@ -55,7 +54,6 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
         val regexQuery = Document("\$regex", query).append("\$options", "i")
 
         val listQuery = BasicBSONList().apply {
-
             add(Document("translation.th", regexQuery))
             add(Document("icd10", regexQuery))
             add(Document("name", regexQuery))
@@ -71,7 +69,6 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
     }
 
     override fun find(query: String, lang: Lang): List<Disease> {
-
         val queryResult = find(query)
         val returnResult = translate(queryResult, lang)
         return returnResult
@@ -81,10 +78,8 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
         queryResult: List<Disease>,
         lang: Lang
     ): ArrayList<Disease> {
-
         val returnResult = arrayListOf<Disease>()
         queryResult.forEach {
-
             val nameLang = it.translation[lang] ?: it.name
             val nameEn = it.name
             val disease = Disease(

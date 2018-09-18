@@ -21,7 +21,6 @@ import javax.xml.bind.DatatypeConverter
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/org")
 class UserResource {
-
     @RolesAllowed("ORG")
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
@@ -37,7 +36,6 @@ class UserResource {
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/authorize")
     fun registerMobile(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String): Response {
-
         val httpHeader = req.buildHeaderMap()
         val token = httpHeader["Authorization"]?.replaceFirst("Basic ", "")
             ?: throw NotAuthorizedException("Not Authorization")

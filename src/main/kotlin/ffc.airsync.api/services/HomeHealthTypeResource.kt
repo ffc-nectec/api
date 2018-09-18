@@ -12,7 +12,6 @@ import javax.ws.rs.core.MediaType
 
 @Path("/")
 class HomeHealthTypeResource {
-
     @Cache(maxAge = 3600)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/homehealth")

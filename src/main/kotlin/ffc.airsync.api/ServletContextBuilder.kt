@@ -22,7 +22,6 @@ import org.eclipse.jetty.servlet.ServletHolder
 import org.glassfish.jersey.servlet.ServletContainer
 
 object ServletContextBuilder {
-
     val ROOT_PATH = ""
 
     fun build(): ServletContextHandler {

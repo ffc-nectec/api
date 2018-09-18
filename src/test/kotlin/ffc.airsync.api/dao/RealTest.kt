@@ -10,7 +10,6 @@ import org.junit.Test
 
 @Ignore("ทดสอบกับเครื่อง Dev เท่านั้น")
 class RealTest {
-
     lateinit var nectecOrg: Organization
 
     @Test

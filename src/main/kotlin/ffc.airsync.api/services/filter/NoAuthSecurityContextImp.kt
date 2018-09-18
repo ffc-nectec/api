@@ -4,11 +4,9 @@ import ffc.entity.Token
 import java.security.Principal
 
 class NoAuthSecurityContextImp : FfcSecurityContext {
-
     private var userPrincipal: Principal? = null
 
     init {
-
         this.userPrincipal = Principal { "NOAUTH" }
     }
     override fun isUserInRole(role: String?): Boolean {

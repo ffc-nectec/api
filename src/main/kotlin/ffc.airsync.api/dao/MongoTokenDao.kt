@@ -29,14 +29,12 @@ internal class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnec
     }
 
     override fun findByOrgId(orgId: String): List<Token> {
-
         val tokenList = arrayListOf<Token>()
 
         val query = Document("orgId", orgId)
         val tokenListDoc = dbCollection.find(query)
 
         tokenListDoc.forEach {
-
             val tokenDoc = it
             val token: Token = tokenDoc.toJson().parseTo()
             tokenList.add(token)

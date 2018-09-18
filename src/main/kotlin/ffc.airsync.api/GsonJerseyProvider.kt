@@ -55,7 +55,6 @@ class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
                 }
             }
         } catch (e: com.google.gson.JsonSyntaxException) {
-
             // Log exception
         }
 
@@ -76,7 +75,6 @@ class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
     }
 
     companion object {
-
         private val UTF_8 = "UTF-8"
     }
 }

@@ -10,7 +10,6 @@ import javax.ws.rs.ext.Provider
 
 @Provider
 class CacheFilter : ContainerResponseFilter {
-
     @Context
     private lateinit var resourceInfo: ResourceInfo
 

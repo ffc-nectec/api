@@ -14,7 +14,6 @@ const val PART_HEALTHCARESERVICE = "healthcareservice"
 
 @Path("/org")
 class VisitResource {
-
     @RolesAllowed("USER", "ORG")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE")
@@ -22,7 +21,6 @@ class VisitResource {
         @PathParam("orgId") orgId: String,
         healthCareService: HealthCareService
     ): Response {
-
         val respond = when (healthCareService) {
             is HomeVisit -> HomeVisitService.create(healthCareService, orgId)
             else -> null

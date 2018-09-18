@@ -22,12 +22,10 @@ import ffc.entity.User
 import java.security.Principal
 
 class UserSecurityContextImp(override val token: Token, override val orgId: String? = null, scheme: String) : FfcSecurityContext {
-
     private var userPrincipal: Principal? = null
     private var scheme: String? = null
 
     init {
-
         this.scheme = scheme
         this.userPrincipal = Principal { token.user.name }
     }

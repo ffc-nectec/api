@@ -10,9 +10,7 @@ import org.bson.types.BasicBSONList
 import java.util.ArrayList
 
 internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConnect(host, port, "ffc", "person") {
-
     override fun insert(orgId: String, person: Person): Person {
-
         val personDoc = person.buildInsertBson()
         personDoc.append("orgId", orgId)
         personDoc.append("houseId", person.bundle["houseId"])
@@ -71,7 +69,6 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     private fun findMongo(query: String, orgId: String): List<Person> {
-
         val result = arrayListOf<Person>()
         val regexQuery = Document("\$regex", query).append("\$options", "i")
 
