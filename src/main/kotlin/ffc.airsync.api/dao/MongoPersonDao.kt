@@ -19,12 +19,9 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     override fun insert(orgId: String, persons: List<Person>): List<Person> {
-        val personsUpdate = arrayListOf<Person>()
-
-        persons.forEach {
-            personsUpdate.add(insert(orgId, it))
+        return persons.map {
+            insert(orgId, it)
         }
-        return personsUpdate
     }
 
     override fun findByOrgId(orgId: String): List<Person> {
@@ -75,13 +72,15 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
         val queryTextCondition = BasicBSONList().apply {
             add(Document("firstname", regexQuery))
             add(Document("lastname", regexQuery))
+            add(Document("identities.id", regexQuery))
+            add(Document("chronics.disease.icd10", regexQuery))
         }
         val queryTextReg = Document("\$or", queryTextCondition)
 
         val queryFixOrgIdDoc = Document("orgId", orgId)
         val fullQuery = BasicBSONList().apply {
-            add(queryTextReg)
             add(queryFixOrgIdDoc)
+            add(queryTextReg)
         }
         val resultQuery = dbCollection.find(Document("\$and", fullQuery))
 
