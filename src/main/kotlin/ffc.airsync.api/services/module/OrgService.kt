@@ -2,7 +2,6 @@ package ffc.airsync.api.services.module
 
 import ffc.airsync.api.printDebug
 import ffc.entity.Organization
-import ffc.entity.copy
 import ffc.entity.gson.toJson
 import javax.ws.rs.NotFoundException
 
@@ -14,10 +13,8 @@ object OrgService {
 
     fun remove(orgId: String) {
         // val org = orgs.find(orgId)
-
         // printDebug("Remove org id = $orgId == ${org.id}")
         // if (org.id != orgId) throw NotAuthorizedException("ไม่เจอ Org")
-
         orgs.remove(orgId)
         // users.removeByOrgId(orgId)
         houses.removeByOrgId(orgId)
@@ -53,5 +50,9 @@ object OrgService {
         val orgReturn = hiddenPrivate(orgList)
         if (orgReturn.isEmpty()) throw NotFoundException("ไม่มีข้อมูลลงทะเบียน")
         return orgReturn
+    }
+
+    fun find(query: String): List<Organization> {
+        return orgs.find(query)
     }
 }

@@ -41,7 +41,6 @@ import javax.ws.rs.core.Response
 class OrgResource {
     @Context
     lateinit var req: HttpServletRequest
-
     val HttpServletRequest.ipAddress: String
         get() = getHeader("X-Forwarded-For") ?: remoteAddr
 
@@ -56,12 +55,15 @@ class OrgResource {
     }
 
     @GET
-    fun getMy(@QueryParam("my") my: Boolean = false): List<Organization> {
+    fun getMy(@QueryParam("my") my: Boolean = false, @QueryParam("query") query: String = ""): List<Organization> {
         return if (my) {
             printDebug("Find Organization with ip-address = ${req.ipAddress}")
             OrgService.getMy(req.ipAddress)
         } else {
-            OrgService.get()
+            if (query.isNotEmpty())
+                OrgService.find(query)
+            else
+                OrgService.get()
         }
     }
 

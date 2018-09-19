@@ -25,15 +25,14 @@ import ffc.entity.User
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
+import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 import javax.ws.rs.NotFoundException
 
 internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port, "ffc", "organ") {
-
     override fun insert(organization: Organization): Organization {
         validate(organization)
         checkDuplication(organization)
-
         val userListDoc = arrayListOf<Document>()
         organization.users.forEach {
             require(it.name.isNotEmpty()) { "พบค่าว่างในตัวแปร user.name" }
@@ -42,7 +41,6 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
 
             userListDoc.add(it.toDocument())
         }
-
         val genId = ObjectId()
         val orgDoc = Document.parse(organization.toJson())
         orgDoc.append("users", userListDoc)
@@ -52,7 +50,6 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
         orgDoc.append("token", ObjectId())
 
         dbCollection.insertOne(orgDoc)
-
         val newOrgDoc = dbCollection.find("_id" equal genId).first()
 
         return newOrgDoc.toJson().parseTo()
@@ -149,7 +146,6 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
             val query = Document("id", orgId)
             val firebaseOrgDoc = dbCollection.find(query).first()
             val firebaseMobile = firebaseOrgDoc["mobileFirebaseToken"] as List<*>?
-
             val orgFirebase = firebaseOrgDoc["firebaseToken"].toString()
             if (orgFirebase != "null")
                 firebaseTokenList.add(orgFirebase)
@@ -165,5 +161,29 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
             ex.printStackTrace()
             throw ex
         }
+    }
+
+    override fun find(query: String): List<Organization> {
+        return findMongo(query)
+    }
+
+    private fun findMongo(query: String): List<Organization> {
+        val result = arrayListOf<Organization>()
+        val regexQuery = Document("\$regex", query).append("\$options", "i")
+        val queryTextCondition = BasicBSONList().apply {
+            add(Document("name", regexQuery))
+            add(Document("tel", regexQuery))
+            add(Document("address", regexQuery))
+        }
+        val queryTextReg = Document("\$or", queryTextCondition)
+        val resultQuery = dbCollection.find(queryTextReg)
+
+        resultQuery.forEach {
+            it.remove("_id")
+            val orgMap = it.toJson().parseTo<Organization>()
+            result.add(orgMap)
+        }
+
+        return result
     }
 }
