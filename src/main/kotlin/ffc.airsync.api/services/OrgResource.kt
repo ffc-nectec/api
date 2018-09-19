@@ -55,7 +55,7 @@ class OrgResource {
     }
 
     @GET
-    fun getMy(@QueryParam("my") my: Boolean = false, @QueryParam("query") query: String? = ""): List<Organization> {
+    fun getMy(@QueryParam("my") my: Boolean = false, @QueryParam("query") query: String?): List<Organization> {
         return if (my) {
             printDebug("Find Organization with ip-address = ${req.ipAddress}")
             OrgService.getMy(req.ipAddress)

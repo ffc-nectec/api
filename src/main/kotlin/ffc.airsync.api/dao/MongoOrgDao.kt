@@ -176,7 +176,7 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
             add(Document("address", regexQuery))
         }
         val queryTextReg = Document("\$or", queryTextCondition)
-        val resultQuery = dbCollection.find(queryTextReg)
+        val resultQuery = dbCollection.find(queryTextReg).limit(20)
 
         resultQuery.forEach {
             it.remove("_id")

@@ -10,7 +10,6 @@ object PersonService {
         val personList = persons.findByOrgId(orgId)
         printDebug("Person Service get list ${personList.size}")
         val personReturn = arrayListOf<Person>()
-
         val count = personList.size
 
         itemRenderPerPage(page, per_page, count, object : AddItmeAction {
@@ -25,5 +24,9 @@ object PersonService {
 
     fun create(orgId: String, personList: List<Person>): List<Person> {
         return persons.insert(orgId, personList)
+    }
+
+    fun find(orgId: String, query: String): List<Person> {
+        return persons.find(orgId = orgId, query = query)
     }
 }

@@ -10,7 +10,6 @@ import org.bson.types.BasicBSONList
 import java.util.ArrayList
 
 internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConnect(host, port, "ffc", "person") {
-
     override fun insert(orgId: String, person: Person): Person {
         val personDoc = person.buildInsertBson()
         personDoc.append("orgId", orgId)
@@ -28,7 +27,6 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     override fun findByOrgId(orgId: String): List<Person> {
         // printDebug("Mongo findAll persons in org $orgUuid")
         val personList = arrayListOf<Person>()
-
         val query = Document("orgId", orgId)
         val docPersonList = dbCollection.find(query)
 
@@ -45,9 +43,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
 
     override fun getPeopleInHouse(houseId: String): ArrayList<Person>? {
         val personInHouse = arrayListOf<Person>()
-
         val query = Document("houseId", houseId)
-
         val personInHouseDoc = dbCollection.find(query)
         personInHouseDoc.forEach {
             val personDoc = it
@@ -69,7 +65,6 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     private fun findMongo(query: String, orgId: String): List<Person> {
         val result = arrayListOf<Person>()
         val regexQuery = Document("\$regex", query).append("\$options", "i")
-
         val queryTextCondition = BasicBSONList().apply {
             add(Document("firstname", regexQuery))
             add(Document("lastname", regexQuery))
@@ -77,13 +72,12 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
             add(Document("chronics.disease.icd10", regexQuery))
         }
         val queryTextReg = Document("\$or", queryTextCondition)
-
         val queryFixOrgIdDoc = Document("orgId", orgId)
         val fullQuery = BasicBSONList().apply {
             add(queryFixOrgIdDoc)
             add(queryTextReg)
         }
-        val resultQuery = dbCollection.find(Document("\$and", fullQuery))
+        val resultQuery = dbCollection.find(Document("\$and", fullQuery)).limit(20)
 
         resultQuery.forEach {
             it.remove("_id")

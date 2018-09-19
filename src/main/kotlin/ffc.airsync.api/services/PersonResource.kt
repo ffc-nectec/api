@@ -57,8 +57,11 @@ class PersonResource {
     @RolesAllowed("USER")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
-    fun get(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @PathParam("orgId") orgId: String): Response {
+    fun get(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @PathParam("orgId") orgId: String, @QueryParam("query") query: String?): Response {
         return try {
+            if (query != null) {
+                val personList = PersonService.find(orgId, query)
+            }
             val personList = PersonService.get(orgId, if (page == 0) 1 else page, if (per_page == 0) 200 else per_page)
 
             Response.status(Response.Status.OK).entity(personList).build()
@@ -66,4 +69,5 @@ class PersonResource {
             Response.status(401).build()
         }
     }
+
 }
