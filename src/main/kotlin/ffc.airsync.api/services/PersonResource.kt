@@ -69,5 +69,4 @@ class PersonResource {
             Response.status(401).build()
         }
     }
-
 }
