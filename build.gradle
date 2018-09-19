@@ -52,7 +52,8 @@ dependencies {
     compile "org.glassfish.jersey.media:jersey-media-json-jackson:$jerseyVersion"
     compile 'com.google.firebase:firebase-admin:5.11.0'
     compile "args4j:args4j:2.33"
-    compile "com.github.ffc-nectec:entities:80420e7ef1"
+    compile "com.github.ffc-nectec:entities:HealthCareGsonAdapter-SNAPSHOT"
+
     compile 'com.github.piruin:jbcrypt:0.4'
     compile "joda-time:joda-time:2.9.9"
     compile 'me.piruin:geok-gson:1.0.0-alpha-2'
@@ -68,6 +69,11 @@ task stage(dependsOn: ['build', 'clean'])
 
 build.mustRunAfter clean
 
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin/'
+    test.java.srcDirs += 'src/test/kotlin/'
+}
+
 jar {
     from {
         configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
@@ -75,7 +81,8 @@ jar {
     }
     archiveName = "${project.name}.jar"
     destinationDir = file("$rootDir/build/bin")
-    manifest { attributes 'Main-Class': 'ffc.airsync.api.FFCApiServer' }
+
+    manifest { attributes 'Main-Class': 'ffc.airsync.api.FFCApiServerKt' }
 
     exclude 'META-INF/*.RSA'
     exclude 'META-INF/*.SF'
