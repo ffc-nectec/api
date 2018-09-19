@@ -2,6 +2,7 @@ package ffc.airsync.api.services.module
 
 import ffc.airsync.api.printDebug
 import ffc.entity.Organization
+import ffc.entity.copy
 import ffc.entity.gson.toJson
 import javax.ws.rs.NotFoundException
 
@@ -34,7 +35,7 @@ object OrgService {
         val orgReturn = arrayListOf<Organization>()
 
         orgList.forEach {
-            val org = it.copy<Organization>()
+            val org = it.copy()
             org.users.removeIf { true }
             org.link = null
             org.bundle.remove("lastKnownIp")
