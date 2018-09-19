@@ -1,7 +1,6 @@
 package ffc.airsync.api.dao
 
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.printDebug
 import ffc.entity.Lang
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
@@ -36,16 +35,6 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
         val newDisease = result.toJson().parseTo<Disease>()
 
         return newDisease
-    }
-
-    override fun insert(disease: List<Disease>): List<Disease> {
-        var count = 1
-        val countAll = disease.count()
-
-        return disease.map {
-            printDebug("Insert disease A:=$countAll P:${count++}")
-            insert(it)
-        }
     }
 
     override fun find(query: String): List<Disease> {
