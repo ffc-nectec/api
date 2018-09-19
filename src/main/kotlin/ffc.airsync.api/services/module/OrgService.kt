@@ -48,6 +48,6 @@ object OrgService {
     }
 
     fun find(query: String): List<Organization> {
-        return orgs.find(query)
+        return hiddenPrivate(orgs.find(query))
     }
 }
