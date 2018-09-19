@@ -62,10 +62,10 @@ class PersonResource {
             if (query != null) {
                 val personList = PersonService.find(orgId, query)
                 Response.status(Response.Status.OK).entity(personList).build()
+            } else {
+                val personList = PersonService.get(orgId, if (page == 0) 1 else page, if (per_page == 0) 200 else per_page)
+                Response.status(Response.Status.OK).entity(personList).build()
             }
-            val personList = PersonService.get(orgId, if (page == 0) 1 else page, if (per_page == 0) 200 else per_page)
-
-            Response.status(Response.Status.OK).entity(personList).build()
         } catch (ex: NotAuthorizedException) {
             Response.status(401).build()
         }
