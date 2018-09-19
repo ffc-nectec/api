@@ -2,7 +2,6 @@ package ffc.airsync.api.services.module
 
 import ffc.airsync.api.printDebug
 import ffc.entity.Organization
-import ffc.entity.copy
 import ffc.entity.gson.toJson
 import javax.ws.rs.NotFoundException
 
@@ -31,18 +30,13 @@ object OrgService {
         return orgReturn
     }
 
-    private fun hiddenPrivate(orgList: List<Organization>): ArrayList<Organization> {
-        val orgReturn = arrayListOf<Organization>()
-
+    private fun hiddenPrivate(orgList: List<Organization>): List<Organization> {
         orgList.forEach {
-            val org = it.copy()
-            org.users.removeIf { true }
-            org.link = null
-            org.bundle.remove("lastKnownIp")
-            orgReturn.add(org)
-            printDebug("\tOrg list Name ${it.name}")
+            it.users.removeIf { true }
+            it.link = null
+            it.bundle.remove("lastKnownIp")
         }
-        return orgReturn
+        return orgList
     }
 
     fun get(): List<Organization> {
