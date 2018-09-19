@@ -52,7 +52,7 @@ fun Locale.toLang(): Lang {
 fun Entity.buildInsertBson(): Document {
     val generateId = ObjectId()
 
-    return if (isTempId) {
+    if (isTempId) {
         val insertObj = copy(generateId.toHexString().trim())
         return insertObj.buildBsonDoc()
     } else

@@ -35,12 +35,12 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
         val result = arrayListOf<CommunityServiceType>()
         val regexQuery = Document("\$regex", query).append("\$options", "i")
 
-        val query = BasicBSONList().apply {
+        val queryDoc = BasicBSONList().apply {
             add(Document("id", regexQuery))
             add(Document("name", regexQuery))
         }
 
-        val resultQuery = dbCollection.find(Document("\$or", query))
+        val resultQuery = dbCollection.find(Document("\$or", queryDoc))
 
         resultQuery.forEach {
             it.remove("_id")
@@ -62,9 +62,9 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
         val result = arrayListOf<CommunityServiceType>()
 
         find.forEach {
-            val it = find.findLastMap(it) ?: it
+            val lastMap = find.findLastMap(it) ?: it
 
-            val communityServiceType = CommunityServiceType(it.id, it.name).apply {
+            val communityServiceType = CommunityServiceType(lastMap.id, lastMap.name).apply {
                 translation[Lang.th] = name
             }
             result.add(communityServiceType)
