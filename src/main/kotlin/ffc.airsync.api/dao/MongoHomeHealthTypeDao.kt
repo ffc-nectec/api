@@ -1,7 +1,6 @@
 package ffc.airsync.api.dao
 
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.printDebug
 import ffc.entity.Lang
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
@@ -30,16 +29,6 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
         result.remove("_id")
 
         return result.toJson().parseTo()
-    }
-
-    override fun insert(homeHealthTypee: List<CommunityServiceType>): List<CommunityServiceType> {
-        var count = 1
-        val countAll = homeHealthTypee.count()
-
-        return homeHealthTypee.map {
-            printDebug("Insert home health type A:=$countAll P:${count++}")
-            insert(it)
-        }
     }
 
     private fun findMongo(query: String): List<CommunityServiceType> {
