@@ -5,6 +5,7 @@ import ffc.entity.User
 import java.security.Principal
 
 class OrgSecurityContextImp(override val token: Token, override val orgId: String? = null, scheme: String) : FfcSecurityContext {
+
     private var HTTPS = "https://"
     private var userPrincipal: Principal? = null
     private var scheme: String? = null

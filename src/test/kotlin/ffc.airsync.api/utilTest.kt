@@ -12,6 +12,7 @@ import org.joda.time.LocalDate
 import org.junit.Test
 
 class utilTest {
+
     val person = Person(generateTempId()).update(DateTime.parse("2018-06-25T14:09:07.815+07:00")) {
         identities.add(ThaiCitizenId("1154801544875"))
         prename = "นาย"

@@ -16,6 +16,7 @@ import javax.ws.rs.ext.Provider
 @Priority(Priorities.AUTHENTICATION)
 @Provider
 class BasicAuthFilter : ContainerRequestFilter {
+
     private val pattern = Pattern.compile("""^org/(?<orgId>[\w\d]+)/.*$""")
     override fun filter(requestContext: ContainerRequestContext) {
         val urlScheme = requestContext.uriInfo.baseUri.scheme
@@ -56,6 +57,7 @@ class BasicAuthFilter : ContainerRequestFilter {
     }
 
     class TokenAuthInfo(requestContext: ContainerRequestContext) {
+
         val AUTHORIZATION_PROPERTY = "Authorization"
         val AUTHENTICATION_SCHEME = "Bearer "
         val token: Token

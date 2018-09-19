@@ -28,6 +28,7 @@ import javax.ws.rs.ext.Provider
 @Priority(Priorities.HEADER_DECORATOR)
 @Provider
 class SuccessToCreatedResponse : ContainerResponseFilter {
+
     override fun filter(
         requestContext: ContainerRequestContext,
         responseContext: ContainerResponseContext

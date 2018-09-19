@@ -21,6 +21,7 @@ import org.glassfish.jersey.server.ResourceConfig
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature
 
 class ApplicationConfig : ResourceConfig() {
+
     init {
         packages("ffc.airsync.api")
 

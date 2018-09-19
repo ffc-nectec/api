@@ -21,6 +21,7 @@ import org.junit.Before
 import org.junit.Test
 
 class MongoHealthCareServiceTest {
+
     lateinit var dao: HealthCareServiceDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer

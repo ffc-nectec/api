@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class SimpleTest {
+
     private MongoCollection<Document> collection;
     private MongoClient client;
     private MongoServer server;

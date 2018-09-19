@@ -4,6 +4,7 @@ import ffc.entity.Token
 import java.security.Principal
 
 class NoAuthSecurityContextImp : FfcSecurityContext {
+
     private var userPrincipal: Principal? = null
 
     init {

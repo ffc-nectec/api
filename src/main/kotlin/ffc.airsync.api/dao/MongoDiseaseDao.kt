@@ -9,6 +9,7 @@ import org.bson.Document
 import org.bson.types.BasicBSONList
 
 internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "disease"), DiseaseDao {
+
     init {
         val searchIndex = Document("icd10", "text")
         searchIndex.append("name", "text")

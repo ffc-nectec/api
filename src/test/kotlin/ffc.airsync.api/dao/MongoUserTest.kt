@@ -14,6 +14,7 @@ import org.junit.Before
 import org.junit.Test
 
 class MongoUserTest {
+
     lateinit var nectecOrg: Organization
     lateinit var dao: UserDao
     lateinit var client: MongoClient

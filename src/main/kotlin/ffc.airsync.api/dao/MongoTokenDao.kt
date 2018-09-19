@@ -9,6 +9,7 @@ import org.bson.Document
 import org.bson.types.ObjectId
 
 internal class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnect(host, port, "ffc", "token") {
+
     override fun create(user: User, orgId: String): Token {
         val generateToken = ObjectId()
         val tokenMessage = Token(token = generateToken.toHexString(), user = user)
