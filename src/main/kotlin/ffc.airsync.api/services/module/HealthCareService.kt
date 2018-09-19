@@ -5,6 +5,7 @@ import ffc.entity.healthcare.HomeVisit
 import javax.ws.rs.NotFoundException
 
 object HomeVisitService {
+
     fun create(homeVisit: HomeVisit, orgId: String): HomeVisit {
         val firebaseToken = orgs.getFirebaseToken(orgId)
         val result = healthCareServices.insert(homeVisit, orgId) as HomeVisit

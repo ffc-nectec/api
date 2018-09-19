@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 
 object PasswordSalt {
+
     private var saltTest = """
 uxF3Ocv5eg4BoQBK9MmR
 rwPARiCL9ovpr3zmlJlj
