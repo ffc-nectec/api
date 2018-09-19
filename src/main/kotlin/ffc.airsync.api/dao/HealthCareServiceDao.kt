@@ -11,4 +11,6 @@ interface HealthCareServiceDao : Dao {
     }
 
     fun find(id: String, orgId: String): HealthCareService?
+
+    fun update(healthCareService: HealthCareService, orgId: String): HealthCareService
 }

@@ -1,6 +1,7 @@
 package ffc.airsync.api.dao
 
 import ffc.airsync.api.buildInsertBson
+import ffc.airsync.api.buildUpdateBson
 import ffc.airsync.api.ffcInsert
 import ffc.entity.gson.parseTo
 import ffc.entity.healthcare.HealthCareService
@@ -19,11 +20,24 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
     override fun find(id: String, orgId: String): HealthCareService? {
         val query = Document("_id", ObjectId(id))
             .append("orgId", orgId)
-
         val result = dbCollection.find(query).first()
 
         if (result != null)
             return result.toJson().parseTo()
         return null
+    }
+
+    override fun update(healthCareService: HealthCareService, orgId: String): HealthCareService {
+        val query = Document("_id", ObjectId(healthCareService.id))
+            .append("orgId", orgId)
+        val updateDocument = healthCareService.buildUpdateBson()
+        val resultUpdate = dbCollection.updateOne(query, updateDocument)
+
+        if (resultUpdate.isModifiedCountAvailable) {
+            val result = dbCollection.find(query).first()
+            return result.toJson().parseTo()
+        } else {
+            throw IllegalAccessException("พารามิตเตอร์การ Update ผิดพลาด")
+        }
     }
 }

@@ -59,6 +59,15 @@ fun Entity.buildInsertBson(): Document {
         throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
 }
 
+fun Entity.buildUpdateBson(): Document {
+    val generateId = ObjectId()
+
+    if (!isTempId) {
+        return this.buildBsonDoc()
+    } else
+        throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
+}
+
 private fun Entity.buildBsonDoc(): Document {
     val generateId = ObjectId(id)
     val json = toJson()
