@@ -3,7 +3,6 @@ package ffc.airsync.api.services
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.module.UserService
 import ffc.entity.User
-import java.util.ArrayList
 import javax.annotation.security.RolesAllowed
 import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.Consumes
@@ -24,7 +23,7 @@ class UserResource {
     @RolesAllowed("ORG")
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
-    fun create(@PathParam("orgUuid") orgId: String, users: ArrayList<User>): Response {
+    fun create(@PathParam("orgUuid") orgId: String, users: List<User>): Response {
         printDebug("Raw user list.")
         users.forEach {
             printDebug("User = " + it.name + " Pass = " + it.password)
