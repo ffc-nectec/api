@@ -56,7 +56,7 @@ fun Entity.buildInsertBson(): Document {
         val insertObj = copy(generateId.toHexString().trim())
         return insertObj.buildBsonDoc()
     } else
-        throw ForbiddenException("ข้อมูลบ้านที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ isTempId")
+        throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
 }
 
 private fun Entity.buildBsonDoc(): Document {
