@@ -27,6 +27,7 @@ import org.bson.Document
 import org.bson.types.ObjectId
 import java.nio.charset.Charset
 import java.util.Locale
+import javax.ws.rs.ForbiddenException
 
 val debug = System.getenv("FFC_DEBUG")
 fun <T> printDebug(infoDebug: T) {
@@ -49,7 +50,7 @@ fun Locale.toLang(): Lang {
 }
 
 fun Entity.buildInsertBson(): Document {
-    require(isTempId) { "ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId" }
+    if (!isTempId) throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
 
     val generateId = ObjectId()
     val insertObj = copy(generateId.toHexString().trim())
@@ -57,7 +58,7 @@ fun Entity.buildInsertBson(): Document {
 }
 
 fun Entity.buildUpdateBson(): Document {
-    require(!isTempId) { "ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId" }
+    if (isTempId) throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
 
     return this.buildBsonDoc()
 }
