@@ -18,7 +18,6 @@
 package ffc.airsync.api.services
 
 import ffc.airsync.api.printDebug
-import ffc.airsync.api.services.filter.FfcSecurityContext
 import ffc.airsync.api.services.module.PersonService
 import ffc.entity.Person
 import javax.annotation.security.RolesAllowed
@@ -33,13 +32,14 @@ import javax.ws.rs.QueryParam
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import javax.ws.rs.core.SecurityContext
 
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/org")
 class PersonResource {
     @Context
-    private var context: FfcSecurityContext? = null
+    private var context: SecurityContext? = null
 
     @RolesAllowed("ORG")
     @POST

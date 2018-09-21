@@ -22,9 +22,8 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
             .append("orgId", orgId)
         val result = dbCollection.find(query).first()
 
-        if (result != null)
-            return result.toJson().parseTo()
-        return null
+        check(result != null) { "ไม่พบ health care service id $id" }
+        return result.toJson().parseTo()
     }
 
     override fun update(healthCareService: HealthCareService, orgId: String): HealthCareService {
@@ -33,11 +32,8 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
         val updateDocument = healthCareService.buildUpdateBson()
         val resultUpdate = dbCollection.updateOne(query, updateDocument)
 
-        if (resultUpdate.isModifiedCountAvailable) {
-            val result = dbCollection.find(query).first()
-            return result.toJson().parseTo()
-        } else {
-            throw IllegalAccessException("พารามิตเตอร์การ Update ผิดพลาด")
-        }
+        check(resultUpdate.isModifiedCountAvailable) { "พารามิตเตอร์การ Update ผิดพลาด" }
+        val result = dbCollection.find(query).first()
+        return result.toJson().parseTo()
     }
 }

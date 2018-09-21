@@ -18,8 +18,7 @@ class CacheFilter : ContainerResponseFilter {
             responseContext.headers.add("Cache-Control", "max-age=0")
             return
         }
-
-        var cache: Cache? = resourceInfo!!.resourceMethod.getAnnotation(Cache::class.java)
+        var cache: Cache? = resourceInfo.resourceMethod.getAnnotation(Cache::class.java)
         if (cache == null) cache = resourceInfo.resourceClass.getAnnotation(Cache::class.java)
         if (cache != null) responseContext.headers.add("Cache-Control", build(cache))
     }
