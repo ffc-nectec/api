@@ -17,4 +17,8 @@
 
 package ffc.airsync.api.dao
 
-interface Dao
+import ffc.entity.Entity
+
+interface Dao {
+    fun syncCloudFilter(orgId: String, isSync: Boolean = false, limitOutput: Int = 20): List<Entity>
+}

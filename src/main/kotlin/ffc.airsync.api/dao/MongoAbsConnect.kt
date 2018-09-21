@@ -5,6 +5,8 @@ import com.mongodb.MongoClientURI
 import com.mongodb.ServerAddress
 import com.mongodb.client.MongoCollection
 import ffc.airsync.api.printDebug
+import ffc.entity.Entity
+import ffc.entity.gson.parseTo
 import org.bson.Document
 import java.util.Arrays
 
@@ -16,9 +18,9 @@ abstract class MongoAbsConnect(
     private val dbName: String,
     private val collection: String,
     private val mongoInitRun: mongoInit? = null
-) {
+) : Dao {
     protected lateinit var dbCollection: MongoCollection<Document>
-
+    val dbExecuted get() = dbCollection
     val mongoUrl = System.getenv("MONGODB_URI") + "?maxPoolSize=2&maxIdleTimeMS=20000&connectTimeoutMS=30000&socketTimeoutMS=30000"
 
     companion object {
@@ -34,6 +36,23 @@ abstract class MongoAbsConnect(
 
     protected fun getClient(): MongoClient? {
         return mongoClient
+    }
+
+    override fun syncCloudFilter(orgId: String, isSync: Boolean, limitOutput: Int): List<Entity> {
+        val query = Document("link.isSynced", isSync)
+        val result = this.dbExecuted.find(query).limit(limitOutput)
+
+        if (result.count() < 1) return emptyList()
+        val output = result.map {
+            try {
+                it.toJson().parseTo<Entity>()
+            } catch (ex: Exception) {
+                Entity()
+            }
+        }.toMutableList()
+        output.removeIf { it.isTempId }
+
+        return output
     }
 
     protected fun connectToMongo() {
@@ -71,7 +90,7 @@ abstract class MongoAbsConnect(
             if (mongoUrl.isEmpty() || mongoUrl.startsWith("null")) {
                 printDebug("Create mongo client localhost")
                 mongoClient = MongoClient(Arrays.asList(ServerAddress(host, port))
-                        /*,Arrays.asList(credential)*/)
+                    /*,Arrays.asList(credential)*/)
                 // printDebug("\t mongoUrl=nul")
             } else {
                 printDebug("Create mongo clinet by uri")
