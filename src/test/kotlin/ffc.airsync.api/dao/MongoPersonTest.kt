@@ -147,16 +147,4 @@ class MongoPersonTest {
         dao.find("2123455687675", ORG_ID).first().name `should be equal to` "นางสาวสมหญิง สมบูรณ์จิต"
         dao.find("1231233123421", ORG_ID).first().name `should be equal to` "นายสมชาย โคตรกระบือ"
     }
-
-    @Test
-    fun findByICD10() {
-        dao.insert(ORG_ID, arrayListOf<Person>().apply {
-            add(missCat)
-            add(misterDog)
-        })
-
-        dao.find("I10", ORG_ID).count() `should be equal to` 1
-        dao.find("I10", ORG_ID).first().name `should be equal to` "นางสาวสมหญิง สมบูรณ์จิต"
-        dao.find("dxabc00x", ORG_ID).first().name `should be equal to` "นายสมชาย โคตรกระบือ"
-    }
 }

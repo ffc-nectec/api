@@ -64,10 +64,14 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
         val result = arrayListOf<Person>()
         val regexQuery = Document("\$regex", query).append("\$options", "i")
         val queryTextCondition = BasicBSONList().apply {
-            add(Document("firstname", regexQuery))
-            add(Document("lastname", regexQuery))
-            add(Document("identities.id", regexQuery))
-            add(Document("chronics.disease.icd10", regexQuery))
+            val rex = Regex("""^ *\d""")
+
+            if (rex.matches(query)) {
+                add(Document("identities.id", regexQuery))
+            } else {
+                add(Document("firstname", regexQuery))
+                add(Document("lastname", regexQuery))
+            }
         }
         val queryTextReg = Document("\$or", queryTextCondition)
         val queryFixOrgIdDoc = Document("orgId", orgId)
