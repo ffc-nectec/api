@@ -3,14 +3,12 @@ package ffc.airsync.api.services.filter
 import ffc.airsync.api.dao.DaoFactory
 import ffc.airsync.api.printDebug
 import ffc.entity.Token
-import ffc.entity.User
 import java.util.regex.Pattern
 import javax.annotation.Priority
 import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.Priorities
 import javax.ws.rs.container.ContainerRequestContext
 import javax.ws.rs.container.ContainerRequestFilter
-import javax.ws.rs.core.SecurityContext
 import javax.ws.rs.ext.Provider
 
 @Priority(Priorities.AUTHENTICATION)
@@ -38,22 +36,22 @@ class BasicAuthFilter : ContainerRequestFilter {
         } catch (ex: NotAuthorizedException) {
             return
         }
-        val securityContext: SecurityContext
+
         val token = authenInfo.token
+        /*val securityContext: SecurityContext
         securityContext = when {
             token.user.role == User.Role.USER -> UserSecurityContextImp(token, urlScheme, orgId)
             token.user.role == User.Role.ORG -> OrgSecurityContextImp(token, urlScheme, orgId)
             else -> NoAuthSecurityContextImp()
         }
 
-        val securityRoles = arrayListOf<SecurityContext>()
-        User.Role.values().forEach {
-            /*val securityContext = when{
-                BuildSecurityContext(token = authenInfo.token,scheme = urlScheme,orgId = orgId,role = it)
-            }*/
-        }
+        requestContext.securityContext = securityContext*/
 
-        requestContext.securityContext = securityContext
+        requestContext.securityContext = BuildSecurityContext(
+            token = token,
+            scheme = urlScheme,
+            orgId = orgId
+        )
     }
 
     class TokenAuthInfo(requestContext: ContainerRequestContext) {
