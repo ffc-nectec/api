@@ -70,4 +70,11 @@ class PersonResource {
             Response.status(401).build()
         }
     }
+
+    @RolesAllowed("USER")
+    @GET
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/icd10/{icd10:(\\w+)}")
+    fun findByICD10(@PathParam("orgId") orgId: String, @PathParam("icd10") icd10: String): List<Person> {
+        return PersonService.findICD10(orgId, icd10)
+    }
 }

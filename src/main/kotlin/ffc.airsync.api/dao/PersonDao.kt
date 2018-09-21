@@ -28,4 +28,6 @@ interface PersonDao : Dao {
     fun getPeopleInHouse(houseId: String): ArrayList<Person>?
     fun removeGroupByOrg(orgId: String)
     fun find(query: String, orgId: String): List<Person>
+
+    fun findByICD10(orgId: String, icd10: String): List<Person>
 }

@@ -2,7 +2,6 @@ package ffc.airsync.api.dao
 
 import ffc.airsync.api.buildInsertBson
 import ffc.airsync.api.ffcInsert
-import ffc.airsync.api.printDebug
 import ffc.entity.Person
 import ffc.entity.gson.parseTo
 import org.bson.Document
@@ -23,20 +22,10 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     override fun findByOrgId(orgId: String): List<Person> {
-        // printDebug("Mongo findAll persons in org $orgUuid")
-        val personList = arrayListOf<Person>()
         val query = Document("orgId", orgId)
         val docPersonList = dbCollection.find(query)
 
-        printDebug("\tPerson in list ${docPersonList.count()}")
-        docPersonList.forEach {
-            // val person = docToObj(it)
-            val person: Person = it.toJson().parseTo()
-            personList.add(person)
-        }
-
-        printDebug("Person find finish list size ${personList.size}")
-        return personList
+        return docPersonList.map { it.toJson().parseTo<Person>() }.toList()
     }
 
     override fun getPeopleInHouse(houseId: String): ArrayList<Person>? {
@@ -61,7 +50,6 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     private fun findMongo(query: String, orgId: String): List<Person> {
-        val result = arrayListOf<Person>()
         val regexQuery = Document("\$regex", query).append("\$options", "i")
         val queryTextCondition = BasicBSONList().apply {
             val rex = Regex("""^ *\d+.*${'$'}""")
@@ -81,12 +69,15 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
         }
         val resultQuery = dbCollection.find(Document("\$and", fullQuery)).limit(20)
 
-        resultQuery.forEach {
-            it.remove("_id")
-            val personMap = it.toJson().parseTo<Person>()
-            result.add(personMap)
-        }
+        return resultQuery.map {
+            it.toJson().parseTo<Person>()
+        }.toList()
+    }
 
-        return result
+    override fun findByICD10(orgId: String, icd10: String): List<Person> {
+        val query = Document("chronics.disease.icd10", icd10)
+        val result = dbCollection.find(query).limit(20)
+
+        return result.map { it.toJson().parseTo<Person>() }.toList()
     }
 }

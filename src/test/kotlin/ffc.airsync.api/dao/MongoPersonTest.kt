@@ -83,7 +83,7 @@ class MongoPersonTest {
         val person = dao.insert(ORG_ID, misterDog)
 
         person.isTempId `should be equal to` false
-        person.name `should be equal to` "นายสมชาย โคตรกระบือ"
+        person.firstname `should be equal to` "สมชาย"
     }
 
     @Test
@@ -95,9 +95,9 @@ class MongoPersonTest {
 
         persons.count() `should be equal to` 2
         persons[0].isTempId `should be equal to` false
-        persons[0].name `should be equal to` "นางสาวสมหญิง สมบูรณ์จิต"
+        persons[0].lastname `should be equal to` "สมบูรณ์จิต"
         persons[1].isTempId `should be equal to` false
-        persons[1].name `should be equal to` "นายสมชาย โคตรกระบือ"
+        persons[1].firstname `should be equal to` "สมชาย"
     }
 
     @Test
@@ -108,9 +108,9 @@ class MongoPersonTest {
         })
         val persons = dao.findByOrgId(ORG_ID)
         persons[0].isTempId `should be equal to` false
-        persons[0].name `should be equal to` "นางสาวสมหญิง สมบูรณ์จิต"
+        persons[0].lastname `should be equal to` "สมบูรณ์จิต"
         persons[1].isTempId `should be equal to` false
-        persons[1].name `should be equal to` "นายสมชาย โคตรกระบือ"
+        persons[1].firstname `should be equal to` "สมชาย"
     }
 
     @Test
@@ -120,8 +120,8 @@ class MongoPersonTest {
             add(misterDog)
         })
 
-        dao.getPeopleInHouse("12345678901")!!.first().name `should be equal to` "นายสมชาย โคตรกระบือ"
-        dao.getPeopleInHouse("11111111111")!!.first().name `should be equal to` "นางสาวสมหญิง สมบูรณ์จิต"
+        dao.getPeopleInHouse("12345678901")!!.first().firstname `should be equal to` "สมชาย"
+        dao.getPeopleInHouse("11111111111")!!.first().lastname `should be equal to` "สมบูรณ์จิต"
     }
 
     @Test
@@ -145,8 +145,8 @@ class MongoPersonTest {
 
         dao.find("สม", ORG_ID).count() `should be equal to` 2
         dao.find("โคตร", ORG_ID).count() `should be equal to` 1
-        dao.find("โคตร", ORG_ID).first().name `should be equal to` "นายสมชาย โคตรกระบือ"
-        dao.find("สมชาย", ORG_ID).first().name `should be equal to` "นายสมชาย โคตรกระบือ"
+        dao.find("โคตร", ORG_ID).first().firstname `should be equal to` "สมชาย"
+        dao.find("สมชาย", ORG_ID).first().lastname `should be equal to` "โคตรกระบือ"
     }
 
     @Test
@@ -157,8 +157,22 @@ class MongoPersonTest {
         })
 
         dao.find("2123455687675", ORG_ID).count() `should be equal to` 1
-        dao.find("2123455687675", ORG_ID).first().name `should be equal to` "นางสาวสมหญิง สมบูรณ์จิต"
-        dao.find("1231233123421", ORG_ID).first().name `should be equal to` "นายสมชาย โคตรกระบือ"
+        dao.find("2123455687675", ORG_ID).first().firstname `should be equal to` "สมหญิง"
+        dao.find("1231233123421", ORG_ID).first().lastname `should be equal to` "โคตรกระบือ"
+    }
+
+    @Test
+    fun findICD10() {
+        dao.insert(ORG_ID, arrayListOf<Person>().apply {
+            add(missCat)
+            add(misterDog)
+            add(missRabbit)
+        })
+        val result = dao.findByICD10(ORG_ID, "I11")
+
+        result.count() `should be equal to` 2
+        result[0].firstname `should be equal to` "สมหญิง"
+        result[1].lastname `should be equal to` "สุดน่ารัก"
     }
 
     @Test

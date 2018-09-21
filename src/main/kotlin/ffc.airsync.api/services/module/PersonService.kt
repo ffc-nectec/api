@@ -5,8 +5,7 @@ import ffc.entity.Person
 
 object PersonService {
     fun get(orgId: String, page: Int, per_page: Int): List<Person> {
-        // val tokenObj = getOrgByMobileToken(UUID.fromString(token.trim()), orgId)
-        // val org = orgs.find(orgId)
+
         val personList = persons.findByOrgId(orgId)
         printDebug("Person Service get list ${personList.size}")
         val personReturn = arrayListOf<Person>()
@@ -28,5 +27,9 @@ object PersonService {
 
     fun find(orgId: String, query: String): List<Person> {
         return persons.find(orgId = orgId, query = query)
+    }
+
+    fun findICD10(orgId: String, icd10: String): List<Person> {
+        return persons.findByICD10(orgId, icd10)
     }
 }
