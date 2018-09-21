@@ -19,9 +19,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     override fun insert(orgId: String, persons: List<Person>): List<Person> {
-        return persons.map {
-            insert(orgId, it)
-        }
+        return persons.map { insert(orgId, it) }
     }
 
     override fun findByOrgId(orgId: String): List<Person> {

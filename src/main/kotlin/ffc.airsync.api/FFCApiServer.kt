@@ -29,6 +29,9 @@ import org.kohsuke.args4j.Option
 import java.io.ByteArrayInputStream
 import java.io.FileInputStream
 import java.io.IOException
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.util.TimeZone
 
 internal class FFCApiServer(args: Array<String>) {
     @Option(name = "-dev", usage = "mode")
@@ -113,6 +116,7 @@ internal class FFCApiServer(args: Array<String>) {
 }
 
 fun main(args: Array<String>) {
+    TimeZone.setDefault(TimeZone.getTimeZone(ZoneId.ofOffset("UTC", ZoneOffset.ofHours(7))))
     FFCApiServer.instance = FFCApiServer(args)
     FFCApiServer.instance!!.run()
 }

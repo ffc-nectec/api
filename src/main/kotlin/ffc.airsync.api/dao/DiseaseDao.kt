@@ -6,9 +6,7 @@ import ffc.entity.healthcare.Disease
 interface DiseaseDao : Dao {
     fun insert(disease: Disease): Disease
     fun insert(disease: List<Disease>): List<Disease> {
-        return disease.map {
-            insert(it)
-        }
+        return disease.map { insert(it) }
     }
 
     fun find(query: String): List<Disease>
