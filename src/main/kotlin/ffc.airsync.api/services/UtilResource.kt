@@ -18,15 +18,30 @@
 package ffc.airsync.api.services
 
 import ffc.airsync.api.services.filter.Cache
+import org.joda.time.DateTime
+import javax.annotation.security.RolesAllowed
+import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.Path
+import javax.ws.rs.Produces
+import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 @Path("/")
-class RootPart {
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+class UtilResource {
     @Cache(maxAge = 2)
     @GET
     fun getRootPart(): Response {
         return Response.status(200).entity(Runtime.getRuntime().freeMemory()).build()
+    }
+
+    @Cache(maxAge = 1)
+    @RolesAllowed("ORG", "ADMIN")
+    @GET
+    @Path("/datetime")
+    fun time(): DateTime {
+        return DateTime.now()
     }
 }
