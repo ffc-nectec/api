@@ -6,7 +6,6 @@ import ffc.entity.Person
 import ffc.entity.gson.parseTo
 import org.bson.Document
 import org.bson.types.BasicBSONList
-import java.util.ArrayList
 
 internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConnect(host, port, "ffc", "person") {
     override fun insert(orgId: String, person: Person): Person {
@@ -23,21 +22,13 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
 
     override fun findByOrgId(orgId: String): List<Person> {
         val query = Document("orgId", orgId)
-        val docPersonList = dbCollection.find(query)
-
-        return docPersonList.map { it.toJson().parseTo<Person>() }.toList()
+        return dbCollection.find(query).map { it.toJson().parseTo<Person>() }.toList()
     }
 
-    override fun getPeopleInHouse(houseId: String): ArrayList<Person>? {
-        val personInHouse = arrayListOf<Person>()
+    override fun getPeopleInHouse(houseId: String): List<Person> {
         val query = Document("houseId", houseId)
-        val personInHouseDoc = dbCollection.find(query)
-        personInHouseDoc.forEach {
-            val personDoc = it
-            val person: Person = personDoc.toJson().parseTo()
-            personInHouse.add(person)
-        }
-        return personInHouse
+        return dbCollection.find(query)
+            .map { it.toJson().parseTo<Person>() }.toList()
     }
 
     override fun removeGroupByOrg(orgId: String) {
