@@ -23,6 +23,7 @@ import com.google.firebase.FirebaseOptions
 import ffc.airsync.api.services.module.DiseaseService
 import ffc.airsync.api.services.module.HomeHealthTypeService
 import org.eclipse.jetty.server.Server
+import org.joda.time.DateTimeZone
 import org.kohsuke.args4j.CmdLineException
 import org.kohsuke.args4j.CmdLineParser
 import org.kohsuke.args4j.Option
@@ -87,11 +88,9 @@ internal class FFCApiServer(args: Array<String>) {
             // logger.log(Level.FINE, "Load config firebase from file.");
         } catch (e: IOException) {
             e.printStackTrace()
-
             val firebaseConfigString = System.getenv("FIREBASE_CONFIG")
             val byteFirebaseConfig = firebaseConfigString.toByteArray()
             val streamFirebaseConfig = ByteArrayInputStream(byteFirebaseConfig)
-
             var options: FirebaseOptions? = null
             try {
                 options = FirebaseOptions.Builder()
@@ -117,6 +116,7 @@ internal class FFCApiServer(args: Array<String>) {
 
 fun main(args: Array<String>) {
     TimeZone.setDefault(TimeZone.getTimeZone(ZoneId.ofOffset("UTC", ZoneOffset.ofHours(7))))
+    DateTimeZone.setDefault(DateTimeZone.forOffsetHours(7))
     FFCApiServer.instance = FFCApiServer(args)
     FFCApiServer.instance!!.run()
 }
