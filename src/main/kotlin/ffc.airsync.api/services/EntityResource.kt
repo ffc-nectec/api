@@ -1,5 +1,6 @@
 package ffc.airsync.api.services
 
+import ffc.airsync.api.services.filter.Cache
 import ffc.airsync.api.services.module.EntityService
 import ffc.entity.Entity
 import javax.annotation.security.RolesAllowed
@@ -14,7 +15,8 @@ import javax.ws.rs.core.MediaType
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/org")
 class EntityResource {
-    @RolesAllowed("USER", "ORG")
+    @Cache(maxAge = 2)
+    @RolesAllowed("ORG", "ADMIN")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/sync")
     fun sync(@PathParam("orgId") orgId: String): List<Entity> {

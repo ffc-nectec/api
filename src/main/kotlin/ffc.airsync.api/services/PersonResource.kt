@@ -18,6 +18,7 @@
 package ffc.airsync.api.services
 
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.services.filter.Cache
 import ffc.airsync.api.services.module.PersonService
 import ffc.entity.Person
 import javax.annotation.security.RolesAllowed
@@ -41,7 +42,7 @@ class PersonResource {
     @Context
     private var context: SecurityContext? = null
 
-    @RolesAllowed("ORG")
+    @RolesAllowed("ORG", "ADMIN")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
     fun create(@PathParam("orgId") orgId: String, personList: List<Person>): Response {
@@ -54,7 +55,8 @@ class PersonResource {
         return Response.status(Response.Status.CREATED).entity(persons).build()
     }
 
-    @RolesAllowed("USER")
+    @Cache(maxAge = 5)
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
     fun get(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @PathParam("orgId") orgId: String, @QueryParam("query") query: String?): Response {

@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/org")
 class FirebaseResource {
-    @RolesAllowed("ORG")
+    @RolesAllowed("ORG", "ADMIN")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @POST
@@ -28,7 +28,7 @@ class FirebaseResource {
         return Response.status(200).build()
     }
 
-    @RolesAllowed("USER")
+    @RolesAllowed("USER", "PROVIDER", "SURVEYOR")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @POST

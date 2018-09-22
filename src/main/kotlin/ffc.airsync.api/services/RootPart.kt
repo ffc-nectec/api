@@ -17,12 +17,14 @@
 
 package ffc.airsync.api.services
 
+import ffc.airsync.api.services.filter.Cache
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.core.Response
 
 @Path("/")
 class RootPart {
+    @Cache(maxAge = 2)
     @GET
     fun getRootPart(): Response {
         return Response.status(200).entity(Runtime.getRuntime().freeMemory()).build()

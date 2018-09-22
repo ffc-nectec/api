@@ -1,5 +1,6 @@
 package ffc.airsync.api.services
 
+import ffc.airsync.api.services.filter.Cache
 import ffc.airsync.api.services.module.HomeVisitService
 import ffc.entity.User
 import ffc.entity.healthcare.HealthCareService
@@ -21,7 +22,7 @@ class VisitResource {
     @Context
     private var context: SecurityContext? = null
 
-    @RolesAllowed("USER", "ORG")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE")
     fun create(
@@ -36,7 +37,8 @@ class VisitResource {
         return Response.status(201).entity(respond).build()
     }
 
-    @RolesAllowed("USER", "ORG")
+    @Cache(maxAge = 2)
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE/{visitId:([\\dabcdefABCDEF].*)}")
     fun get(
@@ -46,7 +48,7 @@ class VisitResource {
         return HomeVisitService.get(orgId, visitId)
     }
 
-    @RolesAllowed("USER", "ORG")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     @PUT
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE/{visitId:([\\dabcdefABCDEF].*)}")
     fun update(

@@ -18,6 +18,7 @@
 package ffc.airsync.api.services
 
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.services.filter.Cache
 import ffc.airsync.api.services.module.OrgService
 import ffc.entity.Organization
 import javax.annotation.security.RolesAllowed
@@ -54,6 +55,7 @@ class OrgResource {
         }
     }
 
+    @Cache(maxAge = 5)
     @GET
     fun getMy(@QueryParam("my") my: Boolean = false, @QueryParam("query") query: String?): List<Organization> {
         return if (my) {
@@ -68,7 +70,7 @@ class OrgResource {
         }
     }
 
-    @RolesAllowed("ORG")
+    @RolesAllowed("ORG", "ADMIN")
     @DELETE
     @Path("/{orgId:([\\dabcdefABCDEF]+)}")
     fun remove(@PathParam("orgId") orgId: String): Response {

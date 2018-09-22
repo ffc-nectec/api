@@ -17,6 +17,7 @@
 
 package ffc.airsync.api.services
 
+import ffc.airsync.api.services.filter.Cache
 import ffc.airsync.api.services.module.HouseService
 import ffc.entity.House
 import ffc.entity.User
@@ -48,7 +49,8 @@ class HouseResource {
     @Context
     private var context: SecurityContext? = null
 
-    @RolesAllowed("USER", "ORG")
+    @Cache(maxAge = 5)
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
@@ -58,17 +60,17 @@ class HouseResource {
         @PathParam("orgId") orgId: String
     ): FeatureCollection<House> {
         val houses = HouseService.getHouses(orgId,
-                if (page == 0) 1 else page,
-                if (per_page == 0) 200 else per_page,
-                haveLocation = true)
+            if (page == 0) 1 else page,
+            if (per_page == 0) 200 else per_page,
+            haveLocation = true)
         if (houses.isEmpty()) throw NotFoundException("ไม่มีรายการบ้าน")
-
         val geoReturn = FeatureCollection<House>()
         geoReturn.features.addAll(houses.map { Feature(it.location!!, it) })
         return geoReturn
     }
 
-    @RolesAllowed("USER", "ORG")
+    @Cache(maxAge = 5)
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
     fun getJsonHouse(
@@ -83,13 +85,13 @@ class HouseResource {
             else -> null
         }
         return HouseService.getHouses(
-                orgId,
-                if (page == 0) 1 else page,
-                if (per_page == 0) 200 else per_page,
-                haveLocation)
+            orgId,
+            if (page == 0) 1 else page,
+            if (per_page == 0) 200 else per_page,
+            haveLocation)
     }
 
-    @RolesAllowed("USER", "ORG")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     @PUT
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     fun update(
@@ -102,7 +104,8 @@ class HouseResource {
         return Response.status(200).entity(houseUpdate).build()
     }
 
-    @RolesAllowed("USER", "ORG")
+    @Cache(maxAge = 2)
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
@@ -113,7 +116,8 @@ class HouseResource {
         return HouseService.getSingleGeo(orgId, houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
     }
 
-    @RolesAllowed("USER", "ORG")
+    @Cache(maxAge = 2)
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     fun getSingle(
@@ -123,7 +127,7 @@ class HouseResource {
         return HouseService.getSingle(houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
     }
 
-    @RolesAllowed("ORG", "USER")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/${PART_HOUSESERVICE}s")
     fun create(
@@ -131,7 +135,6 @@ class HouseResource {
         houseList: List<House>?
     ): Response {
         if (houseList == null) throw BadRequestException()
-
         val role = getTokenRole(context!!)
         houseList.forEach { it.people = null }
 
@@ -148,7 +151,7 @@ class HouseResource {
         }
     }
 
-    @RolesAllowed("ORG", "USER")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
     fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
