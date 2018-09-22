@@ -19,6 +19,7 @@ package ffc.airsync.api.services
 
 import ffc.airsync.api.services.filter.Cache
 import org.joda.time.DateTime
+import java.sql.Timestamp
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.Path
@@ -39,7 +40,7 @@ class UtilResource {
     @Cache(maxAge = 1)
     @GET
     @Path("/datetime")
-    fun time(): DateTime {
-        return DateTime.now()
+    fun time(): Timestamp {
+        return Timestamp(DateTime.now().millis)
     }
 }
