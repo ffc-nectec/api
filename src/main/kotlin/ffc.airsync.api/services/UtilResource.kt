@@ -19,6 +19,7 @@ package ffc.airsync.api.services
 
 import ffc.airsync.api.services.filter.Cache
 import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import java.sql.Timestamp
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -53,6 +54,6 @@ class UtilResource {
     @Path("/timestamp")
     fun timestamp(): Timestamp {
         TimeZone.setDefault(TimeZone.getTimeZone(ZoneId.ofOffset("UTC", ZoneOffset.ofHours(7))))
-        return Timestamp(DateTime.now().millis)
+        return Timestamp(DateTime.now(DateTimeZone.UTC).plusHours(7).millis)
     }
 }
