@@ -25,6 +25,8 @@ import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import java.nio.charset.Charset
 import java.util.Locale
 import javax.ws.rs.ForbiddenException
@@ -33,6 +35,8 @@ val debug = System.getenv("FFC_DEBUG")
 fun <T> printDebug(infoDebug: T) {
     if (debug == null) println(infoDebug)
 }
+
+val DATETIMEBANGKOK = lazy { DateTime(DateTimeZone.UTC).plusHours(7)!! }.value
 
 inline fun <reified T> getResourceAs(filename: String): T {
     val classloader = Thread.currentThread().contextClassLoader
@@ -51,7 +55,6 @@ fun Locale.toLang(): Lang {
 
 fun Entity.buildInsertBson(): Document {
     if (!isTempId) throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
-
     val generateId = ObjectId()
     val insertObj = copy(generateId.toHexString().trim())
     return insertObj.buildBsonDoc()
