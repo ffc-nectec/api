@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.filter
 
 import ffc.airsync.api.printDebug
+import javax.ws.rs.BadRequestException
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.WebApplicationException
@@ -35,5 +36,15 @@ class ErrorUserFilter : ExceptionMapper<ForbiddenException> {
         } else {
             Response.status(exception.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
         }
+    }
+}
+
+@Provider
+class ErrorMethodNotAllow : ExceptionMapper<javax.ws.rs.NotAllowedException> {
+    override fun toResponse(exception: javax.ws.rs.NotAllowedException?): Response {
+        exception!!.printStackTrace()
+        val err = ErrorFilter.ErrorRes(400, exception.message, exception)
+        val except = BadRequestException(err.message)
+        return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
     }
 }
