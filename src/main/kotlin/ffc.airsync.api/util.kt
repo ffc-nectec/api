@@ -36,7 +36,7 @@ fun <T> printDebug(infoDebug: T) {
     if (debug == null) println(infoDebug)
 }
 
-val DATETIMEBANGKOK = lazy { DateTime(DateTimeZone.UTC).plusHours(7)!! }.value
+val DATETIMEBANGKOK: DateTime get() = DateTime(DateTimeZone.UTC).plusHours(7)!!
 
 inline fun <reified T> getResourceAs(filename: String): T {
     val classloader = Thread.currentThread().contextClassLoader
