@@ -12,9 +12,9 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
 
     init {
         val searchIndex = Document("icd10", "text")
-        searchIndex.append("name", "text")
-        searchIndex.append("translation.th", "text")
-        val insertIndex = Document("icd10", 1)
+            .append("name", "text")
+            .append("translation.th", "text")
+        val insertIndex = "icd10" equal 1
 
         try {
             dbCollection.createIndex(searchIndex, IndexOptions().unique(false))
@@ -26,12 +26,10 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
     override fun insert(disease: Disease): Disease {
         val query = Document()
         query.put("icd10", disease.icd10)
-
         val docDisease = Document.parse(disease.toJson())
 
         dbCollection.deleteMany(query)
         dbCollection.insertOne(docDisease)
-
         val result = dbCollection.find(query).first()
         val newDisease = result.toJson().parseTo<Disease>()
 
@@ -41,14 +39,12 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
     override fun find(query: String): List<Disease> {
         val result = arrayListOf<Disease>()
         val regexQuery = Document("\$regex", query).append("\$options", "i")
-
         val listQuery = BasicBSONList().apply {
-            add(Document("translation.th", regexQuery))
-            add(Document("icd10", regexQuery))
-            add(Document("name", regexQuery))
+            add("translation.th" equal regexQuery)
+            add("icd10" equal regexQuery)
+            add("name" equal regexQuery)
         }
-
-        val resultQuery = dbCollection.find(Document("\$or", listQuery)).limit(100)
+        val resultQuery = dbCollection.find("\$or" equal listQuery).limit(100)
         resultQuery.forEach {
             val disease = it.toJson().parseTo<Disease>()
             result.add(disease)

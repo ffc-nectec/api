@@ -21,19 +21,17 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     override fun findByOrgId(orgId: String): List<Person> {
-        val query = Document("orgId", orgId)
-        return dbCollection.find(query).map { it.toJson().parseTo<Person>() }.toList()
+        return dbCollection.find("orgId" equal orgId)
+            .map { it.toJson().parseTo<Person>() }.toList()
     }
 
     override fun getPeopleInHouse(houseId: String): List<Person> {
-        val query = Document("houseId", houseId)
-        return dbCollection.find(query)
+        return dbCollection.find("houseId" equal houseId)
             .map { it.toJson().parseTo<Person>() }.toList()
     }
 
     override fun removeGroupByOrg(orgId: String) {
-        val query = Document("orgId", orgId)
-        dbCollection.deleteMany(query)
+        dbCollection.deleteMany("orgId" equal orgId)
     }
 
     override fun find(query: String, orgId: String): List<Person> {
@@ -46,28 +44,26 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
             val rex = Regex("""^ *\d+.*${'$'}""")
 
             if (rex.matches(query)) {
-                add(Document("identities.id", regexQuery))
+                add("identities.id" equal regexQuery)
             } else {
-                add(Document("firstname", regexQuery))
-                add(Document("lastname", regexQuery))
+                add("firstname" equal regexQuery)
+                add("lastname" equal regexQuery)
             }
         }
-        val queryTextReg = Document("\$or", queryTextCondition)
-        val queryFixOrgIdDoc = Document("orgId", orgId)
+        val queryTextReg = "\$or" equal queryTextCondition
+        val queryFixOrgIdDoc = "orgId" equal orgId
         val fullQuery = BasicBSONList().apply {
             add(queryFixOrgIdDoc)
             add(queryTextReg)
         }
-        val resultQuery = dbCollection.find(Document("\$and", fullQuery)).limit(20)
+        val resultQuery = dbCollection.find("\$and" equal fullQuery).limit(20)
 
-        return resultQuery.map {
-            it.toJson().parseTo<Person>()
-        }.toList()
+        return resultQuery.map { it.toJson().parseTo<Person>() }.toList()
     }
 
     override fun findByICD10(orgId: String, icd10: String): List<Person> {
-        val query = Document("chronics.disease.icd10", icd10)
-        val result = dbCollection.find(query).limit(20)
+        val result = dbCollection
+            .find("chronics.disease.icd10" equal icd10).limit(20)
 
         return result.map { it.toJson().parseTo<Person>() }.toList()
     }

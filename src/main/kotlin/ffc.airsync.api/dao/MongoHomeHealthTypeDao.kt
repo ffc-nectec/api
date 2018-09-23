@@ -11,20 +11,17 @@ import org.bson.types.BasicBSONList
 internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "homeHealthType"),
     HomeHealthTypeDao {
     init {
-        val insertIndex = Document("id", 1)
         try {
-            dbCollection.createIndex(insertIndex, IndexOptions().unique(false))
+            dbCollection.createIndex("id" equal 1, IndexOptions().unique(false))
         } catch (ignore: Exception) {
         }
     }
 
     override fun insert(homeHealthTypee: CommunityServiceType): CommunityServiceType {
-        val query = Document("id", homeHealthTypee.id)
-
+        val query = "id" equal homeHealthTypee.id
         val docHomeHealthType = Document.parse(homeHealthTypee.toJson())
         dbCollection.deleteMany(query)
         dbCollection.insertOne(docHomeHealthType)
-
         val result = dbCollection.find(query).first()
         result.remove("_id")
 
@@ -34,13 +31,11 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
     private fun findMongo(query: String): List<CommunityServiceType> {
         val result = arrayListOf<CommunityServiceType>()
         val regexQuery = Document("\$regex", query).append("\$options", "i")
-
         val queryDoc = BasicBSONList().apply {
-            add(Document("id", regexQuery))
-            add(Document("name", regexQuery))
+            add("id" equal regexQuery)
+            add("name" equal regexQuery)
         }
-
-        val resultQuery = dbCollection.find(Document("\$or", queryDoc))
+        val resultQuery = dbCollection.find("\$or" equal queryDoc)
 
         resultQuery.forEach {
             it.remove("_id")
@@ -63,7 +58,6 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
 
         find.forEach {
             val lastMap = find.findLastMap(it) ?: it
-
             val communityServiceType = CommunityServiceType(lastMap.id, lastMap.name).apply {
                 translation[Lang.th] = name
             }

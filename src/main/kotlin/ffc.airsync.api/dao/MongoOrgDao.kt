@@ -73,8 +73,7 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
 
     override fun remove(orgId: String) {
         printDebug("Call OrgMongoDao remove $orgId")
-        val query = Document("id", orgId)
-        dbCollection.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบ Org $orgId ที่ต้องการลบ")
+        dbCollection.findOneAndDelete("id" equal orgId) ?: throw NotFoundException("ไม่พบ Org $orgId ที่ต้องการลบ")
     }
 
     override fun findAll(): List<Organization> {
@@ -98,7 +97,7 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
 
     override fun findById(orgId: String): Organization {
         printDebug("Find by orgId = $orgId")
-        val query = Document("id", orgId)
+        val query = "id" equal orgId
         val orgDocument = dbCollection.find(query).first()
         printDebug("\torgDoc ${orgDocument.toJson()}")
         return orgDocument.toJson().parseTo()
@@ -106,9 +105,7 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
 
     override fun findByIpAddress(ipAddress: String): List<Organization> {
         printDebug("Mongo findAll org ip $ipAddress")
-        val query = Document("lastKnownIp", ipAddress)
-        printDebug("\tCreate query object $query")
-        val orgDoc = dbCollection.find(query)
+        val orgDoc = dbCollection.find("lastKnownIp" equal ipAddress)
         printDebug("\tQuery org from mongo $orgDoc")
         val orgList = docListToObj(orgDoc)
         if (orgList.isEmpty()) throw NotFoundException("ไม่พบรายการลงทะเบียนในกลุ่มของ Org ip $ipAddress")
@@ -116,9 +113,9 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
     }
 
     override fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
-        val query = Document("id", orgId)
+        val query = "id" equal orgId
         if (isOrg) {
-            val firebaseTokenDoc = Document("firebaseToken", firebaseToken)
+            val firebaseTokenDoc = "firebaseToken" equal firebaseToken
             dbCollection.updateOne(query, BasicDBObject("\$set", firebaseTokenDoc))
         } else {
             dbCollection.updateOne(query, BasicDBObject("\$push", BasicDBObject("mobileFirebaseToken", firebaseToken)))
@@ -126,15 +123,15 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
     }
 
     override fun removeFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
-        val query = Document("id", orgId)
+        val query = "id" equal orgId
 
         if (isOrg) {
-            val removeOrgFirebaseToken = Document("firebaseToken", null)
-            val removeOrgFirebaseTokenQuery = Document("\$set", removeOrgFirebaseToken)
+            val removeOrgFirebaseToken = "firebaseToken" equal null
+            val removeOrgFirebaseTokenQuery = "\$set" equal removeOrgFirebaseToken
             dbCollection.updateOne(query, removeOrgFirebaseTokenQuery)
         } else {
-            val removeMobileFirebaseToken = Document("mobileFirebaseToken", firebaseToken)
-            val removeMobileFirebaseTokenQuery = Document("\$pull", removeMobileFirebaseToken)
+            val removeMobileFirebaseToken = "mobileFirebaseToken" equal firebaseToken
+            val removeMobileFirebaseTokenQuery = "\$pull" equal removeMobileFirebaseToken
             dbCollection.updateOne(query, removeMobileFirebaseTokenQuery)
         }
     }
@@ -143,8 +140,7 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
         try {
             printDebug("Get firebase token.")
             val firebaseTokenList = arrayListOf<String>()
-            val query = Document("id", orgId)
-            val firebaseOrgDoc = dbCollection.find(query).first()
+            val firebaseOrgDoc = dbCollection.find("id" equal orgId).first()
             val firebaseMobile = firebaseOrgDoc["mobileFirebaseToken"] as List<*>?
             val orgFirebase = firebaseOrgDoc["firebaseToken"].toString()
             if (orgFirebase != "null")
@@ -171,11 +167,11 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
         val result = arrayListOf<Organization>()
         val regexQuery = Document("\$regex", query).append("\$options", "i")
         val queryTextCondition = BasicBSONList().apply {
-            add(Document("name", regexQuery))
-            add(Document("tel", regexQuery))
-            add(Document("address", regexQuery))
+            add("name" equal regexQuery)
+            add("tel" equal regexQuery)
+            add("address" equal regexQuery)
         }
-        val queryTextReg = Document("\$or", queryTextCondition)
+        val queryTextReg = "\$or" equal queryTextCondition
         val resultQuery = dbCollection.find(queryTextReg).limit(20)
 
         resultQuery.forEach {

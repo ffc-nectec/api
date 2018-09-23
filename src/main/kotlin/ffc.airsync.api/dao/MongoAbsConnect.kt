@@ -39,8 +39,7 @@ abstract class MongoAbsConnect(
     }
 
     override fun syncCloudFilter(orgId: String, isSync: Boolean, limitOutput: Int): List<Entity> {
-        val query = Document("link.isSynced", isSync)
-        val result = this.dbExecuted.find(query).limit(limitOutput)
+        val result = this.dbExecuted.find("link.isSynced" equal isSync).limit(limitOutput)
 
         if (result.count() < 1) return emptyList()
         val output = result.map {

@@ -29,25 +29,22 @@ import org.bson.Document
 import org.bson.types.ObjectId
 import javax.ws.rs.NotFoundException
 
-internal class MongoUserDao(host: String, port: Int)
-    : UserDao, MongoAbsConnect(host, port, "ffc", "organ") {
+internal class MongoUserDao(host: String, port: Int) : UserDao, MongoAbsConnect(host, port, "ffc", "organ") {
     override fun insertUser(user: User, orgId: String): User {
         if (!user.isTempId) throw IllegalArgumentException("รุปแบบ id ต้องใช้ TempId ในการสร้าง User")
         if (haveUserInDb(orgId, user)) throw IllegalArgumentException("มีการเพิ่มผู้ใช้ ${user.name} ซ้ำ")
+        val userStruct = "users" equal user.toDocument()
+        val userPush = "\$push" equal userStruct
 
-        val userStruct = Document("users", user.toDocument())
-        val userPush = Document("\$push", userStruct)
-
-        dbCollection.updateOne(Document("id", orgId), userPush)
+        dbCollection.updateOne("id" equal orgId, userPush)
 
         return findUser(orgId).find { it.name == user.name }
-                ?: throw IllegalStateException("Server Error in call dev")
+            ?: throw IllegalStateException("Server Error in call dev")
     }
 
     private fun haveUserInDb(orgId: String, user: User): Boolean {
         printDebug("\t\t\tCall haveUserInDb")
-        val query = Document("id", orgId)
-        val userInDb = dbCollection.find(query).projection(Document("users", 1)).first()
+        val userInDb = dbCollection.find("id" equal orgId).projection("users" equal 1).first()
         printDebug("\t\t\tOrg in haveUserInDb = $userInDb")
         val userList: Array<User>? = userInDb?.get("users")?.toJson()?.parseTo()
         printDebug("\t\t\tUser obj = ${userList?.toJson()}")
@@ -59,7 +56,6 @@ internal class MongoUserDao(host: String, port: Int)
 
     override fun updateUser(user: User, orgId: String): User {
         if (!haveUserInDb(orgId, user)) throw NotFoundException("ไม่พบผู้ใช้ ${user.name} ในระบบ")
-
         // TODO("รอพัฒนาระบบ Update User")
         // val query = Document("_id", ObjectId(orgId)).append("users", Document("name", user.name))
         return User().apply {
@@ -70,20 +66,19 @@ internal class MongoUserDao(host: String, port: Int)
 
     override fun findUser(orgId: String): List<User> {
         printDebug("Find User in orgId $orgId")
-        val query = Document("_id", ObjectId(orgId))
-        val userDocList = dbCollection.find(query).projection(Document("users", 1)).first() ?: return arrayListOf()
+        val userDocList = dbCollection
+            .find("_id" equal ObjectId(orgId)).projection("users" equal 1).first() ?: return arrayListOf()
         printDebug("\tuser list ${userDocList.toJson()}")
         return userDocList.getAs("users") ?: listOf()
     }
 
     inline fun <reified T> Document.getAs(key: String, gson: Gson = ffcGson): T? {
-        return this.get(key)?.toJson(gson)?.parseTo()
+        return this[key]?.toJson(gson)?.parseTo()
     }
 
     override fun findThat(orgId: String, name: String, password: String): User? {
         val orgDoc = dbCollection.find("id" equal orgId).first() ?: return null
         val org = orgDoc.toJson().parseTo<Organization>()
-
         val user = org.users.find { it.name == name }
 
         return if (user != null && password().check(password, user.password)) user else null

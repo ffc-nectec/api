@@ -18,7 +18,6 @@
 package ffc.airsync.api.dao
 
 internal class DaoFactory {
-
     companion object {
         var host = "127.0.0.1"
         var port = 27017

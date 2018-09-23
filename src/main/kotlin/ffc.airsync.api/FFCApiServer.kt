@@ -53,12 +53,11 @@ internal class FFCApiServer(args: Array<String>) {
 
     fun run() {
         getFirebaseParameter()
+        initDiseaseAndHomeHealtyType()
+        runningProcess()
+    }
 
-        Thread {
-            DiseaseService.init()
-            HomeHealthTypeService.init()
-        }.start()
-
+    private fun runningProcess() {
         println("Start main process")
         val context = ServletContextBuilder.build()
         val server = Server(JettyServerTuning.threadPool)
@@ -74,6 +73,13 @@ internal class FFCApiServer(args: Array<String>) {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    private fun initDiseaseAndHomeHealtyType() {
+        Thread {
+            DiseaseService.init()
+            HomeHealthTypeService.init()
+        }.start()
     }
 
     private fun getFirebaseParameter() {

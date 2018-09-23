@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 
 object PasswordSalt {
-
     private var saltTest = """
 uxF3Ocv5eg4BoQBK9MmR
 rwPARiCL9ovpr3zmlJlj
@@ -28,7 +27,6 @@ f6zMttthJyQnrDBHGhma
 j1nrasD5fg9NxuwkdJq8
 ytF2v69RwtGYf7C6ygwD
 """
-
     var SALT_PASS: String
 
     init {
@@ -40,7 +38,6 @@ ytF2v69RwtGYf7C6ygwD
     fun getPass(password: String): String {
         val digest = MessageDigest.getInstance("SHA-256")
         val encoded = digest.digest(("$password$SALT_PASS$password").toByteArray(StandardCharsets.UTF_8))
-
         val hexString = StringBuffer()
         for (i in 0 until encoded.size) {
             val hex = Integer.toHexString(0xff and encoded[i].toInt())
