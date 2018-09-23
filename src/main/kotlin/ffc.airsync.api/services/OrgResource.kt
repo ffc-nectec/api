@@ -48,6 +48,9 @@ class OrgResource {
     @POST
     fun create(organization: Organization): Response {
         try {
+            organization.users.forEach {
+                it.roles.add(it.role)
+            }
             val org = OrgService.register(organization.apply { bundle["lastKnownIp"] = req.ipAddress })
             return Response.status(201).entity(org).build()
         } catch (ex: IllegalArgumentException) {
