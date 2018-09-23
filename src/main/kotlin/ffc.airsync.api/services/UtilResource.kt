@@ -18,6 +18,7 @@
 package ffc.airsync.api.services
 
 import ffc.airsync.api.DATETIMEBANGKOK
+import ffc.airsync.api.TIMESTAMPBANGKOK
 import ffc.airsync.api.services.filter.Cache
 import org.joda.time.DateTime
 import java.sql.Timestamp
@@ -49,6 +50,6 @@ class UtilResource {
     @GET
     @Path("/timestamp")
     fun timestamp(): Timestamp {
-        return Timestamp(DATETIMEBANGKOK.millis)
+        return TIMESTAMPBANGKOK
     }
 }

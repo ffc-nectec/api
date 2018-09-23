@@ -28,7 +28,10 @@ import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import java.nio.charset.Charset
+import java.sql.Timestamp
+import java.time.ZoneId
 import java.util.Locale
+import java.util.TimeZone
 import javax.ws.rs.ForbiddenException
 
 val debug = System.getenv("FFC_DEBUG")
@@ -36,7 +39,8 @@ fun <T> printDebug(infoDebug: T) {
     if (debug == null) println(infoDebug)
 }
 
-val DATETIMEBANGKOK: DateTime get() = DateTime(DateTimeZone.UTC).plusHours(7)!!
+val DATETIMEBANGKOK: DateTime get() = DateTime(DateTimeZone.forTimeZone(TimeZone.getTimeZone(ZoneId.of("Asia/Bangkok"))))
+val TIMESTAMPBANGKOK: Timestamp get() = Timestamp(DATETIMEBANGKOK.plusHours(7).millis)
 
 inline fun <reified T> getResourceAs(filename: String): T {
     val classloader = Thread.currentThread().contextClassLoader
