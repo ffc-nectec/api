@@ -62,7 +62,10 @@ private fun putEntityToFirebase(
         .putData("type", type)
         .putData("id", entity.id)
         .putData("url", "$orgId/$urlPart/${entity.id}").setToken(registrationToken).build()
-    val response = FirebaseMessaging.getInstance().sendAsync(message).get()
-
-    printDebug("Successfully sent message: $response")
+    try {
+        val response = FirebaseMessaging.getInstance().sendAsync(message).get()
+        printDebug("Successfully sent firebase message response = $response")
+    } catch (ex: java.lang.Exception) {
+        check(false) { "Fail send message firebase \n ${ex.toJson()}" }
+    }
 }
