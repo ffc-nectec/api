@@ -24,9 +24,8 @@ class UserResource {
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     fun create(@PathParam("orgUuid") orgId: String, users: List<User>): Response {
-        printDebug("Raw user list.")
         users.forEach {
-            printDebug("User = " + it.name + " Pass = " + it.password)
+            it.roles.add(it.role)
         }
         val usersUpdate = UserService.create(orgId, users)
         return Response.status(Response.Status.CREATED).entity(usersUpdate).build()

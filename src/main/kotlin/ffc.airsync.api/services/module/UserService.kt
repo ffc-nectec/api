@@ -1,22 +1,14 @@
 package ffc.airsync.api.services.module
 
 import ffc.airsync.api.dao.UserDao
-import ffc.airsync.api.printDebug
 import ffc.entity.Token
 import ffc.entity.User
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.NotAuthorizedException
 
 object UserService {
-    const val ORGUSER = "ORG"
-
-    fun create(orgId: String, users: List<User>): List<User> {
-        val usersUpdate = arrayListOf<User>()
-        users.forEach {
-            printDebug("insert username " + orgId + " User = " + it.name)
-            usersUpdate.add(ffc.airsync.api.services.module.users.insertUser(it, orgId))
-        }
-        return usersUpdate
+    fun create(orgId: String, user: List<User>): List<User> {
+        return user.map { users.insertUser(it, orgId) }
     }
 
     fun login(orgId: String, username: String, pass: String): Token {
