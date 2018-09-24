@@ -17,6 +17,11 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
         return dbCollection.ffcInsert(insertVisit)
     }
 
+    override fun get(orgId: String): List<HealthCareService> {
+        return dbCollection.find("orgId" equal orgId)
+            .map { it.toJson().parseTo<HealthCareService>() }.toList()
+    }
+
     override fun find(id: String, orgId: String): HealthCareService? {
         val query = Document("_id", ObjectId(id))
             .append("orgId", orgId)

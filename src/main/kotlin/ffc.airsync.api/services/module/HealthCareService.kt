@@ -15,12 +15,16 @@ object HomeVisitService {
         return result
     }
 
-    fun get(orgId: String, id: String): HomeVisit {
+    fun find(orgId: String, id: String): HomeVisit {
         val result = healthCareServices.find(id, orgId)
 
         return if (result != null)
             result as HomeVisit
         else throw NotFoundException("ไม่พบ ข้อมูลที่ค้นหา")
+    }
+
+    fun get(orgId: String): List<HealthCareService> {
+        return healthCareServices.get(orgId)
     }
 
     fun update(healthCareService: HealthCareService, orgId: String): HealthCareService {

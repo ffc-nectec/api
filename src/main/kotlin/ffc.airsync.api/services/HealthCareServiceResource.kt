@@ -40,12 +40,22 @@ class VisitResource {
     @Cache(maxAge = 2)
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE/{visitId:([\\dabcdefABCDEF].*)}")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE")
     fun get(
+        @PathParam("orgId") orgId: String
+    ): List<HealthCareService> {
+        return HomeVisitService.get(orgId)
+    }
+
+    @Cache(maxAge = 2)
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @GET
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE/{visitId:([\\dabcdefABCDEF].*)}")
+    fun find(
         @PathParam("orgId") orgId: String,
         @PathParam("visitId") visitId: String
     ): HomeVisit {
-        return HomeVisitService.get(orgId, visitId)
+        return HomeVisitService.find(orgId, visitId)
     }
 
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")

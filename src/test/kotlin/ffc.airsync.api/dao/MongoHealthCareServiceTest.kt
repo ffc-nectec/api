@@ -15,22 +15,20 @@ import ffc.entity.healthcare.HomeVisit
 import ffc.entity.healthcare.homeVisit
 import ffc.entity.util.generateTempId
 import me.piruin.geok.geometry.Point
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.joda.time.LocalDate
 import org.junit.Before
 import org.junit.Test
 
 class MongoHealthCareServiceTest {
-
     lateinit var dao: HealthCareServiceDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer
-
     val comServType = CommunityServiceType(
         "1B0030",
         "ตรวจคัดกรองความเสี่ยง/โรคมะเร็งเต้านมได้ผลปกติ ผู้รับบริการเคยตรวจด้วยตนเองได้ผลปกติ"
     )
-
     val hypertension = Disease(
         "id2h3",
         "Hypertension",
@@ -41,7 +39,6 @@ class MongoHealthCareServiceTest {
     ).apply {
         translation.put(Lang.th, "ความดันโลหิต")
     }
-
     val provider = User(
         generateTempId(),
         "blast",
@@ -49,14 +46,12 @@ class MongoHealthCareServiceTest {
         User.Role.PROVIDER,
         User.Role.ADMIN
     )
-
     val patient = Person().apply {
         identities.add(ThaiCitizenId("1154785400590"))
         prename = "Mr."
         firstname = "Piruin"
         lastname = "Panichphol"
     }
-
     val visit = provider.homeVisit(patient.id, comServType).apply {
         syntom = "ปกติ"
         weight = 61.5
@@ -98,5 +93,14 @@ class MongoHealthCareServiceTest {
 
         result.id `should equal` find!!.id
         (find as HomeVisit).nextAppoint `should equal` LocalDate.parse("2019-09-21")
+    }
+
+    @Test
+    fun get() {
+        val insert = dao.insert(visit, "23232324ddef")
+        val result = dao.get("23232324ddef")
+
+        result.count() `should be equal to` 1
+        result.first().id `should be equal to` insert.id
     }
 }

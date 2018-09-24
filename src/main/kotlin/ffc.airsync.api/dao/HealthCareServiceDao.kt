@@ -8,6 +8,8 @@ interface HealthCareServiceDao : Dao {
         return healthCareService.map { insert(it, orgId) }
     }
 
+    fun get(orgId: String): List<HealthCareService>
+
     fun find(id: String, orgId: String): HealthCareService?
 
     fun update(healthCareService: HealthCareService, orgId: String): HealthCareService
