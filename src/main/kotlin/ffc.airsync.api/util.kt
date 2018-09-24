@@ -83,7 +83,7 @@ fun Entity.buildInsertBson(): Document {
 
 fun Entity.buildUpdateBson(oldDoc: Document): Document {
     if (isTempId) throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
-    val oldBundle = oldDoc.toJson().parseTo<Entity>(gsonIsBundle).bundle
+    val oldBundle = oldDoc.toJson().parseTo<Entity>(airSyncGson).bundle
     this.bundle.clear()
     this.bundle.putAll(oldBundle)
     return this.buildBsonDoc()
@@ -91,7 +91,7 @@ fun Entity.buildUpdateBson(oldDoc: Document): Document {
 
 private fun Entity.buildBsonDoc(): Document {
     val generateId = ObjectId(id)
-    val json = toJson(gsonIsBundle)
+    val json = toJson(airSyncGson)
     val doc = Document.parse(json)
     doc.append("_id", generateId)
 
@@ -106,7 +106,7 @@ inline fun <reified T> MongoCollection<Document>.ffcInsert(doc: Document): T {
     return result.toJson().parseTo()
 }
 
-private val gsonIsBundle = GsonBuilder()
+val airSyncGson = GsonBuilder()
     .adapterFor<User>(UserJsonAdapter())
     .adapterFor<Identity>(IdentityJsonAdapter())
     .adapterFor<HealthCareService>(HealthCareJsonAdapter())
