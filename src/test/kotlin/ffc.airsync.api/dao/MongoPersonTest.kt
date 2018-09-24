@@ -31,9 +31,9 @@ class MongoPersonTest {
         birthDate = LocalDate.now().minusYears(20)
         chronics.add(Chronic(Disease(generateTempId(), "fair", "dxabc00x")))
         chronics.add(Chronic(Disease(generateTempId(), "fair", "abcffe982")))
-        bundle["houseId"] = "12345678901"
         link = Link(System.JHICS)
         link!!.isSynced = false
+        link!!.keys["hcode"] = "12345678901"
     }
     val missCat = Person().apply {
         identities.add(ThaiCitizenId("2123455687675"))
@@ -44,9 +44,9 @@ class MongoPersonTest {
         birthDate = LocalDate.now().minusYears(27)
         chronics.add(Chronic(Disease(generateTempId(), "floor", "I10")))
         chronics.add(Chronic(Disease(generateTempId(), "fary", "I11")))
-        bundle["houseId"] = "11111111111"
         link = Link(System.JHICS)
         link!!.isSynced = true
+        link!!.keys["hcode"] = "11111111111"
     }
     val missRabbit = Person().apply {
         identities.add(ThaiCitizenId("1122399087432"))
@@ -57,9 +57,9 @@ class MongoPersonTest {
         birthDate = LocalDate.now().minusYears(22)
         chronics.add(Chronic(Disease(generateTempId(), "sleep", "I10")))
         chronics.add(Chronic(Disease(generateTempId(), "god", "I11")))
-        bundle["houseId"] = "99887744998"
         link = Link(System.JHICS)
         link!!.isSynced = false
+        link!!.keys["hcode"] = "99887744998"
     }
 
     @Before
@@ -120,8 +120,8 @@ class MongoPersonTest {
             add(misterDog)
         })
 
-        dao.getPeopleInHouse("12345678901")!!.first().firstname `should be equal to` "สมชาย"
-        dao.getPeopleInHouse("11111111111")!!.first().lastname `should be equal to` "สมบูรณ์จิต"
+        dao.getPeopleInHouse("12345678901").first().firstname `should be equal to` "สมชาย"
+        dao.getPeopleInHouse("11111111111").first().lastname `should be equal to` "สมบูรณ์จิต"
     }
 
     @Test
