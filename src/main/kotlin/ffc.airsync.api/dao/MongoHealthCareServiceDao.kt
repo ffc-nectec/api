@@ -29,7 +29,8 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
     override fun update(healthCareService: HealthCareService, orgId: String): HealthCareService {
         val query = Document("_id", ObjectId(healthCareService.id))
             .append("orgId", orgId)
-        val updateDocument = healthCareService.buildUpdateBson()
+        val oldObject = dbCollection.find(query).first()!!
+        val updateDocument = healthCareService.buildUpdateBson(oldObject)
         val resultUpdate = dbCollection.updateOne(query, updateDocument)
 
         check(resultUpdate.isModifiedCountAvailable) { "พารามิตเตอร์การ Update ผิดพลาด" }

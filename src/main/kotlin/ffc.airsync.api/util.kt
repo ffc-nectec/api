@@ -17,16 +17,33 @@
 
 package ffc.airsync.api
 
+import com.fatboyindustrial.gsonjodatime.DateTimeConverter
+import com.fatboyindustrial.gsonjodatime.LocalDateConverter
+import com.fatboyindustrial.gsonjodatime.LocalDateTimeConverter
+import com.google.gson.GsonBuilder
 import com.mongodb.client.MongoCollection
 import ffc.entity.Entity
+import ffc.entity.Identity
 import ffc.entity.Lang
+import ffc.entity.User
 import ffc.entity.copy
+import ffc.entity.gson.HealthCareJsonAdapter
+import ffc.entity.gson.IdentityJsonAdapter
+import ffc.entity.gson.UserJsonAdapter
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
+import ffc.entity.healthcare.HealthCareService
+import me.piruin.geok.LatLng
+import me.piruin.geok.geometry.Geometry
+import me.piruin.geok.gson.GeometrySerializer
+import me.piruin.geok.gson.LatLngSerializer
+import me.piruin.geok.gson.adapterFor
 import org.bson.Document
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
+import org.joda.time.LocalDate
+import org.joda.time.LocalDateTime
 import java.nio.charset.Charset
 import java.sql.Timestamp
 import java.time.ZoneId
@@ -64,15 +81,17 @@ fun Entity.buildInsertBson(): Document {
     return insertObj.buildBsonDoc()
 }
 
-fun Entity.buildUpdateBson(): Document {
+fun Entity.buildUpdateBson(oldDoc: Document): Document {
     if (isTempId) throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
-
+    val oldBundle = oldDoc.toJson().parseTo<Entity>(gsonIsBundle).bundle
+    this.bundle.clear()
+    this.bundle.putAll(oldBundle)
     return this.buildBsonDoc()
 }
 
 private fun Entity.buildBsonDoc(): Document {
     val generateId = ObjectId(id)
-    val json = toJson()
+    val json = toJson(gsonIsBundle)
     val doc = Document.parse(json)
     doc.append("_id", generateId)
 
@@ -85,4 +104,20 @@ inline fun <reified T> MongoCollection<Document>.ffcInsert(doc: Document): T {
     val result = find(query).first()
 
     return result.toJson().parseTo()
+}
+
+private val gsonIsBundle = GsonBuilder()
+    .adapterFor<User>(UserJsonAdapter())
+    .adapterFor<Identity>(IdentityJsonAdapter())
+    .adapterFor<HealthCareService>(HealthCareJsonAdapter())
+    .adapterForExtLibrary()
+    .create()
+
+private fun GsonBuilder.adapterForExtLibrary(): GsonBuilder {
+    adapterFor<Geometry>(GeometrySerializer())
+    adapterFor<LatLng>(LatLngSerializer())
+    adapterFor<DateTime>(DateTimeConverter())
+    adapterFor<LocalDate>(LocalDateConverter())
+    adapterFor<LocalDateTime>(LocalDateTimeConverter())
+    return this
 }
