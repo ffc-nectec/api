@@ -22,4 +22,12 @@ class EntityResource {
     fun sync(@PathParam("orgId") orgId: String): List<Entity> {
         return EntityService.getNonSyncData(orgId)
     }
+
+    @Cache(maxAge = 2)
+    @RolesAllowed("ORG", "ADMIN")
+    @GET
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/sync/healthcareservice")
+    fun syncHealthCareService(@PathParam("orgId") orgId: String): List<Entity> {
+        return EntityService.getHealthCareService(orgId)
+    }
 }
