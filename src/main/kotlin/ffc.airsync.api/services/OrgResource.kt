@@ -66,9 +66,11 @@ class OrgResource {
             OrgService.getMy(req.ipAddress)
         } else {
             val queryFind = query ?: ""
-            if (queryFind.isNotEmpty())
+            if (queryFind.isNotEmpty()) {
+                require(!queryFind.contains(Regex("""[\.\,\%\!\?\'\|\*]"""))) { "ในการค้นหาไม่ควรมีอักขระ . , % ! ? ' | *" }
+
                 OrgService.find(queryFind)
-            else
+            } else
                 OrgService.get()
         }
     }
