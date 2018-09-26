@@ -164,22 +164,19 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
     }
 
     private fun findMongo(query: String): List<Organization> {
-        val result = arrayListOf<Organization>()
         val regexQuery = Document("\$regex", query).append("\$options", "i")
         val queryTextCondition = BasicBSONList().apply {
             add("name" equal regexQuery)
             add("tel" equal regexQuery)
             add("address" equal regexQuery)
+            add("link.keys.offid" equal regexQuery)
         }
         val queryTextReg = "\$or" equal queryTextCondition
         val resultQuery = dbCollection.find(queryTextReg).limit(20)
 
-        resultQuery.forEach {
+        return resultQuery.map {
             it.remove("_id")
-            val orgMap = it.toJson().parseTo<Organization>()
-            result.add(orgMap)
-        }
-
-        return result
+            it.toJson().parseTo<Organization>()
+        }.toList()
     }
 }
