@@ -57,9 +57,7 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
 
     private fun checkDuplication(organization: Organization) {
         val name = dbCollection.find("name" equal organization.name).first()
-        if (name != null) {
-            throw IllegalArgumentException("ลงทะเบียน Org ซ้ำ")
-        }
+        check(name == null) { "ลงทะเบียน Org ซ้ำ" }
     }
 
     private fun validate(organization: Organization) {
@@ -68,6 +66,12 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
             require(name.isNotEmpty()) { "โปรระบุชื่อ หน่วยงานที่ต้องการลงทะเบียนลงในตัวแปร name" }
             require(users.isNotEmpty()) { "โปรดลงทะเบียน user ในตัวแปร user ในหน่วยงานที่ต้องการลงทะเบียน" }
             require(users.find { it.role == User.Role.ORG } != null) { "ไม่มี User ที่เป็น Role ORG" }
+            if (link != null) {
+                val pcucode = link!!.keys.get("pcucode")
+                if (pcucode is Number) {
+                    link!!.keys["pcucode"] = pcucode.toInt().toString()
+                }
+            }
         }
     }
 

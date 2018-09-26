@@ -52,7 +52,7 @@ class MongoOrgTest {
         hahahaOrg = dao.insert(Org("รพ.สต.HAHAHA", "203.111.222.123").apply {
             tel = "02-388-5555"
             address = "166 ม.99 ต.เนคเทค อ.อยู่ดี จ.กินดี"
-            link!!.keys["pcucode"] = 1245
+            link!!.keys["pcucode"] = 100145
         })
         nectecOrg = dao.insert(Org("รพ.สต.Nectec", "192.168.99.3").apply {
             tel = "037-261-044"
@@ -164,10 +164,10 @@ class MongoOrgTest {
 
     @Test
     fun findByOfficeId() {
-        val result = dao.find("203")
+        val result = dao.find("100145")
 
         result.count() `should be equal to` 1
-        result.first().name `should be equal to` "รพ.สต.Nectec"
+        result.first().name `should be equal to` "รพ.สต.HAHAHA"
     }
 
     @Test

@@ -23,7 +23,6 @@ import ffc.airsync.api.services.module.OrgService
 import ffc.entity.Organization
 import javax.annotation.security.RolesAllowed
 import javax.servlet.http.HttpServletRequest
-import javax.ws.rs.BadRequestException
 import javax.ws.rs.Consumes
 import javax.ws.rs.DELETE
 import javax.ws.rs.GET
@@ -47,15 +46,11 @@ class OrgResource {
 
     @POST
     fun create(organization: Organization): Response {
-        try {
-            organization.users.forEach {
-                it.roles.add(it.role)
-            }
-            val org = OrgService.register(organization.apply { bundle["lastKnownIp"] = req.ipAddress })
-            return Response.status(201).entity(org).build()
-        } catch (ex: IllegalArgumentException) {
-            throw BadRequestException("ไม่สามารถลงทะเบียนได้เนื่องจากหน่วยงานซ้ำ")
+        organization.users.forEach {
+            it.roles.add(it.role)
         }
+        val org = OrgService.register(organization.apply { bundle["lastKnownIp"] = req.ipAddress })
+        return Response.status(201).entity(org).build()
     }
 
     @Cache(maxAge = 5)
