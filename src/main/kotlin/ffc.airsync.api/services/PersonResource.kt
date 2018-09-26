@@ -44,14 +44,22 @@ class PersonResource {
 
     @RolesAllowed("ORG", "ADMIN")
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
-    fun create(@PathParam("orgId") orgId: String, personList: List<Person>): Response {
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/persons")
+    fun creates(@PathParam("orgId") orgId: String, personList: List<Person>): Response {
         printDebug("\nCall create person by ip = ")
-
         personList.forEach {
             printDebug(it)
         }
         val persons = PersonService.create(orgId, personList)
+        return Response.status(Response.Status.CREATED).entity(persons).build()
+    }
+
+    @RolesAllowed("ORG", "ADMIN")
+    @POST
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
+    fun create(@PathParam("orgId") orgId: String, person: Person): Response {
+        printDebug("\nCall create person by ip = ")
+        val persons = PersonService.create(orgId, person)
         return Response.status(Response.Status.CREATED).entity(persons).build()
     }
 

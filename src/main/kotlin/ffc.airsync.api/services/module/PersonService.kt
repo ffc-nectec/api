@@ -18,4 +18,8 @@ object PersonService {
     fun findICD10(orgId: String, icd10: String): List<Person> {
         return persons.findByICD10(orgId, icd10)
     }
+
+    fun create(orgId: String, person: Person): Person {
+        return persons.insert(orgId, person)
+    }
 }
