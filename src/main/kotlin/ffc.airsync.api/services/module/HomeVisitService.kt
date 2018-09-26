@@ -30,4 +30,9 @@ object HomeVisitService {
     fun update(healthCareService: HealthCareService, orgId: String): HealthCareService {
         return healthCareServices.update(healthCareService, orgId)
     }
+
+    fun getPersonHealthCare(orgId: String, personId: String): List<HealthCareService> {
+        val result = healthCareServices.findByPatientId(personId, orgId)
+        return if (result.isNotEmpty()) result else throw NotFoundException("ค้นหา health care service person id $personId ไม่พบ")
+    }
 }

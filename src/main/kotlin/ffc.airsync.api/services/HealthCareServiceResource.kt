@@ -76,4 +76,12 @@ class VisitResource {
             else -> healthCareService.link!!.isSynced = false
         }
     }
+
+    @Cache(maxAge = 5)
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @GET
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE")
+    fun getPerson(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<HealthCareService> {
+        return HomeVisitService.getPersonHealthCare(orgId, personId)
+    }
 }

@@ -31,6 +31,15 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
         return result.toJson().parseTo()
     }
 
+    override fun findByPatientId(personId: String, orgId: String): List<HealthCareService> {
+        val query = Document("patientId", personId)
+            .append("orgId", orgId)
+        val result = dbCollection.find(query)
+
+        check(result != null) { "ไม่พบ health care service person id $personId" }
+        return result.map { it.toJson().parseTo<HealthCareService>() }.toList()
+    }
+
     override fun update(healthCareService: HealthCareService, orgId: String): HealthCareService {
         val query = Document("_id", ObjectId(healthCareService.id))
             .append("orgId", orgId)
