@@ -18,6 +18,7 @@ import me.piruin.geok.geometry.Point
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.joda.time.LocalDate
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
@@ -75,6 +76,12 @@ class MongoHealthCareServiceTest {
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
         dao = DaoFactory().healthCareServices(serverAddress.hostString, serverAddress.port)
+    }
+
+    @After
+    fun cleanDb() {
+        client.close()
+        server.shutdownNow()
     }
 
     @Test
