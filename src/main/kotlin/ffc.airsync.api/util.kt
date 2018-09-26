@@ -99,6 +99,7 @@ private fun Entity.buildBsonDoc(): Document {
 }
 
 inline fun <reified T> MongoCollection<Document>.ffcInsert(doc: Document): T {
+    require(doc["_id"] != null) { "ต้องมี _id ในขั้นตอนการ Insert" }
     insertOne(doc)
     val query = Document("_id", doc["_id"] as ObjectId)
     val result = find(query).first()

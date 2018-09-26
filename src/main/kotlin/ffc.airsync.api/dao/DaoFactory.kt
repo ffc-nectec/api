@@ -34,4 +34,7 @@ internal class DaoFactory {
 
     fun healthCareServices(host: String = DaoFactory.host, port: Int = DaoFactory.port): HealthCareServiceDao =
         MongoHealthCareServiceDao(host, port)
+
+    fun firebaseStauts(host: String = DaoFactory.host, port: Int = DaoFactory.port): FirebaseStatusDao =
+        MongoFirebaseStatusDao(host, port)
 }
