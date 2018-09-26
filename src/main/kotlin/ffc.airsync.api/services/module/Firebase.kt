@@ -27,7 +27,7 @@ import ffc.entity.House
 import ffc.entity.gson.toJson
 import ffc.entity.healthcare.HealthCareService
 
-fun Message.Builder.putHouseData(address: House, registrationToken: String, orgId: String) {
+fun Message.Builder.broadcastHouse(address: House, registrationToken: String, orgId: String) {
     printDebug("Org id = $orgId FB token = $registrationToken House = ${address.toJson()}")
     putEntityToFirebase(address, registrationToken, orgId, PART_HOUSESERVICE, "House")
 }

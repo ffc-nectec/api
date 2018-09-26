@@ -95,7 +95,7 @@ object HouseService {
         try {
             firebaseTokenGropOrg.forEach {
                 printDebug("\ttoken=$it")
-                if (it.isNotEmpty()) Message.builder().putHouseData(house, it, orgId)
+                if (it.isNotEmpty()) Message.builder().broadcastHouse(house, it, orgId)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
