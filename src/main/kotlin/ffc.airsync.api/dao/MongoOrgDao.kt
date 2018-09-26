@@ -163,7 +163,7 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
             add("name" equal regexQuery)
             add("tel" equal regexQuery)
             add("address" equal regexQuery)
-            add("link.keys.offid" equal regexQuery)
+            add("link.keys.pcucode" equal regexQuery)
         }
         val queryTextReg = "\$or" equal queryTextCondition
         val resultQuery = dbCollection.find(queryTextReg).limit(20)
