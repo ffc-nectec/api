@@ -12,7 +12,6 @@ import javax.ws.rs.ext.Provider
 
 @Provider
 class ErrorFilter : ExceptionMapper<WebApplicationException> {
-
     override fun toResponse(exception: WebApplicationException?): Response {
         printDebug("Api wrong")
         exception!!.printStackTrace()
@@ -25,7 +24,6 @@ class ErrorFilter : ExceptionMapper<WebApplicationException> {
 
 @Provider
 class ErrorUserFilter : ExceptionMapper<ForbiddenException> {
-
     override fun toResponse(exception: ForbiddenException?): Response {
         exception!!.printStackTrace()
         var err = ErrorFilter.ErrorRes(exception.response.status, exception.message, exception)
@@ -45,6 +43,26 @@ class ErrorMethodNotAllow : ExceptionMapper<javax.ws.rs.NotAllowedException> {
         exception!!.printStackTrace()
         val err = ErrorFilter.ErrorRes(400, exception.message, exception)
         val except = BadRequestException(err.message)
+        return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
+    }
+}
+
+@Provider
+class RequireError : ExceptionMapper<IllegalArgumentException> {
+    override fun toResponse(exception: IllegalArgumentException?): Response {
+        exception!!.printStackTrace()
+        val err = ErrorFilter.ErrorRes(400, exception.message, exception)
+        val except = BadRequestException(err.message)
+        return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
+    }
+}
+
+@Provider
+class StaegError : ExceptionMapper<IllegalStateException> {
+    override fun toResponse(exception: IllegalStateException?): Response {
+        exception!!.printStackTrace()
+        val err = ErrorFilter.ErrorRes(400, exception.message, exception)
+        val except = BadRequestException("Stage error $err.message")
         return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
     }
 }
