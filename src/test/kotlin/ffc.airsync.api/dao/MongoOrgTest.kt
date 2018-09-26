@@ -52,12 +52,12 @@ class MongoOrgTest {
         hahahaOrg = dao.insert(Org("รพ.สต.HAHAHA", "203.111.222.123").apply {
             tel = "02-388-5555"
             address = "166 ม.99 ต.เนคเทค อ.อยู่ดี จ.กินดี"
-            link!!.keys["offid"] = "1245"
+            link!!.keys["pcucode"] = 1245
         })
         nectecOrg = dao.insert(Org("รพ.สต.Nectec", "192.168.99.3").apply {
             tel = "037-261-044"
             address = "161 ม.29 ต.สง่างาม อ.สดใส จ.ผิวผ่อง"
-            link!!.keys["offid"] = "203"
+            link!!.keys["pcucode"] = 203
         })
     }
 
