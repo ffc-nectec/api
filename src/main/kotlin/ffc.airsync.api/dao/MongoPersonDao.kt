@@ -1,5 +1,6 @@
 package ffc.airsync.api.dao
 
+import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.buildInsertBson
 import ffc.airsync.api.ffcInsert
 import ffc.entity.Person
@@ -9,6 +10,15 @@ import org.bson.Document
 import org.bson.types.BasicBSONList
 
 internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConnect(host, port, "ffc", "person") {
+
+    init {
+        try {
+            dbCollection.createIndex("orgId" equal 1, IndexOptions().unique(false))
+            dbCollection.createIndex("houseId" equal 1, IndexOptions().unique(false))
+        } catch (ignore: Exception) {
+        }
+    }
+
     override fun insert(orgId: String, person: Person): Person {
         val personDoc = person.buildInsertBson()
         personDoc.append("orgId", orgId)
