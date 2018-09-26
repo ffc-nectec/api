@@ -71,10 +71,11 @@ class VisitResource {
     }
 
     private fun roleMapIsSync(healthCareService: HealthCareService) {
-        when (getTokenRole(context!!)) {
-            User.Role.ORG -> healthCareService.link!!.isSynced = true
-            else -> healthCareService.link!!.isSynced = false
-        }
+        if (healthCareService.link != null)
+            when (getTokenRole(context!!)) {
+                User.Role.ORG -> healthCareService.link!!.isSynced = true
+                else -> healthCareService.link!!.isSynced = false
+            }
     }
 
     @Cache(maxAge = 5)
