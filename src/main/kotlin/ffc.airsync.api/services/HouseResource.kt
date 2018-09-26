@@ -104,6 +104,17 @@ class HouseResource {
         return Response.status(200).entity(houseUpdate).build()
     }
 
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    @PUT
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    fun updateFail(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String,
+        house: House
+    ) {
+        require(false) { "URL สำหรับการ update ข้อมูลผิด" }
+    }
+
     @Cache(maxAge = 2)
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
