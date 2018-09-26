@@ -48,6 +48,7 @@ object OrgService {
     }
 
     fun find(query: String): List<Organization> {
-        return hiddenPrivate(orgs.find(query))
+        val result = hiddenPrivate(orgs.find(query))
+        return if (result.isNotEmpty()) result else throw NotFoundException("ค้นหา $query ไม่พบ")
     }
 }

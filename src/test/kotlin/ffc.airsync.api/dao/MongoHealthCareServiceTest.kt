@@ -53,7 +53,6 @@ class MongoHealthCareServiceTest {
         lastname = "Panichphol"
     }
     val visit = provider.homeVisit(patient.id, comServType).apply {
-        syntom = "ปกติ"
         weight = 61.5
         height = 170.0
         bloodPressure = BloodPressure(145.0, 95.0)
@@ -93,6 +92,15 @@ class MongoHealthCareServiceTest {
 
         result.id `should equal` find!!.id
         (find as HomeVisit).nextAppoint `should equal` LocalDate.parse("2019-09-21")
+    }
+
+    @Test
+    fun findByPersonId() {
+        val result = dao.insert(visit, "abxxa")
+        val find = dao.findByPatientId(result.patientId, "abxxa")
+
+        find.size `should be equal to` 1
+        find.first().syntom `should equal` result.syntom
     }
 
     @Test
