@@ -36,8 +36,7 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
 
     private fun mongoCreateHouseIndex() {
         try {
-            val geoIndex = "location" equal "2dsphere"
-            dbCollection.createIndex(geoIndex, IndexOptions().unique(false))
+            dbCollection.createIndex("location" equal "2dsphere", IndexOptions().unique(false))
         } catch (ex: Exception) {
             ex.printStackTrace()
             throw ex

@@ -78,21 +78,15 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
 
     override fun findAll(): List<Organization> {
         printDebug("Mongo findAll() org")
-        val orgCursorList = dbCollection.find()
-        val orgList = docListToObj(orgCursorList)
-        return orgList
+        return dbCollection.find().convertToList()
     }
 
-    private fun docListToObj(list: FindIterable<Document>): List<Organization> {
-        val orgList = arrayListOf<Organization>()
-        printDebug("\t\tLoad doc list.")
-        list.forEach {
-            printDebug("\t\t$it")
-            val organization: Organization = it.toJson().parseTo()
-            orgList.add(organization)
+    private inline fun <reified T> FindIterable<Document>.convertToList(): List<T> {
+        val result = arrayListOf<T>()
+        forEach {
+            result.add(it.toJson().parseTo())
         }
-        printDebug("\tReturn docListToObj")
-        return orgList
+        return result
     }
 
     override fun findById(orgId: String): Organization {
@@ -107,7 +101,7 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
         printDebug("Mongo findAll org ip $ipAddress")
         val orgDoc = dbCollection.find("lastKnownIp" equal ipAddress)
         printDebug("\tQuery org from mongo $orgDoc")
-        val orgList = docListToObj(orgDoc)
+        val orgList = orgDoc.convertToList<Organization>()
         if (orgList.isEmpty()) throw NotFoundException("ไม่พบรายการลงทะเบียนในกลุ่มของ Org ip $ipAddress")
         return orgList
     }
