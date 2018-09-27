@@ -34,9 +34,7 @@ object HouseService {
         val houseReturn = arrayListOf<House>()
         try {
             houseList.forEach {
-                println("\tHouse original ${it.toJson()}")
                 val houseUpdate = createByOrg(orgId, it)
-                println("\tHouse update ${houseUpdate.toJson()}")
                 houseReturn.add(houseUpdate)
             }
         } catch (ex: Exception) {

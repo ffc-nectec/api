@@ -46,7 +46,6 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
     override fun insert(orgId: String, house: House): House {
         val docHouse = house.buildInsertBson()
         docHouse.append("orgId", orgId)
-        printDebug("Document insert = $docHouse")
 
         return dbCollection.ffcInsert(docHouse)
     }
