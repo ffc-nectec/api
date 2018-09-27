@@ -147,7 +147,7 @@ class HouseResource {
     ): Response {
         if (houseList == null) throw BadRequestException()
         val role = getTokenRole(context!!)
-        houseList.forEach { it.people = null }
+        // houseList.forEach { it.people = null }
 
         return when (role) {
             User.Role.ORG -> {
@@ -167,7 +167,7 @@ class HouseResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
     fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
         if (house == null) throw BadRequestException()
-        house.people = null
+        // house.people = null
         val role = getTokenRole(context!!)
         return when (role) {
             User.Role.ORG -> {

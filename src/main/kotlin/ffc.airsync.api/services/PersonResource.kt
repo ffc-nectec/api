@@ -47,9 +47,6 @@ class PersonResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/persons")
     fun creates(@PathParam("orgId") orgId: String, personList: List<Person>): Response {
         printDebug("\nCall create person by ip = ")
-        personList.forEach {
-            printDebug(it)
-        }
         val persons = PersonService.create(orgId, personList)
         return Response.status(Response.Status.CREATED).entity(persons).build()
     }
