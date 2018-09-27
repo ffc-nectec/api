@@ -22,6 +22,7 @@ import ffc.entity.Person
 interface PersonDao : Dao {
     fun insert(orgId: String, person: Person): Person
     fun insert(orgId: String, personList: List<Person>): List<Person>
+    fun getPerson(orgId: String, personId: String): Person
 
     fun findByOrgId(orgId: String): List<Person>
     fun getPeopleInHouse(houseId: String): List<Person>

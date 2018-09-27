@@ -8,6 +8,7 @@ import ffc.entity.System
 import ffc.entity.gson.parseTo
 import org.bson.Document
 import org.bson.types.BasicBSONList
+import javax.ws.rs.NotFoundException
 
 internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConnect(host, port, "ffc", "person") {
 
@@ -28,6 +29,13 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
         }
 
         return dbCollection.ffcInsert(personDoc)
+    }
+
+    override fun getPerson(orgId: String, personId: String): Person {
+        val query = ("orgId" equal orgId) append ("_id" equal personId)
+        val result = dbCollection.find(query).first()
+            ?: throw NotFoundException("ไม่พบรหัส person id $personId ที่ค้นหา")
+        return result.toJson().parseTo()
     }
 
     override fun insert(orgId: String, persons: List<Person>): List<Person> {

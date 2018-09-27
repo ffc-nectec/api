@@ -137,6 +137,18 @@ class MongoPersonTest {
     }
 
     @Test
+    fun getPerson() {
+        val insert = dao.insert(ORG_ID, arrayListOf<Person>().apply {
+            add(missCat)
+            add(misterDog)
+        }).first()
+        val result = dao.getPerson(ORG_ID, insert.id)
+
+        result.id `should be equal to` insert.id
+        result.lastname `should be equal to` insert.lastname
+    }
+
+    @Test
     fun findByName() {
         dao.insert(ORG_ID, arrayListOf<Person>().apply {
             add(missCat)
