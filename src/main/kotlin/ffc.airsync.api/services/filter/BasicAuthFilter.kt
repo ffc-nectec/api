@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.filter
 
-import ffc.airsync.api.dao.DaoFactory
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.services.module.tokens
 import ffc.entity.Token
 import java.util.regex.Pattern
 import javax.annotation.Priority
@@ -14,13 +14,11 @@ import javax.ws.rs.ext.Provider
 @Priority(Priorities.AUTHENTICATION)
 @Provider
 class BasicAuthFilter : ContainerRequestFilter {
-
     private val pattern = Pattern.compile("""^org/(?<orgId>[\w\d]+)/.*$""")
     override fun filter(requestContext: ContainerRequestContext) {
         val urlScheme = requestContext.uriInfo.baseUri.scheme
         val baseUrl = requestContext.uriInfo.path.toString()
         val matcher = pattern.matcher(baseUrl)
-
         var orgId: String = ""
 
         if (matcher.find()) {
@@ -36,7 +34,6 @@ class BasicAuthFilter : ContainerRequestFilter {
         } catch (ex: NotAuthorizedException) {
             return
         }
-
         val token = authenInfo.token
         /*val securityContext: SecurityContext
         securityContext = when {
@@ -55,7 +52,6 @@ class BasicAuthFilter : ContainerRequestFilter {
     }
 
     class TokenAuthInfo(requestContext: ContainerRequestContext) {
-
         val AUTHORIZATION_PROPERTY = "Authorization"
         val AUTHENTICATION_SCHEME = "Bearer "
         val token: Token
@@ -71,12 +67,10 @@ class BasicAuthFilter : ContainerRequestFilter {
                         throw NotAuthorizedException("is basic auth")
                     }
 
-                    val tokenDao = DaoFactory().tokens()
-
                     printDebug("\t\tCheck Basic auth start with $AUTHENTICATION_SCHEME")
                     val tokenStr = authorization[0].replaceFirst(AUTHENTICATION_SCHEME, "").trim()
                     printDebug("\tFind token.")
-                    token = tokenDao.find(token = tokenStr) ?: throw NotAuthorizedException("โปรด Login เพื่อขอ Token")
+                    token = tokens.find(token = tokenStr) ?: throw NotAuthorizedException("โปรด Login เพื่อขอ Token")
                     printDebug("\t\ttoken = $token")
 
                     if (token.isExpire) throw NotAuthorizedException("Token expire ${token.expireDate}")
