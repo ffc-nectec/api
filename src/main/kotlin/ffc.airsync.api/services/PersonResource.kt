@@ -81,6 +81,14 @@ class PersonResource {
         }
     }
 
+    @Cache(maxAge = 5)
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @GET
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}")
+    fun getByPersonId(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): Person {
+        return PersonService.getByPersonId(orgId, personId)
+    }
+
     @RolesAllowed("USER")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/icd10/{icd10:(\\w+)}")

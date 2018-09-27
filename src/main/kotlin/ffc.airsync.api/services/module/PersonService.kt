@@ -7,6 +7,10 @@ object PersonService {
         return persons.findByOrgId(orgId).paging(page, per_page)
     }
 
+    fun getByPersonId(orgId: String, personId: String): Person {
+        return persons.getPerson(orgId, personId)
+    }
+
     fun create(orgId: String, personList: List<Person>): List<Person> {
         return persons.insert(orgId, personList)
     }
