@@ -70,7 +70,7 @@ object HouseService {
         if (houseId != house.id) throw BadRequestException("เลขบ้านที่ระบุใน url part ไม่ตรงกับข้อมูล id ที่ต้องการแก้ไข")
         if (house.id == "") throw BadRequestException("ไม่มี id ไม่มีการใช้ตัวแปร _id แล้ว")
 
-        house.people = null
+        house.people.clear()
 
         printDebug("\t\tGet firebase token.")
         val firebaseTokenGropOrg = orgs.getFirebaseToken(orgId)
