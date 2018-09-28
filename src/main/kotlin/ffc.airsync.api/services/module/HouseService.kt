@@ -86,7 +86,6 @@ object HouseService {
                 house.link?.isSynced = false
             }
         }
-
         val houseUpdate = houses.update(house.copy<House>())
 
         printDebug("Call send notification size list token = ${firebaseTokenGropOrg.size} ")
@@ -115,13 +114,15 @@ object HouseService {
     }
 
     fun getSingle(houseId: String): House? {
-        return houses.find(houseId) ?: return null
+        val people = persons.getPeopleInHouse(houseId)
+        val house = houses.find(houseId)
+        house?.people?.addAll(people)
+        return house
     }
 
     fun getSingleGeo(orgId: String, houseId: String): FeatureCollection<House>? {
         val house = getSingle(houseId) ?: return null
         if (house.location == null) return null
-
         val geoJson = FeatureCollection<House>()
         geoJson.features.add(house.toGeoJsonFeature())
         return geoJson
