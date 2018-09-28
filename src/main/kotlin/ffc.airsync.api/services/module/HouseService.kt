@@ -25,7 +25,6 @@ import ffc.entity.copy
 import ffc.entity.gson.toJson
 import ffc.entity.update
 import me.piruin.geok.geometry.Feature
-import me.piruin.geok.geometry.FeatureCollection
 import javax.ws.rs.BadRequestException
 
 object HouseService {
@@ -78,11 +77,11 @@ object HouseService {
         printDebug("\tUpdate house to dao.")
 
         if (role == User.Role.ORG) {
-            house.update<House>(house.timestamp) {
+            house.update(house.timestamp) {
                 house.link?.isSynced = true
             }
         } else if (role == User.Role.USER) {
-            house.update<House> {
+            house.update {
                 house.link?.isSynced = false
             }
         }
@@ -113,19 +112,11 @@ object HouseService {
         return queryHouse(orgId, haveLocation).paging(page, per_page)
     }
 
-    fun getSingle(houseId: String): House? {
-        val people = persons.getPeopleInHouse(houseId)
+    fun getSingle(orgId: String, houseId: String): House? {
+        val people = persons.getPeopleInHouse(orgId, houseId)
         val house = houses.find(houseId)
         house?.people?.addAll(people)
         return house
-    }
-
-    fun getSingleGeo(orgId: String, houseId: String): FeatureCollection<House>? {
-        val house = getSingle(houseId) ?: return null
-        if (house.location == null) return null
-        val geoJson = FeatureCollection<House>()
-        geoJson.features.add(house.toGeoJsonFeature())
-        return geoJson
     }
 }
 

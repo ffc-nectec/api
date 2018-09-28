@@ -117,25 +117,13 @@ class HouseResource {
 
     @Cache(maxAge = 2)
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
-    @Produces(GEOJSONHeader)
-    @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
-    fun getSingleGeo(
-        @PathParam("orgId") orgId: String,
-        @PathParam("houseId") houseId: String
-    ): FeatureCollection<House> {
-        return HouseService.getSingleGeo(orgId, houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
-    }
-
-    @Cache(maxAge = 2)
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     fun getSingle(
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
     ): House {
-        return HouseService.getSingle(houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
+        return HouseService.getSingle(orgId, houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
     }
 
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
@@ -148,7 +136,6 @@ class HouseResource {
         if (houseList == null) throw BadRequestException()
         val role = getTokenRole(context!!)
         // houseList.forEach { it.people = null }
-
         return when (role) {
             User.Role.ORG -> {
                 val houseReturn = HouseService.createByOrg(orgId, houseList)

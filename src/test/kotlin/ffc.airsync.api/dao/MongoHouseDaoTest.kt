@@ -60,8 +60,8 @@ class MongoHouseDaoTest {
             this.no = no
             road = "สาธร"
             location = Point(13.123321, 113.7765654)
-            people!!.add(createPerson("1234544323423", "นาย มั่นคง มั่งคั่ง"))
-            people!!.add(createPerson("8909877615243", "นางสาว สวย น่ารัก"))
+            people.add(createPerson("1234544323423", "นาย มั่นคง มั่งคั่ง"))
+            people.add(createPerson("8909877615243", "นางสาว สวย น่ารัก"))
         }
     }
 

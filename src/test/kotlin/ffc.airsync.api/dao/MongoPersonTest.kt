@@ -120,8 +120,8 @@ class MongoPersonTest {
             add(misterDog)
         })
 
-        dao.getPeopleInHouse("12345678901").first().firstname `should be equal to` "สมชาย"
-        dao.getPeopleInHouse("11111111111").first().lastname `should be equal to` "สมบูรณ์จิต"
+        dao.getPeopleInHouse(ORG_ID, "12345678901").first().firstname `should be equal to` "สมชาย"
+        dao.getPeopleInHouse(ORG_ID, "11111111111").first().lastname `should be equal to` "สมบูรณ์จิต"
     }
 
     @Test

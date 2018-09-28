@@ -21,7 +21,7 @@ import org.bson.Document
 
 internal infix fun String.equal(param: Any?): Document = Document(this, param)
 
-internal infix fun Document.append(doc: Document): Document {
+internal infix fun Document.plus(doc: Document): Document {
     doc.forEach { key, value ->
         this.append(key, value)
     }

@@ -33,7 +33,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     override fun getPerson(orgId: String, personId: String): Person {
-        val query = ("orgId" equal orgId) append ("_id" equal ObjectId(personId))
+        val query = ("orgId" equal orgId) plus ("_id" equal ObjectId(personId))
         val result = dbCollection.find(query).first()
             ?: throw NotFoundException("ไม่พบรหัส person id $personId ที่ค้นหา")
         return result.toJson().parseTo()
@@ -48,8 +48,8 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
             .map { it.toJson().parseTo<Person>() }.toList()
     }
 
-    override fun getPeopleInHouse(houseId: String): List<Person> {
-        return dbCollection.find("houseId" equal houseId)
+    override fun getPeopleInHouse(orgId: String, houseId: String): List<Person> {
+        return dbCollection.find(("houseId" equal houseId) plus ("orgId" equal orgId))
             .map { it.toJson().parseTo<Person>() }.toList()
     }
 
