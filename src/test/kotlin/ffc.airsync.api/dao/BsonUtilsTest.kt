@@ -1,4 +1,4 @@
-package ffc.airsync.api
+package ffc.airsync.api.dao
 
 import ffc.entity.Link
 import ffc.entity.Person
@@ -11,7 +11,7 @@ import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import org.junit.Test
 
-class utilTest {
+class BsonUtilsTest {
 
     val person = Person(generateTempId()).update(DateTime.parse("2018-06-25T14:09:07.815+07:00")) {
         identities.add(ThaiCitizenId("1154801544875"))

@@ -1,8 +1,5 @@
 package ffc.airsync.api.dao
 
-import ffc.airsync.api.buildInsertBson
-import ffc.airsync.api.buildUpdateBson
-import ffc.airsync.api.ffcInsert
 import ffc.entity.gson.parseTo
 import ffc.entity.healthcare.HealthCareService
 import org.bson.Document

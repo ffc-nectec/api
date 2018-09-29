@@ -18,10 +18,16 @@
 package ffc.airsync.api.dao
 
 import com.mongodb.client.FindIterable
+import com.mongodb.client.MongoCollection
+import ffc.airsync.api.airSyncGson
+import ffc.entity.Entity
+import ffc.entity.copy
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.BasicBSONList
+import org.bson.types.ObjectId
+import javax.ws.rs.ForbiddenException
 import kotlin.collections.map as mapKt
 
 inline fun <reified T> FindIterable<Document>.firstAs(): T = first().toJson().parseTo<T>()
@@ -41,4 +47,36 @@ internal infix fun Document.plus(doc: Document): Document {
         this.append(key, value)
     }
     return this
+}
+
+internal fun Entity.buildInsertBson(): Document {
+    if (!isTempId) throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
+    val generateId = ObjectId()
+    val insertObj = copy(generateId.toHexString().trim())
+    return insertObj.buildBsonDoc()
+}
+
+internal fun Entity.buildUpdateBson(oldDoc: Document): Document {
+    if (isTempId) throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
+    val oldBundle = oldDoc.toJson().parseTo<Entity>(airSyncGson).bundle
+    this.bundle.clear()
+    this.bundle.putAll(oldBundle)
+    return this.buildBsonDoc()
+}
+
+private fun Entity.buildBsonDoc(): Document {
+    val generateId = ObjectId(id)
+    val json = toJson(airSyncGson)
+    val doc = Document.parse(json)
+    doc.append("_id", generateId)
+
+    return doc
+}
+
+internal inline fun <reified T> MongoCollection<Document>.ffcInsert(doc: Document): T {
+    require(doc["_id"] != null) { "ต้องมี _id ในขั้นตอนการ Insert" }
+    insertOne(doc)
+    val query = Document("_id", doc["_id"] as ObjectId)
+
+    return find(query).firstAs()
 }

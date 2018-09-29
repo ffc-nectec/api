@@ -1,8 +1,6 @@
 package ffc.airsync.api.dao
 
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.buildInsertBson
-import ffc.airsync.api.ffcInsert
 import ffc.entity.Person
 import ffc.entity.System
 import ffc.entity.gson.parseTo

@@ -18,8 +18,6 @@
 package ffc.airsync.api.dao
 
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.buildInsertBson
-import ffc.airsync.api.ffcInsert
 import ffc.airsync.api.printDebug
 import ffc.entity.House
 import ffc.entity.gson.parseTo
