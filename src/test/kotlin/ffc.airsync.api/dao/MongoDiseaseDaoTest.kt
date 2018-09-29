@@ -28,14 +28,14 @@ class MongoDiseaseDaoTest {
 
         dao.insert(Disease(generateTempId(), "Fall", "HHXX001Y").apply { translation[Lang.th] = "อ้วนซ้ำซ้อน" })
         dao.insert(
-            Disease(
-                generateTempId(),
-                "Fall2",
-                "HHXX002Y",
-                isNCD = true,
-                isChronic = true,
-                isEpimedic = true
-            ).apply { translation[Lang.th] = "กินไม่หยุด" })
+                Disease(
+                        generateTempId(),
+                        "Fall2",
+                        "HHXX002Y",
+                        isNCD = true,
+                        isChronic = true,
+                        isEpimedic = true
+                ).apply { translation[Lang.th] = "กินไม่หยุด" })
     }
 
     @After
@@ -46,22 +46,26 @@ class MongoDiseaseDaoTest {
 
     @Test
     fun query() {
-        val find = dao.find("HHXX002Y", Lang.th).last()
+        val disease = dao.find("HHXX002Y").last()
 
-        find.icd10 `should equal` "HHXX002Y"
-        find.isChronic `should equal` true
-        find.isEpimedic `should equal` true
-        find.isNCD `should equal` true
+        with(disease) {
+            icd10 `should equal` "HHXX002Y"
+            isChronic `should equal` true
+            isEpimedic `should equal` true
+            isNCD `should equal` true
+        }
     }
 
     @Test
     fun queryDefaultObject() {
-        val find = dao.find("HHXX001Y", Lang.th).last()
+        val disease = dao.find("HHXX001Y").last()
 
-        find.icd10 `should equal` "HHXX001Y"
-        find.isChronic `should equal` false
-        find.isEpimedic `should equal` false
-        find.isNCD `should equal` false
+        with(disease) {
+            icd10 `should equal` "HHXX001Y"
+            isChronic `should equal` false
+            isEpimedic `should equal` false
+            isNCD `should equal` false
+        }
     }
 
     @Test
@@ -73,10 +77,10 @@ class MongoDiseaseDaoTest {
 
     @Test
     fun insertListAndQuery() {
-        val diseaseList = arrayListOf<Disease>().apply {
-            add(Disease(generateTempId(), "Fall3", "HHXX003T"))
-            add(Disease(generateTempId(), "Fall4", "HHXX004T"))
-        }
+        val diseaseList = listOf<Disease>(
+                Disease(generateTempId(), "Fall3", "HHXX003T"),
+                Disease(generateTempId(), "Fall4", "HHXX004T")
+        )
         dao.insert(diseaseList)
 
         dao.find("HHXX003T").last().name `should equal` "Fall3"
@@ -85,23 +89,15 @@ class MongoDiseaseDaoTest {
 
     @Test
     fun queryLangTh() {
-        val find = dao.find("HHXX001Y", Lang.th).last()
+        val disease = dao.find("HHXX001Y", Lang.th).last()
 
-        find.name `should equal` "อ้วนซ้ำซ้อน"
-        find.icd10 `should equal` "HHXX001Y"
-        find.isChronic `should equal` false
-        find.isEpimedic `should equal` false
-        find.isNCD `should equal` false
+        disease.name `should equal` "อ้วนซ้ำซ้อน"
     }
 
     @Test
     fun queryLangEn() {
-        val find = dao.find("HHXX002Y", Lang.en).last()
+        val disease = dao.find("HHXX002Y", Lang.en).last()
 
-        find.name `should equal` "Fall2"
-        find.icd10 `should equal` "HHXX002Y"
-        find.isChronic `should equal` true
-        find.isEpimedic `should equal` true
-        find.isNCD `should equal` true
+        disease.name `should equal` "Fall2"
     }
 }

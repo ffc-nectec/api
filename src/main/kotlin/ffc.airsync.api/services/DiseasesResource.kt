@@ -14,14 +14,15 @@ import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 
 @Path("/")
+@Produces(MediaType.APPLICATION_JSON)
 class DiseasesResource {
+
     @Context
     lateinit var req: HttpServletRequest
 
-    @Cache(maxAge = 3600)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/disease")
     @GET
+    @Path("/disease")
+    @Cache(maxAge = 3600)
     fun query(@QueryParam("query") query: String?): List<Disease> {
         val disease = DiseaseService.query(query ?: "", req.locale.toLang())
         if (disease.isEmpty()) throw NotFoundException("ไม่พบข้อมูล")

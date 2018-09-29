@@ -17,7 +17,22 @@
 
 package ffc.airsync.api.dao
 
+import com.mongodb.client.FindIterable
+import ffc.entity.gson.parseTo
+import ffc.entity.gson.toJson
 import org.bson.Document
+import org.bson.types.BasicBSONList
+import kotlin.collections.map as mapKt
+
+inline fun <reified T> FindIterable<Document>.firstAs(): T = first().toJson().parseTo<T>()
+
+inline fun <reified T> FindIterable<Document>.listOf(): List<T> = mapKt { it.toJson().parseTo<T>() }
+
+fun bsonListOf(vararg document: Document): BasicBSONList = BasicBSONList().apply { document.forEach { add(it) } }
+
+fun documentOf(vararg pair: Pair<String, Any?>): Document = Document(pair.toMap())
+
+fun Any.toDocument(): Document = Document.parse(toJson())
 
 internal infix fun String.equal(param: Any?): Document = Document(this, param)
 

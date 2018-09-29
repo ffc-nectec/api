@@ -4,11 +4,10 @@ import ffc.entity.Lang
 import ffc.entity.healthcare.Disease
 
 interface DiseaseDao : Dao {
-    fun insert(disease: Disease): Disease
-    fun insert(disease: List<Disease>): List<Disease> {
-        return disease.map { insert(it) }
-    }
 
-    fun find(query: String): List<Disease>
-    fun find(query: String, lang: Lang): List<Disease>
+    fun insert(disease: Disease): Disease
+
+    fun insert(disease: List<Disease>): List<Disease> = disease.map { insert(it) }
+
+    fun find(query: String = "", lang: Lang = Lang.th): List<Disease>
 }
