@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.org
 
+import ffc.airsync.api.dao.Dao
+import ffc.airsync.api.dao.DaoFactory
 import ffc.entity.Organization
 
 interface OrgDao : Dao {
@@ -35,3 +37,5 @@ interface OrgDao : Dao {
 
     fun find(query: String): List<Organization>
 }
+
+val orgs: OrgDao by lazy { MongoOrgDao(DaoFactory.host, DaoFactory.port) }

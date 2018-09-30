@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.services
+package ffc.airsync.api.services.org
 
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.filter.Cache
-import ffc.airsync.api.services.module.OrgService
 import ffc.entity.Organization
 import javax.annotation.security.RolesAllowed
 import javax.servlet.http.HttpServletRequest

@@ -15,8 +15,8 @@ import org.junit.Test
 
 class MongoUserTest {
 
-    lateinit var nectecOrg: Organization
-    lateinit var dao: UserDao
+    private lateinit var nectecOrg: Organization
+    private lateinit var dao: MongoUserDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer
 
@@ -26,10 +26,11 @@ class MongoUserTest {
         val serverAddress = server.bind()
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
-        val orgDao: OrgDao = DaoFactory().orgs(serverAddress.hostString, serverAddress.port)
 
-        dao = DaoFactory().users(serverAddress.hostString, serverAddress.port)
-        nectecOrg = orgDao.insert(Org("รพ.สต.Nectec", "192.168.99.3"))
+        dao = MongoUserDao(serverAddress.hostString, serverAddress.port)
+        val collection = client.getDatabase(dao.dbName).getCollection(dao.collection)
+        nectecOrg = collection.insert(Org("รพ.สต.Nectec", "192.168.99.3"))
+        users.forEach { dao.insertUser(it, nectecOrg.id) }
     }
 
     @After
@@ -41,16 +42,19 @@ class MongoUserTest {
     fun Org(name: String = "NECTEC", ip: String = "127.0.01"): Organization =
             Organization().apply {
                 this.name = name
-                users.add(User("maxkung", User.Role.ORG))
-                users.add(User("cat"))
-                users.add(User("dog"))
-                users.add(User("adm"))
-                users.add(User("ADM"))
-                users.add(User("newuser"))
-                users.add(User("usr_db"))
-                users.add(User("Drug_Store_Admin"))
                 bundle["lastKnownIp"] = ip // "203.111.222.123"
             }
+
+    val users = listOf(
+            User("maxkung", User.Role.ORG),
+            User("cat"),
+            User("dog"),
+            User("adm"),
+            User("ADM"),
+            User("newuser"),
+            User("usr_db"),
+            User("Drug_Store_Admin")
+    )
 
     fun User(name: String, role: User.Role = User.Role.USER): User =
             User().apply {

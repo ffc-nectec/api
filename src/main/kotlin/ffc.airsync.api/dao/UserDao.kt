@@ -17,24 +17,20 @@
 
 package ffc.airsync.api.dao
 
-import ffc.airsync.api.printDebug
 import ffc.entity.User
 
 interface UserDao : Dao {
+
     companion object {
-        private val userBlock = arrayListOf<String>("ADM", "adm", "newuser", "usr_db", "Drug_Store_Admin")
-        fun isBlockUser(name: String): Boolean {
-            printDebug("Check block user.")
-            val findUser = userBlock.find {
-                it == name.trim()
-            }
-            printDebug("\tResult block check $findUser")
-            return (findUser != null)
-        }
+
+        private val userBlock = listOf("ADM", "adm", "newuser", "usr_db", "Drug_Store_Admin")
+
+        fun isBlockUser(name: String) = userBlock.firstOrNull { it == name.trim() } != null
     }
 
     fun insertUser(user: User, orgId: String): User
     fun updateUser(user: User, orgId: String): User
+
     fun findUser(orgId: String): List<User>
     fun findThat(orgId: String, name: String, password: String): User?
 }

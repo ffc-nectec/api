@@ -1,22 +1,21 @@
-package ffc.airsync.api.services.module
+package ffc.airsync.api.services.org
 
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.services.module.houses
+import ffc.airsync.api.services.module.persons
+import ffc.airsync.api.services.module.tokens
 import ffc.entity.Organization
 import ffc.entity.gson.toJson
 import javax.ws.rs.NotFoundException
 
-object OrgService {
+internal object OrgService {
     fun register(organization: Organization): Organization {
         printDebug("\t\tCall mongo insert organization ${organization.toJson()}")
         return orgs.insert(organization)
     }
 
     fun remove(orgId: String) {
-        // val org = orgs.find(orgId)
-        // printDebug("Remove org id = $orgId == ${org.id}")
-        // if (org.id != orgId) throw NotAuthorizedException("ไม่เจอ Org")
         orgs.remove(orgId)
-        // users.removeByOrgId(orgId)
         houses.removeByOrgId(orgId)
         tokens.removeByOrgId(orgId)
         persons.removeGroupByOrg(orgId)

@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.org
 
 import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.airsync.api.dao.MongoAbsConnect
 import ffc.airsync.api.resourceFile
 import ffc.entity.Link
 import ffc.entity.Organization
@@ -47,7 +48,7 @@ class MongoOrgTest {
         val serverAddress = server.bind()
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
-        dao = DaoFactory().orgs(serverAddress.hostString, serverAddress.port)
+        dao = MongoOrgDao(serverAddress.hostString, serverAddress.port)
 
         hahahaOrg = dao.insert(Org("รพ.สต.HAHAHA", "203.111.222.123").apply {
             tel = "02-388-5555"

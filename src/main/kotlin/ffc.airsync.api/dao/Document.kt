@@ -40,7 +40,7 @@ fun documentOf(vararg pair: Pair<String, Any?>): Document = Document(pair.toMap(
 
 fun Any.toDocument(): Document = Document.parse(toJson())
 
-internal infix fun String.equal(param: Any?): Document = Document(this, param)
+infix fun String.equal(param: Any?): Document = Document(this, param)
 
 internal infix fun Document.plus(doc: Document): Document {
     doc.forEach { key, value ->
@@ -49,14 +49,20 @@ internal infix fun Document.plus(doc: Document): Document {
     return this
 }
 
-internal fun Entity.buildInsertBson(): Document {
+inline fun <reified T : Entity> MongoCollection<Document>.insert(entity: T, vararg pair: Pair<String, Any?>): T {
+    val doc = entity.buildInsertBson().apply { putAll(pair) }
+    insertOne(doc)
+    return find("_id" equal doc["_id"] as ObjectId).firstAs()
+}
+
+fun Entity.buildInsertBson(): Document {
     if (!isTempId) throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
     val generateId = ObjectId()
-    val insertObj = copy(generateId.toHexString().trim())
+    val insertObj = copy(newId = generateId.toHexString().trim())
     return insertObj.buildBsonDoc()
 }
 
-internal fun Entity.buildUpdateBson(oldDoc: Document): Document {
+fun Entity.buildUpdateBson(oldDoc: Document): Document {
     if (isTempId) throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
     val oldBundle = oldDoc.toJson().parseTo<Entity>(airSyncGson).bundle
     this.bundle.clear()
@@ -64,7 +70,7 @@ internal fun Entity.buildUpdateBson(oldDoc: Document): Document {
     return this.buildBsonDoc()
 }
 
-private fun Entity.buildBsonDoc(): Document {
+fun Entity.buildBsonDoc(): Document {
     val generateId = ObjectId(id)
     val json = toJson(airSyncGson)
     val doc = Document.parse(json)

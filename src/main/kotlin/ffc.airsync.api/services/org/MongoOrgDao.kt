@@ -15,10 +15,13 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.org
 
 import com.mongodb.BasicDBObject
 import com.mongodb.client.FindIterable
+import ffc.airsync.api.dao.MongoAbsConnect
+import ffc.airsync.api.dao.equal
+import ffc.airsync.api.dao.toDocument
 import ffc.airsync.api.printDebug
 import ffc.entity.Organization
 import ffc.entity.User
@@ -30,6 +33,7 @@ import org.bson.types.ObjectId
 import javax.ws.rs.NotFoundException
 
 internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port, "ffc", "organ") {
+
     override fun insert(organization: Organization): Organization {
         validate(organization)
         checkDuplication(organization)
