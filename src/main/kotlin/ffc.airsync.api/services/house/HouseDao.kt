@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.house
 
+import ffc.airsync.api.dao.Dao
+import ffc.airsync.api.dao.DaoFactory
 import ffc.entity.House
 
 interface HouseDao : Dao {
@@ -32,3 +34,5 @@ interface HouseDao : Dao {
 
     fun removeByOrgId(orgId: String)
 }
+
+val houses: HouseDao by lazy { MongoHouseDao(DaoFactory.host, DaoFactory.port) }

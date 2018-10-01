@@ -23,7 +23,6 @@ internal class DaoFactory {
         var port = 27017
     }
 
-    fun houses(host: String = DaoFactory.host, port: Int = DaoFactory.port): HouseDao = MongoHouseDao(host, port)
     fun homeHealthTypes(host: String = DaoFactory.host, port: Int = DaoFactory.port): HomeHealthTypeDao =
         MongoHomeHealthTypeDao(host, port)
 

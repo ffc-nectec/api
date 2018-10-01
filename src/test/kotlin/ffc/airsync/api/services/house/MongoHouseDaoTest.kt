@@ -1,9 +1,10 @@
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.house
 
 import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.airsync.api.dao.MongoAbsConnect
 import ffc.entity.House
 import ffc.entity.Person
 import ffc.entity.ThaiCitizenId
@@ -23,13 +24,10 @@ import org.junit.Before
 import org.junit.Test
 
 class MongoHouseDaoTest {
-
     val ORG_ID = "87543432abcf432123456785"
-
     lateinit var dao: HouseDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer
-
     lateinit var maxHouse: House
     lateinit var someHouse: House
 
@@ -39,8 +37,7 @@ class MongoHouseDaoTest {
         val serverAddress = server.bind()
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
-        dao = DaoFactory().houses(serverAddress.hostString, serverAddress.port)
-
+        dao = MongoHouseDao(serverAddress.hostString, serverAddress.port)
         val house = createHouse("12348764532", "999/888")
         println("house obj = ${house.toJson()}")
 

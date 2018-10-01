@@ -13,13 +13,12 @@ import java.util.Arrays
 typealias mongoInit = () -> Unit
 
 abstract class MongoAbsConnect(
-    private val host: String,
-    private val port: Int,
+    private val host: String = "127.0.0.1",
+    private val port: Int = 27017,
     val dbName: String,
     val collection: String,
     private val mongoInitRun: mongoInit? = null
 ) : Dao {
-
     protected lateinit var dbCollection: MongoCollection<Document>
     val dbExecuted get() = dbCollection
     val mongoUrl = System.getenv("MONGODB_URI") + "?maxPoolSize=2&maxIdleTimeMS=20000&connectTimeoutMS=30000&socketTimeoutMS=30000"

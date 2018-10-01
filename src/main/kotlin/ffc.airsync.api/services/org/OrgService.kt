@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.org
 
 import ffc.airsync.api.printDebug
-import ffc.airsync.api.services.module.houses
+import ffc.airsync.api.services.house.houses
 import ffc.airsync.api.services.person.persons
 import ffc.airsync.api.services.token.tokens
 import ffc.entity.Organization

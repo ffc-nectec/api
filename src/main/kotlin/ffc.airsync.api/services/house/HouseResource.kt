@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.services
+package ffc.airsync.api.services.house
 
+import ffc.airsync.api.services.GEOJSONHeader
 import ffc.airsync.api.services.filter.Cache
-import ffc.airsync.api.services.module.HouseService
+import ffc.airsync.api.services.getTokenRole
 import ffc.entity.House
 import ffc.entity.User
 import me.piruin.geok.geometry.Feature
