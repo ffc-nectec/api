@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.notification
 
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.services.org.orgs
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
 import javax.ws.rs.POST
@@ -22,7 +23,7 @@ class FirebaseResource {
     fun updateToken(@PathParam("orgId") orgId: String, firebaseToken: HashMap<String, String>): Response {
         printDebug("Call update Firebase Token OrgID $orgId Firebase Token = ${firebaseToken["firebasetoken"]}")
 
-        FirebaseService.createOrgToken(orgId, firebaseToken["firebasetoken"]!!)
+        orgs.createFirebase(orgId, firebaseToken["firebasetoken"]!!, true)
 
         return Response.status(200).build()
     }
@@ -34,7 +35,7 @@ class FirebaseResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/mobilefirebasetoken")
     fun createToken(@PathParam("orgId") orgId: String, firebaseToken: HashMap<String, String>): Response {
         printDebug("Call update Firebase Token by OrgID $orgId Firebase Token = ${firebaseToken["firebasetoken"]}")
-        FirebaseService.createMobileToken(orgId, firebaseToken["firebasetoken"]!!)
+        orgs.createFirebase(orgId, firebaseToken["firebasetoken"]!!, false)
 
         return Response.status(200).build()
     }
