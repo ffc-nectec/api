@@ -22,7 +22,7 @@ class DiseasesResource {
     @Path("/disease")
     @Cache(maxAge = 3600)
     fun query(@QueryParam("query") query: String?): List<Disease> {
-        val disease = DiseaseService.query(query ?: "", req.locale.toLang())
+        val disease = diseases.find(query ?: "", req.locale.toLang())
         if (disease.isEmpty()) throw NotFoundException("ไม่พบข้อมูล")
         return disease
     }

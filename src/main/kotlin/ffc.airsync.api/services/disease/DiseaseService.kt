@@ -1,7 +1,6 @@
 package ffc.airsync.api.services.disease
 
 import ffc.airsync.api.getResourceAs
-import ffc.entity.Lang
 import ffc.entity.healthcare.Disease
 
 object DiseaseService {
@@ -10,9 +9,5 @@ object DiseaseService {
         if (diseases.find().count() < 5) {
             diseases.insert(getResourceAs<List<Disease>>("Disease.json"))
         }
-    }
-
-    fun query(query: String, lang: Lang): List<Disease> {
-        return diseases.find(query, lang)
     }
 }
