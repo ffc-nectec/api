@@ -1,16 +1,17 @@
-package ffc.airsync.api.dao;
+package ffc.airsync.api;
 
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
-import java.net.InetSocketAddress;
 import org.bson.Document;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.net.InetSocketAddress;
 
 public class SimpleTest {
 

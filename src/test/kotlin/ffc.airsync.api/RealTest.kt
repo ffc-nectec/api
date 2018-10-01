@@ -1,4 +1,4 @@
-package ffc.airsync.api.dao
+package ffc.airsync.api
 
 import ffc.airsync.api.services.org.orgs
 import ffc.airsync.api.services.user.users
