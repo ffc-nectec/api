@@ -1,4 +1,4 @@
-package ffc.airsync.api.services.module
+package ffc.airsync.api.services.notification
 
 import ffc.airsync.api.services.org.orgs
 

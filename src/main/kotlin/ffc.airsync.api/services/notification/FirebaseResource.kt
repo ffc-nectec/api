@@ -1,7 +1,6 @@
-package ffc.airsync.api.services
+package ffc.airsync.api.services.notification
 
 import ffc.airsync.api.printDebug
-import ffc.airsync.api.services.module.FirebaseService
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
 import javax.ws.rs.POST

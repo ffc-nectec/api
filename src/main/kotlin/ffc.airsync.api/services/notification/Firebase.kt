@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.services.module
+package ffc.airsync.api.services.notification
 
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message

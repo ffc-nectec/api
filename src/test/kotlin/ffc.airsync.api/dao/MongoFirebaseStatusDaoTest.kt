@@ -4,6 +4,8 @@ import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.airsync.api.services.notification.FirebaseStatusDao
+import ffc.airsync.api.services.notification.MongoFirebaseStatusDao
 import org.amshove.kluent.`should be equal to`
 import org.bson.types.ObjectId
 import org.junit.After
@@ -24,7 +26,7 @@ class MongoFirebaseStatusDaoTest {
         val serverAddress = server.bind()
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
-        dao = DaoFactory().firebaseStauts(serverAddress.hostString, serverAddress.port)
+        dao = MongoFirebaseStatusDao(serverAddress.hostString, serverAddress.port)
 
         dao.insert("BNK119", id1)
         dao.insert("BNK119", id2)

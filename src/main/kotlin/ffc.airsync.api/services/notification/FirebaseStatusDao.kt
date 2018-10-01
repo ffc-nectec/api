@@ -1,5 +1,7 @@
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.notification
 
+import ffc.airsync.api.dao.Dao
+import ffc.airsync.api.dao.DaoFactory
 import ffc.entity.Entity
 
 interface FirebaseStatusDao : Dao {
@@ -8,3 +10,5 @@ interface FirebaseStatusDao : Dao {
 
     override fun syncCloudFilter(orgId: String, isSync: Boolean, limitOutput: Int): List<Entity>
 }
+
+val firebaseStauts: FirebaseStatusDao by lazy { MongoFirebaseStatusDao(DaoFactory.host, DaoFactory.port) }
