@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.person
 
+import ffc.airsync.api.dao.Dao
+import ffc.airsync.api.dao.DaoFactory
 import ffc.entity.Person
 
 interface PersonDao : Dao {
@@ -31,3 +33,5 @@ interface PersonDao : Dao {
 
     fun findByICD10(orgId: String, icd10: String): List<Person>
 }
+
+val persons: PersonDao by lazy { MongoPersonDao(DaoFactory.host, DaoFactory.port) }

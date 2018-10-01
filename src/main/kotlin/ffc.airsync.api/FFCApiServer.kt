@@ -20,7 +20,7 @@ package ffc.airsync.api
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
-import ffc.airsync.api.services.module.DiseaseService
+import ffc.airsync.api.services.disease.DiseaseService
 import ffc.airsync.api.services.module.HomeHealthTypeService
 import org.eclipse.jetty.server.Server
 import org.joda.time.DateTimeZone

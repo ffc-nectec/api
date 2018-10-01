@@ -1,9 +1,10 @@
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.person
 
 import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.airsync.api.dao.MongoAbsConnect
 import ffc.entity.Link
 import ffc.entity.Person
 import ffc.entity.System
@@ -69,7 +70,7 @@ class MongoPersonTest {
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
 
-        dao = DaoFactory().persons(serverAddress.hostString, serverAddress.port)
+        dao = MongoPersonDao(serverAddress.hostString, serverAddress.port)
     }
 
     @After

@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.services
+package ffc.airsync.api.services.person
 
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.filter.Cache
-import ffc.airsync.api.services.module.PersonService
 import ffc.entity.Person
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes

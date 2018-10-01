@@ -1,5 +1,6 @@
-package ffc.airsync.api.services.module
+package ffc.airsync.api.services.person
 
+import ffc.airsync.api.services.module.paging
 import ffc.entity.Person
 
 object PersonService {

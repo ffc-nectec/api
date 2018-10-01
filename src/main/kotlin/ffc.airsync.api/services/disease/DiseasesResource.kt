@@ -1,7 +1,6 @@
 package ffc.airsync.api.services.disease
 
 import ffc.airsync.api.services.filter.Cache
-import ffc.airsync.api.services.module.DiseaseService
 import ffc.airsync.api.toLang
 import ffc.entity.healthcare.Disease
 import javax.servlet.http.HttpServletRequest

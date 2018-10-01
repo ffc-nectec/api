@@ -1,4 +1,4 @@
-package ffc.airsync.api.services.module
+package ffc.airsync.api.services.disease
 
 import ffc.airsync.api.getResourceAs
 import ffc.entity.Lang
