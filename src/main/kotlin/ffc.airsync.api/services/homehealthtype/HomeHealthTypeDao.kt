@@ -1,5 +1,7 @@
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.homehealthtype
 
+import ffc.airsync.api.dao.Dao
+import ffc.airsync.api.dao.DaoFactory
 import ffc.entity.healthcare.CommunityServiceType
 
 interface HomeHealthTypeDao : Dao {
@@ -10,3 +12,5 @@ interface HomeHealthTypeDao : Dao {
 
     fun find(query: String): List<CommunityServiceType>
 }
+
+val homeHealthTypes: HomeHealthTypeDao by lazy { MongoHomeHealthTypeDao(DaoFactory.host, DaoFactory.port) }

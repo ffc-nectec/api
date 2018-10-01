@@ -22,7 +22,4 @@ internal class DaoFactory {
         var host = "127.0.0.1"
         var port = 27017
     }
-
-    fun homeHealthTypes(host: String = DaoFactory.host, port: Int = DaoFactory.port): HomeHealthTypeDao =
-        MongoHomeHealthTypeDao(host, port)
 }

@@ -1,9 +1,10 @@
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.homehealthtype
 
 import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.airsync.api.dao.MongoAbsConnect
 import ffc.entity.healthcare.CommunityServiceType
 import org.amshove.kluent.`should equal`
 import org.junit.After
@@ -11,7 +12,6 @@ import org.junit.Before
 import org.junit.Test
 
 class MongoHomeHealthTypeDaoTest {
-
     lateinit var dao: HomeHealthTypeDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer
@@ -22,7 +22,7 @@ class MongoHomeHealthTypeDaoTest {
         val serverAddress = server.bind()
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
-        dao = DaoFactory().homeHealthTypes(serverAddress.hostString, serverAddress.port)
+        dao = MongoHomeHealthTypeDao(serverAddress.hostString, serverAddress.port)
 
         dao.insert(CommunityServiceType("1A001", "เยี่ยมผู้ป่วยโรคเบาหวาน "))
         dao.insert(CommunityServiceType("1D01300", "ให้ทันตสุขศึกษาหญิงตั้งครรภ์"))
