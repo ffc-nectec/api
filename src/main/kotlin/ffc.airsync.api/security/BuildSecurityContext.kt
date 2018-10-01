@@ -1,4 +1,4 @@
-package ffc.airsync.api.services.filter
+package ffc.airsync.api.security
 
 import ffc.entity.Token
 import ffc.entity.User

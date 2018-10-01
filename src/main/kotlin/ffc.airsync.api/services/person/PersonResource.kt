@@ -17,8 +17,8 @@
 
 package ffc.airsync.api.services.person
 
+import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.printDebug
-import ffc.airsync.api.services.filter.Cache
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
 import javax.annotation.security.RolesAllowed

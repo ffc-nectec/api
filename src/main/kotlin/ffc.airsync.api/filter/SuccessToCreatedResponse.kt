@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.services.filter
+package ffc.airsync.api.filter
 
 import javax.annotation.Priority
 import javax.ws.rs.Priorities

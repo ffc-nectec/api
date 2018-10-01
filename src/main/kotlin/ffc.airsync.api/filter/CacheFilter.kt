@@ -1,4 +1,4 @@
-package ffc.airsync.api.services.filter
+package ffc.airsync.api.filter
 
 import java.util.ArrayList
 import javax.ws.rs.container.ContainerRequestContext

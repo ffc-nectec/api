@@ -1,4 +1,4 @@
-package ffc.airsync.api.services.filter
+package ffc.airsync.api.filter
 
 import ffc.airsync.api.printDebug
 import javax.ws.rs.BadRequestException

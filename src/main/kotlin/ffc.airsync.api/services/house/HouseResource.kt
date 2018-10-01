@@ -17,7 +17,7 @@
 
 package ffc.airsync.api.services.house
 
-import ffc.airsync.api.services.filter.Cache
+import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.services.util.GEOJSONHeader
 import ffc.airsync.api.services.util.getTokenRole
 import ffc.entity.House

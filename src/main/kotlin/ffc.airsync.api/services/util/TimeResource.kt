@@ -19,7 +19,7 @@ package ffc.airsync.api.services.util
 
 import ffc.airsync.api.DATETIMEBANGKOK
 import ffc.airsync.api.TIMESTAMPBANGKOK
-import ffc.airsync.api.services.filter.Cache
+import ffc.airsync.api.filter.Cache
 import org.joda.time.DateTime
 import java.sql.Timestamp
 import javax.ws.rs.Consumes

@@ -1,4 +1,4 @@
-package ffc.airsync.api.services.filter
+package ffc.airsync.api.security
 
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.token.tokens
