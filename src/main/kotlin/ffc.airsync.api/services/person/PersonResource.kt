@@ -19,6 +19,7 @@ package ffc.airsync.api.services.person
 
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.filter.Cache
+import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
@@ -46,7 +47,7 @@ class PersonResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/persons")
     fun creates(@PathParam("orgId") orgId: String, personList: List<Person>): Response {
         printDebug("\nCall create person by ip = ")
-        val persons = PersonService.create(orgId, personList)
+        val persons = persons.insert(orgId, personList)
         return Response.status(Response.Status.CREATED).entity(persons).build()
     }
 
@@ -55,7 +56,7 @@ class PersonResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
     fun create(@PathParam("orgId") orgId: String, person: Person): Response {
         printDebug("\nCall create person by ip = ")
-        val persons = PersonService.create(orgId, person)
+        val persons = persons.insert(orgId, person)
         return Response.status(Response.Status.CREATED).entity(persons).build()
     }
 
@@ -66,10 +67,10 @@ class PersonResource {
     fun get(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @PathParam("orgId") orgId: String, @QueryParam("query") query: String?): Response {
         return try {
             if (query != null) {
-                val personList = PersonService.find(orgId, query)
+                val personList = persons.find(orgId, query)
                 Response.status(Response.Status.OK).entity(personList).build()
             } else {
-                val personList = PersonService.get(orgId, if (page == 0) 1 else page, if (per_page == 0) 200 else per_page)
+                val personList = persons.findByOrgId(orgId).paging(if (page == 0) 1 else page, if (per_page == 0) 200 else per_page)
                 Response.status(Response.Status.OK).entity(personList).build()
             }
         } catch (ex: NotAuthorizedException) {
@@ -82,13 +83,13 @@ class PersonResource {
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}")
     fun getByPersonId(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): Person {
-        return PersonService.getByPersonId(orgId, personId)
+        return persons.getPerson(orgId, personId)
     }
 
     @RolesAllowed("USER")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/icd10/{icd10:(\\w+)}")
     fun findByICD10(@PathParam("orgId") orgId: String, @PathParam("icd10") icd10: String): List<Person> {
-        return PersonService.findICD10(orgId, icd10)
+        return persons.findByICD10(orgId, icd10)
     }
 }
