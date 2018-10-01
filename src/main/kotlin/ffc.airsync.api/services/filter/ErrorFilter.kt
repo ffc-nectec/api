@@ -3,8 +3,8 @@ package ffc.airsync.api.services.filter
 import ffc.airsync.api.printDebug
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.ForbiddenException
-import javax.ws.rs.NotAllowedException
 import javax.ws.rs.NotAuthorizedException
+import javax.ws.rs.NotFoundException
 import javax.ws.rs.WebApplicationException
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -53,7 +53,7 @@ class RequireError : ExceptionMapper<IllegalArgumentException> {
     override fun toResponse(exception: IllegalArgumentException?): Response {
         exception!!.printStackTrace()
         val err = ErrorFilter.ErrorRes(400, exception.message, exception)
-        val except = NotAllowedException(err.message)
+        val except = BadRequestException(err.message)
         return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
     }
 }
@@ -63,7 +63,17 @@ class StaegError : ExceptionMapper<IllegalStateException> {
     override fun toResponse(exception: IllegalStateException?): Response {
         exception!!.printStackTrace()
         val err = ErrorFilter.ErrorRes(400, exception.message, exception)
-        val except = BadRequestException("Stage error $err.message")
+        val except = BadRequestException("Stage error ${err.message}")
+        return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
+    }
+}
+
+@Provider
+class NullError : ExceptionMapper<NullPointerException> {
+    override fun toResponse(exception: NullPointerException?): Response {
+        exception!!.printStackTrace()
+        val err = ErrorFilter.ErrorRes(404, exception.message, exception)
+        val except = NotFoundException("Null error ${err.message}")
         return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
     }
 }
