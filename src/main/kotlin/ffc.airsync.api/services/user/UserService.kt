@@ -1,6 +1,5 @@
-package ffc.airsync.api.services.module
+package ffc.airsync.api.services.user
 
-import ffc.airsync.api.dao.UserDao
 import ffc.airsync.api.services.token.tokens
 import ffc.entity.Token
 import ffc.entity.User

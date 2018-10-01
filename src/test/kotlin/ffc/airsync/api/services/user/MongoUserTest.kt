@@ -1,9 +1,11 @@
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.user
 
 import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.airsync.api.dao.MongoAbsConnect
+import ffc.airsync.api.dao.insert
 import ffc.entity.Organization
 import ffc.entity.User
 import org.amshove.kluent.`should be equal to`

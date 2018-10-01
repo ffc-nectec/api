@@ -1,7 +1,7 @@
 package ffc.airsync.api.dao
 
-import ffc.airsync.api.services.module.users
 import ffc.airsync.api.services.org.orgs
+import ffc.airsync.api.services.user.users
 import ffc.entity.Organization
 import ffc.entity.User
 import org.amshove.kluent.`should be equal to`

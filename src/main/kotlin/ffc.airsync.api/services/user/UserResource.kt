@@ -1,7 +1,7 @@
-package ffc.airsync.api.services
+package ffc.airsync.api.services.user
 
 import ffc.airsync.api.printDebug
-import ffc.airsync.api.services.module.UserService
+import ffc.airsync.api.services.buildHeaderMap
 import ffc.entity.User
 import javax.annotation.security.RolesAllowed
 import javax.servlet.http.HttpServletRequest

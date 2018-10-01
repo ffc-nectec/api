@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.user
 
+import ffc.airsync.api.dao.Dao
+import ffc.airsync.api.dao.DaoFactory
 import ffc.entity.User
 
 interface UserDao : Dao {
-
     companion object {
-
         private val userBlock = listOf("ADM", "adm", "newuser", "usr_db", "Drug_Store_Admin")
 
         fun isBlockUser(name: String) = userBlock.firstOrNull { it == name.trim() } != null
@@ -34,3 +34,5 @@ interface UserDao : Dao {
     fun findUser(orgId: String): List<User>
     fun findThat(orgId: String, name: String, password: String): User?
 }
+
+val users: UserDao by lazy { MongoUserDao(DaoFactory.host, DaoFactory.port) }

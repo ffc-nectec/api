@@ -15,9 +15,12 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.user
 
 import com.google.gson.Gson
+import ffc.airsync.api.dao.MongoAbsConnect
+import ffc.airsync.api.dao.equal
+import ffc.airsync.api.dao.toDocument
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.security.password
 import ffc.entity.Organization
