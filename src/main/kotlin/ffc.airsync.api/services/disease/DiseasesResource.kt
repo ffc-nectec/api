@@ -1,4 +1,4 @@
-package ffc.airsync.api.services
+package ffc.airsync.api.services.disease
 
 import ffc.airsync.api.services.filter.Cache
 import ffc.airsync.api.services.module.DiseaseService
@@ -16,7 +16,6 @@ import javax.ws.rs.core.MediaType
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 class DiseasesResource {
-
     @Context
     lateinit var req: HttpServletRequest
 

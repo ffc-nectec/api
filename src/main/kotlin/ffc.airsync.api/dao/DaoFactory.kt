@@ -27,7 +27,6 @@ internal class DaoFactory {
     fun houses(host: String = DaoFactory.host, port: Int = DaoFactory.port): HouseDao = MongoHouseDao(host, port)
     fun persons(host: String = DaoFactory.host, port: Int = DaoFactory.port): PersonDao = MongoPersonDao(host, port)
     fun tokens(host: String = DaoFactory.host, port: Int = DaoFactory.port): TokenDao = MongoTokenDao(host, port)
-    fun diseases(host: String = DaoFactory.host, port: Int = DaoFactory.port): DiseaseDao = MongoDiseaseDao(host, port)
     fun homeHealthTypes(host: String = DaoFactory.host, port: Int = DaoFactory.port): HomeHealthTypeDao =
         MongoHomeHealthTypeDao(host, port)
 

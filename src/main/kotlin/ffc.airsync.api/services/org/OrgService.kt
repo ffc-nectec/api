@@ -18,7 +18,7 @@ internal object OrgService {
         orgs.remove(orgId)
         houses.removeByOrgId(orgId)
         tokens.removeByOrgId(orgId)
-        persons.removeGroupByOrg(orgId)
+        persons.remove(orgId)
     }
 
     fun getMy(ipAddress: String): List<Organization> {

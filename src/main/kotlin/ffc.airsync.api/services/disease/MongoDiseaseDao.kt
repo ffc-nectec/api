@@ -1,6 +1,13 @@
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.disease
 
 import com.mongodb.client.model.IndexOptions
+import ffc.airsync.api.dao.MongoAbsConnect
+import ffc.airsync.api.dao.bsonListOf
+import ffc.airsync.api.dao.documentOf
+import ffc.airsync.api.dao.equal
+import ffc.airsync.api.dao.firstAs
+import ffc.airsync.api.dao.listOf
+import ffc.airsync.api.dao.toDocument
 import ffc.entity.Lang
 import ffc.entity.healthcare.Disease
 import org.bson.Document
@@ -9,9 +16,9 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
 
     init {
         val searchIndex = documentOf(
-                "icd10" to "text",
-                "name" to "text",
-                "translation.th" to "text")
+            "icd10" to "text",
+            "name" to "text",
+            "translation.th" to "text")
         val insertIndex = documentOf("icd10" to 1)
 
         try {
@@ -35,9 +42,9 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
     fun find(query: String): List<Disease> {
         val regexQuery = Document("\$regex", query).append("\$options", "i")
         val listQuery = bsonListOf(
-                "translation.th" equal regexQuery,
-                "icd10" equal regexQuery,
-                "name" equal regexQuery
+            "translation.th" equal regexQuery,
+            "icd10" equal regexQuery,
+            "name" equal regexQuery
         )
 
         return dbCollection.find("\$or" equal listQuery).limit(100).listOf()
