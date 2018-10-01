@@ -4,7 +4,7 @@ import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.airsync.api.dao.MongoAbsConnect
+import ffc.airsync.api.services.MongoAbsConnect
 import org.amshove.kluent.`should be equal to`
 import org.bson.types.ObjectId
 import org.junit.After

@@ -17,9 +17,9 @@
 
 package ffc.airsync.api.services.house
 
-import ffc.airsync.api.services.GEOJSONHeader
 import ffc.airsync.api.services.filter.Cache
-import ffc.airsync.api.services.getTokenRole
+import ffc.airsync.api.services.util.GEOJSONHeader
+import ffc.airsync.api.services.util.getTokenRole
 import ffc.entity.House
 import ffc.entity.User
 import me.piruin.geok.geometry.Feature

@@ -1,10 +1,11 @@
-package ffc.airsync.api.dao
+package ffc.airsync.api.services
 
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import com.mongodb.ServerAddress
 import com.mongodb.client.MongoCollection
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.services.util.equal
 import ffc.entity.Entity
 import ffc.entity.gson.parseTo
 import org.bson.Document
@@ -125,5 +126,12 @@ abstract class MongoAbsConnect(
             ex.printStackTrace()
             throw ex
         }
+    }
+}
+
+internal class DaoFactory {
+    companion object {
+        var host = "127.0.0.1"
+        var port = 27017
     }
 }

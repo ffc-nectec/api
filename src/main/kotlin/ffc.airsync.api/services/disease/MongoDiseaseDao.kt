@@ -1,13 +1,13 @@
 package ffc.airsync.api.services.disease
 
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.dao.MongoAbsConnect
-import ffc.airsync.api.dao.bsonListOf
-import ffc.airsync.api.dao.documentOf
-import ffc.airsync.api.dao.equal
-import ffc.airsync.api.dao.firstAs
-import ffc.airsync.api.dao.listOf
-import ffc.airsync.api.dao.toDocument
+import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.util.bsonListOf
+import ffc.airsync.api.services.util.documentOf
+import ffc.airsync.api.services.util.equal
+import ffc.airsync.api.services.util.firstAs
+import ffc.airsync.api.services.util.listOf
+import ffc.airsync.api.services.util.toDocument
 import ffc.entity.Lang
 import ffc.entity.healthcare.Disease
 import org.bson.Document

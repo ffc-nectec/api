@@ -20,8 +20,8 @@ import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.airsync.api.dao.MongoAbsConnect
 import ffc.airsync.api.resourceFile
+import ffc.airsync.api.services.MongoAbsConnect
 import ffc.entity.Link
 import ffc.entity.Organization
 import ffc.entity.System

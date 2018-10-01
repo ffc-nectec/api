@@ -1,5 +1,6 @@
 package ffc.airsync.api.dao
 
+import ffc.airsync.api.services.util.buildInsertBson
 import ffc.entity.Link
 import ffc.entity.Person
 import ffc.entity.System

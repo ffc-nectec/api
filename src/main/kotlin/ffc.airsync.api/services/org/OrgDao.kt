@@ -17,8 +17,8 @@
 
 package ffc.airsync.api.services.org
 
-import ffc.airsync.api.dao.Dao
-import ffc.airsync.api.dao.DaoFactory
+import ffc.airsync.api.services.Dao
+import ffc.airsync.api.services.DaoFactory
 import ffc.entity.Organization
 
 interface OrgDao : Dao {

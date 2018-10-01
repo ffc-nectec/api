@@ -1,8 +1,8 @@
 package ffc.airsync.api.services.notification
 
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.dao.MongoAbsConnect
-import ffc.airsync.api.dao.equal
+import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.util.equal
 import ffc.entity.Entity
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson

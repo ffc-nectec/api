@@ -17,8 +17,8 @@
 
 package ffc.airsync.api.services.house
 
-import ffc.airsync.api.dao.Dao
-import ffc.airsync.api.dao.DaoFactory
+import ffc.airsync.api.services.Dao
+import ffc.airsync.api.services.DaoFactory
 import ffc.entity.House
 
 interface HouseDao : Dao {

@@ -1,4 +1,4 @@
-package ffc.airsync.api.services.module
+package ffc.airsync.api.services.sync
 
 import ffc.airsync.api.services.healthcareservice.healthCareServices
 import ffc.airsync.api.services.house.houses

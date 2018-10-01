@@ -19,10 +19,10 @@ package ffc.airsync.api.services.house
 
 import com.google.firebase.messaging.Message
 import ffc.airsync.api.printDebug
-import ffc.airsync.api.services.module.paging
 import ffc.airsync.api.services.notification.broadcastHouse
 import ffc.airsync.api.services.org.orgs
 import ffc.airsync.api.services.person.persons
+import ffc.airsync.api.services.util.paging
 import ffc.entity.House
 import ffc.entity.User
 import ffc.entity.copy

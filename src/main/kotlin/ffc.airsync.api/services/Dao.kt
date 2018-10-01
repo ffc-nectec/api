@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.dao
+package ffc.airsync.api.services
 
 import ffc.entity.Entity
 

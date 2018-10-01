@@ -1,8 +1,8 @@
 package ffc.airsync.api.services.token
 
-import ffc.airsync.api.dao.MongoAbsConnect
-import ffc.airsync.api.dao.equal
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.util.equal
 import ffc.entity.Token
 import ffc.entity.User
 import ffc.entity.gson.parseTo

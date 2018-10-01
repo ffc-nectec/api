@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.services.module
+package ffc.airsync.api.services.util
 
 import ffc.airsync.api.printDebug
 import javax.ws.rs.NotFoundException

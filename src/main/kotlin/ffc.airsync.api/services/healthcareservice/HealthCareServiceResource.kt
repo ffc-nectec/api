@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.healthcareservice
 
 import ffc.airsync.api.services.filter.Cache
-import ffc.airsync.api.services.getTokenRole
+import ffc.airsync.api.services.util.getTokenRole
 import ffc.entity.User
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.HomeVisit

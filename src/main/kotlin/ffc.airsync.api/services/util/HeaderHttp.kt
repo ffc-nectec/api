@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.services
+package ffc.airsync.api.services.util
 
 import ffc.entity.User
 import java.util.Enumeration

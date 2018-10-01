@@ -15,12 +15,14 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.util
 
 import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoCollection
 import ffc.airsync.api.airSyncGson
+import ffc.airsync.api.security.password
 import ffc.entity.Entity
+import ffc.entity.User
 import ffc.entity.copy
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
@@ -85,4 +87,11 @@ internal inline fun <reified T> MongoCollection<Document>.ffcInsert(doc: Documen
     val query = Document("_id", doc["_id"] as ObjectId)
 
     return find(query).firstAs()
+}
+
+fun User.toDocument(): Document {
+    val user = this.copy(ObjectId().toHexString())
+    val document = Document.parse(user.toJson())
+    document.append("password", password().hash(user.password))
+    return document
 }

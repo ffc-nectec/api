@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.services
+package ffc.airsync.api.services.util
 
 import ffc.airsync.api.DATETIMEBANGKOK
 import ffc.airsync.api.TIMESTAMPBANGKOK

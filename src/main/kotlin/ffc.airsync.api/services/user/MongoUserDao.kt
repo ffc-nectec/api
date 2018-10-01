@@ -18,11 +18,11 @@
 package ffc.airsync.api.services.user
 
 import com.google.gson.Gson
-import ffc.airsync.api.dao.MongoAbsConnect
-import ffc.airsync.api.dao.equal
-import ffc.airsync.api.dao.toDocument
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.security.password
+import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.util.equal
+import ffc.airsync.api.services.util.toDocument
 import ffc.entity.Organization
 import ffc.entity.User
 import ffc.entity.gson.ffcGson
