@@ -26,7 +26,7 @@ interface PersonDao : Dao {
 
     fun findByOrgId(orgId: String): List<Person>
     fun getPeopleInHouse(orgId: String, houseId: String): List<Person>
-    fun removeGroupByOrg(orgId: String)
+    fun remove(orgId: String)
     fun find(query: String, orgId: String): List<Person>
 
     fun findByICD10(orgId: String, icd10: String): List<Person>

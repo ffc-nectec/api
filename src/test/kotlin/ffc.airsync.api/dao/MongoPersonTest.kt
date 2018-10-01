@@ -131,7 +131,7 @@ class MongoPersonTest {
             add(misterDog)
         })
 
-        dao.removeGroupByOrg(ORG_ID)
+        dao.remove(ORG_ID)
         val persons = dao.findByOrgId(ORG_ID)
         persons.count() `should be equal to` 0
     }

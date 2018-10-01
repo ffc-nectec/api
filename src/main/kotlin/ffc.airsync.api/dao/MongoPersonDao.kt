@@ -51,7 +51,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
             .map { it.toJson().parseTo<Person>() }.toList()
     }
 
-    override fun removeGroupByOrg(orgId: String) {
+    override fun remove(orgId: String) {
         dbCollection.deleteMany("orgId" equal orgId)
     }
 
