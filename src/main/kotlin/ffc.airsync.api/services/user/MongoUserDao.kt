@@ -30,7 +30,6 @@ import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
-import javax.ws.rs.NotFoundException
 
 internal class MongoUserDao(host: String, port: Int) : UserDao, MongoAbsConnect(host, port, "ffc", "organ") {
     override fun insertUser(user: User, orgId: String): User {
@@ -58,7 +57,7 @@ internal class MongoUserDao(host: String, port: Int) : UserDao, MongoAbsConnect(
     }
 
     override fun updateUser(user: User, orgId: String): User {
-        if (!haveUserInDb(orgId, user)) throw NotFoundException("ไม่พบผู้ใช้ ${user.name} ในระบบ")
+        if (!haveUserInDb(orgId, user)) throw NullPointerException("ไม่พบผู้ใช้ ${user.name} ในระบบ")
         // TODO("รอพัฒนาระบบ Update User")
         // val query = Document("_id", ObjectId(orgId)).append("users", Document("name", user.name))
         return User().apply {

@@ -4,6 +4,7 @@ import ffc.airsync.api.printDebug
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.InternalServerErrorException
+import javax.ws.rs.NotAllowedException
 import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.NotFoundException
 import javax.ws.rs.WebApplicationException
@@ -53,6 +54,11 @@ class ErrorMethodNotAllow : ExceptionMapper<javax.ws.rs.NotAllowedException> {
 class RequireError : ExceptionMapper<IllegalArgumentException> {
     override fun toResponse(exception: IllegalArgumentException?): Response {
         exception!!.printStackTrace()
+        if ((exception.message ?: "").endsWith("parameter houseId")) {
+            val except = NotAllowedException(exception.message)
+            val err = ErrorFilter.ErrorRes(except.response.status, exception.message, exception)
+            return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
+        }
         val except = BadRequestException(exception.message)
         val err = ErrorFilter.ErrorRes(except.response.status, exception.message, exception)
         return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()

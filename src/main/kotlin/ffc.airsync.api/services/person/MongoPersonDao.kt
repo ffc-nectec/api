@@ -12,7 +12,6 @@ import ffc.entity.gson.parseTo
 import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
-import javax.ws.rs.NotFoundException
 
 internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConnect(host, port, "ffc", "person") {
 
@@ -38,7 +37,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     override fun getPerson(orgId: String, personId: String): Person {
         val query = ("orgId" equal orgId) plus ("_id" equal ObjectId(personId))
         val result = dbCollection.find(query).first()
-            ?: throw NotFoundException("ไม่พบรหัส person id $personId ที่ค้นหา")
+            ?: throw NullPointerException("ไม่พบรหัส person id $personId ที่ค้นหา")
         return result.toJson().parseTo()
     }
 

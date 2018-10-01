@@ -6,7 +6,6 @@ import ffc.airsync.api.services.person.persons
 import ffc.airsync.api.services.token.tokens
 import ffc.entity.Organization
 import ffc.entity.gson.toJson
-import javax.ws.rs.NotFoundException
 
 internal object OrgService {
     fun register(organization: Organization): Organization {
@@ -25,7 +24,7 @@ internal object OrgService {
         printDebug("Get my org $ipAddress")
         val orgList = orgs.findByIpAddress(ipAddress)
         val orgReturn = hiddenPrivate(orgList)
-        if (orgReturn.isEmpty()) throw NotFoundException("ไม่มีข้อมูลลงทะเบียน")
+        if (orgReturn.isEmpty()) throw NullPointerException("ไม่มีข้อมูลลงทะเบียน")
         return orgReturn
     }
 
@@ -41,13 +40,12 @@ internal object OrgService {
     fun get(): List<Organization> {
         printDebug("Get all org")
         val orgList = orgs.findAll()
-        val orgReturn = hiddenPrivate(orgList)
-        if (orgReturn.isEmpty()) throw NotFoundException("ไม่มีข้อมูลลงทะเบียน")
-        return orgReturn
+        if (orgList.isEmpty()) throw NullPointerException("ไม่มีข้อมูลลงทะเบียน")
+        return hiddenPrivate(orgList)
     }
 
     fun find(query: String): List<Organization> {
         val result = hiddenPrivate(orgs.find(query))
-        return if (result.isNotEmpty()) result else throw NotFoundException("ค้นหา $query ไม่พบ")
+        return if (result.isNotEmpty()) result else throw NullPointerException("ค้นหา $query ไม่พบ")
     }
 }

@@ -57,7 +57,7 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
         val query = "id" equal house.id
 
         printDebug("\tquery old house ")
-        val oldHouseDoc = (dbCollection.find(query).first() ?: throw NotFoundException("ไม่มีบ้านตาม id ให้ Update"))
+        val oldHouseDoc = (dbCollection.find(query).first() ?: throw NullPointerException("ไม่มีบ้านตาม id ให้ Update"))
         val orgId = oldHouseDoc["orgId"].toString()
         printDebug("\tget orgId $orgId")
         printDebug("\tcreate update doc")

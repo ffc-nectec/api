@@ -18,7 +18,6 @@
 package ffc.airsync.api.services.util
 
 import ffc.airsync.api.printDebug
-import javax.ws.rs.NotFoundException
 
 interface AddItmeAction {
     fun onAddItemAction(itemIndex: Int)
@@ -29,7 +28,7 @@ private fun itemRenderPerPage(page: Int, per_page: Int, count: Int, onAddItemAct
     val fromItem = ((page - 1) * per_page) + 1
     var toItem = (page) * per_page
 
-    if (fromItem > count) throw NotFoundException("ไม่พบ")
+    if (fromItem > count) throw NullPointerException("ไม่พบ")
     if (toItem > count) {
         toItem = count
     }

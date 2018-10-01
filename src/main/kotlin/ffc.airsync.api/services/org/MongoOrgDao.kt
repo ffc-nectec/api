@@ -30,10 +30,8 @@ import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
-import javax.ws.rs.NotFoundException
 
 internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port, "ffc", "organ") {
-
     override fun insert(organization: Organization): Organization {
         validate(organization)
         checkDuplication(organization)
@@ -81,7 +79,7 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
 
     override fun remove(orgId: String) {
         printDebug("Call OrgMongoDao remove $orgId")
-        dbCollection.findOneAndDelete("id" equal orgId) ?: throw NotFoundException("ไม่พบ Org $orgId ที่ต้องการลบ")
+        dbCollection.findOneAndDelete("id" equal orgId) ?: throw NullPointerException("ไม่พบ Org $orgId ที่ต้องการลบ")
     }
 
     override fun findAll(): List<Organization> {
@@ -110,7 +108,7 @@ internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(ho
         val orgDoc = dbCollection.find("lastKnownIp" equal ipAddress)
         printDebug("\tQuery org from mongo $orgDoc")
         val orgList = orgDoc.convertToList<Organization>()
-        if (orgList.isEmpty()) throw NotFoundException("ไม่พบรายการลงทะเบียนในกลุ่มของ Org ip $ipAddress")
+        if (orgList.isEmpty()) throw NullPointerException("ไม่พบรายการลงทะเบียนในกลุ่มของ Org ip $ipAddress")
         return orgList
     }
 

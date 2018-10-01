@@ -22,7 +22,7 @@ object HomeVisitService {
 
         return if (result != null)
             result as HomeVisit
-        else throw NotFoundException("ไม่พบ ข้อมูลที่ค้นหา")
+        else throw NullPointerException("ไม่พบ ข้อมูลที่ค้นหา")
     }
 
     fun get(orgId: String): List<HealthCareService> {
