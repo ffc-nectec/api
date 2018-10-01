@@ -13,9 +13,12 @@ import java.util.Arrays
 
 typealias mongoInit = () -> Unit
 
+const val DEFAULT_MONGO_HOST = "127.0.0.1"
+const val DEFAULT_MONGO_PORT = 27017
+
 abstract class MongoAbsConnect(
-    private val host: String = "127.0.0.1",
-    private val port: Int = 27017,
+    private val host: String,
+    private val port: Int,
     val dbName: String,
     val collection: String,
     private val mongoInitRun: mongoInit? = null
@@ -126,12 +129,5 @@ abstract class MongoAbsConnect(
             ex.printStackTrace()
             throw ex
         }
-    }
-}
-
-internal class DaoFactory {
-    companion object {
-        var host = "127.0.0.1"
-        var port = 27017
     }
 }

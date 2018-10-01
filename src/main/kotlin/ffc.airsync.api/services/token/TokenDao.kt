@@ -17,8 +17,9 @@
 
 package ffc.airsync.api.services.token
 
+import ffc.airsync.api.services.DEFAULT_MONGO_HOST
+import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
-import ffc.airsync.api.services.DaoFactory
 import ffc.entity.Token
 import ffc.entity.User
 
@@ -30,4 +31,4 @@ interface TokenDao : Dao {
     fun removeByOrgId(orgId: String)
 }
 
-val tokens: TokenDao by lazy { MongoTokenDao(DaoFactory.host, DaoFactory.port) }
+val tokens: TokenDao by lazy { MongoTokenDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }

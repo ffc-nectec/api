@@ -17,8 +17,9 @@
 
 package ffc.airsync.api.services.house
 
+import ffc.airsync.api.services.DEFAULT_MONGO_HOST
+import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
-import ffc.airsync.api.services.DaoFactory
 import ffc.entity.House
 
 interface HouseDao : Dao {
@@ -35,4 +36,4 @@ interface HouseDao : Dao {
     fun removeByOrgId(orgId: String)
 }
 
-val houses: HouseDao by lazy { MongoHouseDao(DaoFactory.host, DaoFactory.port) }
+val houses: HouseDao by lazy { MongoHouseDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }

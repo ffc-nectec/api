@@ -1,7 +1,8 @@
 package ffc.airsync.api.services.healthcareservice
 
+import ffc.airsync.api.services.DEFAULT_MONGO_HOST
+import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
-import ffc.airsync.api.services.DaoFactory
 import ffc.entity.healthcare.HealthCareService
 
 interface HealthCareServiceDao : Dao {
@@ -18,4 +19,4 @@ interface HealthCareServiceDao : Dao {
     fun update(healthCareService: HealthCareService, orgId: String): HealthCareService
 }
 
-val healthCareServices: HealthCareServiceDao by lazy { MongoHealthCareServiceDao(DaoFactory.host, DaoFactory.port) }
+val healthCareServices: HealthCareServiceDao by lazy { MongoHealthCareServiceDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
