@@ -1,9 +1,10 @@
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.token
 
 import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.airsync.api.dao.MongoAbsConnect
 import ffc.entity.Token
 import ffc.entity.User
 import org.amshove.kluent.`should be equal to`
@@ -14,13 +15,10 @@ import org.junit.Before
 import org.junit.Test
 
 class MongoTokenDaoTest {
-
     private val ORG_ID = "abcdeff"
-
     lateinit var dao: TokenDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer
-
     lateinit var tokenMax: Token
     lateinit var tokenBee: Token
 
@@ -31,7 +29,7 @@ class MongoTokenDaoTest {
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
 
-        dao = DaoFactory().tokens(serverAddress.hostString, serverAddress.port)
+        dao = MongoTokenDao(serverAddress.hostString, serverAddress.port)
 
         tokenMax = dao.create(User("Thanachai", User.Role.ORG), ORG_ID)
         tokenBee = dao.create(User("Morakot", User.Role.USER), ORG_ID)
@@ -46,11 +44,11 @@ class MongoTokenDaoTest {
     }
 
     fun User(name: String, role: User.Role = User.Role.USER): User =
-            User().apply {
-                this.name = name
-                password = "catbite"
-                this.role = role
-            }
+        User().apply {
+            this.name = name
+            password = "catbite"
+            this.role = role
+        }
 
     @Test
     fun createAndFindToken() {

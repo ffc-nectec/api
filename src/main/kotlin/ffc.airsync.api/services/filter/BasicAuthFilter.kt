@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.filter
 
 import ffc.airsync.api.printDebug
-import ffc.airsync.api.services.module.tokens
+import ffc.airsync.api.services.token.tokens
 import ffc.entity.Token
 import java.util.regex.Pattern
 import javax.annotation.Priority

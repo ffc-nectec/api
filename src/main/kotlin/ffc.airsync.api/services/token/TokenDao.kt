@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.token
 
+import ffc.airsync.api.dao.Dao
+import ffc.airsync.api.dao.DaoFactory
 import ffc.entity.Token
 import ffc.entity.User
 
@@ -27,3 +29,5 @@ interface TokenDao : Dao {
     fun remove(token: String): Boolean
     fun removeByOrgId(orgId: String)
 }
+
+val tokens: TokenDao by lazy { MongoTokenDao(DaoFactory.host, DaoFactory.port) }
