@@ -1,4 +1,4 @@
-package ffc.airsync.api.services.module
+package ffc.airsync.api.services.healthcareservice
 
 import com.google.firebase.messaging.Message
 import ffc.airsync.api.services.notification.broadcastVisit

@@ -1,5 +1,6 @@
 package ffc.airsync.api.services.module
 
+import ffc.airsync.api.services.healthcareservice.healthCareServices
 import ffc.airsync.api.services.house.houses
 import ffc.airsync.api.services.person.persons
 import ffc.entity.Entity

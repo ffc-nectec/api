@@ -25,7 +25,4 @@ internal class DaoFactory {
 
     fun homeHealthTypes(host: String = DaoFactory.host, port: Int = DaoFactory.port): HomeHealthTypeDao =
         MongoHomeHealthTypeDao(host, port)
-
-    fun healthCareServices(host: String = DaoFactory.host, port: Int = DaoFactory.port): HealthCareServiceDao =
-        MongoHealthCareServiceDao(host, port)
 }

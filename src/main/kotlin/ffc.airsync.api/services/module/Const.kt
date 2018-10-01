@@ -20,4 +20,3 @@ package ffc.airsync.api.services.module
 import ffc.airsync.api.dao.DaoFactory
 
 val homeHealtyTypes = lazy { DaoFactory().homeHealthTypes() }.value
-val healthCareServices = lazy { ffc.airsync.api.dao.DaoFactory().healthCareServices() }.value

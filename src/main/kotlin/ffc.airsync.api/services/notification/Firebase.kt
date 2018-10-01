@@ -20,7 +20,7 @@ package ffc.airsync.api.services.notification
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
 import ffc.airsync.api.printDebug
-import ffc.airsync.api.services.PART_HEALTHCARESERVICE
+import ffc.airsync.api.services.healthcareservice.PART_HEALTHCARESERVICE
 import ffc.airsync.api.services.house.PART_HOUSESERVICE
 import ffc.entity.Entity
 import ffc.entity.House

@@ -1,9 +1,10 @@
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.healthcareservice
 
 import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.airsync.api.dao.MongoAbsConnect
 import ffc.entity.Lang
 import ffc.entity.Person
 import ffc.entity.ThaiCitizenId
@@ -75,7 +76,7 @@ class MongoHealthCareServiceTest {
         val serverAddress = server.bind()
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
-        dao = DaoFactory().healthCareServices(serverAddress.hostString, serverAddress.port)
+        dao = MongoHealthCareServiceDao(serverAddress.hostString, serverAddress.port)
     }
 
     @After

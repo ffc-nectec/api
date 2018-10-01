@@ -1,5 +1,7 @@
-package ffc.airsync.api.dao
+package ffc.airsync.api.services.healthcareservice
 
+import ffc.airsync.api.dao.Dao
+import ffc.airsync.api.dao.DaoFactory
 import ffc.entity.healthcare.HealthCareService
 
 interface HealthCareServiceDao : Dao {
@@ -15,3 +17,5 @@ interface HealthCareServiceDao : Dao {
 
     fun update(healthCareService: HealthCareService, orgId: String): HealthCareService
 }
+
+val healthCareServices: HealthCareServiceDao by lazy { MongoHealthCareServiceDao(DaoFactory.host, DaoFactory.port) }
