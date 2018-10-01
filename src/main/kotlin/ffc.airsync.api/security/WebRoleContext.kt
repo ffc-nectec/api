@@ -5,7 +5,7 @@ import ffc.entity.User
 import java.security.Principal
 import javax.ws.rs.core.SecurityContext
 
-class BuildSecurityContext(val token: Token, val orgId: String?, val scheme: String) :
+class WebRoleContext(val token: Token, val orgId: String?, val scheme: String) :
     SecurityContext {
     private var userPrincipal: Principal
 

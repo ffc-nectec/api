@@ -1,8 +1,6 @@
 package ffc.airsync.api.security
 
 import ffc.airsync.api.printDebug
-import ffc.airsync.api.services.token.tokens
-import ffc.entity.Token
 import java.util.regex.Pattern
 import javax.annotation.Priority
 import javax.ws.rs.NotAuthorizedException
@@ -18,69 +16,27 @@ class BasicAuthFilter : ContainerRequestFilter {
     override fun filter(requestContext: ContainerRequestContext) {
         val urlScheme = requestContext.uriInfo.baseUri.scheme
         val baseUrl = requestContext.uriInfo.path.toString()
-        val matcher = pattern.matcher(baseUrl)
-        var orgId: String = ""
+        val matcherOrgId = pattern.matcher(baseUrl)
+        var orgId = ""
 
-        if (matcher.find()) {
-            orgId = matcher.group(1)
+        if (matcherOrgId.find()) {
+            orgId = matcherOrgId.group(1)
         }
-        printDebug("Auth filter parth url $baseUrl")
-        printDebug("\t Org id = $orgId")
-        val authenInfo: TokenAuthInfo
+        printDebug("Auth filter parth url $baseUrl \t Org id = $orgId")
+        val authenInfo: BasicTokenInfo
 
         try {
-            authenInfo = TokenAuthInfo(requestContext)
-            printDebug("Finish create TokenAuthInfo")
+            authenInfo = BasicTokenInfo(requestContext)
+            printDebug("Finish create TokenInfo")
         } catch (ex: NotAuthorizedException) {
             return
         }
         val token = authenInfo.token
-        /*val securityContext: SecurityContext
-        securityContext = when {
-            token.user.role == User.Role.USER -> UserSecurityContextImp(token, urlScheme, orgId)
-            token.user.role == User.Role.ORG -> OrgSecurityContextImp(token, urlScheme, orgId)
-            else -> NoAuthSecurityContextImp()
-        }
 
-        requestContext.securityContext = securityContext*/
-
-        requestContext.securityContext = BuildSecurityContext(
+        requestContext.securityContext = WebRoleContext(
             token = token,
             scheme = urlScheme,
             orgId = orgId
         )
-    }
-
-    class TokenAuthInfo(requestContext: ContainerRequestContext) {
-        val AUTHORIZATION_PROPERTY = "Authorization"
-        val AUTHENTICATION_SCHEME = "Bearer "
-        val token: Token
-
-        init {
-            printDebug("TokenAuthInfo class in filter")
-            val authorization = requestContext.headers[AUTHORIZATION_PROPERTY]
-
-            if (authorization != null) {
-                try {
-                    printDebug("\t\tCheck Basic auth start with Basic")
-                    if (authorization[0].startsWith("Basic ")) {
-                        throw NotAuthorizedException("is basic auth")
-                    }
-
-                    printDebug("\t\tCheck Basic auth start with $AUTHENTICATION_SCHEME")
-                    val tokenStr = authorization[0].replaceFirst(AUTHENTICATION_SCHEME, "").trim()
-                    printDebug("\tFind token.")
-                    token = tokens.find(token = tokenStr) ?: throw NotAuthorizedException("โปรด Login เพื่อขอ Token")
-                    printDebug("\t\ttoken = $token")
-
-                    if (token.isExpire) throw NotAuthorizedException("Token expire ${token.expireDate}")
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    throw e
-                }
-            } else {
-                throw NotAuthorizedException("โปรด Login เพื่อขอ Token")
-            }
-        }
     }
 }
