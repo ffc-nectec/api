@@ -32,7 +32,7 @@ import javax.ws.rs.core.Response
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-class UtilResource {
+class TimeResource {
     @Cache(maxAge = 2)
     @GET
     fun getRootPart(): Response {
