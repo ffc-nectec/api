@@ -11,15 +11,14 @@ import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
+@Path("/org")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/org")
 class FirebaseResource {
-    @RolesAllowed("ORG", "ADMIN")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/firebasetoken")
+    @RolesAllowed("ORG", "ADMIN")
     fun updateToken(@PathParam("orgId") orgId: String, firebaseToken: HashMap<String, String>): Response {
         printDebug("Call update Firebase Token OrgID $orgId Firebase Token = ${firebaseToken["firebasetoken"]}")
 
@@ -28,11 +27,9 @@ class FirebaseResource {
         return Response.status(200).build()
     }
 
-    @RolesAllowed("USER", "PROVIDER", "SURVEYOR")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/mobilefirebasetoken")
+    @RolesAllowed("USER", "PROVIDER", "SURVEYOR")
     fun createToken(@PathParam("orgId") orgId: String, firebaseToken: HashMap<String, String>): Response {
         printDebug("Call update Firebase Token by OrgID $orgId Firebase Token = ${firebaseToken["firebasetoken"]}")
         orgs.createFirebase(orgId, firebaseToken["firebasetoken"]!!, false)

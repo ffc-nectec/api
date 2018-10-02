@@ -35,35 +35,35 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import javax.ws.rs.core.SecurityContext
 
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Path("/org")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 class PersonResource {
     @Context
     private var context: SecurityContext? = null
 
-    @RolesAllowed("ORG", "ADMIN")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/persons")
+    @RolesAllowed("ORG", "ADMIN")
     fun creates(@PathParam("orgId") orgId: String, personList: List<Person>): Response {
         printDebug("\nCall create person by ip = ")
         val persons = persons.insert(orgId, personList)
         return Response.status(Response.Status.CREATED).entity(persons).build()
     }
 
-    @RolesAllowed("ORG", "ADMIN")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
+    @RolesAllowed("ORG", "ADMIN")
     fun create(@PathParam("orgId") orgId: String, person: Person): Response {
         printDebug("\nCall create person by ip = ")
         val persons = persons.insert(orgId, person)
         return Response.status(Response.Status.CREATED).entity(persons).build()
     }
 
-    @Cache(maxAge = 5)
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @Cache(maxAge = 5)
     fun get(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @PathParam("orgId") orgId: String, @QueryParam("query") query: String?): Response {
         return try {
             if (query != null) {
@@ -78,17 +78,17 @@ class PersonResource {
         }
     }
 
-    @Cache(maxAge = 5)
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @Cache(maxAge = 5)
     fun getByPersonId(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): Person {
         return persons.getPerson(orgId, personId)
     }
 
-    @RolesAllowed("USER")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/icd10/{icd10:(\\w+)}")
+    @RolesAllowed("USER")
     fun findByICD10(@PathParam("orgId") orgId: String, @PathParam("icd10") icd10: String): List<Person> {
         return persons.findByICD10(orgId, icd10)
     }

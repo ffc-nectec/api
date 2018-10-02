@@ -43,18 +43,19 @@ import javax.ws.rs.core.SecurityContext
 
 const val PART_HOUSESERVICE = "place/house"
 
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Path("/org")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 class HouseResource {
+
     @Context
     private var context: SecurityContext? = null
 
-    @Cache(maxAge = 5)
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
-    @Produces(GEOJSONHeader)
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @Produces(GEOJSONHeader)
+    @Cache(maxAge = 5)
     fun getGeoJsonHouse(
         @QueryParam("page") page: Int = 1,
         @QueryParam("per_page") per_page: Int = 200,
@@ -70,10 +71,10 @@ class HouseResource {
         return geoReturn
     }
 
-    @Cache(maxAge = 5)
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @Cache(maxAge = 5)
     fun getJsonHouse(
         @QueryParam("page") page: Int = 1,
         @QueryParam("per_page") per_page: Int = 200,
@@ -92,9 +93,9 @@ class HouseResource {
             haveLocation)
     }
 
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     @PUT
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun update(
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String,
@@ -105,9 +106,9 @@ class HouseResource {
         return Response.status(200).entity(houseUpdate).build()
     }
 
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     @PUT
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun updateFail(
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String,
@@ -116,11 +117,11 @@ class HouseResource {
         require(false) { "URL สำหรับการ update ข้อมูลผิด" }
     }
 
-    @Cache(maxAge = 2)
-    @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
-    @Produces(GEOJSONHeader)
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
+    @Produces(GEOJSONHeader)
+    @Cache(maxAge = 2)
     fun getSingleGeo(
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
@@ -128,10 +129,10 @@ class HouseResource {
         return HouseService.getSingleGeo(orgId, houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
     }
 
-    @Cache(maxAge = 2)
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @Cache(maxAge = 2)
     fun getSingle(
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
@@ -139,13 +140,10 @@ class HouseResource {
         return HouseService.getSingle(orgId, houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
     }
 
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/${PART_HOUSESERVICE}s")
-    fun create(
-        @PathParam("orgId") orgId: String,
-        houseList: List<House>?
-    ): Response {
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
         if (houseList == null) throw BadRequestException()
         val role = getTokenRole(context!!)
         // houseList.forEach { it.people = null }
@@ -162,9 +160,9 @@ class HouseResource {
         }
     }
 
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
         if (house == null) throw BadRequestException()
         // house.people = null

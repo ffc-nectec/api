@@ -19,12 +19,13 @@ const val PART_HEALTHCARESERVICE = "healthcareservice"
 
 @Path("/org")
 class VisitResource {
+
     @Context
     private var context: SecurityContext? = null
 
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @POST
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     fun create(
         @PathParam("orgId") orgId: String,
         healthCareService: HealthCareService
@@ -37,30 +38,17 @@ class VisitResource {
         return Response.status(201).entity(respond).build()
     }
 
-    @Cache(maxAge = 2)
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
-    @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE")
-    fun get(
-        @PathParam("orgId") orgId: String
-    ): List<HealthCareService> {
-        return HomeVisitService.get(orgId)
-    }
-
-    @Cache(maxAge = 2)
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE/{visitId:([\\dabcdefABCDEF].*)}")
-    fun find(
-        @PathParam("orgId") orgId: String,
-        @PathParam("visitId") visitId: String
-    ): HomeVisit {
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @Cache(maxAge = 2)
+    fun find(@PathParam("orgId") orgId: String, @PathParam("visitId") visitId: String): HomeVisit {
         return HomeVisitService.find(orgId, visitId)
     }
 
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     @PUT
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE/{visitId:([\\dabcdefABCDEF].*)}")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun update(
         @PathParam("orgId") orgId: String,
         @PathParam("visitId") visitId: String,
@@ -78,10 +66,10 @@ class VisitResource {
             }
     }
 
-    @Cache(maxAge = 5)
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @Cache(maxAge = 5)
     fun getPerson(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<HealthCareService> {
         return HomeVisitService.getPersonHealthCare(orgId, personId)
     }

@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 class DiseasesResource {
+
     @Context
     lateinit var req: HttpServletRequest
 

@@ -30,25 +30,26 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 @Path("/")
-@Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 class TimeResource {
-    @Cache(maxAge = 2)
+
     @GET
+    @Cache(maxAge = 2)
     fun getRootPart(): Response {
         return Response.status(200).entity(Runtime.getRuntime().freeMemory()).build()
     }
 
-    @Cache(maxAge = 1)
     @GET
     @Path("/datetime")
+    @Cache(maxAge = 1)
     fun time(): DateTime {
         return DATETIMEBANGKOK
     }
 
-    @Cache(maxAge = 1)
     @GET
     @Path("/timestamp")
+    @Cache(maxAge = 1)
     fun timestamp(): Timestamp {
         return TIMESTAMPBANGKOK
     }

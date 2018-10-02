@@ -16,13 +16,14 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import javax.xml.bind.DatatypeConverter
 
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Path("/org")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 class UserResource {
-    @RolesAllowed("ORG", "ADMIN")
+
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
+    @RolesAllowed("ORG", "ADMIN")
     fun create(@PathParam("orgUuid") orgId: String, users: List<User>): Response {
         users.forEach {
             it.roles.add(it.role)

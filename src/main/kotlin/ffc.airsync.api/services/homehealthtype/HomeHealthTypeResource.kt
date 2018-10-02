@@ -10,11 +10,12 @@ import javax.ws.rs.QueryParam
 import javax.ws.rs.core.MediaType
 
 @Path("/")
+@Produces(MediaType.APPLICATION_JSON)
 class HomeHealthTypeResource {
-    @Cache(maxAge = 3600)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/homehealth")
+
     @GET
+    @Path("/homehealth")
+    @Cache(maxAge = 3600)
     fun query(@QueryParam("query") query: String?): List<CommunityServiceType> {
         val homeHealthType = HomeHealthTypeService.query(query ?: "")
         if (homeHealthType.isEmpty()) throw NotFoundException("ไม่พบข้อมูล")

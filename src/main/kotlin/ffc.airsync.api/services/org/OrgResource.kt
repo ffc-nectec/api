@@ -34,12 +34,14 @@ import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
+@Path("/org")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/org")
 class OrgResource {
+
     @Context
     lateinit var req: HttpServletRequest
+
     val HttpServletRequest.ipAddress: String
         get() = getHeader("X-Forwarded-For") ?: remoteAddr
 
@@ -52,8 +54,8 @@ class OrgResource {
         return Response.status(201).entity(org).build()
     }
 
-    @Cache(maxAge = 5)
     @GET
+    @Cache(maxAge = 5)
     fun get(@QueryParam("my") my: Boolean = false, @QueryParam("query") query: String?): List<Organization> {
         return if (my) {
             printDebug("Find Organization with ip-address = ${req.ipAddress}")
@@ -69,9 +71,9 @@ class OrgResource {
         }
     }
 
-    @RolesAllowed("ORG", "ADMIN")
     @DELETE
     @Path("/{orgId:([\\dabcdefABCDEF]+)}")
+    @RolesAllowed("ORG", "ADMIN")
     fun remove(@PathParam("orgId") orgId: String): Response {
         printDebug("Remove org $orgId")
         OrgService.remove(orgId)
