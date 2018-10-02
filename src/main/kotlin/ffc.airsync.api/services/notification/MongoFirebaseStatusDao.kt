@@ -19,6 +19,12 @@ class MongoFirebaseStatusDao(host: String, port: Int) : FirebaseStatusDao, Mongo
         }
     }
 
+    override fun syncData(orgId: String, limitOutput: Int): List<Entity> {
+        return dbCollection.find("orgId" equal orgId).limit(limitOutput).map {
+            it.toJson().parseTo<Entity>()
+        }.toList()
+    }
+
     override fun insert(orgId: String, entityId: String) {
         val docInsert = Document.parse(Entity(entityId).toJson())
             .append("_id", ObjectId(entityId))
@@ -28,11 +34,5 @@ class MongoFirebaseStatusDao(host: String, port: Int) : FirebaseStatusDao, Mongo
 
     override fun confirmSuccess(orgId: String, entityId: String) {
         dbCollection.deleteOne(("_id" equal ObjectId(entityId)).append("orgId", orgId))
-    }
-
-    override fun syncCloudFilter(orgId: String, isSync: Boolean, limitOutput: Int): List<Entity> {
-        return dbCollection.find("orgId" equal orgId).map {
-            it.toJson().parseTo<Entity>()
-        }.toList()
     }
 }

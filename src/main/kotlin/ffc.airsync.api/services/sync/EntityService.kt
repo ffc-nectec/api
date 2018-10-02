@@ -10,15 +10,15 @@ object EntityService {
     fun getNonSyncData(orgId: String): List<Entity> {
         val syncData = arrayListOf<Entity>()
 
-        syncData.addAll(persons.syncCloudFilter(orgId))
-        syncData.addAll(houses.syncCloudFilter(orgId))
-        syncData.addAll(healthCareServices.syncCloudFilter(orgId))
+        syncData.addAll(persons.syncData(orgId))
+        syncData.addAll(houses.syncData(orgId))
+        syncData.addAll(healthCareServices.syncData(orgId))
 
         return syncData
     }
 
     fun getHealthCareService(orgId: String): List<HealthCareService> {
-        val result = healthCareServices.syncCloudFilter(orgId).map {
+        val result = healthCareServices.syncData(orgId).map {
             healthCareServices.find(it.id, orgId) ?: HealthCareService("", "", "")
         }.toMutableList()
 

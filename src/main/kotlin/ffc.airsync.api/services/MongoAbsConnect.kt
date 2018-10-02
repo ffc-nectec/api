@@ -6,6 +6,7 @@ import com.mongodb.ServerAddress
 import com.mongodb.client.MongoCollection
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.util.equal
+import ffc.airsync.api.services.util.plus
 import ffc.entity.Entity
 import ffc.entity.gson.parseTo
 import org.bson.Document
@@ -42,8 +43,8 @@ abstract class MongoAbsConnect(
         return mongoClient
     }
 
-    override fun syncCloudFilter(orgId: String, isSync: Boolean, limitOutput: Int): List<Entity> {
-        val result = this.dbExecuted.find("link.isSynced" equal isSync).limit(limitOutput)
+    override fun syncData(orgId: String, limitOutput: Int): List<Entity> {
+        val result = this.dbExecuted.find(("link.isSynced" equal false) plus ("orgId" equal orgId)).limit(limitOutput)
 
         if (result.count() < 1) return emptyList()
         val output = result.map {

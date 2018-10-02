@@ -40,7 +40,7 @@ class MongoFirebaseStatusDaoTest {
 
     @Test
     fun syncCloudFilter() {
-        val result = dao.syncCloudFilter("BNK119")
+        val result = dao.syncData("BNK119")
 
         result.count() `should be equal to` 2
         result.first().id `should be equal to` id1
@@ -49,7 +49,7 @@ class MongoFirebaseStatusDaoTest {
     @Test
     fun confirmSuccess() {
         dao.confirmSuccess("BNK119", id1)
-        val result = dao.syncCloudFilter("BNK119")
+        val result = dao.syncData("BNK119")
 
         result.count() `should be equal to` 1
         result.first().id `should be equal to` id2

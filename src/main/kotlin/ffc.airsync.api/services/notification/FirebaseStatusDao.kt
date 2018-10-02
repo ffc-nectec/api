@@ -9,7 +9,7 @@ interface FirebaseStatusDao : Dao {
     fun insert(orgId: String, entityId: String)
     fun confirmSuccess(orgId: String, entityId: String)
 
-    override fun syncCloudFilter(orgId: String, isSync: Boolean, limitOutput: Int): List<Entity>
+    override fun syncData(orgId: String, limitOutput: Int): List<Entity>
 }
 
 val firebaseStauts: FirebaseStatusDao by lazy { MongoFirebaseStatusDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }

@@ -196,6 +196,6 @@ class MongoPersonTest {
             add(missRabbit)
         })
 
-        dao.syncCloudFilter(ORG_ID).count() `should be equal to` 2
+        dao.syncData(ORG_ID).count() `should be equal to` 2
     }
 }
