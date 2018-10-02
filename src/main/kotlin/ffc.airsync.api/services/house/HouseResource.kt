@@ -117,6 +117,18 @@ class HouseResource {
     }
 
     @Cache(maxAge = 2)
+    @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
+    @Produces(GEOJSONHeader)
+    @GET
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    fun getSingleGeo(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String
+    ): FeatureCollection<House> {
+        return HouseService.getSingleGeo(orgId, houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
+    }
+
+    @Cache(maxAge = 2)
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")

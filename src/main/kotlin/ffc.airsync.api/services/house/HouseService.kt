@@ -29,6 +29,7 @@ import ffc.entity.copy
 import ffc.entity.gson.toJson
 import ffc.entity.update
 import me.piruin.geok.geometry.Feature
+import me.piruin.geok.geometry.FeatureCollection
 import javax.ws.rs.BadRequestException
 
 object HouseService {
@@ -114,6 +115,14 @@ object HouseService {
 
     fun getHouses(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?): List<House> {
         return queryHouse(orgId, haveLocation).paging(page, per_page)
+    }
+
+    fun getSingleGeo(orgId: String, houseId: String): FeatureCollection<House>? {
+        val house = getSingle(orgId, houseId) ?: return null
+        if (house.location == null) return null
+        val geoJson = FeatureCollection<House>()
+        geoJson.features.add(house.toGeoJsonFeature())
+        return geoJson
     }
 
     fun getSingle(orgId: String, houseId: String): House? {
