@@ -31,7 +31,8 @@ import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 
-internal class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port, "ffc", "organ") {
+class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port, "ffc", "organ") {
+
     override fun insert(organization: Organization): Organization {
         validate(organization)
         checkDuplication(organization)

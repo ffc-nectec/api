@@ -15,11 +15,9 @@ class MongoTestRule : ExternalResource() {
 
     override fun before() {
         super.before()
-
         server = MongoServer(MemoryBackend())
         address = server.bind()
         client = MongoClient(ServerAddress(address))
-
     }
 
     override fun after() {

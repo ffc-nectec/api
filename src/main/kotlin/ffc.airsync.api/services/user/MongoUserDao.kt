@@ -32,6 +32,7 @@ import org.bson.Document
 import org.bson.types.ObjectId
 
 internal class MongoUserDao(host: String, port: Int) : UserDao, MongoAbsConnect(host, port, "ffc", "organ") {
+
     override fun insertUser(user: User, orgId: String): User {
         if (!user.isTempId) throw IllegalArgumentException("รุปแบบ id ต้องใช้ TempId ในการสร้าง User")
         if (haveUserInDb(orgId, user)) throw IllegalArgumentException("มีการเพิ่มผู้ใช้ ${user.name} ซ้ำ")

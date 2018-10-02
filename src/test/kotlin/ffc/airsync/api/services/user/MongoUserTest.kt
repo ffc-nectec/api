@@ -5,7 +5,7 @@ import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
 import ffc.airsync.api.services.MongoAbsConnect
-import ffc.airsync.api.services.util.insert
+import ffc.airsync.api.services.org.MongoOrgDao
 import ffc.entity.Organization
 import ffc.entity.User
 import org.amshove.kluent.`should be equal to`
@@ -30,9 +30,9 @@ class MongoUserTest {
         MongoAbsConnect.setClient(client)
 
         dao = MongoUserDao(serverAddress.hostString, serverAddress.port)
-        val collection = client.getDatabase(dao.dbName).getCollection(dao.collection)
-        nectecOrg = collection.insert(Org("รพ.สต.Nectec", "192.168.99.3"))
-        users.forEach { dao.insertUser(it, nectecOrg.id) }
+
+        val org = Org("รพ.สต.Nectec", "192.168.99.3")
+        nectecOrg = MongoOrgDao(serverAddress.hostString, serverAddress.port).insert(org)
     }
 
     @After
@@ -45,9 +45,10 @@ class MongoUserTest {
             Organization().apply {
                 this.name = name
                 bundle["lastKnownIp"] = ip // "203.111.222.123"
+                this.users = userList.toMutableList()
             }
 
-    val users = listOf(
+    val userList = listOf(
             User("maxkung", User.Role.ORG),
             User("cat"),
             User("dog"),
@@ -75,7 +76,6 @@ class MongoUserTest {
     @Test
     fun insertUser() {
         val user = dao.insertUser(User("Sommai"), nectecOrg.id)
-        println(user.toString())
 
         user.name `should be equal to` "Sommai"
         user.password `should not equal` null
