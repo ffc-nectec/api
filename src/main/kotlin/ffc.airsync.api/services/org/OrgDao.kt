@@ -23,20 +23,15 @@ import ffc.airsync.api.services.Dao
 import ffc.entity.Organization
 
 interface OrgDao : Dao {
+
     fun insert(organization: Organization): Organization
 
     fun remove(orgId: String)
 
-    fun findAll(): List<Organization>
     fun findById(orgId: String): Organization
-
-    fun findByIpAddress(ipAddress: String): List<Organization>
-
-    fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean)
-    fun removeFirebase(orgId: String, firebaseToken: String, isOrg: Boolean)
-    fun getFirebaseToken(orgId: String): List<String>
-
+    fun findAll(): List<Organization>
     fun find(query: String): List<Organization>
+    fun findByIpAddress(ipAddress: String): List<Organization>
 }
 
 val orgs: OrgDao by lazy { MongoOrgDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }

@@ -16,10 +16,7 @@
  */
 package ffc.airsync.api.services.org
 
-import com.mongodb.MongoClient
-import com.mongodb.ServerAddress
-import de.bwaldvogel.mongo.MongoServer
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.airsync.api.dao.MongoTestRule
 import ffc.airsync.api.resourceFile
 import ffc.airsync.api.services.MongoAbsConnect
 import ffc.entity.Link
@@ -31,24 +28,25 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should equal`
 import org.amshove.kluent.`should not equal`
-import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class MongoOrgTest {
+
+    @Rule
+    @JvmField
+    val mongo = MongoTestRule()
+
     lateinit var dao: OrgDao
-    lateinit var client: MongoClient
-    lateinit var server: MongoServer
     lateinit var hahahaOrg: Organization
     lateinit var nectecOrg: Organization
 
     @Before
     fun initDb() {
-        server = MongoServer(MemoryBackend())
-        val serverAddress = server.bind()
-        client = MongoClient(ServerAddress(serverAddress))
-        MongoAbsConnect.setClient(client)
-        dao = MongoOrgDao(serverAddress.hostString, serverAddress.port)
+
+        MongoAbsConnect.setClient(mongo.client)
+        dao = MongoOrgDao(mongo.address.hostString, mongo.address.port)
 
         hahahaOrg = dao.insert(Org("รพ.สต.HAHAHA", "203.111.222.123").apply {
             tel = "02-388-5555"
@@ -60,12 +58,6 @@ class MongoOrgTest {
             address = "161 ม.29 ต.สง่างาม อ.สดใส จ.ผิวผ่อง"
             link!!.keys["pcucode"] = 203
         })
-    }
-
-    @After
-    fun cleanDb() {
-        client.close()
-        server.shutdownNow()
     }
 
     fun Org(name: String = "NECTEC", ip: String = "127.0.01"): Organization =
@@ -169,49 +161,6 @@ class MongoOrgTest {
 
         result.count() `should be equal to` 1
         result.first().name `should be equal to` "รพ.สต.HAHAHA"
-    }
-
-    @Test
-    fun createAndGetFirebase() {
-        dao.createFirebase(nectecOrg.id, "abcdef001", true)
-        dao.createFirebase(nectecOrg.id, "abcdef007", false)
-        dao.createFirebase(hahahaOrg.id, "abcdef002", true)
-        dao.createFirebase(hahahaOrg.id, "abcdef003", false)
-        val firebaseNectecList = dao.getFirebaseToken(nectecOrg.id)
-        firebaseNectecList.find { it == "abcdef001" } `should not equal` null
-        firebaseNectecList.find { it == "abcdef007" } `should not equal` null
-        firebaseNectecList.size `should be equal to` 2
-        val firebaseHahahaList = dao.getFirebaseToken(hahahaOrg.id)
-        firebaseHahahaList.find { it == "abcdef002" } `should not equal` null
-        firebaseHahahaList.find { it == "abcdef003" } `should not equal` null
-        firebaseHahahaList.size `should be equal to` 2
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    var Organization.firebaseToken: MutableList<String>
-        set(value) {
-            bundle.put("firebaseToken", value)
-        }
-        get() = bundle["firebaseToken"] as MutableList<String>
-
-    @Test
-    fun removeFirebase() {
-        dao.createFirebase(nectecOrg.id, "abcdef001", true)
-        dao.createFirebase(nectecOrg.id, "abcdef007", false)
-
-        dao.createFirebase(hahahaOrg.id, "abcdef002", true)
-        dao.createFirebase(hahahaOrg.id, "abcdef003", false)
-
-        dao.removeFirebase(nectecOrg.id, "abcdef001", true)
-        val firebaseNectecList = dao.getFirebaseToken(nectecOrg.id)
-        firebaseNectecList.find { it == "abcdef001" } `should equal` null
-
-        dao.removeFirebase(hahahaOrg.id, "abcdef003", false)
-        val firebaseHahahaList = dao.getFirebaseToken(hahahaOrg.id)
-        firebaseHahahaList.forEach {
-            println(it)
-        }
-        firebaseHahahaList.find { it == "abcdef003" } `should equal` null
     }
 
     @Test

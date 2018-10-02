@@ -2,14 +2,14 @@ package ffc.airsync.api.services.healthcareservice
 
 import com.google.firebase.messaging.Message
 import ffc.airsync.api.services.notification.broadcastVisit
-import ffc.airsync.api.services.org.orgs
+import ffc.airsync.api.services.notification.notification
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.HomeVisit
 import javax.ws.rs.NotFoundException
 
 object HomeVisitService {
     fun create(homeVisit: HomeVisit, orgId: String): HomeVisit {
-        val firebaseToken = orgs.getFirebaseToken(orgId)
+        val firebaseToken = notification.getFirebaseToken(orgId)
         val result = healthCareServices.insert(homeVisit, orgId) as HomeVisit
 
         Message.builder().broadcastVisit(result, firebaseToken, orgId)

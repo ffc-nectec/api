@@ -20,7 +20,7 @@ package ffc.airsync.api.services.house
 import com.google.firebase.messaging.Message
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.notification.broadcastHouse
-import ffc.airsync.api.services.org.orgs
+import ffc.airsync.api.services.notification.notification
 import ffc.airsync.api.services.person.persons
 import ffc.airsync.api.services.util.paging
 import ffc.entity.House
@@ -77,7 +77,7 @@ object HouseService {
         house.people.clear()
 
         printDebug("\t\tGet firebase token.")
-        val firebaseTokenGropOrg = orgs.getFirebaseToken(orgId)
+        val firebaseTokenGropOrg = notification.getFirebaseToken(orgId)
 
         printDebug("\tUpdate house to dao.")
 

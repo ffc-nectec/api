@@ -17,7 +17,6 @@
 
 package ffc.airsync.api.services.org
 
-import com.mongodb.BasicDBObject
 import com.mongodb.client.FindIterable
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.MongoAbsConnect
@@ -111,53 +110,6 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
         val orgList = orgDoc.convertToList<Organization>()
         if (orgList.isEmpty()) throw NullPointerException("ไม่พบรายการลงทะเบียนในกลุ่มของ Org ip $ipAddress")
         return orgList
-    }
-
-    override fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
-        val query = "id" equal orgId
-        if (isOrg) {
-            val firebaseTokenDoc = "firebaseToken" equal firebaseToken
-            dbCollection.updateOne(query, BasicDBObject("\$set", firebaseTokenDoc))
-        } else {
-            dbCollection.updateOne(query, BasicDBObject("\$push", BasicDBObject("mobileFirebaseToken", firebaseToken)))
-        }
-    }
-
-    override fun removeFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
-        val query = "id" equal orgId
-
-        if (isOrg) {
-            val removeOrgFirebaseToken = "firebaseToken" equal null
-            val removeOrgFirebaseTokenQuery = "\$set" equal removeOrgFirebaseToken
-            dbCollection.updateOne(query, removeOrgFirebaseTokenQuery)
-        } else {
-            val removeMobileFirebaseToken = "mobileFirebaseToken" equal firebaseToken
-            val removeMobileFirebaseTokenQuery = "\$pull" equal removeMobileFirebaseToken
-            dbCollection.updateOne(query, removeMobileFirebaseTokenQuery)
-        }
-    }
-
-    override fun getFirebaseToken(orgId: String): List<String> {
-        try {
-            printDebug("Get firebase token.")
-            val firebaseTokenList = arrayListOf<String>()
-            val firebaseOrgDoc = dbCollection.find("id" equal orgId).first()
-            val firebaseMobile = firebaseOrgDoc["mobileFirebaseToken"] as List<*>?
-            val orgFirebase = firebaseOrgDoc["firebaseToken"].toString()
-            if (orgFirebase != "null")
-                firebaseTokenList.add(orgFirebase)
-
-            firebaseMobile?.forEach {
-                if (it != "null") {
-                    printDebug("\t\t\t\t\t$it")
-                    firebaseTokenList.add(it.toString())
-                }
-            }
-            return firebaseTokenList
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            throw ex
-        }
     }
 
     override fun find(query: String): List<Organization> {
