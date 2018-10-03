@@ -5,7 +5,6 @@ import ffc.airsync.api.services.notification.broadcastVisit
 import ffc.airsync.api.services.notification.notification
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.HomeVisit
-import javax.ws.rs.NotFoundException
 
 object HomeVisitService {
     fun create(homeVisit: HomeVisit, orgId: String): HomeVisit {
@@ -34,7 +33,6 @@ object HomeVisitService {
     }
 
     fun getPersonHealthCare(orgId: String, personId: String): List<HealthCareService> {
-        val result = healthCareServices.findByPatientId(personId, orgId)
-        return if (result.isNotEmpty()) result else throw NotFoundException("ค้นหา health care service person id $personId ไม่พบ")
+        return healthCareServices.findByPatientId(personId, orgId)
     }
 }

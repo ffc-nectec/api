@@ -65,6 +65,7 @@ dependencies {
     testImplementation "junit:junit:4.12"
 
     testImplementation 'com.sun.jersey.jersey-test-framework:jersey-test-framework-core:1.19.4'
+    testImplementation 'org.glassfish.jersey.containers:jersey-container-servlet-core:2.27'
 }
 
 task stage(dependsOn: ['build', 'clean'])
