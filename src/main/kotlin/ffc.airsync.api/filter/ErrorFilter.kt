@@ -6,6 +6,7 @@ import javax.ws.rs.ForbiddenException
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotAllowedException
 import javax.ws.rs.NotAuthorizedException
+import javax.ws.rs.NotFoundException
 import javax.ws.rs.WebApplicationException
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -69,6 +70,16 @@ class StaegError : ExceptionMapper<IllegalStateException> {
     override fun toResponse(exception: IllegalStateException?): Response {
         exception!!.printStackTrace()
         val except = InternalServerErrorException("Stage error ${exception.message}")
+        val err = ErrorFilter.ErrorRes(except.response.status, exception.message, exception)
+        return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
+    }
+}
+
+@Provider
+class NullError : ExceptionMapper<NullPointerException> {
+    override fun toResponse(exception: NullPointerException?): Response {
+        exception!!.printStackTrace()
+        val except = NotFoundException("Null error ${exception.message}")
         val err = ErrorFilter.ErrorRes(except.response.status, exception.message, exception)
         return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
     }
