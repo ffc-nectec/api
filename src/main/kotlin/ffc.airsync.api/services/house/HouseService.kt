@@ -24,6 +24,7 @@ import ffc.airsync.api.services.notification.notification
 import ffc.airsync.api.services.person.persons
 import ffc.airsync.api.services.util.paging
 import ffc.entity.House
+import ffc.entity.Person
 import ffc.entity.User
 import ffc.entity.copy
 import ffc.entity.gson.toJson
@@ -130,6 +131,11 @@ object HouseService {
         val house = houses.find(houseId)
         house?.people?.addAll(people)
         return house
+    }
+
+    fun getPerson(orgId: String, houseId: String): List<Person> {
+        val person = persons.getPeopleInHouse(orgId, houseId)
+        return if (person.isNotEmpty()) person else throw NullPointerException("ไม่พบคนในบ้าน $houseId")
     }
 }
 

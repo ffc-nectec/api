@@ -21,6 +21,7 @@ import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.services.util.GEOJSONHeader
 import ffc.airsync.api.services.util.getTokenRole
 import ffc.entity.House
+import ffc.entity.Person
 import ffc.entity.User
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
@@ -47,7 +48,6 @@ const val PART_HOUSESERVICE = "place/house"
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 class HouseResource {
-
     @Context
     private var context: SecurityContext? = null
 
@@ -127,6 +127,18 @@ class HouseResource {
         @PathParam("houseId") houseId: String
     ): FeatureCollection<House> {
         return HouseService.getSingleGeo(orgId, houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
+    }
+
+    @GET
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
+    @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
+    @Produces(GEOJSONHeader)
+    @Cache(maxAge = 2)
+    fun getPersonInHouse(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String
+    ): List<Person> {
+        return HouseService.getPerson(orgId, houseId)
     }
 
     @GET

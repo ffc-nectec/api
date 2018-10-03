@@ -28,7 +28,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
         personDoc.append("orgId", orgId)
 
         if (person.link?.system == System.JHICS) {
-            personDoc.append("houseId", person.link!!.keys["hcode"])
+            personDoc.append("houseId", (person.link!!.keys["hcode"] as String))
         }
 
         return dbCollection.ffcInsert(personDoc)
