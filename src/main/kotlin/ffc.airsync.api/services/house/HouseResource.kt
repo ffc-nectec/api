@@ -132,7 +132,6 @@ class HouseResource {
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
     @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
-    @Produces(GEOJSONHeader)
     @Cache(maxAge = 2)
     fun getPersonInHouse(
         @PathParam("orgId") orgId: String,
