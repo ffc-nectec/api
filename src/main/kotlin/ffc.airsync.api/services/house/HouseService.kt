@@ -91,7 +91,7 @@ object HouseService {
                 house.link?.isSynced = false
             }
         }
-        val houseUpdate = houses.update(house.copy<House>())
+        val houseUpdate = houses.update(orgId, house.copy())
 
         printDebug("Call send notification size list token = ${firebaseTokenGropOrg.size} ")
         try {
@@ -127,10 +127,7 @@ object HouseService {
     }
 
     fun getSingle(orgId: String, houseId: String): House? {
-        val people = persons.getPeopleInHouse(orgId, houseId)
-        val house = houses.find(houseId)
-        house?.people?.addAll(people)
-        return house
+        return houses.find(orgId, houseId)
     }
 
     fun getPerson(orgId: String, houseId: String): List<Person> {
