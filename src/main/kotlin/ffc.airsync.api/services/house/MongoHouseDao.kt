@@ -23,10 +23,12 @@ import ffc.airsync.api.services.MongoAbsConnect
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
+import ffc.airsync.api.services.util.plus
 import ffc.entity.House
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
+import org.bson.types.ObjectId
 import java.util.ArrayList
 import javax.ws.rs.NotFoundException
 
@@ -39,6 +41,7 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
     private fun mongoCreateHouseIndex() {
         try {
             dbCollection.createIndex("location" equal "2dsphere", IndexOptions().unique(false))
+            dbCollection.createIndex(("_id" equal 1) plus ("orgId" equal 1), IndexOptions().unique(false))
         } catch (ex: Exception) {
             ex.printStackTrace()
             throw ex
@@ -52,13 +55,12 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
         return dbCollection.ffcInsert(docHouse)
     }
 
-    override fun update(house: House): House? {
+    override fun update(orgId: String, house: House): House? {
         printDebug("Call MongoHouseDao.upldate ${house.toJson()}")
-        val query = "id" equal house.id
+        val query = ("_id" equal ObjectId(house.id)) plus ("orgId" equal orgId)
 
         printDebug("\tquery old house ")
         val oldHouseDoc = (dbCollection.find(query).first() ?: throw NullPointerException("ไม่มีบ้านตาม id ให้ Update"))
-        val orgId = oldHouseDoc["orgId"].toString()
         printDebug("\tget orgId $orgId")
         printDebug("\tcreate update doc")
         // val updateHouseDoc = createDocument(ObjectId(house.id), orgId, house, geoPoint)
@@ -79,21 +81,21 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
             throw exo
         }
         printDebug("\tDone mongo update house.")
-        return find(house.id)
+        return find(house.id, orgId)
     }
 
-    override fun update(houseList: List<House>): List<House> {
+    override fun update(orgId: String, houseList: List<House>): List<House> {
         val houseUpdate = arrayListOf<House>()
         houseList.forEach {
-            val house = update(it)
+            val house = update(orgId, it)
             if (house != null)
                 houseUpdate.add(house)
         }
         return houseUpdate
     }
 
-    override fun delete(houseId: String) {
-        val query = "id" equal houseId
+    override fun delete(orgId: String, houseId: String) {
+        val query = ("_id" equal ObjectId(houseId)) plus ("orgId" equal orgId)
         dbCollection.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบบ้าน id $houseId ให้ลบ")
     }
 
@@ -121,9 +123,9 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
         return listHouse
     }
 
-    override fun find(houseId: String): House? {
+    override fun find(orgId: String, houseId: String): House? {
         printDebug("Call find in house dao.")
-        val houseJson = dbCollection.find("id" equal houseId)?.first()?.toJson()
+        val houseJson = dbCollection.find(("_id" equal ObjectId(houseId)) plus ("orgId" equal orgId))?.first()?.toJson()
         return houseJson?.parseTo()
     }
 

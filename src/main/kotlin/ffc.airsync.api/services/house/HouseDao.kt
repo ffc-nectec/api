@@ -25,13 +25,13 @@ import ffc.entity.House
 interface HouseDao : Dao {
     fun insert(orgId: String, house: House): House
 
-    fun update(house: House): House?
-    fun update(houseList: List<House>): List<House>
+    fun update(orgId: String, house: House): House?
+    fun update(orgId: String, houseList: List<House>): List<House>
 
-    fun delete(houseId: String)
+    fun delete(orgId: String, houseId: String)
 
     fun findAll(orgId: String, haveLocation: Boolean? = true): List<House>
-    fun find(houseId: String): House?
+    fun find(orgId: String, houseId: String): House?
 
     fun removeByOrgId(orgId: String)
 }

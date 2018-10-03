@@ -77,19 +77,19 @@ class MongoHouseDaoTest {
 
     @Test
     fun findByHouseId() {
-        dao.find(maxHouse.id)!!.id `should be equal to` maxHouse.id
-        dao.find(someHouse.id)!!.id `should be equal to` someHouse.id
+        dao.find(ORG_ID, maxHouse.id)!!.id `should be equal to` maxHouse.id
+        dao.find(ORG_ID, someHouse.id)!!.id `should be equal to` someHouse.id
     }
 
     @Test
     fun updateHouse() {
-        val houseFind = dao.find(maxHouse.id)
+        val houseFind = dao.find(ORG_ID, maxHouse.id)
         houseFind!!.update<House> {
             road = "เชียงราก"
             no = "123/556"
         }
-        dao.update(houseFind)
-        val houseUpdate = dao.find(maxHouse.id)
+        dao.update(ORG_ID, houseFind)
+        val houseUpdate = dao.find(ORG_ID, maxHouse.id)
 
         houseUpdate!!.road `should equal` "เชียงราก"
         houseUpdate.no `should equal` "123/556"
@@ -97,13 +97,13 @@ class MongoHouseDaoTest {
 
     @Test
     fun timestampUpdate() {
-        val houseFind = dao.find(maxHouse.id)
+        val houseFind = dao.find(ORG_ID, maxHouse.id)
         val oldTimestamp = houseFind!!.timestamp
         houseFind.update<House> {
             road = "เชียงราก"
         }
-        dao.update(houseFind)
-        val houseUpdate = dao.find(maxHouse.id)
+        dao.update(ORG_ID, houseFind)
+        val houseUpdate = dao.find(ORG_ID, maxHouse.id)
 
         houseFind.timestamp `should not equal` oldTimestamp
         houseFind.timestamp `should equal` houseUpdate!!.timestamp
@@ -111,9 +111,9 @@ class MongoHouseDaoTest {
 
     @Test
     fun delete() {
-        dao.delete(maxHouse.id)
+        dao.delete(ORG_ID, maxHouse.id)
 
-        dao.find(maxHouse.id) `should equal` null
+        dao.find(ORG_ID, maxHouse.id) `should equal` null
     }
 
     @Test
