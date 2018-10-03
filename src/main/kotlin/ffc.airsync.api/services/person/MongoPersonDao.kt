@@ -50,8 +50,8 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
             .map { it.toJson().parseTo<Person>() }.toList()
     }
 
-    override fun getPeopleInHouse(orgId: String, houseId: String): List<Person> {
-        return dbCollection.find(("houseId" equal houseId) plus ("orgId" equal orgId))
+    override fun getPeopleInHouse(orgId: String, hcode: String): List<Person> {
+        return dbCollection.find(("link.keys.hcode" equal hcode) plus ("orgId" equal orgId))
             .map { it.toJson().parseTo<Person>() }.toList()
     }
 
