@@ -1,0 +1,64 @@
+package ffc.airsync.api.services.homehealthtype
+
+import com.mongodb.MongoClient
+import com.mongodb.ServerAddress
+import de.bwaldvogel.mongo.MongoServer
+import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.airsync.api.services.MongoAbsConnect
+import ffc.entity.healthcare.CommunityServiceType
+import org.amshove.kluent.`should equal`
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+
+class MongoHomeHealthTypeDaoTest {
+    lateinit var dao: HomeHealthTypeDao
+    lateinit var client: MongoClient
+    lateinit var server: MongoServer
+
+    @Before
+    fun initDb() {
+        server = MongoServer(MemoryBackend())
+        val serverAddress = server.bind()
+        client = MongoClient(ServerAddress(serverAddress))
+        MongoAbsConnect.setClient(client)
+        dao = MongoHomeHealthTypeDao(serverAddress.hostString, serverAddress.port)
+
+        dao.insert(CommunityServiceType("1A001", "เยี่ยมผู้ป่วยโรคเบาหวาน "))
+        dao.insert(CommunityServiceType("1D01300", "ให้ทันตสุขศึกษาหญิงตั้งครรภ์"))
+    }
+
+    @After
+    fun cleanDb() {
+        client.close()
+        server.shutdownNow()
+    }
+
+    @Test
+    fun insertReturnResult() {
+        val result = dao.insert(
+            CommunityServiceType(
+                "1E11",
+                "การตรวจคัดกรองภาวะอ้วนในประชาชนอายุ 15 ปีขึ้นไป โดยการวัดเส้นรอบเอว หรือประเมินค่าดัชนีมวลกาย"
+            )
+        )
+
+        result.id `should equal` "1E11"
+    }
+
+    @Test
+    fun findByCode() {
+        val find = dao.find("1A").first()
+
+        find.id `should equal` "1A001"
+        find.name `should equal` "เยี่ยมผู้ป่วยโรคเบาหวาน "
+    }
+
+    @Test
+    fun findByMean() {
+        val find = dao.find("สุข").first()
+
+        find.id `should equal` "1D01300"
+        find.name `should equal` "ให้ทันตสุขศึกษาหญิงตั้งครรภ์"
+    }
+}

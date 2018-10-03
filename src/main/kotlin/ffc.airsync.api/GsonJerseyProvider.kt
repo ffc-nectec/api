@@ -16,6 +16,7 @@
  */
 
 package ffc.airsync.api
+
 import ffc.entity.gson.ffcGson
 import java.io.IOException
 import java.io.InputStream
@@ -37,7 +38,6 @@ import javax.ws.rs.ext.Provider
 @Produces(MediaType.APPLICATION_JSON, "application/vnd.geo+json")
 @Consumes(MediaType.APPLICATION_JSON, "application/vnd.geo+json")
 class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
-
     override fun isReadable(type: Class<*>?, genericType: Type?, annotations: Array<out Annotation>?, mediaType: MediaType?): Boolean {
         return true
     }
@@ -47,7 +47,7 @@ class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
         try {
             InputStreamReader(entityStream, UTF_8).use {
                 try {
-                    return ffcGson.fromJson<Any>(it, genericType)
+                    return airSyncGson.fromJson<Any>(it, genericType)
                 } catch (ex: java.lang.NumberFormatException) {
                     ex.printStackTrace()
                     val errormess = BadRequestException("JSON error ${ex.message}")

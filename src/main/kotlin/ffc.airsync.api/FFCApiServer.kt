@@ -20,15 +20,19 @@ package ffc.airsync.api
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
-import ffc.airsync.api.services.module.DiseaseService
-import ffc.airsync.api.services.module.HomeHealthTypeService
+import ffc.airsync.api.services.disease.DiseaseService
+import ffc.airsync.api.services.homehealthtype.HomeHealthTypeService
 import org.eclipse.jetty.server.Server
+import org.joda.time.DateTimeZone
 import org.kohsuke.args4j.CmdLineException
 import org.kohsuke.args4j.CmdLineParser
 import org.kohsuke.args4j.Option
 import java.io.ByteArrayInputStream
 import java.io.FileInputStream
 import java.io.IOException
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.util.TimeZone
 
 internal class FFCApiServer(args: Array<String>) {
     @Option(name = "-dev", usage = "mode")
@@ -49,12 +53,11 @@ internal class FFCApiServer(args: Array<String>) {
 
     fun run() {
         getFirebaseParameter()
+        initDiseaseAndHomeHealtyType()
+        runningProcess()
+    }
 
-        Thread {
-            DiseaseService.init()
-            HomeHealthTypeService.init()
-        }.start()
-
+    private fun runningProcess() {
         println("Start main process")
         val context = ServletContextBuilder.build()
         val server = Server(JettyServerTuning.threadPool)
@@ -72,6 +75,13 @@ internal class FFCApiServer(args: Array<String>) {
         }
     }
 
+    private fun initDiseaseAndHomeHealtyType() {
+        Thread {
+            DiseaseService.init()
+            HomeHealthTypeService.init()
+        }.start()
+    }
+
     private fun getFirebaseParameter() {
         try {
             val serviceAccount =
@@ -84,11 +94,9 @@ internal class FFCApiServer(args: Array<String>) {
             // logger.log(Level.FINE, "Load config firebase from file.");
         } catch (e: IOException) {
             e.printStackTrace()
-
             val firebaseConfigString = System.getenv("FIREBASE_CONFIG")
             val byteFirebaseConfig = firebaseConfigString.toByteArray()
             val streamFirebaseConfig = ByteArrayInputStream(byteFirebaseConfig)
-
             var options: FirebaseOptions? = null
             try {
                 options = FirebaseOptions.Builder()
@@ -113,6 +121,8 @@ internal class FFCApiServer(args: Array<String>) {
 }
 
 fun main(args: Array<String>) {
+    TimeZone.setDefault(TimeZone.getTimeZone(ZoneId.ofOffset("UTC", ZoneOffset.ofHours(7))))
+    DateTimeZone.setDefault(DateTimeZone.forOffsetHours(7))
     FFCApiServer.instance = FFCApiServer(args)
     FFCApiServer.instance!!.run()
 }
