@@ -17,9 +17,8 @@
 
 package ffc.airsync.api.services.house
 
-import com.google.firebase.messaging.Message
 import ffc.airsync.api.printDebug
-import ffc.airsync.api.services.notification.broadcastHouse
+import ffc.airsync.api.services.notification.broadcastMessage
 import ffc.airsync.api.services.notification.notification
 import ffc.airsync.api.services.person.persons
 import ffc.airsync.api.services.util.paging
@@ -94,11 +93,8 @@ object HouseService {
         val houseUpdate = houses.update(orgId, house.copy())
 
         printDebug("Call send notification size list token = ${firebaseTokenGropOrg.size} ")
-        try {
-            Message.builder().broadcastHouse(house, firebaseTokenGropOrg, orgId)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
+        notification.broadcastMessage(orgId, house)
+
         return houseUpdate!!
     }
 
