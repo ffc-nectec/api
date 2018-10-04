@@ -27,9 +27,12 @@ import ffc.entity.House
 import ffc.entity.gson.toJson
 import ffc.entity.healthcare.HealthCareService
 
-fun Message.Builder.broadcastHouse(address: House, registrationToken: String, orgId: String) {
+fun Message.Builder.broadcastHouse(address: House, registrationToken: List<String>, orgId: String) {
     printDebug("Org id = $orgId FB token = $registrationToken House = ${address.toJson()}")
-    putEntityToFirebase(address, registrationToken, orgId, PART_HOUSESERVICE, "House")
+    registrationToken.forEach {
+        if (it.isNotEmpty())
+            putEntityToFirebase(address, it, orgId, PART_HOUSESERVICE, "House")
+    }
 }
 
 fun Message.Builder.broadcastVisit(
@@ -41,7 +44,8 @@ fun Message.Builder.broadcastVisit(
 
     try {
         registrationToken.forEach {
-            putEntityToFirebase(healthCareService, it, orgId, PART_HEALTHCARESERVICE, "HealthCare")
+            if (it.isNotEmpty())
+                putEntityToFirebase(healthCareService, it, orgId, PART_HEALTHCARESERVICE, "HealthCare")
         }
     } catch (ex: Exception) {
         ex.printStackTrace()
