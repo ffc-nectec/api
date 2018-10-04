@@ -26,36 +26,39 @@ import ffc.entity.Entity
 import ffc.entity.House
 import ffc.entity.gson.toJson
 import ffc.entity.healthcare.HealthCareService
+import ffc.entity.healthcare.HomeVisit
 
-fun Message.Builder.broadcastHouse(address: House, registrationToken: List<String>, orgId: String) {
-    printDebug("Org id = $orgId FB token = $registrationToken House = ${address.toJson()}")
-    registrationToken.forEach {
-        if (it.isNotEmpty())
-            putEntityToFirebase(address, it, orgId, PART_HOUSESERVICE, "House")
-    }
-}
-
-fun Message.Builder.broadcastVisit(
-    healthCareService: HealthCareService,
-    registrationToken: List<String>,
-    orgId: String
-) {
-    printDebug("Boradcast visit by firebase = $orgId Data = ${healthCareService.toJson()}")
-
-    try {
-        registrationToken.forEach {
-            if (it.isNotEmpty())
-                putEntityToFirebase(healthCareService, it, orgId, PART_HEALTHCARESERVICE, "HealthCare")
+fun <T : Entity> NotifactionDao.broadcastMessage(orgId: String, vararg entitys: T) {
+    val clientAddress = getFirebaseToken(orgId)
+    for (entity in entitys) {
+        try {
+            when (entity.type) {
+                getType<House>() -> send(entity, clientAddress, "House", PART_HOUSESERVICE)
+                getType<HealthCareService>() -> send(entity, clientAddress, "HealthCare", PART_HEALTHCARESERVICE)
+                getType<HomeVisit>() -> send(entity, clientAddress, "HealthCare", PART_HEALTHCARESERVICE)
+                else -> send(entity, clientAddress, entity.type, "else")
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
-    } catch (ex: Exception) {
-        ex.printStackTrace()
     }
 }
 
-private fun putEntityToFirebase(
-    entity: Entity,
+private inline fun <reified T> getType(): String {
+    return T::class.simpleName.toString()
+}
+
+private fun <T : Entity> send(entity: T, clientAddress: List<String>, type: String, urlPart: String) {
+    printDebug("FB token = $clientAddress $type = ${entity.toJson()}")
+    clientAddress.forEach {
+        if (it.isNotEmpty())
+            putEntityToFirebase(entity, it, urlPart, type)
+    }
+}
+
+private fun <T : Entity> putEntityToFirebase(
+    entity: T,
     registrationToken: String,
-    orgId: String,
     urlPart: String,
     type: String
 ) {
@@ -65,7 +68,7 @@ private fun putEntityToFirebase(
     val message = Message.builder()
         .putData("type", type)
         .putData("id", entity.id)
-        .putData("url", "$orgId/$urlPart/${entity.id}").setToken(registrationToken).build()
+        .putData("url", "/$urlPart/${entity.id}").setToken(registrationToken).build()
     try {
         val response = FirebaseMessaging.getInstance().sendAsync(message).get()
         printDebug("Successfully sent firebase message response = $response")
