@@ -23,7 +23,7 @@ internal class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnec
 
     override fun find(token: String): Token? {
         printDebug("Token Dao find $token")
-        val tokenDoc = dbCollection.find("token" equal token).first()
+        val tokenDoc = dbCollection.find("token" equal token.trim()).first()
         printDebug("\tResult token find $tokenDoc")
         if (tokenDoc == null) return null
         return tokenDoc.toJson().parseTo()
