@@ -65,7 +65,7 @@ class PersonResource {
     @Cache(maxAge = 5)
     fun get(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @PathParam("orgId") orgId: String, @QueryParam("query") query: String?): List<Person> {
         return if (query != null) {
-            persons.find(orgId, query)
+            persons.find(query, orgId)
         } else {
             persons.findByOrgId(orgId).paging(if (page == 0) 1 else page, if (per_page == 0) 200 else per_page)
         }
