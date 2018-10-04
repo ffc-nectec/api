@@ -95,10 +95,7 @@ object HouseService {
 
         printDebug("Call send notification size list token = ${firebaseTokenGropOrg.size} ")
         try {
-            firebaseTokenGropOrg.forEach {
-                printDebug("\ttoken=$it")
-                if (it.isNotEmpty()) Message.builder().broadcastHouse(house, it, orgId)
-            }
+            Message.builder().broadcastHouse(house, firebaseTokenGropOrg, orgId)
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
