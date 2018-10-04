@@ -24,7 +24,6 @@ import ffc.entity.Person
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
-import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.PathParam
@@ -64,17 +63,11 @@ class PersonResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
-    fun get(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @PathParam("orgId") orgId: String, @QueryParam("query") query: String?): Response {
-        return try {
-            if (query != null) {
-                val personList = persons.find(orgId, query)
-                Response.status(Response.Status.OK).entity(personList).build()
-            } else {
-                val personList = persons.findByOrgId(orgId).paging(if (page == 0) 1 else page, if (per_page == 0) 200 else per_page)
-                Response.status(Response.Status.OK).entity(personList).build()
-            }
-        } catch (ex: NotAuthorizedException) {
-            Response.status(401).build()
+    fun get(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @PathParam("orgId") orgId: String, @QueryParam("query") query: String?): List<Person> {
+        return if (query != null) {
+            persons.find(orgId, query)
+        } else {
+            persons.findByOrgId(orgId).paging(if (page == 0) 1 else page, if (per_page == 0) 200 else per_page)
         }
     }
 

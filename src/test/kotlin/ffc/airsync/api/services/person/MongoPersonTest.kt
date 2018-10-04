@@ -9,6 +9,7 @@ import ffc.entity.Link
 import ffc.entity.Person
 import ffc.entity.System
 import ffc.entity.ThaiCitizenId
+import ffc.entity.gson.parseTo
 import ffc.entity.healthcare.Chronic
 import ffc.entity.healthcare.Disease
 import ffc.entity.util.generateTempId
@@ -62,15 +63,46 @@ class MongoPersonTest {
         link!!.isSynced = false
         link!!.keys["hcode"] = "99887744998"
     }
+    val json = """
+        {
+  "identities": [
+    {
+      "type": "thailand-citizen-id",
+      "id": "1111111111111"
+    }
+  ],
+  "prename": "นางสาว",
+  "firstname": "พรทิพา",
+  "lastname": "โชคสูงเนิน",
+  "chronics": [],
+  "sex": "UNKNOWN",
+  "birthDate": "1993-06-29",
+  "link": {
+    "isSynced": true,
+    "lastSync": "2018-06-25T14:09:07.815+07:00",
+    "system": "JHICS",
+    "keys": {
+      "pid": "1234560",
+      "cid": "11014578451230"
+    }
+  },
+  "id": "76f5dc0db6b247ce9d5241dda6557300",
+  "type": "Person",
+  "timestamp": "2018-06-25T14:09:07.815+07:00"
+}
+    """.trimIndent()
+    lateinit var personFromJson: Person
 
     @Before
     fun initDb() {
+        personFromJson = json.parseTo()
         server = MongoServer(MemoryBackend())
         val serverAddress = server.bind()
         client = MongoClient(ServerAddress(serverAddress))
         MongoAbsConnect.setClient(client)
 
         dao = MongoPersonDao(serverAddress.hostString, serverAddress.port)
+        dao.insert(ORG_ID, personFromJson)
     }
 
     @After
@@ -108,10 +140,10 @@ class MongoPersonTest {
             add(misterDog)
         })
         val persons = dao.findByOrgId(ORG_ID)
-        persons[0].isTempId `should be equal to` false
-        persons[0].lastname `should be equal to` "สมบูรณ์จิต"
         persons[1].isTempId `should be equal to` false
-        persons[1].firstname `should be equal to` "สมชาย"
+        persons[1].lastname `should be equal to` "สมบูรณ์จิต"
+        persons[2].isTempId `should be equal to` false
+        persons[2].firstname `should be equal to` "สมชาย"
     }
 
     @Test
@@ -160,6 +192,7 @@ class MongoPersonTest {
         dao.find("โคตร", ORG_ID).count() `should be equal to` 1
         dao.find("โคตร", ORG_ID).first().firstname `should be equal to` "สมชาย"
         dao.find("สมชาย", ORG_ID).first().lastname `should be equal to` "โคตรกระบือ"
+        dao.find("พา", ORG_ID).first().firstname `should be equal to` "พรทิพา"
     }
 
     @Test

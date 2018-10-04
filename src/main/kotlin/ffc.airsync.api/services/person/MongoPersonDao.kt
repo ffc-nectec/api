@@ -28,7 +28,9 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
         personDoc.append("orgId", orgId)
 
         if (person.link?.system == System.JHICS) {
-            personDoc.append("houseId", (person.link!!.keys["hcode"] as String))
+            val hcode = person.link!!.keys["hcode"]
+            if (hcode != null)
+                personDoc.append("houseId", (hcode as String))
         }
 
         return dbCollection.ffcInsert(personDoc)
@@ -60,13 +62,9 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     override fun find(query: String, orgId: String): List<Person> {
-        return findMongo(query, orgId)
-    }
-
-    private fun findMongo(query: String, orgId: String): List<Person> {
         val regexQuery = Document("\$regex", query).append("\$options", "i")
         val queryTextCondition = BasicBSONList().apply {
-            val rex = Regex("""^ *\d+.*${'$'}""")
+            val rex = Regex("""^\d+.*${'$'}""")
 
             if (rex.matches(query)) {
                 add("identities.id" equal regexQuery)
