@@ -124,8 +124,7 @@ object HouseService {
     }
 
     fun getPerson(orgId: String, houseId: String): List<Person> {
-        val house = houses.find(orgId, houseId)!!
-        val person = persons.getPeopleInHouse(orgId, house.link!!.keys["hcode"] as String)
+        val person = persons.getPeopleInHouse(orgId, houseId)
         return if (person.isNotEmpty()) person else throw NullPointerException("ไม่พบคนในบ้าน $houseId")
     }
 }
