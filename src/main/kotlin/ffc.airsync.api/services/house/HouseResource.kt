@@ -43,6 +43,7 @@ import javax.ws.rs.core.Response
 import javax.ws.rs.core.SecurityContext
 
 const val PART_HOUSESERVICE = "place/house"
+const val NEWPART_HOUSESERVICE = "house"
 
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -72,6 +73,19 @@ class HouseResource {
     }
 
     @GET
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @Produces(GEOJSONHeader)
+    @Cache(maxAge = 5)
+    fun newGetGeoJsonHouse(
+        @QueryParam("page") page: Int = 1,
+        @QueryParam("per_page") per_page: Int = 200,
+        @PathParam("orgId") orgId: String
+    ): FeatureCollection<House> {
+        return getGeoJsonHouse(page, per_page, orgId)
+    }
+
+    @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 5)
@@ -93,6 +107,19 @@ class HouseResource {
             haveLocation)
     }
 
+    @GET
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @Cache(maxAge = 5)
+    fun newGetJsonHouse(
+        @QueryParam("page") page: Int = 1,
+        @QueryParam("per_page") per_page: Int = 200,
+        @QueryParam("haveLocation") haveLocationQuery: String? = null,
+        @PathParam("orgId") orgId: String
+    ): List<House> {
+        return getJsonHouse(page, per_page, haveLocationQuery, orgId)
+    }
+
     @PUT
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
@@ -107,6 +134,17 @@ class HouseResource {
     }
 
     @PUT
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    fun Newupdate(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String,
+        house: House
+    ): Response {
+        return update(orgId, houseId, house)
+    }
+
+    @PUT
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun updateFail(
@@ -115,6 +153,17 @@ class HouseResource {
         house: House
     ) {
         require(false) { "URL สำหรับการ update ข้อมูลผิด" }
+    }
+
+    @PUT
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    fun newUpdateFail(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String,
+        house: House
+    ) {
+        updateFail(orgId, houseId, house)
     }
 
     @GET
@@ -138,6 +187,17 @@ class HouseResource {
         @PathParam("houseId") houseId: String
     ): List<Person> {
         return HouseService.getPerson(orgId, houseId)
+    }
+
+    @GET
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
+    @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
+    @Cache(maxAge = 2)
+    fun NewGetPersonInHouse(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String
+    ): List<Person> {
+        return getPersonInHouse(orgId, houseId)
     }
 
     @GET
