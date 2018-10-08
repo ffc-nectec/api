@@ -81,7 +81,7 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
             throw exo
         }
         printDebug("\tDone mongo update house.")
-        return find(house.id, orgId)
+        return find(orgId, house.id)
     }
 
     override fun update(orgId: String, houseList: List<House>): List<House> {
