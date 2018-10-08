@@ -33,7 +33,6 @@ import javax.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 class TimeResource {
-
     @GET
     @Cache(maxAge = 2)
     fun getRootPart(): Response {
@@ -41,10 +40,10 @@ class TimeResource {
     }
 
     @GET
-    @Path("/datetime")
+    @Path("/servertime")
     @Cache(maxAge = 1)
-    fun time(): DateTime {
-        return DATETIMEBANGKOK
+    fun time(): TimeData {
+        return TimeData(DATETIMEBANGKOK)
     }
 
     @GET
@@ -54,3 +53,5 @@ class TimeResource {
         return TIMESTAMPBANGKOK
     }
 }
+
+data class TimeData(val dateTime: DateTime)
