@@ -190,7 +190,7 @@ class HouseResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
     @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun NewGetPersonInHouse(
