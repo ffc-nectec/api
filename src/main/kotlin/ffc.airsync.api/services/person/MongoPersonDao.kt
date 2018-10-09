@@ -62,9 +62,9 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     override fun find(query: String, orgId: String): List<Person> {
-        val regexQuery = Document("$" + """regex""", query).append("$" + """options""", "i")
+        val regexQuery = Document("\$regex", query).append("\$options", "i")
         val queryTextCondition = BasicBSONList().apply {
-            val rex = Regex("""^\d+""" + '$')
+            val rex = Regex("""^\d+$""")
 
             if (rex.matches(query)) {
                 add("identities.id" equal regexQuery)
@@ -73,13 +73,13 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
                 add("lastname" equal regexQuery)
             }
         }
-        val queryTextReg = "$" + """or""" equal queryTextCondition
+        val queryTextReg = "\$or" equal queryTextCondition
         val queryFixOrgIdDoc = "orgId" equal orgId
         val fullQuery = BasicBSONList().apply {
             add(queryFixOrgIdDoc)
             add(queryTextReg)
         }
-        val resultQuery = dbCollection.find("$" + """and""" equal fullQuery).limit(20)
+        val resultQuery = dbCollection.find("\$and" equal fullQuery).limit(20)
 
         return resultQuery.map { it.toJson().parseTo<Person>() }.toList()
     }
