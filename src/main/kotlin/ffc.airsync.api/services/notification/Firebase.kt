@@ -32,10 +32,10 @@ fun <T : Entity> NotifactionDao.broadcastMessage(orgId: String, vararg entitys: 
     val clientAddress = getFirebaseToken(orgId)
     for (entity in entitys) {
         try {
-            when (entity.type) {
-                House::class.java.simpleName -> send(entity, clientAddress, House::class.java.simpleName, PART_HOUSESERVICE)
-                HealthCareService::class.java.simpleName -> send(entity, clientAddress, HealthCareService::class.java.simpleName, PART_HEALTHCARESERVICE)
-                HomeVisit::class.java.simpleName -> send(entity, clientAddress, HomeVisit::class.java.simpleName, PART_HEALTHCARESERVICE)
+            when (entity) {
+                is House -> send(entity, clientAddress, House::class.java.simpleName, PART_HOUSESERVICE)
+                is HealthCareService -> send(entity, clientAddress, HealthCareService::class.java.simpleName, PART_HEALTHCARESERVICE)
+                is HomeVisit -> send(entity, clientAddress, HomeVisit::class.java.simpleName, PART_HEALTHCARESERVICE)
                 else -> send(entity, clientAddress, entity.type, "else")
             }
         } catch (ex: Exception) {
