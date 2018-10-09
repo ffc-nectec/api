@@ -33,19 +33,15 @@ fun <T : Entity> NotifactionDao.broadcastMessage(orgId: String, vararg entitys: 
     for (entity in entitys) {
         try {
             when (entity.type) {
-                getType<House>() -> send(entity, clientAddress, "House", PART_HOUSESERVICE)
-                getType<HealthCareService>() -> send(entity, clientAddress, "HealthCare", PART_HEALTHCARESERVICE)
-                getType<HomeVisit>() -> send(entity, clientAddress, "HealthCare", PART_HEALTHCARESERVICE)
+                House::class.java.simpleName -> send(entity, clientAddress, House::class.java.simpleName, PART_HOUSESERVICE)
+                HealthCareService::class.java.simpleName -> send(entity, clientAddress, HealthCareService::class.java.simpleName, PART_HEALTHCARESERVICE)
+                HomeVisit::class.java.simpleName -> send(entity, clientAddress, HomeVisit::class.java.simpleName, PART_HEALTHCARESERVICE)
                 else -> send(entity, clientAddress, entity.type, "else")
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
-}
-
-private inline fun <reified T> getType(): String {
-    return T::class.simpleName.toString()
 }
 
 private fun <T : Entity> send(entity: T, clientAddress: List<String>, type: String, urlPart: String) {
