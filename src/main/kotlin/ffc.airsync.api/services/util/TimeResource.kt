@@ -18,10 +18,8 @@
 package ffc.airsync.api.services.util
 
 import ffc.airsync.api.DATETIMEBANGKOK
-import ffc.airsync.api.TIMESTAMPBANGKOK
 import ffc.airsync.api.filter.Cache
 import org.joda.time.DateTime
-import java.sql.Timestamp
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.Path
@@ -44,13 +42,6 @@ class TimeResource {
     @Cache(maxAge = 1)
     fun time(): TimeData {
         return TimeData(DATETIMEBANGKOK)
-    }
-
-    @GET
-    @Path("/timestamp")
-    @Cache(maxAge = 1)
-    fun timestamp(): Timestamp {
-        return TIMESTAMPBANGKOK
     }
 }
 

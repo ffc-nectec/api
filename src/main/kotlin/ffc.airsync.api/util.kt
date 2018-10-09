@@ -41,7 +41,6 @@ import org.joda.time.DateTimeZone
 import org.joda.time.LocalDate
 import org.joda.time.LocalDateTime
 import java.nio.charset.Charset
-import java.sql.Timestamp
 import java.time.ZoneId
 import java.util.Locale
 import java.util.TimeZone
@@ -52,7 +51,6 @@ fun <T> printDebug(infoDebug: T) {
 }
 
 val DATETIMEBANGKOK: DateTime get() = DateTime(DateTimeZone.forTimeZone(TimeZone.getTimeZone(ZoneId.of("Asia/Bangkok"))))
-val TIMESTAMPBANGKOK: Timestamp get() = Timestamp(DATETIMEBANGKOK.plusHours(7).millis)
 
 inline fun <reified T> getResourceAs(filename: String): T {
     val classloader = Thread.currentThread().contextClassLoader
