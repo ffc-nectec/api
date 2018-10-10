@@ -6,6 +6,7 @@ import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
 import ffc.airsync.api.services.util.plus
+import ffc.entity.Entity
 import ffc.entity.Person
 import ffc.entity.System
 import ffc.entity.gson.parseTo
@@ -25,7 +26,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
 
     override fun insert(orgId: String, person: Person): Person {
         val personDoc = person.buildInsertBson()
-        personDoc.append("orgId", orgId)
+        personDoc.append("orgId", ObjectId(orgId))
 
         if (person.link?.system == System.JHICS) {
             val hcode = person.link!!.keys["hcode"]
@@ -37,7 +38,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     override fun getPerson(orgId: String, personId: String): Person {
-        val query = ("orgId" equal orgId) plus ("_id" equal ObjectId(personId))
+        val query = ("orgId" equal ObjectId(orgId)) plus ("_id" equal ObjectId(personId))
         val result = dbCollection.find(query).first()
             ?: throw NullPointerException("ไม่พบรหัส person id $personId ที่ค้นหา")
         return result.toJson().parseTo()
@@ -48,17 +49,17 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     override fun findByOrgId(orgId: String): List<Person> {
-        return dbCollection.find("orgId" equal orgId)
+        return dbCollection.find("orgId" equal ObjectId(orgId))
             .map { it.toJson().parseTo<Person>() }.toList()
     }
 
     override fun getPeopleInHouse(orgId: String, houseId: String): List<Person> {
-        return dbCollection.find(("houseId" equal houseId) plus ("orgId" equal orgId))
+        return dbCollection.find(("houseId" equal houseId) plus ("orgId" equal ObjectId(orgId)))
             .map { it.toJson().parseTo<Person>() }.toList()
     }
 
     override fun remove(orgId: String) {
-        dbCollection.deleteMany("orgId" equal orgId)
+        dbCollection.deleteMany("orgId" equal ObjectId(orgId))
     }
 
     override fun find(query: String, orgId: String): List<Person> {
@@ -74,7 +75,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
             }
         }
         val queryTextReg = "\$or" equal queryTextCondition
-        val queryFixOrgIdDoc = "orgId" equal orgId
+        val queryFixOrgIdDoc = "orgId" equal ObjectId(orgId)
         val fullQuery = BasicBSONList().apply {
             add(queryFixOrgIdDoc)
             add(queryTextReg)
@@ -89,5 +90,21 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
             .find("chronics.disease.icd10" equal icd10).limit(20)
 
         return result.map { it.toJson().parseTo<Person>() }.toList()
+    }
+
+    override fun syncData(orgId: String, limitOutput: Int): List<Entity> {
+        val result = this.dbExecuted.find(("link.isSynced" equal false) plus ("orgId" equal ObjectId(orgId))).limit(limitOutput)
+
+        if (result.count() < 1) return emptyList()
+        val output = result.map {
+            try {
+                it.toJson().parseTo<Entity>()
+            } catch (ex: Exception) {
+                Entity()
+            }
+        }.toMutableList()
+        output.removeIf { it.isTempId }
+
+        return output
     }
 }
