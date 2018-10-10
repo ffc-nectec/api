@@ -20,7 +20,7 @@ import org.junit.Before
 import org.junit.Test
 
 class MongoPersonTest {
-    private val ORG_ID = "abcdeff"
+    private val ORG_ID = "5bbd7f5ebc920637b04c7796"
     lateinit var dao: PersonDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer

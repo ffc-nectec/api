@@ -20,6 +20,7 @@ package ffc.airsync.api.services.person
 import ffc.airsync.api.services.DEFAULT_MONGO_HOST
 import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
+import ffc.entity.Entity
 import ffc.entity.Person
 
 interface PersonDao : Dao {
@@ -33,6 +34,7 @@ interface PersonDao : Dao {
     fun find(query: String, orgId: String): List<Person>
 
     fun findByICD10(orgId: String, icd10: String): List<Person>
+    override fun syncData(orgId: String, limitOutput: Int): List<Entity>
 }
 
 val persons: PersonDao by lazy { MongoPersonDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
