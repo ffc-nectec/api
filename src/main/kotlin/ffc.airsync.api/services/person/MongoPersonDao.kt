@@ -8,7 +8,6 @@ import ffc.airsync.api.services.util.ffcInsert
 import ffc.airsync.api.services.util.plus
 import ffc.entity.Entity
 import ffc.entity.Person
-import ffc.entity.System
 import ffc.entity.gson.parseTo
 import org.bson.Document
 import org.bson.types.BasicBSONList
@@ -27,12 +26,6 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     override fun insert(orgId: String, person: Person): Person {
         val personDoc = person.buildInsertBson()
         personDoc.append("orgId", ObjectId(orgId))
-
-        if (person.link?.system == System.JHICS) {
-            val hcode = person.link!!.keys["hcode"]
-            if (hcode != null)
-                personDoc.append("houseId", (hcode as String))
-        }
 
         return dbCollection.ffcInsert(personDoc)
     }
