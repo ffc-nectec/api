@@ -35,7 +35,7 @@ class MongoPersonTest {
         chronics.add(Chronic(Disease(generateTempId(), "fair", "abcffe982")))
         link = Link(System.JHICS)
         link!!.isSynced = false
-        link!!.keys["hcode"] = "12345678901"
+        houseId = "12345678901"
     }
     val missCat = Person().apply {
         identities.add(ThaiCitizenId("2123455687675"))
@@ -48,7 +48,7 @@ class MongoPersonTest {
         chronics.add(Chronic(Disease(generateTempId(), "fary", "I11")))
         link = Link(System.JHICS)
         link!!.isSynced = true
-        link!!.keys["hcode"] = "11111111111"
+        houseId = "11111111111"
     }
     val missRabbit = Person().apply {
         identities.add(ThaiCitizenId("1122399087432"))
@@ -61,7 +61,7 @@ class MongoPersonTest {
         chronics.add(Chronic(Disease(generateTempId(), "god", "I11")))
         link = Link(System.JHICS)
         link!!.isSynced = false
-        link!!.keys["hcode"] = "99887744998"
+        houseId = "99887744998"
     }
     val json = """
         {
