@@ -31,7 +31,6 @@ import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 
 class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port, "ffc", "organ") {
-
     override fun insert(organization: Organization): Organization {
         validate(organization)
         checkDuplication(organization)
@@ -50,6 +49,7 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
         orgDoc["id"] = genId.toHexString()
         orgDoc.append("lastKnownIp", organization.bundle["lastKnownIp"])
         orgDoc.append("token", ObjectId())
+        orgDoc.append("shortName", organization.name.replace(Regex("[ -_\\.@]"), ""))
 
         dbCollection.insertOne(orgDoc)
         val newOrgDoc = dbCollection.find("_id" equal genId).first()
@@ -118,11 +118,13 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
 
     private fun findMongo(query: String): List<Organization> {
         val regexQuery = Document("\$regex", query).append("\$options", "i")
+        val regexQueryShortName = Document("\$regex", query.replace(Regex("[ -_\\.@]"), "")).append("\$options", "i")
         val queryTextCondition = BasicBSONList().apply {
             add("name" equal regexQuery)
             add("tel" equal regexQuery)
             add("address" equal regexQuery)
             add("link.keys.pcucode" equal regexQuery)
+            add("shortName" equal regexQueryShortName)
         }
         val queryTextReg = "\$or" equal queryTextCondition
         val resultQuery = dbCollection.find(queryTextReg).limit(20)
