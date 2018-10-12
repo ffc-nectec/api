@@ -19,12 +19,15 @@ package ffc.airsync.api.services.person
 
 import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.services.util.getTokenRole
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
+import ffc.entity.User
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.POST
+import javax.ws.rs.PUT
 import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
@@ -57,6 +60,20 @@ class PersonResource {
         printDebug("\nCall create person by ip = ")
         val persons = persons.insert(orgId, person)
         return Response.status(Response.Status.CREATED).entity(persons).build()
+    }
+
+    @PUT
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @Cache(maxAge = 5)
+    fun updatePerson(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String, person: Person): Person {
+        require(person.id == personId) { "ข้อมูลการ Update ไม่ถูกต้อง" }
+        when (getTokenRole(context!!)) {
+            User.Role.ADMIN -> person.link?.isSynced = true
+            User.Role.ORG -> person.link?.isSynced = true
+            else -> person.link?.isSynced = false
+        }
+        return persons.update(orgId, person)
     }
 
     @GET

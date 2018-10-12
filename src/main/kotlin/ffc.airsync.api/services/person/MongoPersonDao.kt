@@ -3,6 +3,7 @@ package ffc.airsync.api.services.person
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.services.MongoAbsConnect
 import ffc.airsync.api.services.util.buildInsertBson
+import ffc.airsync.api.services.util.buildUpdateBson
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
 import ffc.airsync.api.services.util.plus
@@ -28,6 +29,21 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
         personDoc.append("orgId", ObjectId(orgId))
 
         return dbCollection.ffcInsert(personDoc)
+    }
+
+    override fun update(orgId: String, person: Person): Person {
+        val query = "_id" equal ObjectId(person.id)
+        val personOldDoc = dbCollection.find(query).first()
+
+        check(personOldDoc["orgId"] == ObjectId(orgId)) { "ไม่พบคน" }
+        val personDoc = person.buildUpdateBson(personOldDoc)
+
+        personDoc.append("orgId", ObjectId(orgId))
+
+        dbCollection.replaceOne(query, personDoc)
+
+        return (dbCollection.find(query).first()
+            ?: throw javax.ws.rs.InternalServerErrorException("ไม่สามารถค้นหาข้อมูลคนหลัง Update ได้ โปรติดต่อ Admin")).toJson().parseTo()
     }
 
     override fun getPerson(orgId: String, personId: String): Person {
