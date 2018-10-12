@@ -6,6 +6,7 @@ import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.buildUpdateBson
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
+import ffc.airsync.api.services.util.firstAs
 import ffc.airsync.api.services.util.plus
 import ffc.entity.Entity
 import ffc.entity.Person
@@ -42,8 +43,8 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
 
         dbCollection.replaceOne(query, personDoc)
 
-        return (dbCollection.find(query).first()
-            ?: throw javax.ws.rs.InternalServerErrorException("ไม่สามารถค้นหาข้อมูลคนหลัง Update ได้ โปรติดต่อ Admin")).toJson().parseTo()
+        return dbCollection.find(query).firstAs()
+            ?: throw javax.ws.rs.InternalServerErrorException("ไม่สามารถค้นหาข้อมูลคนหลัง Update ได้ โปรติดต่อ Admin")
     }
 
     override fun getPerson(orgId: String, personId: String): Person {
