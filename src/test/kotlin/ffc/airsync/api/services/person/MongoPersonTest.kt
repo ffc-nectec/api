@@ -12,6 +12,7 @@ import ffc.entity.ThaiCitizenId
 import ffc.entity.gson.parseTo
 import ffc.entity.healthcare.Chronic
 import ffc.entity.healthcare.Disease
+import ffc.entity.update
 import ffc.entity.util.generateTempId
 import org.amshove.kluent.`should be equal to`
 import org.joda.time.LocalDate
@@ -131,6 +132,18 @@ class MongoPersonTest {
         persons[0].lastname `should be equal to` "สมบูรณ์จิต"
         persons[1].isTempId `should be equal to` false
         persons[1].firstname `should be equal to` "สมชาย"
+    }
+
+    @Test
+    fun update() {
+        val missRabbit = dao.insert(ORG_ID, missRabbit)
+        val person = dao.getPerson(ORG_ID, missRabbit.id)
+        person.update {
+            lastname = "สีขาว"
+        }
+        val personUpdate = dao.update(ORG_ID, person)
+
+        personUpdate.lastname `should be equal to` "สีขาว"
     }
 
     @Test
