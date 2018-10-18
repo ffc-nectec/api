@@ -30,8 +30,7 @@ class MongoUserTest {
         MongoAbsConnect.setClient(client)
 
         dao = MongoUserDao(serverAddress.hostString, serverAddress.port)
-
-        val org = Org("รพ.สต.Nectec", "192.168.99.3")
+        val org = Org("รพสตNectec", "192.168.99.3")
         nectecOrg = MongoOrgDao(serverAddress.hostString, serverAddress.port).insert(org)
     }
 
