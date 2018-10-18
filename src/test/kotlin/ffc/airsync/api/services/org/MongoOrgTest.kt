@@ -33,27 +33,26 @@ import org.junit.Rule
 import org.junit.Test
 
 class MongoOrgTest {
-
     @Rule
     @JvmField
     val mongo = MongoTestRule()
-
     lateinit var dao: OrgDao
     lateinit var hahahaOrg: Organization
     lateinit var nectecOrg: Organization
 
     @Before
     fun initDb() {
-
         MongoAbsConnect.setClient(mongo.client)
         dao = MongoOrgDao(mongo.address.hostString, mongo.address.port)
 
-        hahahaOrg = dao.insert(Org("รพ.สต.HAHAHA", "203.111.222.123").apply {
+        hahahaOrg = dao.insert(Org("รพสตHAHAHA", "203.111.222.123").apply {
+            displayName = "รพ.สต.HAHAHA"
             tel = "02-388-5555"
             address = "166 ม.99 ต.เนคเทค อ.อยู่ดี จ.กินดี"
             link!!.keys["pcucode"] = 100145
         })
-        nectecOrg = dao.insert(Org("รพ.สต.Nectec", "192.168.99.3").apply {
+        nectecOrg = dao.insert(Org("รพสตNectec", "192.168.99.3").apply {
+            displayName = "รพ.สต.Nectec"
             tel = "037-261-044"
             address = "161 ม.29 ต.สง่างาม อ.สดใส จ.ผิวผ่อง"
             link!!.keys["pcucode"] = 203
@@ -78,10 +77,10 @@ class MongoOrgTest {
 
     @Test
     fun insert() {
-        val returnedOrg = dao.insert(Org("รพสต.AAA"))
+        val returnedOrg = dao.insert(Org("รพสตAAA"))
 
         with(returnedOrg) {
-            name `should be equal to` "รพสต.AAA"
+            name `should be equal to` "รพสตAAA"
             isTempId `should be` false
             bundle["lastKnownIp"] = "192.168.99.3"
         }
@@ -136,7 +135,7 @@ class MongoOrgTest {
         val result = dao.find("Nectec")
 
         result.count() `should be equal to` 1
-        result.first().name `should be equal to` "รพ.สต.Nectec"
+        result.first().name `should be equal to` "รพสตNectec"
     }
 
     @Test
@@ -144,7 +143,7 @@ class MongoOrgTest {
         val result = dao.find("037-261-044")
 
         result.count() `should be equal to` 1
-        result.first().name `should be equal to` "รพ.สต.Nectec"
+        result.first().name `should be equal to` "รพสตNectec"
     }
 
     @Test
@@ -152,7 +151,7 @@ class MongoOrgTest {
         val result = dao.find("สง่างาม")
 
         result.count() `should be equal to` 1
-        result.first().name `should be equal to` "รพ.สต.Nectec"
+        result.first().name `should be equal to` "รพสตNectec"
     }
 
     @Test
@@ -160,7 +159,7 @@ class MongoOrgTest {
         val result = dao.find("100145")
 
         result.count() `should be equal to` 1
-        result.first().name `should be equal to` "รพ.สต.HAHAHA"
+        result.first().name `should be equal to` "รพสตHAHAHA"
     }
 
     @Test
@@ -168,5 +167,13 @@ class MongoOrgTest {
         dao.remove(nectecOrg.id)
 
         dao.findAll().size `should be equal to` 1
+    }
+
+    @Test(expected = java.lang.IllegalArgumentException::class)
+    fun nameWrong() {
+        dao.insert(Organization().apply {
+            name = "*รพ.สต.สง่างง*"
+            displayName = "สง่างง"
+        })
     }
 }

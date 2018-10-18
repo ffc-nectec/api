@@ -55,7 +55,7 @@ val DATETIMEBANGKOK: DateTime get() = DateTime(DateTimeZone.forTimeZone(TimeZone
 inline fun <reified T> getResourceAs(filename: String): T {
     val classloader = Thread.currentThread().contextClassLoader
     val file = classloader.getResourceAsStream(filename)
-            .bufferedReader(Charset.forName("UTF-8"))
+        .bufferedReader(Charset.forName("UTF-8"))
 
     return file.readText().parseTo()
 }
@@ -67,14 +67,20 @@ fun Locale.toLang(): Lang {
     }
 }
 
+private const val thaiCharacters = """กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮa-zA-Z"""
+private const val thaiVowels = """ะาิีึืุูเแโไใัํำ่้๊๋็์ฤฦ"""
+private val thaiRegx = Regex("^[$thaiCharacters][$thaiCharacters$thaiVowels]+\$")
+
+fun String.acceptName(): Boolean = thaiRegx.matches(this)
+
 val airSyncGson = GsonBuilder()
-        .adapterFor<User>(UserJsonAdapter())
-        .adapterFor<Identity>(IdentityJsonAdapter())
-        .adapterFor<HealthCareService>(HealthCareJsonAdapter())
-        .adapterFor<URLs>(URLsJsonAdapter())
-        .adapterFor<Geometry>(GeometrySerializer())
-        .adapterFor<LatLng>(LatLngSerializer())
-        .adapterFor<DateTime>(DateTimeConverter())
-        .adapterFor<LocalDate>(LocalDateConverter())
-        .adapterFor<LocalDateTime>(LocalDateTimeConverter())
-        .create()
+    .adapterFor<User>(UserJsonAdapter())
+    .adapterFor<Identity>(IdentityJsonAdapter())
+    .adapterFor<HealthCareService>(HealthCareJsonAdapter())
+    .adapterFor<URLs>(URLsJsonAdapter())
+    .adapterFor<Geometry>(GeometrySerializer())
+    .adapterFor<LatLng>(LatLngSerializer())
+    .adapterFor<DateTime>(DateTimeConverter())
+    .adapterFor<LocalDate>(LocalDateConverter())
+    .adapterFor<LocalDateTime>(LocalDateTimeConverter())
+    .create()

@@ -18,6 +18,7 @@
 package ffc.airsync.api.services.org
 
 import com.mongodb.client.FindIterable
+import ffc.airsync.api.acceptName
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.MongoAbsConnect
 import ffc.airsync.api.services.util.equal
@@ -49,8 +50,6 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
         orgDoc["id"] = genId.toHexString()
         orgDoc.append("lastKnownIp", organization.bundle["lastKnownIp"])
         orgDoc.append("token", ObjectId())
-        orgDoc.append("shortName", organization.name.replace(Regex("[ -_\\.@]"), ""))
-
         dbCollection.insertOne(orgDoc)
         val newOrgDoc = dbCollection.find("_id" equal genId).first()
 
@@ -64,6 +63,7 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
 
     private fun validate(organization: Organization) {
         with(organization) {
+            require(organization.name.acceptName()) { "name ห้ามมีอักขระพิเศษ" }
             require(isTempId) { "ไม่สามารถ Register ได้ โปรดตรวจสอบ id" }
             require(name.isNotEmpty()) { "โปรระบุชื่อ หน่วยงานที่ต้องการลงทะเบียนลงในตัวแปร name" }
             require(users.isNotEmpty()) { "โปรดลงทะเบียน user ในตัวแปร user ในหน่วยงานที่ต้องการลงทะเบียน" }
@@ -120,12 +120,13 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
         val regexQuery = Document("\$regex", query).append("\$options", "i")
         val regexQueryShortName = Document("\$regex", query.replace(Regex("[ -_\\.@]"), "")).append("\$options", "i")
         val queryTextCondition = BasicBSONList().apply {
-            add("name" equal regexQuery)
+            if (!Regex("^\\d.*").matches(query)) {
+                add("name" equal regexQueryShortName)
+            }
+            add("displayName" equal regexQuery)
             add("tel" equal regexQuery)
             add("address" equal regexQuery)
             add("link.keys.pcucode" equal regexQuery)
-            if (!Regex("^\\d.*").matches(query))
-                add("shortName" equal regexQueryShortName)
         }
         val queryTextReg = "\$or" equal queryTextCondition
         val resultQuery = dbCollection.find(queryTextReg).limit(20)
