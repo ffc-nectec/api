@@ -4,6 +4,9 @@ import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.airsync.api.services.MongoAbsConnect
+import ffc.entity.Village
+import ffc.entity.place.Business
 import me.piruin.geok.geometry.Point
 import org.junit.After
 import org.junit.Before
@@ -14,13 +17,13 @@ class MongoVillageDaoTest {
     lateinit var dao: VillageDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer
-    val foodShop = Businsess().apply {
+    val foodShop = Business().apply {
         name = "ร้านอาหาร กินจุ"
         businessType = "ร้านอาหารริมทาง"
         location = Point(13.0, 100.3)
         no = "117/8"
     }
-    val businsess = Businsess().apply {
+    val businsess = Business().apply {
         name = "บ้านเช่า นายนามี คมคนมา"
         businessType = "อาคารปล่อยเช่า"
         location = Point(13.009, 100.3453)
@@ -57,6 +60,18 @@ class MongoVillageDaoTest {
     }
 
     @Test
+    fun update() {
+        val villageInsert = dao.insert(ORG_ID, village)
+
+        villageInsert.name = "หมู่บ้าน หมีน้อย"
+        villageInsert.places.removeIf { it.no == "117/8" }
+        val villageUpdate = dao.update(ORG_ID, villageInsert)
+
+        villageInsert.id `should be equal to` villageUpdate.id
+        villageUpdate.name `should be equal to` "หมู่บ้าน หมีน้อย"
+    }
+
+    @Test
     fun getFound() {
         val villageInsert = dao.insert(ORG_ID, village)
         val data = dao.get(villageInsert.id)
@@ -64,9 +79,9 @@ class MongoVillageDaoTest {
         data.name `should be equal to` village.name
     }
 
-    @Test
+    @Test(expected = java.lang.NullPointerException::class)
     fun getNotFound() {
         dao.insert(ORG_ID, village)
-        val data = dao.get("554d7f5ebc920637b04c7708")
+        dao.get("554d7f5ebc920637b04c7708")
     }
 }

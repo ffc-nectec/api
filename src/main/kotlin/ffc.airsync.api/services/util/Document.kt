@@ -60,6 +60,13 @@ inline fun <reified T : Entity> MongoCollection<Document>.insert(entity: T, vara
     return find("_id" equal doc["_id"] as ObjectId).firstAs()
 }
 
+/**
+ * build Entity ให้เป็น เอกสาร Insert
+ * มีการตรวจสอบ TempId
+ * สร้าง _id ขึ้นมา
+ * ทำให้ข้อมูล id กับ _id ตรงกัน
+ * @return เอกสาร bson doc สำหรับการ Insert
+ */
 fun Entity.buildInsertBson(): Document {
     if (!isTempId) throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
     val generateId = ObjectId()
@@ -67,6 +74,14 @@ fun Entity.buildInsertBson(): Document {
     return insertObj.buildBsonDoc()
 }
 
+/**
+ * build Entity ให้เป็น เอกสาร Update
+ * มีการตรวจสอบ TempId
+ * ทำให้ข้อมูล id กับ _id ตรงกัน
+ * คัดลอก้อมูล bundle จาก ที่เก่า มาใส่ในชุดข้อมูลที่ Update
+ * @param oldDoc ข้อมูล bson document เดิม
+ * @return เอกสาร bson doc สำหรับการ update
+ */
 fun Entity.buildUpdateBson(oldDoc: Document): Document {
     if (isTempId) throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
     return this.buildBsonDoc()
@@ -84,6 +99,14 @@ fun Entity.buildBsonDoc(): Document {
 internal inline fun <reified T> MongoCollection<Document>.ffcInsert(doc: Document): T {
     require(doc["_id"] != null) { "ต้องมี _id ในขั้นตอนการ Insert" }
     insertOne(doc)
+    val query = Document("_id", doc["_id"] as ObjectId)
+
+    return find(query).firstAs()
+}
+
+internal inline fun <reified T> MongoCollection<Document>.ffcUpdate(doc: Document): T {
+    require(doc["_id"] != null) { "ต้องมี _id ในขั้นตอนการ Insert" }
+    replaceOne("_id" equal doc["_id"], doc)
     val query = Document("_id", doc["_id"] as ObjectId)
 
     return find(query).firstAs()
