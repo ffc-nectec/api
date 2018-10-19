@@ -61,6 +61,18 @@ inline fun <reified T : Entity> MongoCollection<Document>.insert(entity: T, vara
 }
 
 /**
+ * ตัวช่วยสำหรับการสร้าง query จาก Entity
+ * @return Document("_id", ObjectId(id))
+ */
+fun Entity.buildQueryDoc(): Document = "_id" equal ObjectId(id)
+
+/**
+ * ตัวช่วยสำหรับการสร้าง query จาก String
+ * @return Document("_id", ObjectId(this))
+ */
+fun String.buildQueryDoc(): Document = "_id" equal ObjectId(this)
+
+/**
  * build Entity ให้เป็น เอกสาร Insert
  * มีการตรวจสอบ TempId
  * สร้าง _id ขึ้นมา

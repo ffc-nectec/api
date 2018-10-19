@@ -10,6 +10,8 @@ interface VillageDao : Dao {
 
     fun update(orgId: String, village: Village): Village
 
+    fun delete(orgId: String, id: String)
+
     fun get(id: String): Village
 
     fun find(orgId: String, query: String): List<Village>
