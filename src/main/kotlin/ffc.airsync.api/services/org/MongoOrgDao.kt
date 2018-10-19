@@ -18,7 +18,6 @@
 package ffc.airsync.api.services.org
 
 import com.mongodb.client.FindIterable
-import ffc.airsync.api.acceptName
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.MongoAbsConnect
 import ffc.airsync.api.services.util.equal
@@ -63,7 +62,7 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
 
     private fun validate(organization: Organization) {
         with(organization) {
-            require(organization.name.acceptName()) { "name ห้ามมีอักขระพิเศษ" }
+            require(organization.isAcceptName()) { "name ห้ามมีอักขระพิเศษ" }
             require(isTempId) { "ไม่สามารถ Register ได้ โปรดตรวจสอบ id" }
             require(name.isNotEmpty()) { "โปรระบุชื่อ หน่วยงานที่ต้องการลงทะเบียนลงในตัวแปร name" }
             require(users.isNotEmpty()) { "โปรดลงทะเบียน user ในตัวแปร user ในหน่วยงานที่ต้องการลงทะเบียน" }

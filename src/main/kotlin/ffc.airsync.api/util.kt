@@ -67,12 +67,6 @@ fun Locale.toLang(): Lang {
     }
 }
 
-private const val thaiCharacters = """กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮa-zA-Z"""
-private const val thaiVowels = """ะาิีึืุูเแโไใัํำ่้๊๋็์ฤฦ"""
-private val thaiRegx = Regex("^[$thaiCharacters][$thaiCharacters$thaiVowels]+\$")
-
-fun String.acceptName(): Boolean = thaiRegx.matches(this)
-
 val airSyncGson = GsonBuilder()
     .adapterFor<User>(UserJsonAdapter())
     .adapterFor<Identity>(IdentityJsonAdapter())
