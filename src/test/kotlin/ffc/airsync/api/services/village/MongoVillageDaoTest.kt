@@ -71,6 +71,31 @@ class MongoVillageDaoTest {
         villageUpdate.name `should be equal to` "หมู่บ้าน หมีน้อย"
     }
 
+    @Test(expected = java.lang.NullPointerException::class)
+    fun deleteFound() {
+        val villageInsert = dao.insert(ORG_ID, village)
+
+        dao.delete(ORG_ID, villageInsert.id)
+        try {
+            dao.get(villageInsert.id)
+        } catch (ex: Exception) {
+            ex.message!! `should be equal to` "ค้นหาข้อมูลที่ต้องการไม่พบ ข้อมูลอาจถูกลบ หรือ ใส่ข้อมูลอ้างอิงผิด"
+            throw ex
+        }
+    }
+
+    @Test(expected = java.lang.IllegalArgumentException::class)
+    fun deleteNotFound() {
+        dao.insert(ORG_ID, village)
+
+        try {
+            dao.delete(ORG_ID, ORG_ID)
+        } catch (ex: java.lang.Exception) {
+            ex.message!! `should be equal to` "ไม่พบข้อมูลสำหรับการลบ"
+            throw ex
+        }
+    }
+
     @Test
     fun getFound() {
         val villageInsert = dao.insert(ORG_ID, village)
@@ -82,6 +107,12 @@ class MongoVillageDaoTest {
     @Test(expected = java.lang.NullPointerException::class)
     fun getNotFound() {
         dao.insert(ORG_ID, village)
-        dao.get("554d7f5ebc920637b04c7708")
+
+        try {
+            dao.get("554d7f5ebc920637b04c7708")
+        } catch (ex: java.lang.Exception) {
+            ex.message!! `should be equal to` "ค้นหาข้อมูลที่ต้องการไม่พบ ข้อมูลอาจถูกลบ หรือ ใส่ข้อมูลอ้างอิงผิด"
+            throw ex
+        }
     }
 }
