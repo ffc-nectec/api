@@ -77,7 +77,7 @@ class MongoVillageDaoTest {
 
         dao.delete(ORG_ID, villageInsert.id)
         try {
-            dao.get(villageInsert.id)
+            dao.get(ORG_ID, villageInsert.id)
         } catch (ex: Exception) {
             ex.message!! `should be equal to` "ค้นหาข้อมูลที่ต้องการไม่พบ ข้อมูลอาจถูกลบ หรือ ใส่ข้อมูลอ้างอิงผิด"
             throw ex
@@ -99,7 +99,7 @@ class MongoVillageDaoTest {
     @Test
     fun getFound() {
         val villageInsert = dao.insert(ORG_ID, village)
-        val data = dao.get(villageInsert.id)
+        val data = dao.get(ORG_ID, villageInsert.id)
 
         data.name `should be equal to` village.name
     }
@@ -109,7 +109,7 @@ class MongoVillageDaoTest {
         dao.insert(ORG_ID, village)
 
         try {
-            dao.get("554d7f5ebc920637b04c7708")
+            dao.get(ORG_ID, "554d7f5ebc920637b04c7708")
         } catch (ex: java.lang.Exception) {
             ex.message!! `should be equal to` "ค้นหาข้อมูลที่ต้องการไม่พบ ข้อมูลอาจถูกลบ หรือ ใส่ข้อมูลอ้างอิงผิด"
             throw ex
@@ -144,6 +144,14 @@ class MongoVillageDaoTest {
     fun findFail() {
         dao.insert(ORG_ID, village)
         val find = dao.find(ORG_ID, "xxaabb").first()
+
+        find.name `should be equal to` "หมู่บ้าน Nectec"
+    }
+
+    @Test
+    fun findOrgId() {
+        dao.insert(ORG_ID, village)
+        val find = dao.find(ORG_ID).first()
 
         find.name `should be equal to` "หมู่บ้าน Nectec"
     }

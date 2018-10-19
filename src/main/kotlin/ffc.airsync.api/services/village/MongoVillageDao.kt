@@ -6,6 +6,7 @@ import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.buildQueryDoc
 import ffc.airsync.api.services.util.buildTextFindMongo
 import ffc.airsync.api.services.util.buildUpdateBson
+import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
 import ffc.airsync.api.services.util.ffcUpdate
 import ffc.entity.Village
@@ -34,9 +35,13 @@ class MongoVillageDao(host: String, port: Int) : VillageDao, MongoAbsConnect(hos
         dbCollection.deleteOne(query)
     }
 
-    override fun get(id: String): Village {
-        return dbCollection.find(id.buildQueryDoc()).first()?.toJson()?.parseTo<Village>()
+    override fun get(orgId: String, id: String): Village {
+        val villageDoc = dbCollection.find(id.buildQueryDoc()).first()
             ?: throw NullPointerException("ค้นหาข้อมูลที่ต้องการไม่พบ ข้อมูลอาจถูกลบ หรือ ใส่ข้อมูลอ้างอิงผิด")
+
+        require(villageDoc["orgId"].toString() == orgId) { "ค้นหาข้อมูลที่ต้องการไม่พบ ข้อมูลอาจถูกลบ หรือ ใส่ข้อมูลอ้างอิงผิด" }
+
+        return villageDoc.toJson()!!.parseTo()
     }
 
     override fun find(orgId: String, query: String): List<Village> {
@@ -44,5 +49,12 @@ class MongoVillageDao(host: String, port: Int) : VillageDao, MongoAbsConnect(hos
         val resultQuery = dbCollection.find(query.buildTextFindMongo(orgId, queryField = stringQuery)).limit(20)
 
         return resultQuery.map { it.toJson().parseTo<Village>() }.toList()
+    }
+
+    override fun find(orgId: String): List<Village> {
+        val findDoc = dbCollection.find("orgId" equal ObjectId(orgId))
+            ?: throw java.util.NoSuchElementException("ไม่พบข้อมูลการค้นหา")
+
+        return findDoc.map { it.toJson().parseTo<Village>() }.toList()
     }
 }
