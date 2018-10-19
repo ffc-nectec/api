@@ -84,13 +84,3 @@ class NullError : ExceptionMapper<NullPointerException> {
         return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
     }
 }
-
-@Provider
-class ArithmeticError : ExceptionMapper<ArithmeticException> {
-    override fun toResponse(exception: ArithmeticException?): Response {
-        exception!!.printStackTrace()
-        val except = BadRequestException("Request error ${exception.message}")
-        val err = ErrorFilter.ErrorRes(except.response.status, exception.message, exception)
-        return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
-    }
-}
