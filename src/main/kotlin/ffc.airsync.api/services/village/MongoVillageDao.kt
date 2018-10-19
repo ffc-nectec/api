@@ -1,8 +1,10 @@
 package ffc.airsync.api.services.village
 
 import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.util.TextFindMongo
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.buildQueryDoc
+import ffc.airsync.api.services.util.buildTextFindMongo
 import ffc.airsync.api.services.util.buildUpdateBson
 import ffc.airsync.api.services.util.ffcInsert
 import ffc.airsync.api.services.util.ffcUpdate
@@ -38,6 +40,9 @@ class MongoVillageDao(host: String, port: Int) : VillageDao, MongoAbsConnect(hos
     }
 
     override fun find(orgId: String, query: String): List<Village> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val stringQuery: TextFindMongo = { arrayListOf("name", "places.name", "places.no") }
+        val resultQuery = dbCollection.find(query.buildTextFindMongo(orgId, queryField = stringQuery)).limit(20)
+
+        return resultQuery.map { it.toJson().parseTo<Village>() }.toList()
     }
 }

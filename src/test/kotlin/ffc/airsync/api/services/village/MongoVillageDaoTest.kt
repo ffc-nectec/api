@@ -115,4 +115,36 @@ class MongoVillageDaoTest {
             throw ex
         }
     }
+
+    @Test
+    fun findVillageName() {
+        dao.insert(ORG_ID, village)
+        val find = dao.find(ORG_ID, "Nectec").first()
+
+        find.name `should be equal to` "หมู่บ้าน Nectec"
+    }
+
+    @Test
+    fun findPlacesName() {
+        dao.insert(ORG_ID, village)
+        val find = dao.find(ORG_ID, "บ้านเช่า").first()
+
+        find.name `should be equal to` "หมู่บ้าน Nectec"
+    }
+
+    @Test
+    fun findPlancesNo() {
+        dao.insert(ORG_ID, village)
+        val find = dao.find(ORG_ID, "117/8").first()
+
+        find.name `should be equal to` "หมู่บ้าน Nectec"
+    }
+
+    @Test(expected = java.util.NoSuchElementException::class)
+    fun findFail() {
+        dao.insert(ORG_ID, village)
+        val find = dao.find(ORG_ID, "xxaabb").first()
+
+        find.name `should be equal to` "หมู่บ้าน Nectec"
+    }
 }

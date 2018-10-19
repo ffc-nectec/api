@@ -99,7 +99,7 @@ fun Entity.buildUpdateBson(oldDoc: Document): Document {
     return this.buildBsonDoc()
 }
 
-fun Entity.buildBsonDoc(): Document {
+private fun Entity.buildBsonDoc(): Document {
     val generateId = ObjectId(id)
     val json = toJson()
     val doc = Document.parse(json)
@@ -129,4 +129,51 @@ fun User.toDocument(): Document {
     val document = Document.parse(user.toJson())
     document.append("password", password().hash(user.password))
     return document
+}
+
+/**
+ * fun สำหรับใช้งานกับ String.buildTextFindMongo
+ */
+typealias TextFindMongo = () -> List<String>
+
+/**
+ * สร้างเอกสาร bson Document สำหรับการ query
+ * @param this ข้อความที่ใช้ ค้นหา
+ * @param orgId orgId
+ * @param queryStartWithNumber ถ้าข้อมูล query เริ่มต้นด้วย ตัวเลข จะให้ค้นหา field ไหนบ้าง ใช้เมื่อต้องการ Optimize
+ * @param queryStartWithString ถ้าข้อมูล query เริ่มต้นด้วย ตัวอักษร จะให้ค้นหา field ไหนบ้าง ใช้เมื่อต้องการ Optimize
+ * @param queryField จะให้ค้นหา field ไหนบ้าง โดยไม่สนว่า query จะเป็นตัวเลข หรือ ตัวอักษร
+ *
+ * @return bson Document ที่ใช้สำหรับการ query ใน mongo
+ */
+fun String.buildTextFindMongo(
+    orgId: String,
+    queryStartWithNumber: TextFindMongo = { arrayListOf() },
+    queryStartWithString: TextFindMongo = { arrayListOf() },
+    queryField: TextFindMongo = { arrayListOf() }
+): Document {
+    val regexQuery = Document("\$regex", this).append("\$options", "i")
+    val queryTextCondition = BasicBSONList().apply {
+        val startWithNumber = Regex("""^\d+$""")
+        if (startWithNumber.matches(this@buildTextFindMongo)) {
+            queryStartWithNumber().forEach {
+                add(it equal regexQuery)
+            }
+        } else {
+            queryStartWithString().forEach {
+                add(it equal regexQuery)
+            }
+        }
+
+        queryField().forEach {
+            add(it equal regexQuery)
+        }
+    }
+    val queryTextReg = "\$or" equal queryTextCondition
+    val queryFixOrgIdDoc = "orgId" equal ObjectId(orgId)
+    val fullQuery = BasicBSONList().apply {
+        add(queryFixOrgIdDoc)
+        add(queryTextReg)
+    }
+    return "\$and" equal fullQuery
 }
