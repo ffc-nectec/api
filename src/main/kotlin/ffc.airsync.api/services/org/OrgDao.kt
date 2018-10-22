@@ -23,7 +23,6 @@ import ffc.airsync.api.services.Dao
 import ffc.entity.Organization
 
 interface OrgDao : Dao {
-
     fun insert(organization: Organization): Organization
 
     fun remove(orgId: String)
@@ -36,7 +35,7 @@ interface OrgDao : Dao {
 
 val orgs: OrgDao by lazy { MongoOrgDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
 private const val thaiCharacters = """กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮa-zA-Z"""
-private const val thaiVowels = """ะาิีึืุูเแโไใัํำ่้๊๋็์ฤฦ"""
+private const val thaiVowels = """ะาิีึืุูเแโไใัํำ่้๊๋็์ฤฦ0-9\-"""
 private val thaiRegx = Regex("^[$thaiCharacters][$thaiCharacters$thaiVowels]+\$")
 
 fun Organization.isAcceptName(): Boolean = thaiRegx.matches(this.name)

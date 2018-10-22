@@ -117,7 +117,7 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
 
     private fun findMongo(query: String): List<Organization> {
         val regexQuery = Document("\$regex", query).append("\$options", "i")
-        val regexQueryShortName = Document("\$regex", query.replace(Regex("[ -_\\.@]"), "")).append("\$options", "i")
+        val regexQueryShortName = Document("\$regex", query.replace(Regex("[ -_.@]"), "")).append("\$options", "i")
         val queryTextCondition = BasicBSONList().apply {
             if (!Regex("^\\d.*").matches(query)) {
                 add("name" equal regexQueryShortName)

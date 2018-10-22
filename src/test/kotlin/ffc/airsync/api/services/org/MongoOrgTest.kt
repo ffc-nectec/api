@@ -176,4 +176,14 @@ class MongoOrgTest {
             displayName = "สง่างง"
         })
     }
+
+    @Test
+    fun name() {
+        dao.insert(Organization().apply {
+            name = "รพ1-สตสง่างง"
+            displayName = "สง่างง"
+            users.add(User("maxkung", User.Role.ORG))
+            users.add(User("cat"))
+        })
+    }
 }
