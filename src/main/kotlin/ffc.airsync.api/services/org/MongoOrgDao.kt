@@ -57,7 +57,7 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
 
     private fun checkDuplication(organization: Organization) {
         val name = dbCollection.find("name" equal organization.name).first()
-        check(name == null) { "ลงทะเบียน Org ซ้ำ" }
+        if (name != null) throw java.lang.ArithmeticException("ลงทะเบียน Org ซ้ำ")
     }
 
     private fun validate(organization: Organization) {
