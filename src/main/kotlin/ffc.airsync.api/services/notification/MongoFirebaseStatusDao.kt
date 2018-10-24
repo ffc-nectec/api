@@ -13,14 +13,14 @@ class MongoFirebaseStatusDao(host: String, port: Int) : FirebaseStatusDao, Mongo
 
     init {
         try {
-            dbCollection.createIndex(("orgId" equal 1).append("_id", 1), IndexOptions().unique(true))
-            dbCollection.createIndex("orgId" equal 1, IndexOptions().unique(false))
+            dbCollection.createIndex(("orgIndex" equal 1).append("_id", 1), IndexOptions().unique(true))
+            dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
         } catch (ignore: Exception) {
         }
     }
 
     override fun syncData(orgId: String, limitOutput: Int): List<Entity> {
-        return dbCollection.find("orgId" equal orgId).limit(limitOutput).map {
+        return dbCollection.find("orgIndex" equal ObjectId(orgId)).limit(limitOutput).map {
             it.toJson().parseTo<Entity>()
         }.toList()
     }
@@ -28,11 +28,11 @@ class MongoFirebaseStatusDao(host: String, port: Int) : FirebaseStatusDao, Mongo
     override fun insert(orgId: String, entityId: String) {
         val docInsert = Document.parse(Entity(entityId).toJson())
             .append("_id", ObjectId(entityId))
-            .append("orgId", orgId)
+            .append("orgIndex", ObjectId(orgId))
         dbCollection.insertOne(docInsert)
     }
 
     override fun confirmSuccess(orgId: String, entityId: String) {
-        dbCollection.deleteOne(("_id" equal ObjectId(entityId)).append("orgId", orgId))
+        dbCollection.deleteOne(("_id" equal ObjectId(entityId)).append("orgIndex", ObjectId(orgId)))
     }
 }

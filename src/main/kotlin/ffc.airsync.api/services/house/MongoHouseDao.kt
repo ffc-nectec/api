@@ -41,7 +41,7 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
     private fun mongoCreateHouseIndex() {
         try {
             dbCollection.createIndex("location" equal "2dsphere", IndexOptions().unique(false))
-            dbCollection.createIndex("orgId" equal 1, IndexOptions().unique(false))
+            dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
         } catch (ex: Exception) {
             ex.printStackTrace()
             throw ex
@@ -50,7 +50,7 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
 
     override fun insert(orgId: String, house: House): House {
         val docHouse = house.buildInsertBson()
-        docHouse.append("orgId", ObjectId(orgId))
+        docHouse.append("orgIndex", ObjectId(orgId))
 
         return dbCollection.ffcInsert(docHouse)
     }
@@ -62,14 +62,14 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
         printDebug("\tquery old house ")
         val oldHouseDoc = (dbCollection.find(query).first() ?: throw NullPointerException("ไม่มีบ้านตาม id ให้ Update"))
 
-        check(oldHouseDoc["orgId"] == ObjectId(orgId)) { "houseId out of organization" }
+        check(oldHouseDoc["orgIndex"] == ObjectId(orgId)) { "houseId out of organization" }
 
         printDebug("\tget orgId $orgId")
         printDebug("\tcreate update doc")
         // val updateHouseDoc = createDocument(ObjectId(house.id), orgId, house, geoPoint)
         val updateDoc = Document.parse(house.toJson())
         updateDoc.append("id", house.id)
-        updateDoc.append("orgId", ObjectId(orgId))
+        updateDoc.append("orgIndex", ObjectId(orgId))
 
         printDebug("\tcall collection.update (oldDoc, updateDoc)")
         printDebug("\t\tOld doc =    $oldHouseDoc")
@@ -98,12 +98,12 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
     }
 
     override fun delete(orgId: String, houseId: String) {
-        val query = ("_id" equal ObjectId(houseId)) plus ("orgId" equal ObjectId(orgId))
+        val query = ("_id" equal ObjectId(houseId)) plus ("orgIndex" equal ObjectId(orgId))
         dbCollection.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบบ้าน id $houseId ให้ลบ")
     }
 
     override fun findAll(orgId: String, haveLocation: Boolean?): List<House> {
-        val query = "orgId" equal ObjectId(orgId)
+        val query = "orgIndex" equal ObjectId(orgId)
         when {
             haveLocation == null -> {
             }
@@ -130,11 +130,11 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
         printDebug("Call find in house dao.")
         val house = dbCollection.find("_id" equal ObjectId(houseId))?.first()
 
-        if (house?.get("orgId") != ObjectId(orgId)) return null
+        if (house?.get("orgIndex") != ObjectId(orgId)) return null
         return house.toJson()?.parseTo()
     }
 
     override fun removeByOrgId(orgId: String) {
-        dbCollection.deleteMany("orgId" equal ObjectId(orgId))
+        dbCollection.deleteMany("orgIndex" equal ObjectId(orgId))
     }
 }

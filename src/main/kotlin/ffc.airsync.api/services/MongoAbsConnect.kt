@@ -10,6 +10,7 @@ import ffc.airsync.api.services.util.plus
 import ffc.entity.Entity
 import ffc.entity.gson.parseTo
 import org.bson.Document
+import org.bson.types.ObjectId
 import java.util.Arrays
 
 typealias mongoInit = () -> Unit
@@ -44,7 +45,7 @@ abstract class MongoAbsConnect(
     }
 
     override fun syncData(orgId: String, limitOutput: Int): List<Entity> {
-        val result = this.dbExecuted.find(("link.isSynced" equal false) plus ("orgId" equal orgId)).limit(limitOutput)
+        val result = this.dbExecuted.find(("link.isSynced" equal false) plus ("orgIndex" equal ObjectId(orgId))).limit(limitOutput)
 
         if (result.count() < 1) return emptyList()
         val output = result.map {
