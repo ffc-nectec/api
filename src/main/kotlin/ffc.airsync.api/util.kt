@@ -23,9 +23,11 @@ import com.fatboyindustrial.gsonjodatime.LocalDateTimeConverter
 import com.google.gson.GsonBuilder
 import ffc.entity.Identity
 import ffc.entity.Lang
+import ffc.entity.Place
 import ffc.entity.User
 import ffc.entity.gson.HealthCareJsonAdapter
 import ffc.entity.gson.IdentityJsonAdapter
+import ffc.entity.gson.PlaceJsonAdapter
 import ffc.entity.gson.URLsJsonAdapter
 import ffc.entity.gson.UserJsonAdapter
 import ffc.entity.gson.parseTo
@@ -71,6 +73,7 @@ val airSyncGson = GsonBuilder()
     .adapterFor<User>(UserJsonAdapter())
     .adapterFor<Identity>(IdentityJsonAdapter())
     .adapterFor<HealthCareService>(HealthCareJsonAdapter())
+    .adapterFor<Place>(PlaceJsonAdapter())
     .adapterFor<URLs>(URLsJsonAdapter())
     .adapterFor<Geometry>(GeometrySerializer())
     .adapterFor<LatLng>(LatLngSerializer())
