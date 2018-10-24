@@ -5,13 +5,13 @@ import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
 import ffc.airsync.api.services.MongoAbsConnect
-import ffc.entity.House
 import ffc.entity.Person
 import ffc.entity.ThaiCitizenId
 import ffc.entity.ThaiHouseholdId
 import ffc.entity.gson.toJson
 import ffc.entity.healthcare.Chronic
 import ffc.entity.healthcare.Disease
+import ffc.entity.place.House
 import ffc.entity.update
 import ffc.entity.util.generateTempId
 import me.piruin.geok.geometry.Point

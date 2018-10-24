@@ -23,10 +23,10 @@ import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.healthcareservice.PART_HEALTHCARESERVICE
 import ffc.airsync.api.services.house.PART_HOUSESERVICE
 import ffc.entity.Entity
-import ffc.entity.House
 import ffc.entity.gson.toJson
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.HomeVisit
+import ffc.entity.place.House
 
 fun <T : Entity> NotifactionDao.broadcastMessage(orgId: String, vararg entitys: T) {
     val clientAddress = getFirebaseToken(orgId)

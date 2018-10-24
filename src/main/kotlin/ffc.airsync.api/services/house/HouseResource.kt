@@ -20,9 +20,9 @@ package ffc.airsync.api.services.house
 import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.services.util.GEOJSONHeader
 import ffc.airsync.api.services.util.getTokenRole
-import ffc.entity.House
 import ffc.entity.Person
 import ffc.entity.User
+import ffc.entity.place.House
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import javax.annotation.security.RolesAllowed
