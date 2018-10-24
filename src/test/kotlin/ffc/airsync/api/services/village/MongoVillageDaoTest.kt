@@ -8,6 +8,7 @@ import ffc.airsync.api.services.MongoAbsConnect
 import ffc.entity.Village
 import ffc.entity.place.Business
 import me.piruin.geok.geometry.Point
+import org.amshove.kluent.`should be equal to`
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

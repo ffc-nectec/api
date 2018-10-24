@@ -170,7 +170,7 @@ fun String.buildTextFindMongo(
         }
     }
     val queryTextReg = "\$or" equal queryTextCondition
-    val queryFixOrgIdDoc = "orgId" equal ObjectId(orgId)
+    val queryFixOrgIdDoc = "orgIndex" equal ObjectId(orgId)
     val fullQuery = BasicBSONList().apply {
         add(queryFixOrgIdDoc)
         add(queryTextReg)
