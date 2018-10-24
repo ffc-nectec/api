@@ -24,9 +24,9 @@ import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
 import ffc.airsync.api.services.util.plus
-import ffc.entity.House
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
+import ffc.entity.place.House
 import org.bson.Document
 import org.bson.types.ObjectId
 import java.util.ArrayList
