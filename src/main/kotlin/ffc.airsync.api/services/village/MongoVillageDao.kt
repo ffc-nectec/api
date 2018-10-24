@@ -16,7 +16,7 @@ import org.bson.types.ObjectId
 class MongoVillageDao(host: String, port: Int) : VillageDao, MongoAbsConnect(host, port, "ffc", "village") {
     override fun insert(orgId: String, village: Village): Village {
         val villageDoc = village.buildInsertBson()
-        villageDoc.append("orgId", ObjectId(orgId))
+        villageDoc.append("orgIndex", ObjectId(orgId))
 
         return dbCollection.ffcInsert(villageDoc)
     }
@@ -30,7 +30,7 @@ class MongoVillageDao(host: String, port: Int) : VillageDao, MongoAbsConnect(hos
 
     override fun delete(orgId: String, id: String) {
         val query = id.buildQueryDoc()
-        require((dbCollection.find(query).first()?.get("orgId").toString()) == orgId) { "ไม่พบข้อมูลสำหรับการลบ" }
+        require((dbCollection.find(query).first()?.get("orgIndex").toString()) == orgId) { "ไม่พบข้อมูลสำหรับการลบ" }
 
         dbCollection.deleteOne(query)
     }
@@ -39,7 +39,7 @@ class MongoVillageDao(host: String, port: Int) : VillageDao, MongoAbsConnect(hos
         val villageDoc = dbCollection.find(id.buildQueryDoc()).first()
             ?: throw NullPointerException("ค้นหาข้อมูลที่ต้องการไม่พบ ข้อมูลอาจถูกลบ หรือ ใส่ข้อมูลอ้างอิงผิด")
 
-        require(villageDoc["orgId"].toString() == orgId) { "ค้นหาข้อมูลที่ต้องการไม่พบ ข้อมูลอาจถูกลบ หรือ ใส่ข้อมูลอ้างอิงผิด" }
+        require(villageDoc["orgIndex"].toString() == orgId) { "ค้นหาข้อมูลที่ต้องการไม่พบ ข้อมูลอาจถูกลบ หรือ ใส่ข้อมูลอ้างอิงผิด" }
 
         return villageDoc.toJson()!!.parseTo()
     }
@@ -52,7 +52,7 @@ class MongoVillageDao(host: String, port: Int) : VillageDao, MongoAbsConnect(hos
     }
 
     override fun find(orgId: String): List<Village> {
-        val findDoc = dbCollection.find("orgId" equal ObjectId(orgId))
+        val findDoc = dbCollection.find("orgIndex" equal ObjectId(orgId))
             ?: throw java.util.NoSuchElementException("ไม่พบข้อมูลการค้นหา")
 
         return findDoc.map { it.toJson().parseTo<Village>() }.toList()

@@ -3,6 +3,7 @@ package ffc.airsync.api.services.village
 import ffc.airsync.api.services.DEFAULT_MONGO_HOST
 import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
+import ffc.entity.Village
 
 interface VillageDao : Dao {
     fun insert(orgId: String, village: Village): Village
