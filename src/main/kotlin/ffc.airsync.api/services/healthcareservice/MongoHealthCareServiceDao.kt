@@ -14,19 +14,19 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
     MongoAbsConnect(host, port, "ffc", "healthcareservice") {
     override fun insert(healthCareService: HealthCareService, orgId: String): HealthCareService {
         val insertVisit = healthCareService.buildInsertBson()
-            .append("orgId", orgId)
+            .append("orgIndex", orgId)
 
         return dbCollection.ffcInsert(insertVisit)
     }
 
     override fun get(orgId: String): List<HealthCareService> {
-        return dbCollection.find("orgId" equal orgId)
+        return dbCollection.find("orgIndex" equal orgId)
             .map { it.toJson().parseTo<HealthCareService>() }.toList()
     }
 
     override fun find(id: String, orgId: String): HealthCareService? {
         val query = Document("_id", ObjectId(id))
-            .append("orgId", orgId)
+            .append("orgIndex", orgId)
         val result = dbCollection.find(query).first()
 
         check(result != null) { "ไม่พบ health care service id $id" }
@@ -35,7 +35,7 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
 
     override fun findByPatientId(personId: String, orgId: String): List<HealthCareService> {
         val query = Document("patientId", personId)
-            .append("orgId", orgId)
+            .append("orgIndex", orgId)
         val result = dbCollection.find(query)
 
         check(result != null) { "ไม่พบ health care service person id $personId" }
@@ -44,7 +44,7 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
 
     override fun update(healthCareService: HealthCareService, orgId: String): HealthCareService {
         val query = Document("_id", ObjectId(healthCareService.id))
-            .append("orgId", orgId)
+            .append("orgIndex", orgId)
         val oldObject = dbCollection.find(query).first()!!
         val updateDocument = healthCareService.buildUpdateBson(oldObject)
         val resultUpdate = dbCollection.updateOne(query, updateDocument)

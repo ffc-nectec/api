@@ -15,7 +15,7 @@ internal class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnec
         val generateToken = ObjectId()
         val tokenMessage = Token(token = generateToken.toHexString(), user = user)
         val tokenDoc = Document.parse(tokenMessage.toJson())
-        tokenDoc.append("orgId", orgId)
+        tokenDoc.append("orgIndex", ObjectId(orgId))
         tokenDoc.append("_id", generateToken)
         dbCollection.insertOne(tokenDoc)
         return tokenMessage
@@ -30,7 +30,7 @@ internal class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnec
     }
 
     override fun findByOrgId(orgId: String): List<Token> {
-        return dbCollection.find("orgId" equal orgId)
+        return dbCollection.find("orgIndex" equal ObjectId(orgId))
             .map { it.toJson().parseTo<Token>() }.toList()
     }
 
@@ -40,6 +40,6 @@ internal class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnec
     }
 
     override fun removeByOrgId(orgId: String) {
-        dbCollection.deleteMany("orgId" equal orgId)
+        dbCollection.deleteMany("orgIndex" equal ObjectId(orgId))
     }
 }

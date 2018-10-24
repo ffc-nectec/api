@@ -27,9 +27,9 @@ class MongoFirebaseStatusDaoTest {
         MongoAbsConnect.setClient(client)
         dao = MongoFirebaseStatusDao(serverAddress.hostString, serverAddress.port)
 
-        dao.insert("BNK119", id1)
-        dao.insert("BNK119", id2)
-        dao.insert("BNK120", id3)
+        dao.insert("5bbd7f5ebc920637b04c7796", id1)
+        dao.insert("5bbd7f5ebc920637b04c7796", id2)
+        dao.insert("5bbd7f5ebc920637b04c7797", id3)
     }
 
     @After
@@ -40,7 +40,7 @@ class MongoFirebaseStatusDaoTest {
 
     @Test
     fun syncCloudFilter() {
-        val result = dao.syncData("BNK119")
+        val result = dao.syncData("5bbd7f5ebc920637b04c7796")
 
         result.count() `should be equal to` 2
         result.first().id `should be equal to` id1
@@ -48,8 +48,8 @@ class MongoFirebaseStatusDaoTest {
 
     @Test
     fun confirmSuccess() {
-        dao.confirmSuccess("BNK119", id1)
-        val result = dao.syncData("BNK119")
+        dao.confirmSuccess("5bbd7f5ebc920637b04c7796", id1)
+        val result = dao.syncData("5bbd7f5ebc920637b04c7796")
 
         result.count() `should be equal to` 1
         result.first().id `should be equal to` id2

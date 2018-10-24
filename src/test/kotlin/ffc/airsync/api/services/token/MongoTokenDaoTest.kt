@@ -15,7 +15,7 @@ import org.junit.Before
 import org.junit.Test
 
 class MongoTokenDaoTest {
-    private val ORG_ID = "abcdeff"
+    private val ORG_ID = "5bbd7f5ebc920637b04c7796"
     lateinit var dao: TokenDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer
@@ -33,8 +33,8 @@ class MongoTokenDaoTest {
 
         tokenMax = dao.create(User("Thanachai", User.Role.ORG), ORG_ID)
         tokenBee = dao.create(User("Morakot", User.Role.USER), ORG_ID)
-        dao.create(User("Cat", User.Role.USER), "abc1234")
-        dao.create(User("Dog", User.Role.USER), "abc1234")
+        dao.create(User("Cat", User.Role.USER), "5bbd7f5ebc920637b04c7797")
+        dao.create(User("Dog", User.Role.USER), "5bbd7f5ebc920637b04c7797")
     }
 
     @After
