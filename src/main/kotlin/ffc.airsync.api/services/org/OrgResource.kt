@@ -63,7 +63,7 @@ class OrgResource {
         } else {
             val queryFind = query ?: ""
             if (queryFind.isNotEmpty()) {
-                require(!queryFind.contains(Regex("""[\.\,\%\!\?\'\|\*]"""))) { "ในการค้นหาไม่ควรมีอักขระ . , % ! ? ' | *" }
+                require(!queryFind.contains(Regex("""[\,\%\!\?\'\|\*]"""))) { "ในการค้นหาไม่ควรมีอักขระ . , % ! ? ' | *" }
 
                 OrgService.find(queryFind)
             } else
