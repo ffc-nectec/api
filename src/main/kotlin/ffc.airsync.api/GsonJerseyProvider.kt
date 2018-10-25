@@ -47,7 +47,7 @@ class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
         try {
             InputStreamReader(entityStream, UTF_8).use {
                 try {
-                    return airSyncGson.fromJson<Any>(it, genericType)
+                    return ffcGson.fromJson<Any>(it, genericType)
                 } catch (ex: java.lang.NumberFormatException) {
                     ex.printStackTrace()
                     val errormess = BadRequestException("JSON error ${ex.message}")

@@ -17,31 +17,10 @@
 
 package ffc.airsync.api
 
-import com.fatboyindustrial.gsonjodatime.DateTimeConverter
-import com.fatboyindustrial.gsonjodatime.LocalDateConverter
-import com.fatboyindustrial.gsonjodatime.LocalDateTimeConverter
-import com.google.gson.GsonBuilder
-import ffc.entity.Identity
 import ffc.entity.Lang
-import ffc.entity.Place
-import ffc.entity.User
-import ffc.entity.gson.HealthCareJsonAdapter
-import ffc.entity.gson.IdentityJsonAdapter
-import ffc.entity.gson.PlaceJsonAdapter
-import ffc.entity.gson.URLsJsonAdapter
-import ffc.entity.gson.UserJsonAdapter
 import ffc.entity.gson.parseTo
-import ffc.entity.healthcare.HealthCareService
-import ffc.entity.util.URLs
-import me.piruin.geok.LatLng
-import me.piruin.geok.geometry.Geometry
-import me.piruin.geok.gson.GeometrySerializer
-import me.piruin.geok.gson.LatLngSerializer
-import me.piruin.geok.gson.adapterFor
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
-import org.joda.time.LocalDate
-import org.joda.time.LocalDateTime
 import java.nio.charset.Charset
 import java.time.ZoneId
 import java.util.Locale
@@ -68,16 +47,3 @@ fun Locale.toLang(): Lang {
         else -> Lang.en
     }
 }
-
-val airSyncGson = GsonBuilder()
-    .adapterFor<User>(UserJsonAdapter())
-    .adapterFor<Identity>(IdentityJsonAdapter())
-    .adapterFor<HealthCareService>(HealthCareJsonAdapter())
-    .adapterFor<Place>(PlaceJsonAdapter())
-    .adapterFor<URLs>(URLsJsonAdapter())
-    .adapterFor<Geometry>(GeometrySerializer())
-    .adapterFor<LatLng>(LatLngSerializer())
-    .adapterFor<DateTime>(DateTimeConverter())
-    .adapterFor<LocalDate>(LocalDateConverter())
-    .adapterFor<LocalDateTime>(LocalDateTimeConverter())
-    .create()
