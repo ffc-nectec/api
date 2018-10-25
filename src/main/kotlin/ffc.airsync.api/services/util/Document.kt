@@ -19,7 +19,6 @@ package ffc.airsync.api.services.util
 
 import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoCollection
-import ffc.airsync.api.airSyncGson
 import ffc.airsync.api.security.password
 import ffc.entity.Entity
 import ffc.entity.User
@@ -30,6 +29,10 @@ import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 import javax.ws.rs.ForbiddenException
+import kotlin.collections.List
+import kotlin.collections.forEach
+import kotlin.collections.putAll
+import kotlin.collections.toMap
 import kotlin.collections.map as mapKt
 
 inline fun <reified T> FindIterable<Document>.firstAs(): T = first().toJson().parseTo<T>()
@@ -66,15 +69,12 @@ fun Entity.buildInsertBson(): Document {
 
 fun Entity.buildUpdateBson(oldDoc: Document): Document {
     if (isTempId) throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
-    val oldBundle = oldDoc.toJson().parseTo<Entity>(airSyncGson).bundle
-    this.bundle.clear()
-    this.bundle.putAll(oldBundle)
     return this.buildBsonDoc()
 }
 
 fun Entity.buildBsonDoc(): Document {
     val generateId = ObjectId(id)
-    val json = toJson(airSyncGson)
+    val json = toJson()
     val doc = Document.parse(json)
     doc.append("_id", generateId)
 
