@@ -200,4 +200,16 @@ class MongoOrgTest {
 
         dao.find("รพสต-พรทิพา1").first().displayName `should equal` "รพ.สต.พรทิพา สาขา 1"
     }
+
+    @Test
+    fun findNameCase3() {
+        dao.insert(Organization().apply {
+            name = "รพสต-พรทิพา1"
+            displayName = "รพ.สต. พรทิพา 1"
+            users.add(User("maxkung", User.Role.ORG))
+            users.add(User("cat"))
+        })
+
+        dao.find("รพ.สต.พรทิพา1").first().displayName `should equal` "รพ.สต. พรทิพา 1"
+    }
 }
