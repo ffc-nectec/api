@@ -28,12 +28,14 @@ import javax.ws.rs.ext.Provider
 @Priority(Priorities.HEADER_DECORATOR)
 @Provider
 class SuccessToCreatedResponse : ContainerResponseFilter {
-
     override fun filter(
         requestContext: ContainerRequestContext,
         responseContext: ContainerResponseContext
     ) {
         val isPost = requestContext.method.equals("port", ignoreCase = true)
+        responseContext.headers.add("access-control-allow-credentials", "true")
+        responseContext.headers.add("access-control-allow-origin", "http://localhost:3001")
+
         if (isPost && responseContext.status == 200) {
             responseContext.status = 201
         }
