@@ -38,4 +38,7 @@ private const val thaiCharacters = """กขฃคฅฆงจฉชซฌญฎ
 private const val thaiVowels = """ะาิีึืุูเแโไใัํำ่้๊๋็์ฤฦ0-9\-"""
 private val thaiRegx = Regex("^[$thaiCharacters][$thaiCharacters$thaiVowels]+\$")
 
+/**
+ * ตรวจสอบ Organization name ว่าอยู่ในเงื่อนไขในการตั้งชื่อหรือไม่
+ */
 fun Organization.isAcceptName(): Boolean = thaiRegx.matches(this.name)
