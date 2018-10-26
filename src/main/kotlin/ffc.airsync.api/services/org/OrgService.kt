@@ -28,6 +28,9 @@ internal object OrgService {
         return orgReturn
     }
 
+    /**
+     * ซ่อนข้อมูลสำคัญก่อน Return ค่ากลับไป
+     */
     private fun hiddenPrivate(orgList: List<Organization>): List<Organization> {
         orgList.forEach {
             it.users.removeIf { true }
@@ -37,6 +40,9 @@ internal object OrgService {
         return orgList
     }
 
+    /**
+     * เรียกดูรายชื่อ Organization ที่ลงทะเบียนไว้ทั้งหมด
+     */
     fun get(): List<Organization> {
         printDebug("Get all org")
         val orgList = orgs.findAll()
