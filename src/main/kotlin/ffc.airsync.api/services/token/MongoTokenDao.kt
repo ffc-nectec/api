@@ -12,11 +12,11 @@ import org.bson.types.ObjectId
 
 internal class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnect(host, port, "ffc", "token") {
     override fun create(user: User, orgId: String): Token {
-        val generateToken = ObjectId()
-        val tokenMessage = Token(token = generateToken.toHexString(), user = user)
+        val generateId = ObjectId()
+        val tokenMessage = Token(token = randomString.nextString(), user = user)
         val tokenDoc = Document.parse(tokenMessage.toJson())
         tokenDoc.append("orgIndex", ObjectId(orgId))
-        tokenDoc.append("_id", generateToken)
+        tokenDoc.append("_id", generateId)
         dbCollection.insertOne(tokenDoc)
         return tokenMessage
     }
