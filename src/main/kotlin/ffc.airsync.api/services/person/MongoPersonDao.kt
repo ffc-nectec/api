@@ -26,6 +26,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     override fun insert(orgId: String, person: Person): Person {
+        person.orgId = orgId
         val personDoc = person.buildInsertBson()
         personDoc.append("orgIndex", ObjectId(orgId))
 
@@ -33,6 +34,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     override fun update(orgId: String, person: Person): Person {
+        person.orgId = orgId
         val query = "_id" equal ObjectId(person.id)
         val personOldDoc = dbCollection.find(query).first()
 
