@@ -35,12 +35,12 @@ class MongoFirebaseNotificationTokenDaoTest {
         hahahaOrg = orgDao.insert(Org("รพสตHAHAHA", "203.111.222.123").apply {
             tel = "02-388-5555"
             address = "166 ม.99 ต.เนคเทค อ.อยู่ดี จ.กินดี"
-            link!!.keys["pcucode"] = 100145
+            link!!.keys["pcucode"] = "100145"
         })
         nectecOrg = orgDao.insert(Org("รพสตNectec", "192.168.99.3").apply {
             tel = "037-261-044"
             address = "161 ม.29 ต.สง่างาม อ.สดใส จ.ผิวผ่อง"
-            link!!.keys["pcucode"] = 203
+            link!!.keys["pcucode"] = "203"
         })
     }
 
