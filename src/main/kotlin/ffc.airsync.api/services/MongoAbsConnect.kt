@@ -27,8 +27,8 @@ abstract class MongoAbsConnect(
 ) : Dao {
     protected lateinit var dbCollection: MongoCollection<Document>
     val dbExecuted get() = dbCollection
-    val mongoUrl = System.getenv("MONGODB_URI") +
-        "?maxPoolSize=2&maxIdleTimeMS=20000&connectTimeoutMS=30000&socketTimeoutMS=30000"
+    val mongoOption = "?maxPoolSize=3&maxIdleTimeMS=20000&connectTimeoutMS=30000&socketTimeoutMS=30000"
+    val mongoUrl = System.getenv("MONGODB_URI") + mongoOption
 
     companion object {
         protected var mongoClient: MongoClient? = null
@@ -107,6 +107,8 @@ abstract class MongoAbsConnect(
             }
             // mongoClient!!.writeConcern = WriteConcern.JOURNALED
             // instant = this
+        } else {
+            println("Run with test client. ${mongoClient?.listDatabaseNames()?.count()}")
         }
     }
 

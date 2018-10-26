@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.personrelationsship
 
 import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.person.persons
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.plus
 import ffc.airsync.api.services.util.toDocument
@@ -27,8 +28,8 @@ class MongoRelationsShipDao(host: String, port: Int) : MongoAbsConnect(host, por
             ?: throw NoSuchElementException("ไม่พบข้อมูล ความสัมพันธ์ของบุคคลนี้")
     }
 
-    override fun update(orgId: String, personId: String, relation: List<Person.Relationship>): List<Person.Relationship> {
-        get(orgId, personId)
+    override fun update(orgId: String, personId: String, relation: List<Person.Relationship>, validate: (person: Person, updateRelation: List<Person.Relationship>) -> Unit): List<Person.Relationship> {
+        validate(persons.getPerson(orgId, personId), relation)
         val relationDoc = "relationships" equal BasicBSONList().apply {
             relation.forEach {
                 add(it.toDocument())

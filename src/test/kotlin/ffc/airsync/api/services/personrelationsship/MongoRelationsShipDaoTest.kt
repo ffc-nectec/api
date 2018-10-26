@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.personrelationsship
 
 import com.mongodb.MongoClient
+import com.mongodb.MongoClientOptions
 import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
@@ -16,9 +17,11 @@ import ffc.entity.update
 import ffc.entity.util.generateTempId
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
+import org.amshove.kluent.`should start with`
 import org.joda.time.LocalDate
 import org.junit.After
 import org.junit.Before
+import org.junit.Test
 
 class MongoRelationsShipDaoTest {
     private val ORG_ID = "5bbd7f5ebc920637b04c7796"
@@ -31,10 +34,16 @@ class MongoRelationsShipDaoTest {
 
     @Before
     fun initDb() {
+        println("Init Database")
         server = MongoServer(MemoryBackend())
         val serverAddress = server.bind()
-        client = MongoClient(ServerAddress(serverAddress))
+        client = MongoClient(ServerAddress(serverAddress),
+            MongoClientOptions.Builder()
+                .maxConnectionIdleTime(5000)
+                .connectionsPerHost(5)
+                .build())
         MongoAbsConnect.setClient(client)
+
         val daoPerson = MongoPersonDao(serverAddress.hostString, serverAddress.port)
         dao = MongoRelationsShipDao(serverAddress.hostString, serverAddress.port)
         val misterDog = Person().apply {
@@ -91,9 +100,10 @@ class MongoRelationsShipDaoTest {
     fun cleanDb() {
         client.close()
         server.shutdownNow()
+        println("Shutdown Db")
     }
 
-    @org.junit.Test
+    @Test
     fun get() {
         val dogRelation = dao.get(ORG_ID, dog.id).first()
 
@@ -101,7 +111,7 @@ class MongoRelationsShipDaoTest {
         dogRelation.relate `should equal` Person.Relate.Child
     }
 
-    @org.junit.Test
+    @Test
     fun update() {
         dog.update {
             relationships.add(Person.Relationship(Person.Relate.Child, rabbit))
@@ -118,5 +128,49 @@ class MongoRelationsShipDaoTest {
 
         rabbitUpdate.first().id `should be equal to` dog.id
         rabbitUpdate.last().id `should be equal to` dog.id
+    }
+
+    @Test(expected = java.lang.IllegalArgumentException::class)
+    fun validateDuplicateRelation() {
+        dog.update {
+            relationships.add(Person.Relationship(Person.Relate.Mother, rabbit))
+            relationships.add(Person.Relationship(Person.Relate.Mother, rabbit))
+        }
+        try {
+            dao.update(ORG_ID, dog.id, dog.relationships)
+        } catch (ex: Exception) {
+            ex.message!! `should start with` "พบการใส่ความสัมพันธ์ซ้ำ"
+            throw ex
+        }
+    }
+
+    @Test(expected = java.lang.IllegalArgumentException::class)
+    fun validateMotherChild() {
+        dog.update {
+            relationships.add(Person.Relationship(Person.Relate.Child, rabbit))
+            relationships.add(Person.Relationship(Person.Relate.Mother, rabbit))
+        }
+        try {
+            dao.update(ORG_ID, dog.id, dog.relationships)
+        } catch (ex: Exception) {
+            ex.message!! `should start with` "ตรวจพบความสัมพันธ์ในครอบครัวแปลก"
+            ex.printStackTrace()
+            throw ex
+        }
+    }
+
+    @Test(expected = java.lang.IllegalArgumentException::class)
+    fun validateFatherChild() {
+        dog.update {
+            relationships.add(Person.Relationship(Person.Relate.Father, rabbit))
+            relationships.add(Person.Relationship(Person.Relate.Child, rabbit))
+        }
+        try {
+            dao.update(ORG_ID, dog.id, dog.relationships)
+        } catch (ex: Exception) {
+            ex.message!! `should start with` "ตรวจพบความสัมพันธ์ในครอบครัวแปลก"
+            ex.printStackTrace()
+            throw ex
+        }
     }
 }

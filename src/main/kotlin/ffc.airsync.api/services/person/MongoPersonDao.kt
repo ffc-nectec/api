@@ -38,7 +38,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
         val query = "_id" equal ObjectId(person.id)
         val personOldDoc = dbCollection.find(query).first()
 
-        check(personOldDoc["orgIndex"] == ObjectId(orgId)) { "ไม่พบคน" }
+        check(personOldDoc["orgId"] == orgId) { "ไม่พบคน" }
         val personDoc = person.buildUpdateBson(personOldDoc)
 
         personDoc.append("orgIndex", ObjectId(orgId))
@@ -50,9 +50,20 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     override fun getPerson(orgId: String, personId: String): Person {
-        val query = ("orgIndex" equal ObjectId(orgId)) plus ("_id" equal ObjectId(personId))
-        val result = dbCollection.find(query).first()
-            ?: throw NullPointerException("ไม่พบรหัส person id $personId ที่ค้นหา")
+        val query = "_id" equal ObjectId(personId)
+        var result: Document = Document()
+
+        try {
+            result = dbCollection.find(query).first()
+                ?: throw NullPointerException("ไม่พบรหัส person id $personId ที่ค้นหา")
+        } catch (ex: java.lang.IllegalStateException) {
+            if (ex.message?.contains("state should be: open") == true) {
+                result = dbCollection.find(query).first()
+                    ?: throw NullPointerException("ไม่พบรหัส person id $personId ที่ค้นหา")
+            }
+        }
+        require(result["orgId"].toString() == orgId) { "ไม่พบรหัส person id $personId ที่ค้นหา" }
+
         return result.toJson().parseTo()
     }
 
