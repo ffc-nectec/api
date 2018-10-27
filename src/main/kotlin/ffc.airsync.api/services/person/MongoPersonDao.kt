@@ -58,8 +58,6 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
                 ?: throw NullPointerException("ไม่พบรหัส person id $personId ที่ค้นหา")
         } catch (ex: java.lang.IllegalStateException) {
             if (ex.message?.contains("state should be: open") == true) {
-                result = dbCollection.find(query).first()
-                    ?: throw NullPointerException("ไม่พบรหัส person id $personId ที่ค้นหา")
             }
         }
         require(result["orgId"].toString() == orgId) { "ไม่พบรหัส person id $personId ที่ค้นหา" }
