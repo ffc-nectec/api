@@ -7,12 +7,12 @@ import ffc.entity.Person
 
 interface GenoGramDao : Dao {
     fun get(orgId: String, personId: String): List<Person.Relationship>
-    fun update(orgId: String, personId: String, relation: List<Person.Relationship>, validate: (person: Person, updateRelation: List<Person.Relationship>) -> Unit = validateRelation): List<Person.Relationship>
+    fun update(orgId: String, personId: String, relation: List<Person.Relationship>, validate: (personId: String, updateRelation: List<Person.Relationship>) -> Unit = validateRelation): List<Person.Relationship>
 }
 
-private val validateRelation: (Person, List<Person.Relationship>) -> Unit =
-    { person: Person, updateRelation: List<Person.Relationship> ->
-        require(updateRelation.find { it.id == person.id } == null) { "ไม่สามารถมีความสัมพันธ์กับตัวเองได้" }
+private val validateRelation: (String, List<Person.Relationship>) -> Unit =
+    { person: String, updateRelation: List<Person.Relationship> ->
+        require(updateRelation.find { it.id == person } == null) { "ไม่สามารถมีความสัมพันธ์กับตัวเองได้" }
         val groupPerson: HashMap<String, ArrayList<Person.Relationship>> = hashMapOf()
         updateRelation.forEach {
             if (groupPerson[it.id] == null) groupPerson[it.id] = arrayListOf()
