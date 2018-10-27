@@ -4,6 +4,13 @@ import ffc.airsync.api.services.DEFAULT_MONGO_HOST
 import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
 import ffc.entity.Person
+import ffc.entity.Person.Relate.Child
+import ffc.entity.Person.Relate.Divorced
+import ffc.entity.Person.Relate.Father
+import ffc.entity.Person.Relate.LegallySeperated
+import ffc.entity.Person.Relate.Married
+import ffc.entity.Person.Relate.Mother
+import ffc.entity.Person.Relate.Seperated
 
 interface GenoGramDao : Dao {
     fun get(orgId: String, personId: String): List<Person.Relationship>
@@ -27,17 +34,37 @@ private val validateRelation: (String, List<Person.Relationship>) -> Unit =
                     groupRelation[it.relate]!!.add(it)
                 }
 
-                groupRelation.forEach { relateGroup, value ->
-                    require(value.count() == 1) { "พบการใส่ความสัมพันธ์ซ้ำ $relateGroup count ${value.count()}" }
-
-                    when (relateGroup) {
-                        Person.Relate.Child ->
-                            require(updateRelation.find {
-                                it.id == value.first().id && (it.relate == Person.Relate.Mother || it.relate == Person.Relate.Father)
-                            } == null) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Mother or Father" }
-                    }
+                groupRelation.forEach { relateGroup, personRelation ->
+                    require(personRelation.count() == 1) { "พบการใส่ความสัมพันธ์ซ้ำ $relateGroup count ${personRelation.count()}" }
+                    conditionRelationShip(updateRelation, personRelation, relateGroup)
                 }
             }
         }
     }
+
+private fun conditionRelationShip(updateRelation: List<Person.Relationship>, personRelation: java.util.ArrayList<Person.Relationship>, relateGroup: Person.Relate) {
+    val personGroupRelation = updateRelation.filter { it.id == personRelation.first().id }
+    when (relateGroup) {
+        Child -> {
+            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Mother) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Mother is Child" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Father) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Father is Child" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Married) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Married with child" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Seperated) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Separated with child" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` LegallySeperated) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Legally Separated with child" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Divorced) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Divorced with child" }
+        }
+        Married -> {
+            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Mother) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Married with mother" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Father) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Married with father" }
+
+            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Seperated) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup You have to choose Married, Divorced, Separated, LegallySeperated" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` LegallySeperated) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup You have to choose Married, Divorced, Separated, LegallySeperated" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Divorced) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup You have to choose Married, Divorced, Separated, LegallySeperated" }
+        }
+    }
+}
+
+private infix fun List<Person.Relationship>.`ไม่มีความสัมพันธ์กับ`(relation: Person.Relate): Boolean =
+    find { it.relate == relation } == null
+
 val personRelationsShip: GenoGramDao by lazy { MongoRelationsShipDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
