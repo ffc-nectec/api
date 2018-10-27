@@ -46,25 +46,25 @@ private fun conditionRelationShip(updateRelation: List<Person.Relationship>, per
     val personGroupRelation = updateRelation.filter { it.id == personRelation.first().id }
     when (relateGroup) {
         Child -> {
-            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Mother) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Mother is Child" }
-            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Father) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Father is Child" }
-            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Married) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Married with child" }
-            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Seperated) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Separated with child" }
-            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` LegallySeperated) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Legally Separated with child" }
-            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Divorced) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Divorced with child" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์เป็น` Mother) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Mother is Child" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์เป็น` Father) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Father is Child" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์เป็น` Married) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Married with child" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์เป็น` Seperated) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Separated with child" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์เป็น` LegallySeperated) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Legally Separated with child" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์เป็น` Divorced) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Divorced with child" }
         }
         Married -> {
-            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Mother) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Married with mother" }
-            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Father) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Married with father" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์เป็น` Mother) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Married with mother" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์เป็น` Father) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup Married with father" }
 
-            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Seperated) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup You have to choose Married, Divorced, Separated, LegallySeperated" }
-            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` LegallySeperated) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup You have to choose Married, Divorced, Separated, LegallySeperated" }
-            require(personGroupRelation `ไม่มีความสัมพันธ์กับ` Divorced) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup You have to choose Married, Divorced, Separated, LegallySeperated" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์เป็น` Seperated) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup You have to choose Married, Divorced, Separated, LegallySeperated" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์เป็น` LegallySeperated) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup You have to choose Married, Divorced, Separated, LegallySeperated" }
+            require(personGroupRelation `ไม่มีความสัมพันธ์เป็น` Divorced) { "ตรวจพบความสัมพันธ์ในครอบครัวแปลก $relateGroup You have to choose Married, Divorced, Separated, LegallySeperated" }
         }
     }
 }
 
-private infix fun List<Person.Relationship>.`ไม่มีความสัมพันธ์กับ`(relation: Person.Relate): Boolean =
+private infix fun List<Person.Relationship>.`ไม่มีความสัมพันธ์เป็น`(relation: Person.Relate): Boolean =
     find { it.relate == relation } == null
 
 val personRelationsShip: GenoGramDao by lazy { MongoRelationsShipDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
