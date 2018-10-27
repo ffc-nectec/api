@@ -154,7 +154,6 @@ class MongoRelationsShipDaoTest {
             dao.update(ORG_ID, dog.id, dog.relationships)
         } catch (ex: Exception) {
             ex.message!! `should start with` "ตรวจพบความสัมพันธ์ในครอบครัวแปลก"
-            ex.printStackTrace()
             throw ex
         }
     }
@@ -169,7 +168,34 @@ class MongoRelationsShipDaoTest {
             dao.update(ORG_ID, dog.id, dog.relationships)
         } catch (ex: Exception) {
             ex.message!! `should start with` "ตรวจพบความสัมพันธ์ในครอบครัวแปลก"
-            ex.printStackTrace()
+            throw ex
+        }
+    }
+
+    @Test(expected = java.lang.IllegalArgumentException::class)
+    fun childMarriedFather() {
+        dog.update {
+            relationships.add(Person.Relationship(Person.Relate.Child, rabbit))
+            relationships.add(Person.Relationship(Person.Relate.Married, rabbit))
+        }
+        try {
+            dao.update(ORG_ID, dog.id, dog.relationships)
+        } catch (ex: Exception) {
+            ex.message!! `should start with` "ตรวจพบความสัมพันธ์ในครอบครัวแปลก"
+            throw ex
+        }
+    }
+
+    @Test(expected = java.lang.IllegalArgumentException::class)
+    fun fatherMarriedChild() {
+        dog.update {
+            relationships.add(Person.Relationship(Person.Relate.Married, rabbit))
+            relationships.add(Person.Relationship(Person.Relate.Child, rabbit))
+        }
+        try {
+            dao.update(ORG_ID, dog.id, dog.relationships)
+        } catch (ex: Exception) {
+            ex.message!! `should start with` "ตรวจพบความสัมพันธ์ในครอบครัวแปลก"
             throw ex
         }
     }
