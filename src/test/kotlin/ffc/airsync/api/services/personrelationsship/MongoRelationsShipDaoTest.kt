@@ -17,7 +17,6 @@ import ffc.entity.update
 import ffc.entity.util.generateTempId
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
-import org.amshove.kluent.`should start with`
 import org.joda.time.LocalDate
 import org.junit.After
 import org.junit.Before
@@ -128,75 +127,5 @@ class MongoRelationsShipDaoTest {
 
         rabbitUpdate.first().id `should be equal to` dog.id
         rabbitUpdate.last().id `should be equal to` dog.id
-    }
-
-    @Test(expected = java.lang.IllegalArgumentException::class)
-    fun validateDuplicateRelation() {
-        dog.update {
-            relationships.add(Person.Relationship(Person.Relate.Mother, rabbit))
-            relationships.add(Person.Relationship(Person.Relate.Mother, rabbit))
-        }
-        try {
-            dao.update(ORG_ID, dog.id, dog.relationships)
-        } catch (ex: Exception) {
-            ex.message!! `should start with` "พบการใส่ความสัมพันธ์ซ้ำ"
-            throw ex
-        }
-    }
-
-    @Test(expected = java.lang.IllegalArgumentException::class)
-    fun validateMotherChild() {
-        dog.update {
-            relationships.add(Person.Relationship(Person.Relate.Child, rabbit))
-            relationships.add(Person.Relationship(Person.Relate.Mother, rabbit))
-        }
-        try {
-            dao.update(ORG_ID, dog.id, dog.relationships)
-        } catch (ex: Exception) {
-            ex.message!! `should start with` "ตรวจพบความสัมพันธ์ในครอบครัวแปลก"
-            throw ex
-        }
-    }
-
-    @Test(expected = java.lang.IllegalArgumentException::class)
-    fun validateFatherChild() {
-        dog.update {
-            relationships.add(Person.Relationship(Person.Relate.Father, rabbit))
-            relationships.add(Person.Relationship(Person.Relate.Child, rabbit))
-        }
-        try {
-            dao.update(ORG_ID, dog.id, dog.relationships)
-        } catch (ex: Exception) {
-            ex.message!! `should start with` "ตรวจพบความสัมพันธ์ในครอบครัวแปลก"
-            throw ex
-        }
-    }
-
-    @Test(expected = java.lang.IllegalArgumentException::class)
-    fun childMarriedFather() {
-        dog.update {
-            relationships.add(Person.Relationship(Person.Relate.Child, rabbit))
-            relationships.add(Person.Relationship(Person.Relate.Married, rabbit))
-        }
-        try {
-            dao.update(ORG_ID, dog.id, dog.relationships)
-        } catch (ex: Exception) {
-            ex.message!! `should start with` "ตรวจพบความสัมพันธ์ในครอบครัวแปลก"
-            throw ex
-        }
-    }
-
-    @Test(expected = java.lang.IllegalArgumentException::class)
-    fun fatherMarriedChild() {
-        dog.update {
-            relationships.add(Person.Relationship(Person.Relate.Married, rabbit))
-            relationships.add(Person.Relationship(Person.Relate.Child, rabbit))
-        }
-        try {
-            dao.update(ORG_ID, dog.id, dog.relationships)
-        } catch (ex: Exception) {
-            ex.message!! `should start with` "ตรวจพบความสัมพันธ์ในครอบครัวแปลก"
-            throw ex
-        }
     }
 }
