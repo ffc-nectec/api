@@ -30,6 +30,7 @@ import javax.annotation.security.RolesAllowed
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.Consumes
 import javax.ws.rs.DefaultValue
+import javax.ws.rs.DELETE
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.GET
 import javax.ws.rs.NotFoundException
@@ -193,5 +194,13 @@ class HouseResource {
             }
             else -> throw ForbiddenException("ไม่มีสิทธ์ ในการสร้างบ้าน")
         }
+    }
+
+    @DELETE
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/${PART_HOUSESERVICE}s")
+    @RolesAllowed("ORG", "ADMIN")
+    fun delete(@PathParam("orgId") orgId: String): Response {
+        houses.removeByOrgId(orgId)
+        return Response.status(Response.Status.FOUND).build()
     }
 }

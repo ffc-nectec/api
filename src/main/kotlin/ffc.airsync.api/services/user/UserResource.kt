@@ -20,7 +20,6 @@ import javax.xml.bind.DatatypeConverter
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 class UserResource {
-
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     @RolesAllowed("ORG", "ADMIN")

@@ -69,7 +69,7 @@ abstract class MongoAbsConnect(
             getDbCollection()
         } catch (ex: Exception) {
             ex.printStackTrace()
-            val exOut = javax.ws.rs.InternalServerErrorException("Mongo Error")
+            val exOut = javax.ws.rs.InternalServerErrorException(ex.message)
             exOut.stackTrace = ex.stackTrace
             throw exOut
         }
