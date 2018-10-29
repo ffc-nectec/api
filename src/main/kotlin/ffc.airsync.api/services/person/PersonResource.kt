@@ -25,6 +25,7 @@ import ffc.entity.Person
 import ffc.entity.User
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
+import javax.ws.rs.DELETE
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.PUT
@@ -51,6 +52,15 @@ class PersonResource {
         printDebug("\nCall create person by ip = ")
         val persons = persons.insert(orgId, personList)
         return Response.status(Response.Status.CREATED).entity(persons).build()
+    }
+
+    @DELETE
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/persons")
+    @RolesAllowed("ORG", "ADMIN")
+    fun delete(@PathParam("orgId") orgId: String): Response {
+        printDebug("\nCall create person by ip = ")
+        persons.remove(orgId)
+        return Response.status(Response.Status.FOUND).build()
     }
 
     @POST
