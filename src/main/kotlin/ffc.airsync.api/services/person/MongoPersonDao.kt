@@ -33,6 +33,17 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
         return dbCollection.ffcInsert(personDoc)
     }
 
+    override fun insert(orgId: String, persons: List<Person>): List<Person> {
+        val personInsert = persons.map {
+            it.orgId = orgId
+            val personDoc = it.buildInsertBson()
+            personDoc.append("orgIndex", ObjectId(orgId))
+            personDoc
+        }
+
+        return dbCollection.ffcInsert(personInsert)
+    }
+
     override fun update(orgId: String, person: Person): Person {
         person.orgId = orgId
         val query = "_id" equal ObjectId(person.id)
@@ -63,10 +74,6 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
         require(result["orgId"].toString() == orgId) { "ไม่พบรหัส person id $personId ที่ค้นหา" }
 
         return result.toJson().parseTo()
-    }
-
-    override fun insert(orgId: String, persons: List<Person>): List<Person> {
-        return persons.map { insert(orgId, it) }
     }
 
     override fun findByOrgId(orgId: String): List<Person> {
