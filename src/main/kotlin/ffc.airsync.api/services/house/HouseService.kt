@@ -36,17 +36,11 @@ import javax.ws.rs.BadRequestException
 object HouseService {
     fun createByOrg(orgId: String, houseList: List<House>): List<House> {
         printDebug("create house by org.")
-        val houseReturn = arrayListOf<House>()
-        try {
-            houseList.forEach {
-                val houseUpdate = createByOrg(orgId, it)
-                houseReturn.add(houseUpdate)
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            throw ex
-        }
-        return houseReturn
+        return houses.insert(orgId, houseList.map {
+            if (it.link == null) throw BadRequestException("เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link")
+            it.link!!.isSynced = true
+            it
+        })
     }
 
     fun createByOrg(orgId: String, house: House): House {
@@ -56,12 +50,10 @@ object HouseService {
     }
 
     fun createByUser(orgId: String, houseList: List<House>): List<House> {
-        val houseReturn = arrayListOf<House>()
-        houseList.forEach {
-            val houseUpdate = createByUser(orgId, it)
-            houseReturn.add(houseUpdate)
-        }
-        return houseReturn
+        return houses.insert(orgId, houseList.map {
+            if (it.link != null) throw BadRequestException("เมื่อสร้างด้วย user ไม่ต้องมีข้อมูล link")
+            it
+        })
     }
 
     fun createByUser(orgId: String, house: House): House {

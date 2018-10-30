@@ -55,6 +55,16 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
         return dbCollection.ffcInsert(docHouse)
     }
 
+    override fun insert(orgId: String, house: List<House>): List<House> {
+        val doc = house.map {
+            val docHouse = it.buildInsertBson()
+            docHouse.append("orgIndex", ObjectId(orgId))
+            docHouse
+        }
+
+        return dbCollection.ffcInsert(doc)
+    }
+
     override fun update(orgId: String, house: House): House? {
         printDebug("Call MongoHouseDao.upldate ${house.toJson()}")
         val query = "_id" equal ObjectId(house.id)
