@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.personrelationsship
 
 import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.person.persons
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.plus
 import ffc.airsync.api.services.util.toDocument
@@ -40,5 +41,20 @@ class MongoRelationsShipDao(host: String, port: Int) : MongoAbsConnect(host, por
         dbCollection.updateOne("_id" equal ObjectId(personId), "\$set" equal relationDoc)
 
         return get(orgId, personId)
+    }
+
+    override fun collectGenogram(orgId: String, personId: String, skip: List<Person>): List<Person> {
+        val collect = HashMap<String, Person>()
+        val relation = get(orgId, personId)
+
+        collect[personId] = persons.getPerson(orgId, personId)
+
+        relation.forEach { personRelation ->
+            if (skip.find { it.id == personRelation.id } == null) {
+                collect[personRelation.id] = persons.getPerson(orgId, personRelation.id)
+                collectGenogram(orgId, personId, collect.map { it.value })
+            }
+        }
+        return collect.map { it.value }
     }
 }
