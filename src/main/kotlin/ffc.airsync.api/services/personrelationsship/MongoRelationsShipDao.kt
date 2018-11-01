@@ -45,7 +45,11 @@ class MongoRelationsShipDao(host: String, port: Int) : MongoAbsConnect(host, por
 
     override fun collectGenogram(orgId: String, personId: String, skip: List<Person>): List<Person> {
         val collect = HashMap<String, Person>()
-        val relation = get(orgId, personId)
+        val relation: List<Person.Relationship> = try {
+            get(orgId, personId)
+        } catch (ex: NoSuchElementException) {
+            arrayListOf()
+        }
 
         collect[personId] = persons.getPerson(orgId, personId)
 
