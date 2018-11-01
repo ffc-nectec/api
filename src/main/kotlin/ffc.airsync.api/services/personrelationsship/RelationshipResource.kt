@@ -35,4 +35,12 @@ class RelationshipResource {
     fun update(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String, relationship: List<Person.Relationship>): List<Person.Relationship> {
         return personRelationsShip.update(orgId, personId, relationship)
     }
+
+    @GET
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}/genogram/collect")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @Cache(maxAge = 5)
+    fun getGenogram(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<Person> {
+        return personRelationsShip.collectGenogram(orgId, personId)
+    }
 }

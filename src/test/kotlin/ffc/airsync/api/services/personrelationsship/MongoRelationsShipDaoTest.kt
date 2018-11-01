@@ -42,7 +42,6 @@ class MongoRelationsShipDaoTest {
                 .connectionsPerHost(5)
                 .build())
         MongoAbsConnect.setClient(client)
-
         val daoPerson = MongoPersonDao(serverAddress.hostString, serverAddress.port)
         dao = MongoRelationsShipDao(serverAddress.hostString, serverAddress.port)
         val misterDog = Person().apply {
@@ -127,5 +126,11 @@ class MongoRelationsShipDaoTest {
 
         rabbitUpdate.first().id `should be equal to` dog.id
         rabbitUpdate.last().id `should be equal to` dog.id
+    }
+
+    @Test
+    fun collectGenogram() {
+        val rela = dao.collectGenogram(ORG_ID, dog.id)
+        rela.count() `should be equal to` 2
     }
 }
