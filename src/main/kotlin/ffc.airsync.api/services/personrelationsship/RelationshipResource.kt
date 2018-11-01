@@ -2,6 +2,8 @@ package ffc.airsync.api.services.personrelationsship
 
 import ffc.airsync.api.filter.Cache
 import ffc.entity.Person
+import ffc.entity.gson.parseTo
+import ffc.genogram.Family
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
@@ -36,11 +38,224 @@ class RelationshipResource {
         return personRelationsShip.update(orgId, personId, relationship)
     }
 
+    // 5bd7247932b1d7000440f67e
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}/genogram/collect")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun getGenogram(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<Person> {
         return personRelationsShip.collectGenogram(orgId, personId)
+    }
+
+    @GET
+    @Path("/person/genogram/demo")
+    @Cache(maxAge = 5)
+    fun demo2(@PathParam("orgId") orgId: String): Family {
+        return demo("11")
+    }
+
+    @GET
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/genogram/demo")
+    @Cache(maxAge = 5)
+    fun demo(@PathParam("orgId") orgId: String): Family {
+        val json = """
+            {
+  "familyId": 2,
+  "familyName": "Smiths",
+  "bloodFamily": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "members": [
+    {
+      "idCard": 0,
+      "firstname": "Grandfather",
+      "lastname": "Smiths",
+      "birthDate": "1-1-1970",
+      "gender": 0,
+      "father": null,
+      "mother": null,
+      "twin": null,
+      "ex-husband": null,
+      "ex-wife": null,
+      "husband": null,
+      "wife": [
+        10
+      ],
+      "children": [
+        1,
+        2
+      ],
+      "linkedStack": [
+        10,
+        1,
+        2
+      ]
+    },
+    {
+      "idCard": 10,
+      "firstname": "Grandmother",
+      "lastname": "Smiths",
+      "birthDate": "12-11-1972",
+      "gender": 1,
+      "father": null,
+      "mother": null,
+      "twin": null,
+      "ex-husband": null,
+      "ex-wife": null,
+      "husband": [
+        0
+      ],
+      "wife": null,
+      "children": [
+        1,
+        2
+      ],
+      "linkedStack": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "idCard": 1,
+      "firstname": "Lisa",
+      "lastname": "Snow",
+      "birthDate": "12-11-1980",
+      "gender": 1,
+      "father": 0,
+      "mother": 10,
+      "twin": null,
+      "ex-husband": null,
+      "ex-wife": null,
+      "husband": [
+        13
+      ],
+      "wife": null,
+      "children": [
+        3,
+        4,
+        5
+      ],
+      "linkedStack": [
+        0,
+        10,
+        13,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "idCard": 13,
+      "firstname": "Bill",
+      "lastname": "Snow",
+      "birthDate": "12-11-1980",
+      "gender": 0,
+      "father": null,
+      "mother": null,
+      "twin": null,
+      "ex-husband": null,
+      "ex-wife": null,
+      "husband": null,
+      "wife": [
+        1
+      ],
+      "children": [
+        3,
+        4,
+        5
+      ],
+      "linkedStack": [
+        1,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "idCard": 3,
+      "firstname": "River",
+      "lastname": "Snow",
+      "birthDate": "12-11-2001",
+      "gender": 0,
+      "father": 13,
+      "mother": 1,
+      "twin": null,
+      "ex-husband": null,
+      "ex-wife": null,
+      "husband": null,
+      "wife": null,
+      "children": null,
+      "linkedStack": [
+        13,
+        1
+      ]
+    },
+    {
+      "idCard": 4,
+      "firstname": "Will",
+      "lastname": "Snow",
+      "birthDate": "12-11-2003",
+      "gender": 0,
+      "father": 13,
+      "mother": 1,
+      "twin": null,
+      "ex-husband": null,
+      "ex-wife": null,
+      "husband": null,
+      "wife": null,
+      "children": null,
+      "linkedStack": [
+        13,
+        1
+      ]
+    },
+    {
+      "idCard": 5,
+      "firstname": "Sarah",
+      "lastname": "Snow",
+      "birthDate": "12-11-2004",
+      "gender": 1,
+      "father": 13,
+      "mother": 1,
+      "twin": null,
+      "ex-husband": null,
+      "ex-wife": null,
+      "husband": null,
+      "wife": null,
+      "children": null,
+      "linkedStack": [
+        13,
+        1
+      ]
+    },
+    {
+      "idCard": 2,
+      "firstname": "Ed",
+      "lastname": "Smiths",
+      "birthDate": "23-10-1982",
+      "gender": 0,
+      "father": 0,
+      "mother": 10,
+      "twin": null,
+      "ex-husband": null,
+      "ex-wife": null,
+      "husband": null,
+      "wife": null,
+      "children": null,
+      "linkedStack": [
+        0,
+        10
+      ]
+    }
+  ]
+}
+        """.trimIndent()
+        return json.parseTo()
     }
 }
