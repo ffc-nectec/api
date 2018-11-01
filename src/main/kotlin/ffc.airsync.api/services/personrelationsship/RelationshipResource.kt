@@ -50,7 +50,7 @@ class RelationshipResource {
     @GET
     @Path("/person/genogram/demo")
     @Cache(maxAge = 5)
-    fun demo2(@PathParam("orgId") orgId: String): Family {
+    fun demo2(): Family {
         return demo("11")
     }
 
