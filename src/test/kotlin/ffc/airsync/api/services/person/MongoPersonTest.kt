@@ -15,6 +15,7 @@ import ffc.entity.healthcare.Disease
 import ffc.entity.update
 import ffc.entity.util.generateTempId
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should not be equal to`
 import org.joda.time.LocalDate
 import org.junit.After
 import org.junit.Before
@@ -243,5 +244,11 @@ class MongoPersonTest {
         })
 
         dao.syncData(ORG_ID).count() `should be equal to` 2
+    }
+
+    @Test
+    fun hashCodeTest() {
+        misterDog.hashCode() `should be equal to` misterDog.hashCode()
+        misterDog.hashCode() `should not be equal to` missCat.hashCode()
     }
 }

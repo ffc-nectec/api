@@ -43,8 +43,21 @@ class RelationshipResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}/genogram/collect")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
-    fun getGenogram(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<Person> {
+    fun getGenogramCollect(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<Person> {
         return personRelationsShip.collectGenogram(orgId, personId)
+    }
+
+    @GET
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}/genogram")
+    @Cache(maxAge = 5)
+    fun getGenogramFamily(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): Family {
+        val collect = getGenogramCollect(orgId, personId)
+        val member: List<ffc.genogram.Person> = collect.map {
+            it.buildGeogramPerson(collect)
+        }
+        val somePerson = collect.first()
+
+        return Family(somePerson.houseId.hashCode().toLong(), somePerson.lastname, collect.buildBloodFamily(), member)
     }
 
     @GET
