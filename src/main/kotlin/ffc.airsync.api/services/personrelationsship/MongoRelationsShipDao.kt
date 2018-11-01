@@ -43,19 +43,23 @@ class MongoRelationsShipDao(host: String, port: Int) : MongoAbsConnect(host, por
         return get(orgId, personId)
     }
 
-    override fun collectGenogram(orgId: String, personId: String, skip: List<String>, ttl: Int): List<Person> {
-        if (ttl <= 0) return arrayListOf()
-        val collect = HashMap<String, Person>()
+    override fun collectGenogram(orgId: String, personId: String): List<Person> {
+        return collectPerson(orgId, personId).map { it.value }
+    }
+
+    private fun collectPerson(orgId: String, personId: String, collect: HashMap<String, Person> = hashMapOf()): HashMap<String, Person> {
         val relation: List<Person.Relationship> = get(orgId, personId)
 
-        collect[personId] = persons.getPerson(orgId, personId)
+        if (collect[personId] == null)
+            collect[personId] = persons.getPerson(orgId, personId)
 
         relation.forEach { personRelation ->
-            if (skip.find { personRelation.id == it } == null) {
-                collect[personRelation.id] = persons.getPerson(orgId, personRelation.id)
-                collectGenogram(orgId, personId, collect.map { it.key }, ttl - 1)
+            if (personRelation.id.isNotBlank() && collect[personRelation.id] == null) {
+                val person = persons.getPerson(orgId, personRelation.id)
+                collect[personRelation.id] = person
+                collectPerson(orgId, personRelation.id, collect)
             }
         }
-        return collect.map { it.value }
+        return collect
     }
 }

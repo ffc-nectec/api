@@ -7,6 +7,7 @@ import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
 import ffc.airsync.api.services.MongoAbsConnect
 import ffc.airsync.api.services.person.MongoPersonDao
+import ffc.airsync.api.services.person.PersonDao
 import ffc.entity.Link
 import ffc.entity.Person
 import ffc.entity.System
@@ -25,6 +26,7 @@ import org.junit.Test
 class MongoRelationsShipDaoTest {
     private val ORG_ID = "5bbd7f5ebc920637b04c7796"
     lateinit var dao: GenoGramDao
+    lateinit var daoPerson: PersonDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer
     lateinit var dog: Person
@@ -42,7 +44,7 @@ class MongoRelationsShipDaoTest {
                 .connectionsPerHost(5)
                 .build())
         MongoAbsConnect.setClient(client)
-        val daoPerson = MongoPersonDao(serverAddress.hostString, serverAddress.port)
+        daoPerson = MongoPersonDao(serverAddress.hostString, serverAddress.port)
         dao = MongoRelationsShipDao(serverAddress.hostString, serverAddress.port)
         val misterDog = Person().apply {
             identities.add(ThaiCitizenId("1231233123421"))
@@ -128,9 +130,21 @@ class MongoRelationsShipDaoTest {
         rabbitUpdate.last().id `should be equal to` dog.id
     }
 
+    /**
+     * สมชาย > สมหญิง > กระต่าย
+     */
     @Test
     fun collectGenogram() {
+        cat.update {
+            addRelationship(Pair(Person.Relate.Child, rabbit))
+        }
+        daoPerson.update(ORG_ID, cat)
+
+        rabbit.update {
+            addRelationship(Pair(Person.Relate.Mother, cat))
+        }
+        daoPerson.update(ORG_ID, rabbit)
         val rela = dao.collectGenogram(ORG_ID, dog.id)
-        rela.count() `should be equal to` 2
+        rela.count() `should be equal to` 3
     }
 }

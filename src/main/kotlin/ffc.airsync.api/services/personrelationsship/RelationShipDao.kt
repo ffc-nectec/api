@@ -9,7 +9,7 @@ import ffc.genogram.GenderLabel
 interface GenoGramDao : Dao {
     fun get(orgId: String, personId: String): List<Person.Relationship>
     fun update(orgId: String, personId: String, relation: List<Person.Relationship>): List<Person.Relationship>
-    fun collectGenogram(orgId: String, personId: String, skip: List<String> = arrayListOf(), ttl: Int = 10): List<Person>
+    fun collectGenogram(orgId: String, personId: String): List<Person>
 }
 
 fun Person.buildGeogramPerson(group: List<Person>): ffc.genogram.Person {
