@@ -45,32 +45,6 @@ fun Person.buildGeogramPerson(group: List<Person>): ffc.genogram.Person {
 
     person.properties = this
 
-    person.linkedStack = arrayListOf<Int>().apply {
-        person.mother?.let {
-            add(it.toInt())
-        }
-        person.father?.let {
-            add(it.toInt())
-        }
-        person.twin?.let {
-            it.forEach { add(it) }
-        }
-        person.exHusband?.let {
-            it.forEach { add(it) }
-        }
-        person.exWife?.let {
-            it.forEach { add(it) }
-        }
-        person.husband?.let {
-            it.forEach { add(it) }
-        }
-        person.wife?.let {
-            it.forEach { add(it) }
-        }
-        person.children?.let {
-            it.forEach { add(it) }
-        }
-    }
     return person
 }
 

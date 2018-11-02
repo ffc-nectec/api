@@ -35,7 +35,7 @@ class RelationshipResource {
     }
 
     @PUT
-    @Path("/$ORGIDTYPE/zzzz/{personId:([\\dabcdefABCDEF]+)}/relationship")
+    @Path("/$ORGIDTYPE/person/{personId:([\\dabcdefABCDEF]+)}/relationship")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun update(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String, relationship: List<Person.Relationship>): List<Person.Relationship> {

@@ -17,6 +17,6 @@ class EmptyListResponse : ContainerResponseFilter {
         responseContext: ContainerResponseContext
     ) {
         val list = responseContext.entity as? List<*> ?: return
-        if (list.isEmpty()) throw NotFoundException()
+        if (list.isEmpty()) throw NotFoundException("Empty List")
     }
 }
