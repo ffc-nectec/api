@@ -47,6 +47,27 @@ class MongoRelationsShipDao(host: String, port: Int) : MongoAbsConnect(host, por
         return collectPerson(orgId, personId).map { it.value }
     }
 
+    private fun List<Person>.findHead(): List<Person> {
+        val sortList = arrayListOf<Person>()
+        val resultMap = hashMapOf<Int, ArrayList<Person>>()
+        findDeep(first().id, resultMap)
+        return sortList
+    }
+
+    private fun List<Person>.findDeep(personId: String, result: HashMap<Int, ArrayList<Person>>, deep: Int = 0): Int {
+        val person = find { it.id == personId } ?: throw IllegalAccessException("ค้นหาหัว ผิดพลาด ไม่มีสมาชิกในกลุ่ม")
+        person.motherId?.let {
+            return findDeep(it, result, deep + 1)
+        }
+        person.fatherId?.let {
+            return findDeep(it, result, deep + 1)
+        }
+        if (result[deep] == null)
+            result[deep] = arrayListOf()
+        result[deep]!!.add(person)
+        return deep
+    }
+
     private fun collectPerson(orgId: String, personId: String, collect: HashMap<String, Person> = hashMapOf()): HashMap<String, Person> {
         val relation: List<Person.Relationship> = get(orgId, personId)
 

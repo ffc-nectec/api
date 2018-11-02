@@ -14,29 +14,32 @@ interface GenoGramDao : Dao {
 
 fun Person.buildGeogramPerson(group: List<Person>): ffc.genogram.Person {
     val person = ffc.genogram.Person(
-        id.hashCode().toLong(),
-        firstname, lastname,
-        if (sex == Person.Sex.FEMALE) GenderLabel.FEMALE else GenderLabel.MALE,
-        fatherId?.hashCode()?.toLong(),
-        motherId?.hashCode()?.toLong(),
-        arrayListOf(),
-        arrayListOf(),
-        arrayListOf(),
-        group.find { it.id == spouseId }.let {
+        idCard = id.hashCode().toLong(),
+        firstname = firstname,
+        lastname = lastname,
+        gender = if (sex == Person.Sex.FEMALE) GenderLabel.FEMALE else GenderLabel.MALE,
+        father = fatherId?.hashCode()?.toLong(),
+        mother = motherId?.hashCode()?.toLong(),
+        exHusband = null,
+        twin = null,
+        exWife = null,
+        husband = group.find { it.id == spouseId }.let {
             if (it?.sex == Person.Sex.MALE)
                 listOf(it.hashCode())
             else
-                listOf()
+                null
         },
-        group.find { it.id == spouseId }.let {
+        wife = group.find { it.id == spouseId }.let {
             if (it?.sex == Person.Sex.FEMALE)
                 listOf(it.hashCode())
             else
-                listOf()
+                null
         },
-        childId.map { it.hashCode() },
-        null
+        children = childId.map { it.hashCode() },
+        linkedStack = null
     )
+
+    person.properties = this
 
     person.linkedStack = arrayListOf<Int>().apply {
         person.mother?.let {
@@ -66,7 +69,5 @@ fun Person.buildGeogramPerson(group: List<Person>): ffc.genogram.Person {
     }
     return person
 }
-
-fun List<Person>.buildBloodFamily(): List<Int> = map { it.id.hashCode() }
 
 val personRelationsShip: GenoGramDao by lazy { MongoRelationsShipDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
