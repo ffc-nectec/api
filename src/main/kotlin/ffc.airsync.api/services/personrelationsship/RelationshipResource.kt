@@ -16,6 +16,7 @@ import javax.ws.rs.Produces
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.SecurityContext
+import kotlin.math.absoluteValue
 
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -59,7 +60,7 @@ class RelationshipResource {
         }
         val somePerson = collect.first()
 
-        return Family(somePerson.houseId.hashCode().toLong(), somePerson.lastname, member.map { it.idCard.toInt() }, member)
+        return Family(somePerson.houseId.hashCode().toLong().absoluteValue, somePerson.lastname, member.map { it.idCard.toInt() }, member)
     }
 
     @GET

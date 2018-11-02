@@ -5,6 +5,7 @@ import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
 import ffc.entity.Person
 import ffc.genogram.GenderLabel
+import kotlin.math.absoluteValue
 
 interface GenoGramDao : Dao {
     fun get(orgId: String, personId: String): List<Person.Relationship>
@@ -14,28 +15,28 @@ interface GenoGramDao : Dao {
 
 fun Person.buildGeogramPerson(group: List<Person>): ffc.genogram.Person {
     val person = ffc.genogram.Person(
-        idCard = id.hashCode().toLong(),
+        idCard = id.hashCode().toLong().absoluteValue,
         firstname = firstname,
         lastname = lastname,
         gender = if (sex == Person.Sex.FEMALE) GenderLabel.FEMALE else GenderLabel.MALE,
-        father = fatherId?.hashCode()?.toLong(),
-        mother = motherId?.hashCode()?.toLong(),
+        father = fatherId?.hashCode()?.toLong()?.absoluteValue,
+        mother = motherId?.hashCode()?.toLong()?.absoluteValue,
         exHusband = null,
         twin = null,
         exWife = null,
         husband = group.find { it.id == spouseId }.let {
             if (it?.sex == Person.Sex.MALE)
-                listOf(it.hashCode())
+                listOf(it.hashCode().absoluteValue)
             else
                 null
         },
         wife = group.find { it.id == spouseId }.let {
             if (it?.sex == Person.Sex.FEMALE)
-                listOf(it.hashCode())
+                listOf(it.hashCode().absoluteValue)
             else
                 null
         },
-        children = childId.map { it.hashCode() },
+        children = childId.map { it.hashCode().absoluteValue },
         linkedStack = null
     )
     if ((person.children?.isEmpty() != false)) {
