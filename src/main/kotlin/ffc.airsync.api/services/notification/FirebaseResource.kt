@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.notification
 
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.services.ORGIDTYPE
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
 import javax.ws.rs.POST
@@ -16,7 +17,7 @@ import javax.ws.rs.core.Response
 class FirebaseResource {
 
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/firebasetoken")
+    @Path("/$ORGIDTYPE/firebasetoken")
     @RolesAllowed("ORG", "ADMIN")
     fun updateToken(@PathParam("orgId") orgId: String, firebaseToken: HashMap<String, String>): Response {
         printDebug("Call update Firebase Token OrgID $orgId Firebase Token = ${firebaseToken["firebasetoken"]}")
@@ -27,7 +28,7 @@ class FirebaseResource {
     }
 
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/mobilefirebasetoken")
+    @Path("/$ORGIDTYPE/mobilefirebasetoken")
     @RolesAllowed("USER", "PROVIDER", "SURVEYOR")
     fun createToken(@PathParam("orgId") orgId: String, firebaseToken: HashMap<String, String>): Response {
         printDebug("Call update Firebase Token by OrgID $orgId Firebase Token = ${firebaseToken["firebasetoken"]}")

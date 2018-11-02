@@ -19,6 +19,8 @@ package ffc.airsync.api.services.person
 
 import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.services.ORGIDTYPE
+import ffc.airsync.api.services.PERSONIDTYPE
 import ffc.airsync.api.services.util.getTokenRole
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
@@ -46,7 +48,7 @@ class PersonResource {
     private var context: SecurityContext? = null
 
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/persons")
+    @Path("/$ORGIDTYPE/persons")
     @RolesAllowed("ORG", "ADMIN")
     fun creates(@PathParam("orgId") orgId: String, personList: List<Person>): Response {
         printDebug("\nCall create person by ip = ")
@@ -55,7 +57,7 @@ class PersonResource {
     }
 
     @DELETE
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/persons")
+    @Path("/$ORGIDTYPE/persons")
     @RolesAllowed("ORG", "ADMIN")
     fun delete(@PathParam("orgId") orgId: String): Response {
         printDebug("\nCall create person by ip = ")
@@ -64,7 +66,7 @@ class PersonResource {
     }
 
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
+    @Path("/$ORGIDTYPE/person")
     @RolesAllowed("ORG", "ADMIN")
     fun create(@PathParam("orgId") orgId: String, person: Person): Response {
         printDebug("\nCall create person by ip = ")
@@ -73,7 +75,7 @@ class PersonResource {
     }
 
     @PUT
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}")
+    @Path("/$ORGIDTYPE/person/$PERSONIDTYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun updatePerson(
@@ -91,7 +93,7 @@ class PersonResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
+    @Path("/$ORGIDTYPE/person")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun get(
@@ -108,7 +110,7 @@ class PersonResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}")
+    @Path("/$ORGIDTYPE/person/$PERSONIDTYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun getByPersonId(
@@ -119,7 +121,7 @@ class PersonResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/icd10/{icd10:(\\w+)}")
+    @Path("/$ORGIDTYPE/person/icd10/{icd10:(\\w+)}")
     @RolesAllowed("USER")
     fun findByICD10(
         @PathParam("orgId") orgId: String,
