@@ -38,6 +38,9 @@ fun Person.buildGeogramPerson(group: List<Person>): ffc.genogram.Person {
         children = childId.map { it.hashCode() },
         linkedStack = null
     )
+    if ((person.children?.isEmpty() != false)) {
+        person.children = null
+    }
 
     person.properties = this
 
