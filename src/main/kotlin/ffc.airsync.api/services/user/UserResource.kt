@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.user
 
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.buildHeaderMap
 import ffc.entity.User
 import javax.annotation.security.RolesAllowed
@@ -32,7 +33,7 @@ class UserResource {
     }
 
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/authorize")
+    @Path("/$ORGIDTYPE/authorize")
     fun registerMobile(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String): Response {
         val httpHeader = req.buildHeaderMap()
         val token = httpHeader["Authorization"]?.replaceFirst("Basic ", "")

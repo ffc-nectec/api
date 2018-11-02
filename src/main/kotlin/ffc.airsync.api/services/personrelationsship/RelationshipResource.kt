@@ -1,6 +1,8 @@
 package ffc.airsync.api.services.personrelationsship
 
 import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.services.ORGIDTYPE
+import ffc.airsync.api.services.PERSONIDTYPE
 import ffc.entity.Person
 import ffc.entity.gson.parseTo
 import ffc.genogram.Family
@@ -18,12 +20,13 @@ import javax.ws.rs.core.SecurityContext
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+
 class RelationshipResource {
     @Context
     private var context: SecurityContext? = null
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}/relationship")
+    @Path("/$ORGIDTYPE/person/{personId:([\\dabcdefABCDEF]+)}/relationship")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun get(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<Person.Relationship> {
@@ -31,16 +34,15 @@ class RelationshipResource {
     }
 
     @PUT
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}/relationship")
+    @Path("/$ORGIDTYPE/person/{personId:([\\dabcdefABCDEF]+)}/relationship")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun update(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String, relationship: List<Person.Relationship>): List<Person.Relationship> {
         return personRelationsShip.update(orgId, personId, relationship)
     }
 
-    // 5bd7247932b1d7000440f67e
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}/genogram/collect")
+    @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/genogram/collect")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun getGenogramCollect(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<Person> {
@@ -48,7 +50,7 @@ class RelationshipResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}/genogram")
+    @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/genogram")
     @Cache(maxAge = 5)
     fun getGenogramFamily(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): Family {
         val collect = getGenogramCollect(orgId, personId)
@@ -68,7 +70,7 @@ class RelationshipResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/genogram/demo")
+    @Path("/$ORGIDTYPE/person/genogram/demo")
     @Cache(maxAge = 5)
     fun demo(@PathParam("orgId") orgId: String): Family {
         val json = """

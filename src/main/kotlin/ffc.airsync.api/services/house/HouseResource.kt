@@ -18,6 +18,7 @@
 package ffc.airsync.api.services.house
 
 import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.GEOJSONHeader
 import ffc.airsync.api.services.util.getTokenRole
 import ffc.airsync.api.services.util.paging
@@ -46,6 +47,7 @@ import javax.ws.rs.core.Response
 import javax.ws.rs.core.SecurityContext
 
 const val PART_HOUSESERVICE = "place/house"
+const val NEWPART_HOUSESERVICE = "house"
 
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -55,7 +57,7 @@ class HouseResource {
     private var context: SecurityContext? = null
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    @Path("/$ORGIDTYPE/$PART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 5)
@@ -72,7 +74,20 @@ class HouseResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @Produces(GEOJSONHeader)
+    @Cache(maxAge = 5)
+    fun newGetGeoJsonHouse(
+        @QueryParam("page") page: Int = 1,
+        @QueryParam("per_page") per_page: Int = 200,
+        @PathParam("orgId") orgId: String
+    ): FeatureCollection<House> {
+        return getGeoJsonHouse(page, per_page, orgId)
+    }
+
+    @GET
+    @Path("/$ORGIDTYPE/$PART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 5)
     fun newGetJsonHouse(
@@ -88,10 +103,24 @@ class HouseResource {
             else -> null
         }
         return HouseService.getHouses(orgId, query, haveLocation).paging(page, per_page)
+
+    }
+
+    @GET
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @Cache(maxAge = 5)
+    fun newGetJsonHouse(
+        @QueryParam("page") page: Int = 1,
+        @QueryParam("per_page") per_page: Int = 200,
+        @QueryParam("haveLocation") haveLocationQuery: String? = null,
+        @PathParam("orgId") orgId: String
+    ): List<House> {
+        return getJsonHouse(page, per_page, haveLocationQuery, orgId)
     }
 
     @PUT
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @Path("/$ORGIDTYPE/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun update(
         @PathParam("orgId") orgId: String,
@@ -104,7 +133,18 @@ class HouseResource {
     }
 
     @PUT
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    fun Newupdate(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String,
+        house: House
+    ): Response {
+        return update(orgId, houseId, house)
+    }
+
+    @PUT
+    @Path("/$ORGIDTYPE/$PART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun updateFail(
         @PathParam("orgId") orgId: String,
@@ -114,8 +154,19 @@ class HouseResource {
         require(false) { "URL สำหรับการ update ข้อมูลผิด" }
     }
 
+    @PUT
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    fun newUpdateFail(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String,
+        house: House
+    ) {
+        updateFail(orgId, houseId, house)
+    }
+
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @Path("/$ORGIDTYPE/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 2)
@@ -127,7 +178,7 @@ class HouseResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
+    @Path("/$ORGIDTYPE/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
     @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun getPersonInHouse(
@@ -138,7 +189,18 @@ class HouseResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
+    @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
+    @Cache(maxAge = 2)
+    fun NewGetPersonInHouse(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String
+    ): List<Person> {
+        return getPersonInHouse(orgId, houseId)
+    }
+
+    @GET
+    @Path("/$ORGIDTYPE/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun getSingle(
@@ -149,7 +211,7 @@ class HouseResource {
     }
 
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/${PART_HOUSESERVICE}s")
+    @Path("/$ORGIDTYPE/${PART_HOUSESERVICE}s")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
         if (houseList == null) throw BadRequestException()
@@ -169,7 +231,7 @@ class HouseResource {
     }
 
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    @Path("/$ORGIDTYPE/$PART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
         if (house == null) throw BadRequestException()
@@ -197,7 +259,7 @@ class HouseResource {
     }
 
     @DELETE
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/${PART_HOUSESERVICE}s")
+    @Path("/$ORGIDTYPE/${PART_HOUSESERVICE}s")
     @RolesAllowed("ORG", "ADMIN")
     fun delete(@PathParam("orgId") orgId: String): Response {
         houses.removeByOrgId(orgId)

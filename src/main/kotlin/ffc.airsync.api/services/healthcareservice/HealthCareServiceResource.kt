@@ -1,6 +1,9 @@
 package ffc.airsync.api.services.healthcareservice
 
 import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.services.ORGIDTYPE
+import ffc.airsync.api.services.PERSONIDTYPE
+import ffc.airsync.api.services.VISITIDTYPE
 import ffc.airsync.api.services.util.getTokenRole
 import ffc.entity.User
 import ffc.entity.healthcare.HealthCareService
@@ -24,7 +27,7 @@ class VisitResource {
     private var context: SecurityContext? = null
 
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE")
+    @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     fun create(
         @PathParam("orgId") orgId: String,
@@ -39,7 +42,7 @@ class VisitResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE/{visitId:([\\dabcdefABCDEF].*)}")
+    @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE/$VISITIDTYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun find(@PathParam("orgId") orgId: String, @PathParam("visitId") visitId: String): HomeVisit {
@@ -47,7 +50,7 @@ class VisitResource {
     }
 
     @PUT
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE/{visitId:([\\dabcdefABCDEF].*)}")
+    @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE/$VISITIDTYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun update(
         @PathParam("orgId") orgId: String,
@@ -67,7 +70,7 @@ class VisitResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}/$PART_HEALTHCARESERVICE")
+    @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/$PART_HEALTHCARESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun getPerson(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<HealthCareService> {
