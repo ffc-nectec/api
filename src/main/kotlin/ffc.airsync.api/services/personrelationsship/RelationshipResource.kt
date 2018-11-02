@@ -27,7 +27,7 @@ class RelationshipResource {
     private var context: SecurityContext? = null
 
     @GET
-    @Path("/$ORGIDTYPE/person/{personId:([\\dabcdefABCDEF]+)}")
+    @Path("/$ORGIDTYPE/person/{personId:([\\dabcdefABCDEF]+)}/relationship")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun get(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<Person.Relationship> {
@@ -35,7 +35,7 @@ class RelationshipResource {
     }
 
     @PUT
-    @Path("/$ORGIDTYPE/zzz/{personId:([\\dabcdefABCDEF]+)}")
+    @Path("/$ORGIDTYPE/zzzz/{personId:([\\dabcdefABCDEF]+)}/relationship")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun update(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String, relationship: List<Person.Relationship>): List<Person.Relationship> {
