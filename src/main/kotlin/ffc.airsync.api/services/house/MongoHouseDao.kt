@@ -23,13 +23,13 @@ import ffc.airsync.api.services.MongoAbsConnect
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
+import ffc.airsync.api.services.util.listOf
 import ffc.airsync.api.services.util.plus
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import ffc.entity.place.House
 import org.bson.Document
 import org.bson.types.ObjectId
-import java.util.ArrayList
 import javax.ws.rs.NotFoundException
 
 internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnect(host, port, "ffc", "house") {
@@ -102,28 +102,20 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
         dbCollection.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบบ้าน id $houseId ให้ลบ")
     }
 
-    override fun findAll(orgId: String, haveLocation: Boolean?): List<House> {
+    override fun findAll(orgId: String, queryStr: String?, haveLocation: Boolean?): List<House> {
         val query = "orgIndex" equal ObjectId(orgId)
-        when {
-            haveLocation == null -> {
-            }
-            haveLocation -> query.append("location", "\$ne" equal null)
+        when (haveLocation) {
+            null -> { }
+            true -> query.append("location", "\$ne" equal null)
             else -> query.append("location", "\$eq" equal null)
         }
-        val listHouse: ArrayList<House> = arrayListOf()
-
-        mongoSafe(object : MongoSafeRun {
-            override fun run() {
-                val houseListDocument = dbCollection.find(query)
-                printDebug("getHouseInMongo size = ${houseListDocument.count()}")
-
-                houseListDocument.forEach {
-                    val house: House = it.toJson().parseTo()
-                    listHouse.add(house)
-                }
+        var houses = dbCollection.find(query).listOf<House>()
+        queryStr?.let {
+            houses = houses.filter {
+                it.no?.contains(queryStr) == true || it.villageName?.contains(queryStr) == true
             }
-        })
-        return listHouse
+        }
+        return houses
     }
 
     override fun find(orgId: String, houseId: String): House? {

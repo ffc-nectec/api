@@ -20,6 +20,7 @@ package ffc.airsync.api.services.house
 import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.services.util.GEOJSONHeader
 import ffc.airsync.api.services.util.getTokenRole
+import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
 import ffc.entity.User
 import ffc.entity.place.House
@@ -28,6 +29,7 @@ import me.piruin.geok.geometry.FeatureCollection
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.Consumes
+import javax.ws.rs.DefaultValue
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.GET
 import javax.ws.rs.NotFoundException
@@ -62,10 +64,7 @@ class HouseResource {
         @QueryParam("per_page") per_page: Int = 200,
         @PathParam("orgId") orgId: String
     ): FeatureCollection<House> {
-        val houses = HouseService.getHouses(orgId,
-            if (page == 0) 1 else page,
-            if (per_page == 0) 200 else per_page,
-            haveLocation = true)
+        val houses = HouseService.getHouses(orgId, haveLocation = true)
         if (houses.isEmpty()) throw NotFoundException("ไม่มีรายการบ้าน")
         val geoReturn = FeatureCollection<House>()
         geoReturn.features.addAll(houses.map { Feature(it.location!!, it) })
@@ -86,12 +85,13 @@ class HouseResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 5)
     fun getJsonHouse(
-        @QueryParam("page") page: Int = 1,
-        @QueryParam("per_page") per_page: Int = 200,
+        @QueryParam("page") @DefaultValue("1") page: Int = 1,
+        @QueryParam("per_page") @DefaultValue("200") per_page: Int = 200,
+        @QueryParam("query") query: String? = null,
         @QueryParam("haveLocation") haveLocationQuery: String? = null,
         @PathParam("orgId") orgId: String
     ): List<House> {
@@ -100,24 +100,21 @@ class HouseResource {
             "false" -> false
             else -> null
         }
-        return HouseService.getHouses(
-            orgId,
-            if (page == 0) 1 else page,
-            if (per_page == 0) 200 else per_page,
-            haveLocation)
+        return HouseService.getHouses(orgId, query, haveLocation).paging(page, per_page)
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 5)
     fun newGetJsonHouse(
-        @QueryParam("page") page: Int = 1,
-        @QueryParam("per_page") per_page: Int = 200,
+        @QueryParam("page") @DefaultValue("1") page: Int = 1,
+        @QueryParam("per_page") @DefaultValue("200") per_page: Int = 200,
+        @QueryParam("query") query: String? = null,
         @QueryParam("haveLocation") haveLocationQuery: String? = null,
         @PathParam("orgId") orgId: String
     ): List<House> {
-        return getJsonHouse(page, per_page, haveLocationQuery, orgId)
+        return getJsonHouse(page, per_page, query, haveLocationQuery, orgId)
     }
 
     @PUT
