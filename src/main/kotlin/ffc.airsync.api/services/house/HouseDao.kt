@@ -30,7 +30,7 @@ interface HouseDao : Dao {
 
     fun delete(orgId: String, houseId: String)
 
-    fun findAll(orgId: String, haveLocation: Boolean? = true): List<House>
+    fun findAll(orgId: String, query: String? = null, haveLocation: Boolean? = true): List<House>
     fun find(orgId: String, houseId: String): House?
 
     fun removeByOrgId(orgId: String)

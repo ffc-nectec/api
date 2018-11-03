@@ -56,6 +56,7 @@ class MongoHouseDaoTest {
             this.identity = ThaiHouseholdId(identity)
             this.no = no
             road = "สาธร"
+            villageName = "ลัดดา"
             location = Point(13.123321, 113.7765654)
             people.add(createPerson("1234544323423", "นาย มั่นคง มั่งคั่ง"))
             people.add(createPerson("8909877615243", "นางสาว สวย น่ารัก"))
@@ -123,5 +124,17 @@ class MongoHouseDaoTest {
         dao.removeByOrgId(ORG_ID)
 
         dao.findAll(ORG_ID).size `should be equal to` 0
+    }
+
+    @Test
+    fun queryHouse() {
+        dao.findAll(ORG_ID, "ลัดดา") .size `should be equal to` 2
+        dao.findAll(ORG_ID, "999") .size `should be equal to` 1
+    }
+
+    @Test
+    fun queryByLocation() {
+        dao.findAll(ORG_ID, haveLocation = true).size `should be equal to` 2
+        dao.findAll(ORG_ID, haveLocation = false).size `should be equal to` 0
     }
 }

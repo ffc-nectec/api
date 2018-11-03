@@ -21,7 +21,6 @@ import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.notification.broadcastMessage
 import ffc.airsync.api.services.notification.notification
 import ffc.airsync.api.services.person.persons
-import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
 import ffc.entity.User
 import ffc.entity.copy
@@ -71,8 +70,8 @@ object HouseService {
     fun update(role: User.Role, orgId: String, house: House, houseId: String): House {
         printDebug("Update house role $role orgid $orgId house_id $houseId house ${house.toJson()}")
 
-        if (houseId != house.id) throw BadRequestException("เลขบ้านที่ระบุใน url part ไม่ตรงกับข้อมูล id ที่ต้องการแก้ไข")
-        if (house.id == "") throw BadRequestException("ไม่มี id ไม่มีการใช้ตัวแปร _id แล้ว")
+        require(houseId != house.id) { "เลขบ้านที่ระบุใน url part ไม่ตรงกับข้อมูล id ที่ต้องการแก้ไข" }
+        require(house.id == "") { "ไม่มี id ไม่มีการใช้ตัวแปร _id แล้ว" }
 
         house.people.clear()
 
@@ -98,17 +97,8 @@ object HouseService {
         return houseUpdate!!
     }
 
-    private fun queryHouse(orgId: String, haveLocationFilter: Boolean?): List<House> {
-        return houses.findAll(orgId, haveLocationFilter).toMutableList().apply {
-            when (haveLocationFilter) {
-                true -> removeIf { it.location == null }
-                false -> removeIf { it.location != null }
-            }
-        }
-    }
-
-    fun getHouses(orgId: String, page: Int = 1, per_page: Int = 200, haveLocation: Boolean?): List<House> {
-        return queryHouse(orgId, haveLocation).paging(page, per_page)
+    fun getHouses(orgId: String, query: String? = null, haveLocation: Boolean? = null): List<House> {
+        return houses.findAll(orgId, query, haveLocation)
     }
 
     fun getSingleGeo(orgId: String, houseId: String): FeatureCollection<House>? {
