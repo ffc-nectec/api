@@ -19,4 +19,6 @@ interface HealthCareServiceDao : Dao {
     fun update(healthCareService: HealthCareService, orgId: String): HealthCareService
 }
 
-val healthCareServices: HealthCareServiceDao by lazy { MongoHealthCareServiceDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
+val healthCareServices: HealthCareServiceDao by lazy {
+    MongoHealthCareServiceDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT)
+}

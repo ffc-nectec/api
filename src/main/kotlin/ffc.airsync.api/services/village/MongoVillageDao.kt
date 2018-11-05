@@ -39,7 +39,9 @@ class MongoVillageDao(host: String, port: Int) : VillageDao, MongoAbsConnect(hos
         val villageDoc = dbCollection.find(id.buildQueryDoc()).first()
             ?: throw NullPointerException("ค้นหาข้อมูลที่ต้องการไม่พบ ข้อมูลอาจถูกลบ หรือ ใส่ข้อมูลอ้างอิงผิด")
 
-        require(villageDoc["orgIndex"].toString() == orgId) { "ค้นหาข้อมูลที่ต้องการไม่พบ ข้อมูลอาจถูกลบ หรือ ใส่ข้อมูลอ้างอิงผิด" }
+        require(villageDoc["orgIndex"].toString() == orgId) {
+            "ค้นหาข้อมูลที่ต้องการไม่พบ ข้อมูลอาจถูกลบ หรือ ใส่ข้อมูลอ้างอิงผิด"
+        }
 
         return villageDoc.toJson()!!.parseTo()
     }

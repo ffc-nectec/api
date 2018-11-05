@@ -34,7 +34,11 @@ class VillageResource {
     @PUT
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/village/{villageId:([\\dabcdefABCDEF].*)")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
-    fun update(@PathParam("orgId") orgId: String, @PathParam("villageId") villageId: String, village: Village): Village {
+    fun update(
+        @PathParam("orgId") orgId: String,
+        @PathParam("villageId") villageId: String,
+        village: Village
+    ): Village {
         require(villageId == village.id) { "ไม่สามารถ update ได้ เนื่องจาก id ไม่ตรงกับเอกสาร" }
         return villages.update(orgId, village)
     }
@@ -42,21 +46,30 @@ class VillageResource {
     @DELETE
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/village/{villageId:([\\dabcdefABCDEF].*)")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
-    fun delete(@PathParam("orgId") orgId: String, @PathParam("villageId") villageId: String) {
+    fun delete(
+        @PathParam("orgId") orgId: String,
+        @PathParam("villageId") villageId: String
+    ) {
         return villages.delete(orgId, villageId)
     }
 
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/village/{villageId:([\\dabcdefABCDEF].*)")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
-    fun get(@PathParam("orgId") orgId: String, @PathParam("villageId") villageId: String): Village {
+    fun get(
+        @PathParam("orgId") orgId: String,
+        @PathParam("villageId") villageId: String
+    ): Village {
         return villages.get(orgId, villageId)
     }
 
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/village")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
-    fun find(@PathParam("orgId") orgId: String, @QueryParam("query") query: String?): List<Village> {
+    fun find(
+        @PathParam("orgId") orgId: String,
+        @QueryParam("query") query: String?
+    ): List<Village> {
         return if (query != null) {
             villages.find(orgId, query)
         } else {

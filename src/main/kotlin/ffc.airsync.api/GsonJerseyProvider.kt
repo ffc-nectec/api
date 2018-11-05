@@ -38,12 +38,25 @@ import javax.ws.rs.ext.Provider
 @Produces(MediaType.APPLICATION_JSON, "application/vnd.geo+json")
 @Consumes(MediaType.APPLICATION_JSON, "application/vnd.geo+json")
 class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
-    override fun isReadable(type: Class<*>?, genericType: Type?, annotations: Array<out Annotation>?, mediaType: MediaType?): Boolean {
+
+    override fun isReadable(
+        type: Class<*>?,
+        genericType: Type?,
+        annotations: Array<out Annotation>?,
+        mediaType: MediaType?
+    ): Boolean {
         return true
     }
 
     @Throws(IOException::class)
-    override fun readFrom(type: Class<Any>, genericType: Type, annotations: Array<Annotation>, mediaType: MediaType, httpHeaders: MultivaluedMap<String, String>, entityStream: InputStream): Any? {
+    override fun readFrom(
+        type: Class<Any>,
+        genericType: Type,
+        annotations: Array<Annotation>,
+        mediaType: MediaType,
+        httpHeaders: MultivaluedMap<String, String>,
+        entityStream: InputStream
+    ): Any? {
         try {
             InputStreamReader(entityStream, UTF_8).use {
                 try {
@@ -62,17 +75,34 @@ class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
         return null
     }
 
-    override fun isWriteable(type: Class<*>, genericType: Type, annotations: Array<Annotation>, mediaType: MediaType): Boolean {
-        return true
-    }
+    override fun isWriteable(
+        type: Class<*>,
+        genericType: Type,
+        annotations: Array<Annotation>,
+        mediaType: MediaType
+    ) = true
 
-    override fun getSize(`object`: Any, type: Class<*>, genericType: Type, annotations: Array<Annotation>, mediaType: MediaType): Long {
-        return -1
-    }
+    override fun getSize(
+        `object`: Any,
+        type: Class<*>,
+        genericType: Type,
+        annotations: Array<Annotation>,
+        mediaType: MediaType
+    ): Long = -1
 
     @Throws(IOException::class, WebApplicationException::class)
-    override fun writeTo(`object`: Any, type: Class<*>, genericType: Type, annotations: Array<Annotation>, mediaType: MediaType, httpHeaders: MultivaluedMap<String, Any>, entityStream: OutputStream) {
-        OutputStreamWriter(entityStream, UTF_8).use { writer -> ffcGson.toJson(`object`, genericType, writer) }
+    override fun writeTo(
+        `object`: Any,
+        type: Class<*>,
+        genericType: Type,
+        annotations: Array<Annotation>,
+        mediaType: MediaType,
+        httpHeaders: MultivaluedMap<String, Any>,
+        entityStream: OutputStream
+    ) {
+        OutputStreamWriter(entityStream, UTF_8).use { writer ->
+            ffcGson.toJson(`object`, genericType, writer)
+        }
     }
 
     companion object {
