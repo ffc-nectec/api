@@ -31,7 +31,9 @@ fun <T> printDebug(infoDebug: T) {
     if (debug == null) println(infoDebug)
 }
 
-val DATETIMEBANGKOK: DateTime get() = DateTime(DateTimeZone.forTimeZone(TimeZone.getTimeZone(ZoneId.of("Asia/Bangkok"))))
+private val bangkokTimeZone = TimeZone.getTimeZone(ZoneId.of("Asia/Bangkok"))
+
+val DATETIMEBANGKOK: DateTime get() = DateTime(DateTimeZone.forTimeZone(bangkokTimeZone))
 
 inline fun <reified T> getResourceAs(filename: String): T {
     val classloader = Thread.currentThread().contextClassLoader

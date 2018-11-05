@@ -68,10 +68,10 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
         return result
     }
 
-    private fun List<CommunityServiceType>.findLastMap(communityServiceType: CommunityServiceType): CommunityServiceType? {
+    private fun List<CommunityServiceType>.findLastMap(type: CommunityServiceType): CommunityServiceType? {
         return this.find {
             try {
-                it.id == communityServiceType.link!!.keys["map"]
+                it.id == type.link!!.keys["map"]
             } catch (ignore: Exception) {
                 false
             }

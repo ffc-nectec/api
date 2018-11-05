@@ -33,10 +33,10 @@ fun <T : Entity> NotifactionDao.broadcastMessage(orgId: String, vararg entitys: 
     for (entity in entitys) {
         try {
             when (entity) {
-                is House -> send(entity, clientAddress, House::class.java.simpleName, PART_HOUSESERVICE)
-                is HealthCareService -> send(entity, clientAddress, HealthCareService::class.java.simpleName, PART_HEALTHCARESERVICE)
-                is HomeVisit -> send(entity, clientAddress, HomeVisit::class.java.simpleName, PART_HEALTHCARESERVICE)
-                else -> send(entity, clientAddress, entity.type, "else")
+                is House -> send(entity, clientAddress, PART_HOUSESERVICE)
+                is HealthCareService -> send(entity, clientAddress, PART_HEALTHCARESERVICE)
+                is HomeVisit -> send(entity, clientAddress, PART_HEALTHCARESERVICE)
+                else -> send(entity, clientAddress, "else")
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -44,11 +44,11 @@ fun <T : Entity> NotifactionDao.broadcastMessage(orgId: String, vararg entitys: 
     }
 }
 
-private fun <T : Entity> send(entity: T, clientAddress: List<String>, type: String, urlPart: String) {
-    printDebug("FB token = $clientAddress $type = ${entity.toJson()}")
+private fun <T : Entity> send(entity: T, clientAddress: List<String>, urlPart: String) {
+    printDebug("FB token = $clientAddress ${entity.type} = ${entity.toJson()}")
     clientAddress.forEach {
         if (it.isNotEmpty())
-            putEntityToFirebase(entity, it, urlPart, type)
+            putEntityToFirebase(entity, it, urlPart, entity.type)
     }
 }
 

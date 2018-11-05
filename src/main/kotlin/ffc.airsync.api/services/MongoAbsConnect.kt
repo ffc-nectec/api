@@ -27,7 +27,8 @@ abstract class MongoAbsConnect(
 ) : Dao {
     protected lateinit var dbCollection: MongoCollection<Document>
     val dbExecuted get() = dbCollection
-    val mongoUrl = System.getenv("MONGODB_URI") + "?maxPoolSize=2&maxIdleTimeMS=20000&connectTimeoutMS=30000&socketTimeoutMS=30000"
+    val mongoUrl = System.getenv("MONGODB_URI") +
+        "?maxPoolSize=2&maxIdleTimeMS=20000&connectTimeoutMS=30000&socketTimeoutMS=30000"
 
     companion object {
         protected var mongoClient: MongoClient? = null
@@ -45,7 +46,9 @@ abstract class MongoAbsConnect(
     }
 
     override fun syncData(orgId: String, limitOutput: Int): List<Entity> {
-        val result = this.dbExecuted.find(("link.isSynced" equal false) plus ("orgIndex" equal ObjectId(orgId))).limit(limitOutput)
+        val result = this.dbExecuted.find(
+            ("link.isSynced" equal false) plus ("orgIndex" equal ObjectId(orgId))
+        ).limit(limitOutput)
 
         if (result.count() < 1) return emptyList()
         val output = result.map {

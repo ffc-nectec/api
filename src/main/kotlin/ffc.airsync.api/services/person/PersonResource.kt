@@ -66,7 +66,11 @@ class PersonResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
-    fun updatePerson(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String, person: Person): Person {
+    fun updatePerson(
+        @PathParam("orgId") orgId: String,
+        @PathParam("personId") personId: String,
+        person: Person
+    ): Person {
         require(person.id == personId) { "ข้อมูลการ Update ไม่ถูกต้อง" }
         when (getTokenRole(context!!)) {
             User.Role.ADMIN -> person.link?.isSynced = true
@@ -80,7 +84,12 @@ class PersonResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
-    fun get(@QueryParam("page") page: Int = 1, @QueryParam("per_page") per_page: Int = 200, @PathParam("orgId") orgId: String, @QueryParam("query") query: String?): List<Person> {
+    fun get(
+        @QueryParam("page") page: Int = 1,
+        @QueryParam("per_page") per_page: Int = 200,
+        @PathParam("orgId") orgId: String,
+        @QueryParam("query") query: String?
+    ): List<Person> {
         return if (query != null) {
             persons.find(query, orgId)
         } else {
@@ -92,14 +101,20 @@ class PersonResource {
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/{personId:([\\dabcdefABCDEF].*)}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
-    fun getByPersonId(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): Person {
+    fun getByPersonId(
+        @PathParam("orgId") orgId: String,
+        @PathParam("personId") personId: String
+    ): Person {
         return persons.getPerson(orgId, personId)
     }
 
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/person/icd10/{icd10:(\\w+)}")
     @RolesAllowed("USER")
-    fun findByICD10(@PathParam("orgId") orgId: String, @PathParam("icd10") icd10: String): List<Person> {
+    fun findByICD10(
+        @PathParam("orgId") orgId: String,
+        @PathParam("icd10") icd10: String
+    ): List<Person> {
         return persons.findByICD10(orgId, icd10)
     }
 }
