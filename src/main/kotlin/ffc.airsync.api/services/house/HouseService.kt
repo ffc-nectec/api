@@ -23,6 +23,8 @@ import ffc.airsync.api.services.notification.notification
 import ffc.airsync.api.services.person.persons
 import ffc.entity.Person
 import ffc.entity.User
+import ffc.entity.User.Role.ADMIN
+import ffc.entity.User.Role.ORG
 import ffc.entity.copy
 import ffc.entity.gson.toJson
 import ffc.entity.place.House
@@ -80,15 +82,18 @@ object HouseService {
 
         printDebug("\tUpdate house to dao.")
 
-        if (role == User.Role.ORG) {
-            house.update(house.timestamp) {
+        when (role) {
+            ORG -> house.update(house.timestamp) {
                 house.link?.isSynced = true
             }
-        } else if (role == User.Role.USER) {
-            house.update {
+            ADMIN -> house.update(house.timestamp) {
+                house.link?.isSynced = true
+            }
+            else -> house.update {
                 house.link?.isSynced = false
             }
         }
+
         val houseUpdate = houses.update(orgId, house.copy())
 
         printDebug("Call send notification size list token = ${firebaseTokenGropOrg.size} ")
