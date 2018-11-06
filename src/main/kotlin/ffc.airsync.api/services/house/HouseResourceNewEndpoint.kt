@@ -1,20 +1,3 @@
-/*
- * Copyright (c) 2018 NECTEC
- *   National Electronics and Computer Technology Center, Thailand
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package ffc.airsync.api.services.house
 
 import ffc.airsync.api.filter.Cache
@@ -44,17 +27,19 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import javax.ws.rs.core.SecurityContext
 
-const val PART_HOUSESERVICE = "place/house"
+const val NEWPART_HOUSESERVICE = "house"
 
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-class HouseResource {
+
+class HouseResourceNewEndpoint {
+
     @Context
     private var context: SecurityContext? = null
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 5)
@@ -71,7 +56,7 @@ class HouseResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 5)
     fun newGetJsonHouse(
@@ -90,7 +75,7 @@ class HouseResource {
     }
 
     @PUT
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun update(
         @PathParam("orgId") orgId: String,
@@ -103,7 +88,7 @@ class HouseResource {
     }
 
     @PUT
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun updateFail(
         @PathParam("orgId") orgId: String,
@@ -114,7 +99,7 @@ class HouseResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 2)
@@ -126,7 +111,7 @@ class HouseResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
     @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun getPersonInHouse(
@@ -137,7 +122,7 @@ class HouseResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun getSingle(
@@ -148,7 +133,7 @@ class HouseResource {
     }
 
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/${PART_HOUSESERVICE}s")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/${NEWPART_HOUSESERVICE}s")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
         if (houseList == null) throw BadRequestException()
@@ -168,7 +153,7 @@ class HouseResource {
     }
 
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$PART_HOUSESERVICE")
+    @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
         if (house == null) throw BadRequestException()
