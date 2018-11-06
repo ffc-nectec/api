@@ -60,7 +60,7 @@ class RelationshipResource {
         }
         val somePerson = collect.first()
 
-        return Family(somePerson.houseId.hashCode().toLong().absoluteValue, somePerson.lastname, member.map { it.idCard.toInt() }, member)
+        return Family(somePerson.houseId.hashCode().toLong().absoluteValue, somePerson.lastname, member)
     }
 
     @GET
