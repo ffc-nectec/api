@@ -138,7 +138,9 @@ class HouseResource {
         @PathParam("houseId") houseId: String,
         house: House
     ): Response {
-        return update(orgId, houseId, house)
+        val role = getTokenRole(context!!)
+        val houseUpdate = HouseService.update(role, orgId, house, houseId)
+        return Response.status(200).entity(houseUpdate).build()
     }
 
     @PUT
