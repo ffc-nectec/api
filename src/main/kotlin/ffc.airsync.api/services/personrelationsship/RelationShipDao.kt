@@ -15,12 +15,12 @@ interface GenoGramDao : Dao {
 
 fun Person.buildGeogramPerson(group: List<Person>): ffc.genogram.Person {
     val person = ffc.genogram.Person(
-        idCard = id.hashCode().toLong().absoluteValue,
+        idCard = id.hashCode().absoluteValue,
         firstname = firstname,
         lastname = lastname,
         gender = if (sex == Person.Sex.FEMALE) GenderLabel.FEMALE else GenderLabel.MALE,
-        father = fatherId?.hashCode()?.toLong()?.absoluteValue,
-        mother = motherId?.hashCode()?.toLong()?.absoluteValue,
+        father = fatherId?.hashCode()?.absoluteValue,
+        mother = motherId?.hashCode()?.absoluteValue,
         exHusband = null,
         twin = null,
         exWife = null,
@@ -36,8 +36,7 @@ fun Person.buildGeogramPerson(group: List<Person>): ffc.genogram.Person {
             else
                 null
         },
-        children = childId.map { it.hashCode().absoluteValue },
-        linkedStack = null
+        children = childId.map { it.hashCode().absoluteValue }
     )
     if ((person.children?.isEmpty() != false)) {
         person.children = null
