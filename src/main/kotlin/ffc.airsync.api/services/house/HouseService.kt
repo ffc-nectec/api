@@ -64,6 +64,7 @@ object HouseService {
 
     fun createByUser(orgId: String, house: House): House {
         if (house.link != null) throw BadRequestException("เมื่อสร้างด้วย user ไม่ต้องมีข้อมูล link")
+        house.link?.isSynced = false
         return houses.insert(orgId, house)
     }
 
