@@ -64,15 +64,14 @@ object HouseService {
 
     fun createByUser(orgId: String, house: House): House {
         if (house.link != null) throw BadRequestException("เมื่อสร้างด้วย user ไม่ต้องมีข้อมูล link")
-        house.link?.isSynced = false
         return houses.insert(orgId, house)
     }
 
     fun update(role: User.Role, orgId: String, house: House, houseId: String): House {
         printDebug("Update house role $role orgid $orgId house_id $houseId house ${house.toJson()}")
 
-        require(houseId != house.id) { "เลขบ้านที่ระบุใน url part ไม่ตรงกับข้อมูล id ที่ต้องการแก้ไข" }
-        require(house.id == "") { "ไม่มี id ไม่มีการใช้ตัวแปร _id แล้ว" }
+        require(houseId == house.id) { "เลขบ้านที่ระบุใน url part ไม่ตรงกับข้อมูล id ที่ต้องการแก้ไข" }
+        require(house.id != "") { "ไม่มี id ไม่มีการใช้ตัวแปร _id แล้ว" }
 
         house.people.clear()
 
