@@ -1,4 +1,4 @@
-package ffc.airsync.api.services.personrelationsship
+package ffc.airsync.api.services.genogram
 
 import ffc.entity.Person
 import ffc.entity.Person.Relate.Child

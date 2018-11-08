@@ -1,4 +1,4 @@
-package ffc.airsync.api.services.personrelationsship
+package ffc.airsync.api.services.genogram
 
 import ffc.airsync.api.services.DEFAULT_MONGO_HOST
 import ffc.airsync.api.services.DEFAULT_MONGO_PORT
