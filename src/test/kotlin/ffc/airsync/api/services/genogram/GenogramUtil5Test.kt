@@ -1,4 +1,4 @@
-package ffc.airsync.api.services.personrelationsship
+package ffc.airsync.api.services.genogram
 
 import ffc.entity.Person
 import ffc.entity.Person.Relate.Child
@@ -15,7 +15,7 @@ import org.junit.Test
 /**
  *
  */
-class GenogramUtil2Test {
+class GenogramUtil5Test {
 
     private val `เลือดข้น` = arrayListOf<Person>()
     private val อากง = male("อากง")
@@ -23,13 +23,10 @@ class GenogramUtil2Test {
     private val `ภัสสร` = female("ภัสสร")
     private val `กรกันต์` = male("กรกันต์")
     private val `วิเชียร` = male("วิเชียร")
-    private val `น้ำผึ้ง` = female("น้ำผึ้ง")
     private val `อี้` = male("อี้")
     private val `เอิร์น` = male("เอิร์น")
     private val `เต๋า` = male("เต๋า")
     private val `เต้ย` = male("เต้ย")
-    private val `เวกัส` = male("เวกัส")
-    private val `มาเก๋า` = male("มาเก๋า")
 
     @Before
     fun setUp() {
@@ -68,16 +65,7 @@ class GenogramUtil2Test {
         `กรกันต์`.addRelationship(
             Father to อากง,
             Mother to `อาม่า`,
-            Married to `น้ำผึ้ง`,
-            Child to `เวกัส`,
-            Child to `มาเก๋า`,
             Sibling to `ภัสสร`
-        )
-
-        `น้ำผึ้ง`.addRelationship(
-            Married to `กรกันต์`,
-            Child to `เวกัส`,
-            Child to `มาเก๋า`
         )
 
         `อี้`.addRelationship(
@@ -112,21 +100,7 @@ class GenogramUtil2Test {
             Sibling to `เต๋า`
         )
 
-        `เวกัส`.addRelationship(
-            Father to `กรกันต์`,
-            Mother to `น้ำผึ้ง`,
-            Sibling to `มาเก๋า`
-        )
-
-        `มาเก๋า`.addRelationship(
-            Father to `กรกันต์`,
-            Mother to `น้ำผึ้ง`,
-            Sibling to `เวกัส`
-        )
-
         `เลือดข้น`.apply {
-
-            add(`เวกัส`)
             add(`เอิร์น`)
             add(อากง)
             add(`อาม่า`)
@@ -135,8 +109,6 @@ class GenogramUtil2Test {
             add(`กรกันต์`)
             add(`เต๋า`)
             add(`เต้ย`)
-            add(`มาเก๋า`)
-            add(`น้ำผึ้ง`)
             add(`อี้`)
         }
     }
@@ -165,8 +137,8 @@ class GenogramUtil2Test {
 
         result.size `should be equal to` 3
         result[1]!!.size `should be equal to` 2
-        result[2]!!.size `should be equal to` 4
-        result[3]!!.size `should be equal to` 6
+        result[2]!!.size `should be equal to` 3
+        result[3]!!.size `should be equal to` 4
     }
 
     @Test
@@ -185,6 +157,6 @@ class GenogramUtil2Test {
             println("${person.firstname} link $linkName")
         }
         println(family.toJson())
-        result.size `should be equal to` 12
+        result.size `should be equal to` 9
     }
 }

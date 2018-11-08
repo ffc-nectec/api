@@ -1,4 +1,4 @@
-package ffc.airsync.api.services.personrelationsship
+package ffc.airsync.api.services.genogram
 
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientOptions
