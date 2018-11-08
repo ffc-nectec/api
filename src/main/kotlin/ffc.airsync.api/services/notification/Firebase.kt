@@ -21,7 +21,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.healthcareservice.PART_HEALTHCARESERVICE
-import ffc.airsync.api.services.house.PART_HOUSESERVICE
+import ffc.airsync.api.services.house.NEWPART_HOUSESERVICE
 import ffc.entity.Entity
 import ffc.entity.gson.toJson
 import ffc.entity.healthcare.HealthCareService
@@ -33,7 +33,7 @@ fun <T : Entity> NotifactionDao.broadcastMessage(orgId: String, vararg entitys: 
     for (entity in entitys) {
         try {
             when (entity) {
-                is House -> send(entity, clientAddress, PART_HOUSESERVICE)
+                is House -> send(entity, clientAddress, NEWPART_HOUSESERVICE)
                 is HealthCareService -> send(entity, clientAddress, PART_HEALTHCARESERVICE)
                 is HomeVisit -> send(entity, clientAddress, PART_HEALTHCARESERVICE)
                 else -> send(entity, clientAddress, "else")
