@@ -6,6 +6,16 @@ import ffc.entity.Person.Relate.Divorced
 import ffc.entity.Person.Relate.Married
 import kotlin.math.absoluteValue
 
+internal fun Map<Int, ArrayList<Person>>.toList(): List<Person> {
+    val list = arrayListOf<Person>()
+    forEach { key, value ->
+        value.forEach {
+            list.add(it)
+        }
+    }
+    return list
+}
+
 internal fun List<Person>.deep(): Map<Int, ArrayList<Person>> {
     val result = hashMapOf<String, GenogramProcessProperty>()
     calDeep(first(), this, result)
