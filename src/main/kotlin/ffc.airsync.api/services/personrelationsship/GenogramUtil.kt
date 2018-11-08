@@ -15,21 +15,18 @@ internal fun List<Person>.deep(): Map<Int, ArrayList<Person>> {
 private fun groupDeep(result: HashMap<String, GenogramProcessProperty>): Map<Int, ArrayList<Person>> {
     val groupDeep = hashMapOf<Int, ArrayList<Person>>()
 
-    result.forEach { key, value ->
-        if (groupDeep[value.deep] == null)
-            groupDeep[value.deep] = arrayListOf()
-
-        groupDeep[value.deep]!!.add(value.person)
-    }
-
-    // start 1 2 3 4 5
     var min = 0
-    groupDeep.forEach { key, value ->
-        if (key < min) min = key
+    result.forEach { key, value ->
+        val deep = value.deep
+        if (deep < min) min = deep
+        if (groupDeep[deep] == null)
+            groupDeep[deep] = arrayListOf()
+
+        groupDeep[deep]!!.add(value.person)
     }
     min = min.absoluteValue + 1
 
-    return groupDeep.mapKeys { it.key + min }
+    return groupDeep.toSortedMap().mapKeys { it.key + min }
 }
 
 private fun calDeep(
@@ -67,6 +64,6 @@ private fun calDeep(
     person.bundle.remove("genogram")
 }
 
-internal data class GenogramProcessProperty(val person: Person, var deep: Int) {
+private data class GenogramProcessProperty(val person: Person, var deep: Int) {
     val name = person.name
 }
