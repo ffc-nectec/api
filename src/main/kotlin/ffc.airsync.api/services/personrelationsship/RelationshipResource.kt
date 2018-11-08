@@ -59,7 +59,7 @@ class RelationshipResource {
     @Cache(maxAge = 5)
     fun getGenogramFamily(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): Family {
 
-        val collect = getGenogramCollect(orgId, personId).deep().toList()
+        val collect = getGenogramCollect(orgId, personId).processGroupLayer().toList()
 
         val member: List<ffc.genogram.Person> = collect.map {
             it.buildGeogramPerson(collect)

@@ -122,7 +122,7 @@ class GenogramUtil4Test {
 
     @Test
     fun deep() {
-        val result = `เลือดข้น`.deep()
+        val result = `เลือดข้น`.processGroupLayer()
 
         result.size `should be equal to` 3
         result[1]!!.size `should be equal to` 2
@@ -132,7 +132,7 @@ class GenogramUtil4Test {
 
     @Test
     fun toList() {
-        val result = `เลือดข้น`.deep().toList()
+        val result = `เลือดข้น`.processGroupLayer().toList()
 
         val member: List<ffc.genogram.Person> = result.map {
             it.buildGeogramPerson(result)
