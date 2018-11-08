@@ -20,7 +20,8 @@ class MongoRelationsShipDao(host: String, port: Int) : MongoAbsConnect(host, por
      *
      */
     override fun get(orgId: String, personId: String): List<Person.Relationship> {
-        val find = dbCollection.find("_id" equal ObjectId(personId)).projection(("relationships" equal 1) plus ("orgId" equal 1)).first()
+        val find = dbCollection.find("_id" equal ObjectId(personId))
+            .projection(("relationships" equal 1) plus ("orgId" equal 1)).first()
             ?: throw NoSuchElementException("ไม่พบข้อมูล คนที่ระบุ")
 
         if (find["orgId"].toString() != orgId) throw NoSuchElementException("ไม่พบข้อมูล คนที่ระบุ")
@@ -29,7 +30,11 @@ class MongoRelationsShipDao(host: String, port: Int) : MongoAbsConnect(host, por
             ?: throw NoSuchElementException("ไม่พบข้อมูล ความสัมพันธ์ของบุคคลนี้")
     }
 
-    override fun update(orgId: String, personId: String, relation: List<Person.Relationship>): List<Person.Relationship> {
+    override fun update(
+        orgId: String,
+        personId: String,
+        relation: List<Person.Relationship>
+    ): List<Person.Relationship> {
         relation.validate(personId)
         get(orgId, personId)
         val relationDoc = "relationships" equal BasicBSONList().apply {
@@ -47,7 +52,11 @@ class MongoRelationsShipDao(host: String, port: Int) : MongoAbsConnect(host, por
         return collectPerson(orgId, personId).map { it.value }
     }
 
-    private fun collectPerson(orgId: String, personId: String, collect: HashMap<String, Person> = hashMapOf()): HashMap<String, Person> {
+    private fun collectPerson(
+        orgId: String,
+        personId: String,
+        collect: HashMap<String, Person> = hashMapOf()
+    ): HashMap<String, Person> {
         val relation: List<Person.Relationship> = get(orgId, personId)
 
         if (collect[personId] == null)
