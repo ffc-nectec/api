@@ -21,7 +21,7 @@ import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
-import ffc.airsync.api.services.util.getTokenRole
+import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
 import ffc.entity.User
@@ -84,7 +84,7 @@ class PersonResource {
         person: Person
     ): Person {
         require(person.id == personId) { "ข้อมูลการ Update ไม่ถูกต้อง" }
-        when (getTokenRole(context!!)) {
+        when (context?.getLoginRole()) {
             User.Role.ADMIN -> person.link?.isSynced = true
             User.Role.ORG -> person.link?.isSynced = true
             else -> person.link?.isSynced = false
