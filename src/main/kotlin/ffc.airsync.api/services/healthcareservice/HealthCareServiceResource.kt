@@ -34,10 +34,24 @@ class VisitResource {
         healthCareService: HealthCareService
     ): Response {
         roleMapIsSync(healthCareService)
-        val respond = when (healthCareService) {
-            is HomeVisit -> HomeVisitService.create(healthCareService, orgId)
-            else -> null
-        }
+
+        val respond: HomeVisit? =
+            when (context?.getLoginRole()) {
+                User.Role.ADMIN -> when (healthCareService) {
+                    is HomeVisit -> HomeVisitService.organizationCreate(healthCareService, orgId)
+                    else -> null
+                }
+                User.Role.ORG -> when (healthCareService) {
+                    is HomeVisit -> HomeVisitService.organizationCreate(healthCareService, orgId)
+                    else -> null
+                }
+                else -> when (healthCareService) {
+                    is HomeVisit -> HomeVisitService.create(healthCareService, orgId)
+                    else -> null
+                }
+            }
+
+
         return Response.status(201).entity(respond).build()
     }
 
