@@ -10,6 +10,9 @@ import ffc.entity.Person.Sex.FEMALE
 import ffc.entity.Person.Sex.MALE
 import kotlin.math.absoluteValue
 
+/**
+ * แปลง Map ที่มีข้อมูลชั้น Layer ของ Person ให้เป็น List
+ */
 internal fun Map<Int, ArrayList<Person>>.toList(): List<Person> {
     val list = arrayListOf<Person>()
     forEach { key, value ->
@@ -20,6 +23,11 @@ internal fun Map<Int, ArrayList<Person>>.toList(): List<Person> {
     return list
 }
 
+/**
+ * หาชั้นของ Layer ที่จะนำไปใช้วาด Genogram
+ * @param this ก้อน Person ที่มีความสัมพันธ์ ถึงกัน
+ * @return Map ที่มีข้อมูลชั้น Layer ของ Person
+ */
 internal fun List<Person>.processGroupLayer(): Map<Int, ArrayList<Person>> {
     val result = hashMapOf<String, GenogramProcessProperty>()
     calLayer(first(), this.addDummy(), result)
@@ -28,6 +36,9 @@ internal fun List<Person>.processGroupLayer(): Map<Int, ArrayList<Person>> {
 
 private typealias GroupXarrayList = HashMap<Int, ArrayList<Person>>
 
+/**
+ * เรียงข้อมูลตาม group ของ layer
+ */
 private fun groupLayer(result: HashMap<String, GenogramProcessProperty>): Map<Int, ArrayList<Person>> {
     val group = hashMapOf<Int, ArrayList<Person>>()
 
@@ -61,6 +72,9 @@ private fun groupLayer(result: HashMap<String, GenogramProcessProperty>): Map<In
     return group.toSortedMap().mapKeys { it.key + min }
 }
 
+/**
+ * คำนวนหาชั้นของ Layer
+ */
 private fun calLayer(
     person: Person?,
     listPerson: List<Person>,
@@ -101,6 +115,12 @@ private data class GenogramProcessProperty(val person: Person, var layer: Int, v
     val name = person.name
 }
 
+/**
+ * ในกรณีที่ มีลูก แต่ไม่สามารถหาคู่ ในฐานข้อมูลได้
+ * จะสร้างคนว่างๆ ให้มาเป็นคู่แทน
+ * เนื่องจาก Library ในการวาดไม่ support ลูกติด
+ * ถ้ามีลูก ต้องมีคู่
+ */
 private fun List<Person>.addDummy(): List<Person> {
     val list = arrayListOf<Person>()
     list.addAll(this)
