@@ -52,13 +52,13 @@ dependencies {
     compile "org.glassfish.jersey.media:jersey-media-json-jackson:$jerseyVersion"
     compile 'com.google.firebase:firebase-admin:5.11.0'
     compile "args4j:args4j:2.33"
-    compile "com.github.ffc-nectec:entities:15ef550d4b"
+    compile "com.github.ffc-nectec:entities:1.0.0-alpha11"
 
     compile 'com.github.piruin:jbcrypt:0.4'
     compile "joda-time:joda-time:2.9.9"
     compile 'me.piruin:geok-gson:1.0.0-alpha-2'
     compile "org.mongodb:mongo-java-driver:3.6.3"
-    compile 'com.github.ffc-nectec.genogram:genogram:1.0.0-alpha3'
+    compile 'com.github.ffc-nectec.genogram:genogram:1.0.0-alpha4'
 
     testImplementation "org.mockito:mockito-core:2.19.0"
     testImplementation "de.bwaldvogel:mongo-java-server:1.9.0"
