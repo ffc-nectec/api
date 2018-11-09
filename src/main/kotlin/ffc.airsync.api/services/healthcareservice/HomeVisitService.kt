@@ -15,6 +15,10 @@ object HomeVisitService {
         return result
     }
 
+    fun organizationCreate(homeVisit: HomeVisit, orgId: String): HomeVisit {
+        return healthCareServices.insert(homeVisit, orgId) as HomeVisit
+    }
+
     fun find(orgId: String, id: String): HomeVisit {
         val result = healthCareServices.find(id, orgId)
 
