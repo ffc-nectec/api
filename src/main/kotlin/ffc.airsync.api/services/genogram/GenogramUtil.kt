@@ -3,7 +3,11 @@ package ffc.airsync.api.services.genogram
 import ffc.entity.Person
 import ffc.entity.Person.Relate.Child
 import ffc.entity.Person.Relate.Divorced
+import ffc.entity.Person.Relate.Father
 import ffc.entity.Person.Relate.Married
+import ffc.entity.Person.Relate.Mother
+import ffc.entity.Person.Sex.FEMALE
+import ffc.entity.Person.Sex.MALE
 import kotlin.math.absoluteValue
 
 internal fun Map<Int, ArrayList<Person>>.toList(): List<Person> {
@@ -18,7 +22,7 @@ internal fun Map<Int, ArrayList<Person>>.toList(): List<Person> {
 
 internal fun List<Person>.processGroupLayer(): Map<Int, ArrayList<Person>> {
     val result = hashMapOf<String, GenogramProcessProperty>()
-    calLayer(first(), this, result)
+    calLayer(first(), this.addDummy(), result)
     return groupLayer(result)
 }
 
@@ -95,4 +99,50 @@ private fun calLayer(
 
 private data class GenogramProcessProperty(val person: Person, var layer: Int, var x: Int) {
     val name = person.name
+}
+
+private fun List<Person>.addDummy(): List<Person> {
+    val list = arrayListOf<Person>()
+    list.addAll(this)
+
+    forEach {
+
+        val childGroup = it.relationships.filter { it.relate == Child }
+        val dummyRelation = if (it.sex == FEMALE) Father else Mother
+        if (childGroup.isNotEmpty()) {
+            val twin = it.relationships.filter { it.relate == Married || it.relate == Divorced }
+            val dummyPerson = ffc.entity.Person()
+            if (twin.isEmpty()) {
+                list.add(dummyPerson)
+
+                it.addRelationship(Pair(Married, dummyPerson))
+                dummyPerson.addRelationship(Pair(Married, it))
+                dummyPerson.sex = if (it.sex == FEMALE) MALE else FEMALE
+                childGroup.forEach { child ->
+                    val childPerson = list.find { child.id == it.id }!!
+                    addChildPerson(childPerson, dummyRelation, dummyPerson)
+                }
+            } else {
+                childGroup.forEach { child ->
+
+                    val childPerson = list.find { child.id == it.id }!!
+                    val childParent = childPerson.relationships?.find { it.relate == dummyRelation }
+
+                    if (childParent == null) {
+                        addChildPerson(childPerson, dummyRelation, dummyPerson)
+                    }
+                }
+            }
+        }
+    }
+    return list
+}
+
+private fun addChildPerson(
+    childPerson: Person,
+    dummyRelation: Person.Relate,
+    dummyPerson: Person
+) {
+    childPerson.addRelationship(Pair(dummyRelation, dummyPerson))
+    dummyPerson.addRelationship(Pair(Child, childPerson))
 }
