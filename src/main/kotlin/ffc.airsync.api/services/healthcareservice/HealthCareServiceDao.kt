@@ -7,9 +7,7 @@ import ffc.entity.healthcare.HealthCareService
 
 interface HealthCareServiceDao : Dao {
     fun insert(healthCareService: HealthCareService, orgId: String): HealthCareService
-    fun insert(healthCareService: List<HealthCareService>, orgId: String): List<HealthCareService> {
-        return healthCareService.map { insert(it, orgId) }
-    }
+    fun insert(healthCareService: List<HealthCareService>, orgId: String): List<HealthCareService>
 
     fun get(orgId: String): List<HealthCareService>
 

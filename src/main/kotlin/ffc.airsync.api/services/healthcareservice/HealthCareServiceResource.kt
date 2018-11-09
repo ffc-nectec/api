@@ -35,22 +35,27 @@ class VisitResource {
     ): Response {
         roleMapIsSync(healthCareService)
 
-        val respond: HomeVisit? =
-            when (context?.getLoginRole()) {
-                User.Role.ADMIN -> when (healthCareService) {
-                    is HomeVisit -> HomeVisitService.organizationCreate(healthCareService, orgId)
-                    else -> null
-                }
-                User.Role.ORG -> when (healthCareService) {
-                    is HomeVisit -> HomeVisitService.organizationCreate(healthCareService, orgId)
-                    else -> null
-                }
-                else -> when (healthCareService) {
-                    is HomeVisit -> HomeVisitService.create(healthCareService, orgId)
-                    else -> null
-                }
-            }
+        val respond = when (healthCareService) {
+            is HomeVisit -> HomeVisitService.create(healthCareService, orgId)
+            else -> null
+        }
 
+        return Response.status(201).entity(respond).build()
+    }
+
+    @POST
+    @Path("/$ORGIDTYPE/${PART_HEALTHCARESERVICE}s")
+    @RolesAllowed("ORG", "ADMIN")
+    fun createList(
+        @PathParam("orgId") orgId: String,
+        healthCareService: List<HealthCareService>
+    ): Response {
+        healthCareService.forEach { roleMapIsSync(it) }
+
+        val respond = when (healthCareService.first()) {
+            is HomeVisit -> HomeVisitService.createListByOrganization(healthCareService as List<HomeVisit>, orgId)
+            else -> null
+        }
 
         return Response.status(201).entity(respond).build()
     }
