@@ -1,5 +1,6 @@
 package ffc.airsync.api.services.healthcareservice
 
+import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.services.MongoAbsConnect
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.buildUpdateBson
@@ -12,21 +13,37 @@ import org.bson.types.ObjectId
 
 class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
     MongoAbsConnect(host, port, "ffc", "healthcareservice") {
+
+    init {
+        try {
+            dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
+        } catch (ignore: Exception) {
+        }
+    }
+
     override fun insert(healthCareService: HealthCareService, orgId: String): HealthCareService {
         val insertVisit = healthCareService.buildInsertBson()
-            .append("orgIndex", orgId)
+            .append("orgIndex", ObjectId(orgId))
 
         return dbCollection.ffcInsert(insertVisit)
     }
 
+    override fun insert(healthCareService: List<HealthCareService>, orgId: String): List<HealthCareService> {
+        val healCare = healthCareService.map {
+            it.buildInsertBson()
+                .append("orgIndex", ObjectId(orgId))
+        }
+        return dbCollection.ffcInsert(healCare)
+    }
+
     override fun get(orgId: String): List<HealthCareService> {
-        return dbCollection.find("orgIndex" equal orgId)
+        return dbCollection.find("orgIndex" equal ObjectId(orgId))
             .map { it.toJson().parseTo<HealthCareService>() }.toList()
     }
 
     override fun find(id: String, orgId: String): HealthCareService? {
         val query = Document("_id", ObjectId(id))
-            .append("orgIndex", orgId)
+            .append("orgIndex", ObjectId(orgId))
         val result = dbCollection.find(query).first()
 
         check(result != null) { "ไม่พบ health care service id $id" }
@@ -35,7 +52,7 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
 
     override fun findByPatientId(personId: String, orgId: String): List<HealthCareService> {
         val query = Document("patientId", personId)
-            .append("orgIndex", orgId)
+            .append("orgIndex", ObjectId(orgId))
         val result = dbCollection.find(query)
 
         check(result != null) { "ไม่พบ health care service person id $personId" }
@@ -44,7 +61,7 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
 
     override fun update(healthCareService: HealthCareService, orgId: String): HealthCareService {
         val query = Document("_id", ObjectId(healthCareService.id))
-            .append("orgIndex", orgId)
+            .append("orgIndex", ObjectId(orgId))
         val oldObject = dbCollection.find(query).first()!!
         val updateDocument = healthCareService.buildUpdateBson(oldObject)
         val resultUpdate = dbCollection.updateOne(query, updateDocument)

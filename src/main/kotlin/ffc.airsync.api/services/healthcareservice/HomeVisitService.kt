@@ -15,8 +15,8 @@ object HomeVisitService {
         return result
     }
 
-    fun organizationCreate(homeVisit: HomeVisit, orgId: String): HomeVisit {
-        return healthCareServices.insert(homeVisit, orgId) as HomeVisit
+    fun createListByOrganization(homeVisit: List<HomeVisit>, orgId: String): List<HomeVisit> {
+        return healthCareServices.insert(homeVisit, orgId) as List<HomeVisit>
     }
 
     fun find(orgId: String, id: String): HomeVisit {

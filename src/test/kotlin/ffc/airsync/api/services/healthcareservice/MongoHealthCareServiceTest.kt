@@ -12,6 +12,7 @@ import ffc.entity.User
 import ffc.entity.healthcare.BloodPressure
 import ffc.entity.healthcare.CommunityServiceType
 import ffc.entity.healthcare.Disease
+import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.HomeVisit
 import ffc.entity.healthcare.homeVisit
 import ffc.entity.util.generateTempId
@@ -24,6 +25,7 @@ import org.junit.Before
 import org.junit.Test
 
 class MongoHealthCareServiceTest {
+    val ORG_ID = "87543432abcf432123456785"
     lateinit var dao: HealthCareServiceDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer
@@ -69,6 +71,21 @@ class MongoHealthCareServiceTest {
         plan = "ติดตามเยี่ยมปีละ 1 ครั้ง"
         nextAppoint = LocalDate.parse("2019-09-21")
     }
+    val visit2 = provider.homeVisit(patient.id, comServType).apply {
+        weight = 65.0
+        height = 170.0
+        bloodPressure = BloodPressure(155.0, 99.0)
+        principleDx = hypertension
+        respiratoryRate = 24.0
+        pulseRate = 75.0
+        bodyTemperature = 37.5
+        location = Point(14.192390, 120.029384)
+        syntom = "ทานอาหารได้น้อย เบื่ออาหาร"
+        detail = "ตรวจร่างกายทั่วไป / อธิบานผลเสียของโรค / เปิดโอกาสให้ผู้ป่วยซักถาม"
+        result = "ผู้ป่วยเข้าใจเกี่ยวกับโรค สามารถดูแลตัวเองได้และปฎิบัติตามคำแนะนำได้ดี"
+        plan = "ติดตามเยี่ยมปีละ 1 ครั้ง"
+        nextAppoint = LocalDate.parse("2019-09-24")
+    }
 
     @Before
     fun initDb() {
@@ -87,7 +104,7 @@ class MongoHealthCareServiceTest {
 
     @Test
     fun insert() {
-        val result = dao.insert(visit, "23232324ddef")
+        val result = dao.insert(visit, ORG_ID)
 
         result.height `should equal` visit.height
         (result as HomeVisit).nextAppoint `should equal` LocalDate.parse("2019-09-21")
@@ -95,8 +112,8 @@ class MongoHealthCareServiceTest {
 
     @Test
     fun find() {
-        val result = dao.insert(visit, "abxxa")
-        val find = dao.find(result.id, "abxxa")
+        val result = dao.insert(visit, ORG_ID)
+        val find = dao.find(result.id, ORG_ID)
 
         result.id `should equal` find!!.id
         (find as HomeVisit).nextAppoint `should equal` LocalDate.parse("2019-09-21")
@@ -104,17 +121,30 @@ class MongoHealthCareServiceTest {
 
     @Test
     fun findByPersonId() {
-        val result = dao.insert(visit, "abxxa")
-        val find = dao.findByPatientId(result.patientId, "abxxa")
+        val result = dao.insert(visit, ORG_ID)
+        val find = dao.findByPatientId(result.patientId, ORG_ID)
 
         find.size `should be equal to` 1
         find.first().syntom `should equal` result.syntom
     }
 
     @Test
+    fun insertList() {
+        val visitList = arrayListOf<HealthCareService>()
+        visitList.add(visit)
+        visitList.add(visit2)
+
+        val listResult = dao.insert(visitList, ORG_ID)
+
+        listResult.size `should be equal to` 2
+        dao.find(listResult.first().id, ORG_ID)!!.weight `should equal` 61.5
+        dao.find(listResult.last().id, ORG_ID)!!.weight `should equal` 65.0
+    }
+
+    @Test
     fun get() {
-        val insert = dao.insert(visit, "23232324ddef")
-        val result = dao.get("23232324ddef")
+        val insert = dao.insert(visit, ORG_ID)
+        val result = dao.get(ORG_ID)
 
         result.count() `should be equal to` 1
         result.first().id `should be equal to` insert.id
