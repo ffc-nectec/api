@@ -2,11 +2,12 @@ package ffc.airsync.api.services.house
 
 import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.services.util.GEOJSONHeader
-import ffc.airsync.api.services.util.getTokenRole
+import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
 import ffc.entity.User
 import ffc.entity.place.House
+import ffc.entity.update
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import javax.annotation.security.RolesAllowed
@@ -82,8 +83,20 @@ class HouseResourceNewEndpoint {
         @PathParam("houseId") houseId: String,
         house: House
     ): Response {
-        val role = getTokenRole(context!!)
-        val houseUpdate = HouseService.update(role, orgId, house, houseId)
+
+        when (context?.getLoginRole()) {
+            User.Role.ORG -> house.update(house.timestamp) {
+                house.link?.isSynced = true
+            }
+            User.Role.ADMIN -> house.update(house.timestamp) {
+                house.link?.isSynced = true
+            }
+            else -> house.update {
+                house.link?.isSynced = false
+            }
+        }
+
+        val houseUpdate = HouseService.update(orgId, house, houseId)
         return Response.status(200).entity(houseUpdate).build()
     }
 
@@ -137,14 +150,21 @@ class HouseResourceNewEndpoint {
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
         if (houseList == null) throw BadRequestException()
-        val role = getTokenRole(context!!)
-        // houseList.forEach { it.people = null }
-        return when (role) {
+
+        return when (context?.getLoginRole()) {
             User.Role.ORG -> {
                 val houseReturn = HouseService.createByOrg(orgId, houseList)
                 Response.status(Response.Status.CREATED).entity(houseReturn).build()
             }
+            User.Role.ADMIN -> {
+                val houseReturn = HouseService.createByOrg(orgId, houseList)
+                Response.status(Response.Status.CREATED).entity(houseReturn).build()
+            }
             User.Role.USER -> {
+                val houseReturn = HouseService.createByUser(orgId, houseList)
+                Response.status(Response.Status.CREATED).entity(houseReturn).build()
+            }
+            User.Role.PROVIDER -> {
                 val houseReturn = HouseService.createByUser(orgId, houseList)
                 Response.status(Response.Status.CREATED).entity(houseReturn).build()
             }
@@ -157,9 +177,8 @@ class HouseResourceNewEndpoint {
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
         if (house == null) throw BadRequestException()
-        // house.people = null
-        val role = getTokenRole(context!!)
-        return when (role) {
+
+        return when (context?.getLoginRole()) {
             User.Role.ORG -> {
                 val houseReturn = HouseService.createByOrg(orgId, house)
                 Response.status(Response.Status.CREATED).entity(houseReturn).build()

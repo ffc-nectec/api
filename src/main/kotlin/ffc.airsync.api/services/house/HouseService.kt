@@ -22,13 +22,9 @@ import ffc.airsync.api.services.notification.broadcastMessage
 import ffc.airsync.api.services.notification.notification
 import ffc.airsync.api.services.person.persons
 import ffc.entity.Person
-import ffc.entity.User
-import ffc.entity.User.Role.ADMIN
-import ffc.entity.User.Role.ORG
 import ffc.entity.copy
 import ffc.entity.gson.toJson
 import ffc.entity.place.House
-import ffc.entity.update
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import javax.ws.rs.BadRequestException
@@ -61,8 +57,8 @@ object HouseService {
         return houses.insert(orgId, house)
     }
 
-    fun update(role: User.Role, orgId: String, house: House, houseId: String): House {
-        printDebug("Update house role $role orgid $orgId house_id $houseId house ${house.toJson()}")
+    fun update(orgId: String, house: House, houseId: String): House {
+        printDebug("Update house orgid $orgId house_id $houseId house ${house.toJson()}")
 
         require(houseId == house.id) { "เลขบ้านที่ระบุใน url part ไม่ตรงกับข้อมูล id ที่ต้องการแก้ไข" }
         require(house.id != "") { "ไม่มี id ไม่มีการใช้ตัวแปร _id แล้ว" }
@@ -73,18 +69,6 @@ object HouseService {
         val firebaseTokenGropOrg = notification.getFirebaseToken(orgId)
 
         printDebug("\tUpdate house to dao.")
-
-        when (role) {
-            ORG -> house.update(house.timestamp) {
-                house.link?.isSynced = true
-            }
-            ADMIN -> house.update(house.timestamp) {
-                house.link?.isSynced = true
-            }
-            else -> house.update {
-                house.link?.isSynced = false
-            }
-        }
 
         val houseUpdate = houses.update(orgId, house.copy())
 

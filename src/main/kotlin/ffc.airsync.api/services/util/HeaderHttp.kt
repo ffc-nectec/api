@@ -21,9 +21,9 @@ import ffc.entity.User
 import java.util.Enumeration
 import java.util.HashMap
 import javax.servlet.http.HttpServletRequest
-import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.core.SecurityContext
-fun HttpServletRequest.buildHeaderMap(): Map<String, String> {
+
+fun HttpServletRequest.getHeaderMap(): Map<String, String> {
     val map = HashMap<String, String>()
     val headerNames: Enumeration<String> = this.headerNames
     while (headerNames.hasMoreElements()) {
@@ -36,12 +36,8 @@ fun HttpServletRequest.buildHeaderMap(): Map<String, String> {
 
 const val GEOJSONHeader = "application/vnd.geo+json"
 
-fun getTokenRole(context: SecurityContext): User.Role {
-    val roleList = User.Role.values()
-
-    val role = roleList.find {
-        context.isUserInRole(it.toString())
-    } ?: throw NotAuthorizedException("Token นี้ไม่มีสิท")
-
-    return role
+fun SecurityContext.getLoginRole(): List<User.Role> {
+    return User.Role.values().filter {
+        isUserInRole(it.toString())
+    }
 }
