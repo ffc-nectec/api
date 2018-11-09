@@ -126,17 +126,16 @@ private fun List<Person>.addDummy(): List<Person> {
     list.addAll(this)
 
     forEach {
-
         val childGroup = it.relationships.filter { it.relate == Child }
         val dummyRelation = if (it.sex == FEMALE) Father else Mother
         if (childGroup.isNotEmpty()) {
-            val twin = it.relationships.filter { it.relate == Married || it.relate == Divorced }
+            val couple = it.relationships.filter { it.relate == Married || it.relate == Divorced }
             val dummyPerson = ffc.entity.Person()
-            if (twin.isEmpty()) {
+            if (couple.isEmpty()) {
                 list.add(dummyPerson)
 
-                it.addRelationship(Pair(Married, dummyPerson))
-                dummyPerson.addRelationship(Pair(Married, it))
+                it.addRelationship(Married to dummyPerson)
+                dummyPerson.addRelationship(Married to it)
                 dummyPerson.sex = if (it.sex == FEMALE) MALE else FEMALE
                 childGroup.forEach { child ->
                     val childPerson = list.find { child.id == it.id }!!
@@ -144,7 +143,6 @@ private fun List<Person>.addDummy(): List<Person> {
                 }
             } else {
                 childGroup.forEach { child ->
-
                     val childPerson = list.find { child.id == it.id }!!
                     val childParent = childPerson.relationships?.find { it.relate == dummyRelation }
 
@@ -163,6 +161,6 @@ private fun addChildPerson(
     dummyRelation: Person.Relate,
     dummyPerson: Person
 ) {
-    childPerson.addRelationship(Pair(dummyRelation, dummyPerson))
-    dummyPerson.addRelationship(Pair(Child, childPerson))
+    childPerson.addRelationship(dummyRelation to dummyPerson)
+    dummyPerson.addRelationship(Child to childPerson)
 }
