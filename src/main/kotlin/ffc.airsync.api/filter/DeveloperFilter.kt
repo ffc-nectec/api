@@ -18,10 +18,11 @@ class DeveloperFilter : ContainerResponseFilter {
 
     override fun filter(requestContext: ContainerRequestContext?, responseContext: ContainerResponseContext) {
 
-        if ((resourceInfo.resourceMethod.getAnnotation(Developer::class.java)) != null) {
-            responseContext.headers.add("access-control-allow-credentials", "true")
-            responseContext.headers.add("access-control-allow-origin", "*")
-            responseContext.headers.add("Access-Control-Allow-Headers", "X-Custom-Header, Upgrade-Insecure-Requests")
+        var developer = resourceInfo.resourceMethod.getAnnotation(Developer::class.java)
+        if (developer == null) developer = resourceInfo.resourceClass.getAnnotation(Developer::class.java)
+
+        if (developer != null) {
+            responseContext.headers.add("dev", "test dev")
         }
     }
 }

@@ -18,7 +18,6 @@
 package ffc.airsync.api.services.org
 
 import ffc.airsync.api.filter.Cache
-import ffc.airsync.api.filter.Developer
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.entity.Organization
@@ -39,7 +38,6 @@ import javax.ws.rs.core.Response
 @Path("/org")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Developer
 class OrgResource {
 
     @Context
