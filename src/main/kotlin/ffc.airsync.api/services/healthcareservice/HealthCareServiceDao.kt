@@ -15,6 +15,8 @@ interface HealthCareServiceDao : Dao {
     fun findByPatientId(personId: String, orgId: String): List<HealthCareService>
 
     fun update(healthCareService: HealthCareService, orgId: String): HealthCareService
+
+    fun remove(orgId: String)
 }
 
 val healthCareServices: HealthCareServiceDao by lazy {

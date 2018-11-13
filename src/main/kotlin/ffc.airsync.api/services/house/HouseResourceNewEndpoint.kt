@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.house
 
 import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.filter.Developer
 import ffc.airsync.api.services.util.GEOJSONHeader
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.paging
@@ -39,6 +40,7 @@ class HouseResourceNewEndpoint {
     @Context
     private var context: SecurityContext? = null
 
+    @Developer
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
@@ -56,6 +58,7 @@ class HouseResourceNewEndpoint {
         return geoReturn
     }
 
+    @Developer
     @GET
     @Path("/{orgId:([\\dabcdefABCDEF].*)}/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")

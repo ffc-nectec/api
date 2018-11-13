@@ -24,7 +24,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class MongoHealthCareServiceTest {
+class MongoHealthCareServiceDaoTest {
     val ORG_ID = "87543432abcf432123456785"
     lateinit var dao: HealthCareServiceDao
     lateinit var client: MongoClient
@@ -148,5 +148,28 @@ class MongoHealthCareServiceTest {
 
         result.count() `should be equal to` 1
         result.first().id `should be equal to` insert.id
+    }
+
+    @Test
+    fun delete() {
+        dao.insert(visit, ORG_ID)
+        dao.insert(visit2, ORG_ID)
+
+        dao.remove(ORG_ID)
+
+        dao.get(ORG_ID).size `should be equal to` 0
+    }
+
+    @Test
+    fun deleteDifferenceOrganization() {
+        val orgId2 = "87543432abcf432123456786"
+
+        dao.insert(visit, ORG_ID)
+        dao.insert(visit2, orgId2)
+
+        dao.remove(ORG_ID)
+
+        dao.get(ORG_ID).size `should be equal to` 0
+        dao.get(orgId2).size `should be equal to` 1
     }
 }
