@@ -33,8 +33,6 @@ class SuccessToCreatedResponse : ContainerResponseFilter {
         responseContext: ContainerResponseContext
     ) {
         val isPost = requestContext.method.equals("port", ignoreCase = true)
-        responseContext.headers.add("access-control-allow-credentials", "true")
-        responseContext.headers.add("access-control-allow-origin", "http://localhost:3001")
 
         if (isPost && responseContext.status == 200) {
             responseContext.status = 201
