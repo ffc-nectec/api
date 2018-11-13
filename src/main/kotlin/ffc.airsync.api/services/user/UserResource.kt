@@ -1,5 +1,6 @@
 package ffc.airsync.api.services.user
 
+import ffc.airsync.api.filter.Developer
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.getHeaderMap
@@ -20,6 +21,7 @@ import javax.xml.bind.DatatypeConverter
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Developer
 class UserResource {
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
@@ -46,6 +48,9 @@ class UserResource {
         val tokenMessage = UserService.login(orgId, user, pass)
 
         printDebug("Token is $tokenMessage")
-        return Response.status(Response.Status.CREATED).entity(tokenMessage).build()
+        return Response.status(Response.Status.CREATED)
+            .entity(tokenMessage)
+            .header("Authorization", "Bearer ${tokenMessage.token}")
+            .build()
     }
 }
