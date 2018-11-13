@@ -34,6 +34,10 @@ class SuccessToCreatedResponse : ContainerResponseFilter {
     ) {
         val isPost = requestContext.method.equals("port", ignoreCase = true)
 
+        responseContext.headers.add("access-control-allow-credentials", "true")
+        responseContext.headers.add("access-control-allow-origin", "*")
+        responseContext.headers.add("Access-Control-Allow-Headers", "X-Custom-Header, Upgrade-Insecure-Requests")
+
         if (isPost && responseContext.status == 200) {
             responseContext.status = 201
         }
