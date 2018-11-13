@@ -4,11 +4,14 @@ import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
 import ffc.airsync.api.services.VISITIDTYPE
+import ffc.airsync.api.services.notification.broadcastMessage
+import ffc.airsync.api.services.notification.notification
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.entity.User
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.HomeVisit
 import javax.annotation.security.RolesAllowed
+import javax.ws.rs.DELETE
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.PUT
@@ -36,11 +39,25 @@ class VisitResource {
         roleMapIsSync(healthCareService)
 
         val respond = when (healthCareService) {
-            is HomeVisit -> HomeVisitService.create(healthCareService, orgId)
+            is HomeVisit -> {
+                notification.getFirebaseToken(orgId)
+                val result = healthCareServices.insert(healthCareService, orgId) as HomeVisit
+                notification.broadcastMessage(orgId, result)
+                result
+            }
             else -> null
         }
 
         return Response.status(201).entity(respond).build()
+    }
+
+    @DELETE
+    @Path("/$ORGIDTYPE/${PART_HEALTHCARESERVICE}s")
+    @RolesAllowed("ORG", "ADMIN")
+    fun delete(
+        @PathParam("orgId") orgId: String
+    ) {
+        healthCareServices.remove(orgId)
     }
 
     @POST
@@ -53,7 +70,7 @@ class VisitResource {
         healthCareService.forEach { roleMapIsSync(it) }
 
         val respond = when (healthCareService.first()) {
-            is HomeVisit -> HomeVisitService.createListByOrganization(healthCareService as List<HomeVisit>, orgId)
+            is HomeVisit -> healthCareServices.insert(healthCareService, orgId) as List<HomeVisit>
             else -> null
         }
 
@@ -65,7 +82,12 @@ class VisitResource {
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun find(@PathParam("orgId") orgId: String, @PathParam("visitId") visitId: String): HomeVisit {
-        return HomeVisitService.find(orgId, visitId)
+
+        val result = healthCareServices.find(visitId, orgId)
+
+        return if (result != null)
+            result as HomeVisit
+        else throw NullPointerException("ไม่พบ ข้อมูลที่ค้นหา")
     }
 
     @PUT
@@ -77,7 +99,7 @@ class VisitResource {
         healthCareService: HealthCareService
     ): HealthCareService {
         roleMapIsSync(healthCareService)
-        return HomeVisitService.update(healthCareService, orgId)
+        return healthCareServices.update(healthCareService, orgId)
     }
 
     private fun roleMapIsSync(healthCareService: HealthCareService) {
@@ -94,6 +116,6 @@ class VisitResource {
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun getPerson(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<HealthCareService> {
-        return HomeVisitService.getPersonHealthCare(orgId, personId)
+        return healthCareServices.findByPatientId(personId, orgId)
     }
 }

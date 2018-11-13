@@ -70,4 +70,8 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
         val result = dbCollection.find(query).first()
         return result.toJson().parseTo()
     }
+
+    override fun remove(orgId: String) {
+        dbCollection.deleteMany("orgIndex" equal ObjectId(orgId))
+    }
 }
