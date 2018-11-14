@@ -28,7 +28,10 @@ class DeveloperFilter : ContainerResponseFilter {
                 "Access-Control-Allow-Headers",
                 "X-Custom-Header, Upgrade-Insecure-Requests, Authorization"
             )
-            responseContext.headers.add("Access-Control-Expose-Headers", "Authorization")
+            responseContext.headers.add(
+                "Access-Control-Expose-Headers",
+                "X-Custom-Header, Upgrade-Insecure-Requests, Authorization"
+            )
         }
     }
 }
