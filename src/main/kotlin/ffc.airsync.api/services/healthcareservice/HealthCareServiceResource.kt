@@ -24,7 +24,7 @@ import javax.ws.rs.core.SecurityContext
 const val PART_HEALTHCARESERVICE = "healthcareservice"
 
 @Path("/org")
-class VisitResource {
+class HealthCareServiceResource {
 
     @Context
     private var context: SecurityContext? = null
@@ -70,7 +70,7 @@ class VisitResource {
         healthCareService.forEach { roleMapIsSync(it) }
 
         val respond = when (healthCareService.first()) {
-            is HomeVisit -> healthCareServices.insert(healthCareService, orgId) as List<HomeVisit>
+            is HomeVisit -> healthCareServices.insert(healthCareService, orgId)
             else -> null
         }
 
