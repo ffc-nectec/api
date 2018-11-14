@@ -18,6 +18,7 @@
 package ffc.airsync.api.services.org
 
 import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.filter.Developer
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.entity.Organization
@@ -58,7 +59,11 @@ class OrgResource {
 
     @GET
     @Cache(maxAge = 5)
-    fun get(@QueryParam("my") @DefaultValue("false") my: Boolean, @QueryParam("query") query: String?): List<Organization> {
+    @Developer
+    fun get(
+        @QueryParam("my") @DefaultValue("false") my: Boolean,
+        @QueryParam("query") query: String?
+    ): List<Organization> {
         return if (my) {
             printDebug("Find Organization with ip-address = ${req.ipAddress}")
             OrgService.getMy(req.ipAddress)
@@ -66,7 +71,7 @@ class OrgResource {
             val queryFind = query ?: ""
             if (queryFind.isNotEmpty()) {
                 require(!queryFind.contains(Regex("""[\,\%\!\?\'\|\*]"""))) {
-                    "ในการค้นหาไม่ควรมีอักขระ . , % ! ? ' | *"
+                    "ในการค้นหาไม่ควรมีอักขระ , % ! ? ' | *"
                 }
 
                 OrgService.find(queryFind)

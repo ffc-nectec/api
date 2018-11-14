@@ -22,7 +22,13 @@ class DeveloperFilter : ContainerResponseFilter {
         if (developer == null) developer = resourceInfo.resourceClass.getAnnotation(Developer::class.java)
 
         if (developer != null) {
-            responseContext.headers.add("dev", "test dev")
+            responseContext.headers.add("access-control-allow-credentials", "true")
+            responseContext.headers.add("access-control-allow-origin", "*")
+            responseContext.headers.add(
+                "Access-Control-Allow-Headers",
+                "X-Custom-Header, Upgrade-Insecure-Requests, Authorization"
+            )
+            responseContext.headers.add("Access-Control-Expose-Headers", "Authorization")
         }
     }
 }

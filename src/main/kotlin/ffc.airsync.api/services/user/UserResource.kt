@@ -35,6 +35,7 @@ class UserResource {
     }
 
     @POST
+    @Developer
     @Path("/$ORGIDTYPE/authorize")
     fun registerMobile(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String): Response {
         val httpHeader = req.getHeaderMap()
