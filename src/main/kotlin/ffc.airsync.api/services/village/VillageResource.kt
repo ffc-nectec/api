@@ -1,5 +1,6 @@
 package ffc.airsync.api.services.village
 
+import ffc.airsync.api.services.ORGIDTYPE
 import ffc.entity.Village
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
@@ -18,21 +19,21 @@ import javax.ws.rs.core.MediaType
 @Produces(MediaType.APPLICATION_JSON)
 class VillageResource {
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/village")
+    @Path("/$ORGIDTYPE/village")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun create(@PathParam("orgId") orgId: String, village: Village): Village {
         return villages.insert(orgId, village)
     }
 
     @POST
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/village")
+    @Path("/$ORGIDTYPE/villages")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun create(@PathParam("orgId") orgId: String, village: List<Village>): List<Village> {
         return villages.insert(orgId, village)
     }
 
     @PUT
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/village/{villageId:([\\dabcdefABCDEF].*)")
+    @Path("/$ORGIDTYPE/village/VILLAGETYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun update(
         @PathParam("orgId") orgId: String,
@@ -44,7 +45,7 @@ class VillageResource {
     }
 
     @DELETE
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/village/{villageId:([\\dabcdefABCDEF].*)")
+    @Path("/$ORGIDTYPE/village/VILLAGETYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun delete(
         @PathParam("orgId") orgId: String,
@@ -54,7 +55,7 @@ class VillageResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/village/{villageId:([\\dabcdefABCDEF].*)")
+    @Path("/$ORGIDTYPE/village/VILLAGETYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun get(
         @PathParam("orgId") orgId: String,
@@ -64,7 +65,7 @@ class VillageResource {
     }
 
     @GET
-    @Path("/{orgId:([\\dabcdefABCDEF].*)}/village")
+    @Path("/$ORGIDTYPE/village")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun find(
         @PathParam("orgId") orgId: String,
