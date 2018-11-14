@@ -26,11 +26,11 @@ class DeveloperFilter : ContainerResponseFilter {
             responseContext.headers.add("access-control-allow-origin", "*")
             responseContext.headers.add(
                 "Access-Control-Allow-Headers",
-                "X-Custom-Header, Upgrade-Insecure-Requests, Authorization"
+                "*"
             )
             responseContext.headers.add(
                 "Access-Control-Expose-Headers",
-                "X-Custom-Header, Upgrade-Insecure-Requests, Authorization"
+                "*"
             )
         }
     }
