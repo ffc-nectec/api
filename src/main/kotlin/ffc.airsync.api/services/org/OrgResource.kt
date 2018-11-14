@@ -25,6 +25,7 @@ import javax.annotation.security.RolesAllowed
 import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.Consumes
 import javax.ws.rs.DELETE
+import javax.ws.rs.DefaultValue
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.Path
@@ -57,7 +58,7 @@ class OrgResource {
 
     @GET
     @Cache(maxAge = 5)
-    fun get(@QueryParam("my") my: Boolean = false, @QueryParam("query") query: String?): List<Organization> {
+    fun get(@QueryParam("my") @DefaultValue("false") my: Boolean, @QueryParam("query") query: String?): List<Organization> {
         return if (my) {
             printDebug("Find Organization with ip-address = ${req.ipAddress}")
             OrgService.getMy(req.ipAddress)
