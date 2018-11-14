@@ -49,8 +49,8 @@ class HouseResourceNewEndpoint {
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 5)
     fun getGeoJsonHouse(
-        @QueryParam("page") page: Int = 1,
-        @QueryParam("per_page") per_page: Int = 200,
+        @QueryParam("page") @DefaultValue("1") page: Int,
+        @QueryParam("per_page") @DefaultValue("200") per_page: Int,
         @PathParam("orgId") orgId: String
     ): FeatureCollection<House> {
         val houses = HouseService.getHouses(orgId, haveLocation = true)
@@ -66,10 +66,10 @@ class HouseResourceNewEndpoint {
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 5)
     fun newGetJsonHouse(
-        @QueryParam("page") @DefaultValue("1") page: Int = 1,
-        @QueryParam("per_page") @DefaultValue("200") per_page: Int = 200,
-        @QueryParam("query") query: String? = null,
-        @QueryParam("haveLocation") haveLocationQuery: String? = null,
+        @QueryParam("page") @DefaultValue("1") page: Int,
+        @QueryParam("per_page") @DefaultValue("200") per_page: Int,
+        @QueryParam("query") query: String?,
+        @QueryParam("haveLocation") haveLocationQuery: String?,
         @PathParam("orgId") orgId: String
     ): List<House> {
         val haveLocation: Boolean? = when (haveLocationQuery) {
