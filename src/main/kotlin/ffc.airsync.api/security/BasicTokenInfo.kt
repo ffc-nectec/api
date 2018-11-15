@@ -1,6 +1,5 @@
 package ffc.airsync.api.security
 
-import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.token.tokens
 import ffc.entity.Token
 import javax.ws.rs.NotAuthorizedException
@@ -12,13 +11,13 @@ class BasicTokenInfo(requestContext: ContainerRequestContext) {
     val token: Token
 
     init {
-        printDebug("TokenInfo class in filter")
+        // printDebug("TokenInfo class in filter")
         val authorization = requestContext.headers[AUTHORIZATION_PROPERTY]
 
         if (authorization != null) {
             try {
                 token = findToken(getBasicToken(authorization))
-                printDebug("\t\ttoken user= ${token.user}")
+                // printDebug("\t\ttoken user= ${token.user}")
                 checkTokenExpire()
             } catch (e: Exception) {
                 e.printStackTrace()

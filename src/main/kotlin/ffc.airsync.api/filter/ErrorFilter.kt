@@ -15,9 +15,9 @@ import javax.ws.rs.ext.Provider
 
 @Provider
 class ErrorFilter : ExceptionMapper<WebApplicationException> {
-    override fun toResponse(exception: WebApplicationException?): Response {
+    override fun toResponse(exception: WebApplicationException): Response {
         printDebug("Api wrong")
-        exception!!.printStackTrace()
+        // exception!!.printStackTrace()
         val err = ErrorRes(exception.response.status, exception.message, exception)
         return Response.status(exception.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
     }
@@ -27,8 +27,8 @@ class ErrorFilter : ExceptionMapper<WebApplicationException> {
 
 @Provider
 class ErrorUserFilter : ExceptionMapper<ForbiddenException> {
-    override fun toResponse(exception: ForbiddenException?): Response {
-        exception!!.printStackTrace()
+    override fun toResponse(exception: ForbiddenException): Response {
+        // exception!!.printStackTrace()
         var err = ErrorFilter.ErrorRes(exception.response.status, exception.message, exception)
         return if (exception.message == "User not authorized.") {
             val except = NotAuthorizedException("token not found")
@@ -42,8 +42,8 @@ class ErrorUserFilter : ExceptionMapper<ForbiddenException> {
 
 @Provider
 class ErrorMethodNotAllow : ExceptionMapper<javax.ws.rs.NotAllowedException> {
-    override fun toResponse(exception: javax.ws.rs.NotAllowedException?): Response {
-        exception!!.printStackTrace()
+    override fun toResponse(exception: javax.ws.rs.NotAllowedException): Response {
+        // exception!!.printStackTrace()
         val except = BadRequestException(exception.message)
         val err = ErrorFilter.ErrorRes(except.response.status, exception.message, exception)
         return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
@@ -52,8 +52,8 @@ class ErrorMethodNotAllow : ExceptionMapper<javax.ws.rs.NotAllowedException> {
 
 @Provider
 class RequireError : ExceptionMapper<IllegalArgumentException> {
-    override fun toResponse(exception: IllegalArgumentException?): Response {
-        exception!!.printStackTrace()
+    override fun toResponse(exception: IllegalArgumentException): Response {
+        // exception!!.printStackTrace()
         if ((exception.message ?: "").endsWith("parameter houseId")) {
             val except = NotAllowedException(exception.message)
             val err = ErrorFilter.ErrorRes(except.response.status, exception.message, exception)
@@ -67,8 +67,8 @@ class RequireError : ExceptionMapper<IllegalArgumentException> {
 
 @Provider
 class StaegError : ExceptionMapper<IllegalStateException> {
-    override fun toResponse(exception: IllegalStateException?): Response {
-        exception!!.printStackTrace()
+    override fun toResponse(exception: IllegalStateException): Response {
+        // exception!!.printStackTrace()
         val except = InternalServerErrorException("Stage error ${exception.message}")
         val err = ErrorFilter.ErrorRes(except.response.status, exception.message, exception)
         return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
@@ -77,8 +77,8 @@ class StaegError : ExceptionMapper<IllegalStateException> {
 
 @Provider
 class NullError : ExceptionMapper<NullPointerException> {
-    override fun toResponse(exception: NullPointerException?): Response {
-        exception!!.printStackTrace()
+    override fun toResponse(exception: NullPointerException): Response {
+        // exception!!.printStackTrace()
         val except = NotFoundException("Null error ${exception.message}")
         val err = ErrorFilter.ErrorRes(except.response.status, exception.message, exception)
         return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
@@ -87,8 +87,8 @@ class NullError : ExceptionMapper<NullPointerException> {
 
 @Provider
 class NotSuchElement : ExceptionMapper<NoSuchElementException> {
-    override fun toResponse(exception: NoSuchElementException?): Response {
-        exception!!.printStackTrace()
+    override fun toResponse(exception: NoSuchElementException): Response {
+        // exception!!.printStackTrace()
         val except = NotFoundException("No Such Element ${exception.message}")
         val err = ErrorFilter.ErrorRes(except.response.status, exception.message, exception)
         return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()

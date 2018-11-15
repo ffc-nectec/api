@@ -1,6 +1,5 @@
 package ffc.airsync.api.security
 
-import ffc.airsync.api.printDebug
 import java.util.regex.Pattern
 import javax.annotation.Priority
 import javax.ws.rs.NotAuthorizedException
@@ -22,12 +21,12 @@ class BasicAuthFilter : ContainerRequestFilter {
         if (matcherOrgId.find()) {
             orgId = matcherOrgId.group(1)
         }
-        printDebug("Auth filter parth url $baseUrl \t Org id = $orgId")
+        // printDebug("Auth filter parth ${requestContext.method} url $baseUrl \t Org id = $orgId")
         val authenInfo: BasicTokenInfo
 
         try {
             authenInfo = BasicTokenInfo(requestContext)
-            printDebug("Finish create TokenInfo")
+            // printDebug("Finish create TokenInfo")
         } catch (ex: NotAuthorizedException) {
             return
         }
