@@ -1,7 +1,6 @@
 package ffc.airsync.api.filter
 
 import javax.annotation.Priority
-import javax.ws.rs.NotFoundException
 import javax.ws.rs.Priorities
 import javax.ws.rs.container.ContainerRequestContext
 import javax.ws.rs.container.ContainerResponseContext
@@ -17,6 +16,6 @@ class EmptyListResponse : ContainerResponseFilter {
         responseContext: ContainerResponseContext
     ) {
         val list = responseContext.entity as? List<*> ?: return
-        if (list.isEmpty()) throw NotFoundException("Empty List")
+        if (list.isEmpty()) throw NoSuchElementException("Empty List")
     }
 }
