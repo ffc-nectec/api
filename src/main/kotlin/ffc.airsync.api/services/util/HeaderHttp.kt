@@ -41,3 +41,6 @@ fun SecurityContext.getLoginRole(): List<User.Role> {
         isUserInRole(it.toString())
     }
 }
+
+infix fun List<User.Role>?.isRole(role: User.Role): Boolean = (this?.contains(role)) ?: false
+infix fun User.Role.inRole(role: List<User.Role>?): Boolean = (role?.contains(this)) ?: false
