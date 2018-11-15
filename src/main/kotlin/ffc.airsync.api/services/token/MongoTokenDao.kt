@@ -1,6 +1,5 @@
 package ffc.airsync.api.services.token
 
-import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.MongoAbsConnect
 import ffc.airsync.api.services.util.equal
 import ffc.entity.Token
@@ -22,10 +21,8 @@ internal class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnec
     }
 
     override fun find(token: String): Token? {
-        printDebug("Token Dao find $token")
-        val tokenDoc = dbCollection.find("token" equal token.trim()).first()
-        printDebug("\tResult token find $tokenDoc")
-        if (tokenDoc == null) return null
+        // printDebug("Token Dao find $token")
+        val tokenDoc = dbCollection.find("token" equal token.trim()).first() ?: return null
         return tokenDoc.toJson().parseTo()
     }
 
