@@ -23,14 +23,13 @@ class DeveloperFilter : ContainerResponseFilter {
 
         if (developer != null) {
             responseContext.headers.add("access-control-allow-credentials", "true")
-            responseContext.headers.add("access-control-allow-origin", "*")
+            responseContext.headers.add("access-control-allow-origin", "")
             responseContext.headers.add(
                 "Access-Control-Allow-Headers",
-                "*"
+                "http://localhost:3001, http://localhost:8080"
             )
             responseContext.headers.add(
-                "Access-Control-Expose-Headers",
-                "*"
+                "Access-Control-Expose-Headers", "Authorization"
             )
         }
     }
