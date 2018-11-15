@@ -5,6 +5,7 @@ import ffc.airsync.api.filter.Developer
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.GEOJSONHeader
 import ffc.airsync.api.services.util.getLoginRole
+import ffc.airsync.api.services.util.inRole
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
 import ffc.entity.User
@@ -44,7 +45,7 @@ class HouseResourceNewEndpoint {
 
     @Developer
     @GET
-    @Path("/$ORGIDTYPE}/$NEWPART_HOUSESERVICE")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 5)
@@ -62,7 +63,7 @@ class HouseResourceNewEndpoint {
 
     @Developer
     @GET
-    @Path("/$ORGIDTYPE}/$NEWPART_HOUSESERVICE")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 5)
     fun newGetJsonHouse(
@@ -81,7 +82,7 @@ class HouseResourceNewEndpoint {
     }
 
     @PUT
-    @Path("/$ORGIDTYPE}/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun update(
         @PathParam("orgId") orgId: String,
@@ -106,7 +107,7 @@ class HouseResourceNewEndpoint {
     }
 
     @PUT
-    @Path("/$ORGIDTYPE}/$NEWPART_HOUSESERVICE")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun updateFail(
         @PathParam("orgId") orgId: String,
@@ -117,7 +118,7 @@ class HouseResourceNewEndpoint {
     }
 
     @GET
-    @Path("/$ORGIDTYPE}/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 2)
@@ -129,7 +130,7 @@ class HouseResourceNewEndpoint {
     }
 
     @GET
-    @Path("/$ORGIDTYPE}/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
     @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun getPersonInHouse(
@@ -140,7 +141,7 @@ class HouseResourceNewEndpoint {
     }
 
     @GET
-    @Path("/$ORGIDTYPE}/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun getSingle(
@@ -151,25 +152,26 @@ class HouseResourceNewEndpoint {
     }
 
     @POST
-    @Path("/$ORGIDTYPE}/${NEWPART_HOUSESERVICE}s")
+    @Path("/$ORGIDTYPE/houses")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
         if (houseList == null) throw BadRequestException()
 
-        return when (context?.getLoginRole()) {
-            User.Role.ORG -> {
+        val role = context?.getLoginRole()
+        return when {
+            User.Role.ORG inRole role -> {
                 val houseReturn = HouseService.createByOrg(orgId, houseList)
                 Response.status(Response.Status.CREATED).entity(houseReturn).build()
             }
-            User.Role.ADMIN -> {
+            User.Role.ADMIN inRole role -> {
                 val houseReturn = HouseService.createByOrg(orgId, houseList)
                 Response.status(Response.Status.CREATED).entity(houseReturn).build()
             }
-            User.Role.USER -> {
+            User.Role.USER inRole role -> {
                 val houseReturn = HouseService.createByUser(orgId, houseList)
                 Response.status(Response.Status.CREATED).entity(houseReturn).build()
             }
-            User.Role.PROVIDER -> {
+            User.Role.PROVIDER inRole role -> {
                 val houseReturn = HouseService.createByUser(orgId, houseList)
                 Response.status(Response.Status.CREATED).entity(houseReturn).build()
             }
@@ -178,25 +180,26 @@ class HouseResourceNewEndpoint {
     }
 
     @POST
-    @Path("/$ORGIDTYPE}/$NEWPART_HOUSESERVICE")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
         if (house == null) throw BadRequestException()
 
-        return when (context?.getLoginRole()) {
-            User.Role.ORG -> {
+        val role = context?.getLoginRole()
+        return when {
+            User.Role.ORG inRole role -> {
                 val houseReturn = HouseService.createByOrg(orgId, house)
                 Response.status(Response.Status.CREATED).entity(houseReturn).build()
             }
-            User.Role.ADMIN -> {
+            User.Role.ADMIN inRole role -> {
                 val houseReturn = HouseService.createByOrg(orgId, house)
                 Response.status(Response.Status.CREATED).entity(houseReturn).build()
             }
-            User.Role.USER -> {
+            User.Role.USER inRole role -> {
                 val houseReturn = HouseService.createByUser(orgId, house)
                 Response.status(Response.Status.CREATED).entity(houseReturn).build()
             }
-            User.Role.SURVEYOR -> {
+            User.Role.SURVEYOR inRole role -> {
                 val houseReturn = HouseService.createByUser(orgId, house)
                 Response.status(Response.Status.CREATED).entity(houseReturn).build()
             }

@@ -7,6 +7,7 @@ import ffc.airsync.api.services.VISITIDTYPE
 import ffc.airsync.api.services.notification.broadcastMessage
 import ffc.airsync.api.services.notification.notification
 import ffc.airsync.api.services.util.getLoginRole
+import ffc.airsync.api.services.util.inRole
 import ffc.entity.User
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.HomeVisit
@@ -103,12 +104,14 @@ class HealthCareServiceResource {
     }
 
     private fun roleMapIsSync(healthCareService: HealthCareService) {
-        if (healthCareService.link != null)
-            when (context?.getLoginRole()) {
-                User.Role.ORG -> healthCareService.link?.isSynced = true
-                User.Role.ADMIN -> healthCareService.link?.isSynced = true
+        if (healthCareService.link != null) {
+            val role = context?.getLoginRole()
+            when {
+                User.Role.ORG inRole role -> healthCareService.link?.isSynced = true
+                User.Role.ADMIN inRole role -> healthCareService.link?.isSynced = true
                 else -> healthCareService.link?.isSynced = false
             }
+        }
     }
 
     @GET

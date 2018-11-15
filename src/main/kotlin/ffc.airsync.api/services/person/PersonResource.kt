@@ -22,12 +22,14 @@ import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
 import ffc.airsync.api.services.util.getLoginRole
+import ffc.airsync.api.services.util.inRole
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
 import ffc.entity.User
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
 import javax.ws.rs.DELETE
+import javax.ws.rs.DefaultValue
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.PUT
@@ -84,9 +86,10 @@ class PersonResource {
         person: Person
     ): Person {
         require(person.id == personId) { "ข้อมูลการ Update ไม่ถูกต้อง" }
-        when (context?.getLoginRole()) {
-            User.Role.ADMIN -> person.link?.isSynced = true
-            User.Role.ORG -> person.link?.isSynced = true
+        val role = context?.getLoginRole()
+        when {
+            User.Role.ADMIN inRole role -> person.link?.isSynced = true
+            User.Role.ORG inRole role -> person.link?.isSynced = true
             else -> person.link?.isSynced = false
         }
         return persons.update(orgId, person)
@@ -97,15 +100,15 @@ class PersonResource {
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun get(
-        @QueryParam("page") page: Int = 1,
-        @QueryParam("per_page") per_page: Int = 200,
+        @QueryParam("page") @DefaultValue("1") page: Int,
+        @QueryParam("per_page") @DefaultValue("200") per_page: Int,
         @PathParam("orgId") orgId: String,
         @QueryParam("query") query: String?
     ): List<Person> {
         return if (query != null) {
             persons.find(query, orgId)
         } else {
-            persons.findByOrgId(orgId).paging(if (page == 0) 1 else page, if (per_page == 0) 200 else per_page)
+            persons.findByOrgId(orgId).paging(page, per_page)
         }
     }
 
