@@ -8,6 +8,7 @@ import ffc.airsync.api.services.MongoAbsConnect
 import ffc.entity.Lang
 import ffc.entity.healthcare.Disease
 import ffc.entity.util.generateTempId
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.junit.After
 import org.junit.Before
@@ -54,6 +55,11 @@ class MongoDiseaseDaoTest {
             isEpimedic `should equal` true
             isNCD `should equal` true
         }
+    }
+
+    @Test
+    fun getByICD10() {
+        dao.getByIcd10("HHXX002Y")!!.name `should be equal to` "Fall2"
     }
 
     @Test
