@@ -17,3 +17,14 @@ interface DiseaseDao : Dao {
 }
 
 val diseases: DiseaseDao by lazy { MongoDiseaseDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
+
+/**
+ * Lookup disease by icd10
+ */
+fun String.getDisease() = diseases.getByIcd10(this)
+
+/**
+ * Lookup disease by icd10 field.
+ * @return Disease id, name, icd10
+ */
+fun Disease.getDisease() = this.icd10?.let { diseases.getByIcd10(it) }
