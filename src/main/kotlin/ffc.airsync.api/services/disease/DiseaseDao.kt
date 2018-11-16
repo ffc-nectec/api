@@ -11,6 +11,8 @@ interface DiseaseDao : Dao {
 
     fun insert(disease: List<Disease>): List<Disease> = disease.map { insert(it) }
 
+    fun getByIcd10(icd10: String): Disease?
+
     fun find(query: String = "", lang: Lang = Lang.th): List<Disease>
 }
 

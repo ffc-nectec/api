@@ -9,6 +9,7 @@ import ffc.airsync.api.services.util.firstAs
 import ffc.airsync.api.services.util.listOf
 import ffc.airsync.api.services.util.toDocument
 import ffc.entity.Lang
+import ffc.entity.gson.parseTo
 import ffc.entity.healthcare.Disease
 import org.bson.Document
 
@@ -18,7 +19,8 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
         val searchIndex = documentOf(
             "icd10" to "text",
             "name" to "text",
-            "translation.th" to "text")
+            "translation.th" to "text"
+        )
         val insertIndex = documentOf("icd10" to 1)
 
         try {
@@ -50,16 +52,21 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
         return dbCollection.find("\$or" equal listQuery).limit(100).listOf()
     }
 
+    override fun getByIcd10(icd10: String): Disease? {
+        val query = "icd10" equal icd10
+        return dbCollection.find(query).first().toJson().parseTo()
+    }
+
     private fun List<Disease>.translate(lang: Lang): List<Disease> {
         return map {
             val nameLang = it.translation[lang] ?: it.name
             val nameEn = it.name
             Disease(
-                    it.id, nameLang,
-                    icd10 = it.icd10,
-                    isChronic = it.isChronic,
-                    isEpimedic = it.isEpimedic,
-                    isNCD = it.isNCD
+                it.id, nameLang,
+                icd10 = it.icd10,
+                isChronic = it.isChronic,
+                isEpimedic = it.isEpimedic,
+                isNCD = it.isNCD
             ).apply {
                 this.translation.putAll(it.translation)
                 this.translation[Lang.en] = nameEn
