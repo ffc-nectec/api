@@ -29,4 +29,4 @@ fun String.getDisease() = diseases.getByIcd10(this)
  */
 fun Disease.getDisease() = this.icd10?.let { diseases.getByIcd10(it) }
 
-fun List<Disease>.getDisease() = this.map { it.getDisease() }
+fun List<Disease>.getDisease() = this.map { it.getDisease() ?: it }
