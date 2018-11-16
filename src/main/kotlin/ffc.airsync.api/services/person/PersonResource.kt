@@ -21,6 +21,7 @@ import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
+import ffc.airsync.api.services.disease.getDisease
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.inRole
 import ffc.airsync.api.services.util.paging
@@ -54,8 +55,18 @@ class PersonResource {
     @RolesAllowed("ORG", "ADMIN")
     fun creates(@PathParam("orgId") orgId: String, personList: List<Person>): Response {
         printDebug("\nCall create person by ip = ")
+
+        personList.forEach { person ->
+            mapDeadIcd10(person)
+        }
         val persons = persons.insert(orgId, personList)
         return Response.status(Response.Status.CREATED).entity(persons).build()
+    }
+
+    private fun mapDeadIcd10(person: Person) {
+        person.death?.causes?.getDisease()?.let {
+            person.death = Person.Death(person.death!!.date, it)
+        }
     }
 
     @DELETE
@@ -72,6 +83,7 @@ class PersonResource {
     @RolesAllowed("ORG", "ADMIN")
     fun create(@PathParam("orgId") orgId: String, person: Person): Response {
         printDebug("\nCall create person by ip = ")
+        mapDeadIcd10(person)
         val persons = persons.insert(orgId, person)
         return Response.status(Response.Status.CREATED).entity(persons).build()
     }
