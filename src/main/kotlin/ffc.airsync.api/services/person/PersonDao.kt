@@ -26,6 +26,11 @@ interface PersonDao : Dao {
     fun insert(orgId: String, person: Person): Person
     fun insert(orgId: String, personList: List<Person>): List<Person>
 
+    fun inserBlock(orgId: String, block: Int, personList: List<Person>): List<Person>
+    fun confirmBlock(orgId: String, block: Int)
+    fun getBlock(orgId: String, block: Int): List<Person>
+    fun unConfirmBlock(orgId: String, block: Int)
+
     fun update(orgId: String, person: Person): Person
 
     fun getPerson(orgId: String, personId: String): Person

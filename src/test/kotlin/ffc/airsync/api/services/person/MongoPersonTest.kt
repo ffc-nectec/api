@@ -251,4 +251,42 @@ class MongoPersonTest {
         misterDog.hashCode() `should be equal to` misterDog.hashCode()
         misterDog.hashCode() `should not be equal to` missCat.hashCode()
     }
+
+    @Test
+    fun getBlock() {
+        dao.inserBlock(ORG_ID, 2, arrayListOf<Person>().apply {
+            add(missCat)
+            add(misterDog)
+            add(missRabbit)
+        })
+
+        dao.getBlock(ORG_ID, 2).count() `should be equal to` 3
+    }
+
+    @Test
+    fun unconfirmBlock() {
+        dao.inserBlock(ORG_ID, 2, arrayListOf<Person>().apply {
+            add(missCat)
+            add(misterDog)
+            add(missRabbit)
+        })
+
+        dao.unConfirmBlock(ORG_ID, 2)
+        dao.getBlock(ORG_ID, 2).count() `should be equal to` 0
+        dao.find("", ORG_ID).count() `should be equal to` 1
+    }
+
+    @Test
+    fun confirmBlock() {
+        dao.inserBlock(ORG_ID, 2, arrayListOf<Person>().apply {
+            add(missCat)
+            add(misterDog)
+            add(missRabbit)
+        })
+
+        dao.confirmBlock(ORG_ID, 2)
+
+        dao.getBlock(ORG_ID, 2).count() `should be equal to` 0
+        dao.find("", ORG_ID).count() `should be equal to` 4
+    }
 }
