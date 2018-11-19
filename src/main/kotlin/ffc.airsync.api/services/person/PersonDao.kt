@@ -20,6 +20,7 @@ package ffc.airsync.api.services.person
 import ffc.airsync.api.services.DEFAULT_MONGO_HOST
 import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
+import ffc.airsync.api.services.disease.getDisease
 import ffc.entity.Person
 
 interface PersonDao : Dao {
@@ -44,3 +45,9 @@ interface PersonDao : Dao {
 }
 
 val persons: PersonDao by lazy { MongoPersonDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
+
+fun mapDeadIcd10(person: Person) {
+    person.death?.causes?.getDisease()?.let {
+        person.death = Person.Death(person.death!!.date, it)
+    }
+}
