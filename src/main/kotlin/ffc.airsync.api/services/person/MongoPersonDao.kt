@@ -1,6 +1,8 @@
 package ffc.airsync.api.services.person
 
+import com.mongodb.BasicDBObject
 import com.mongodb.client.model.IndexOptions
+import com.mongodb.client.model.UpdateOptions
 import ffc.airsync.api.services.MongoAbsConnect
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.buildUpdateBson
@@ -121,8 +123,10 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
     }
 
     override fun syncData(orgId: String, limitOutput: Int): List<Entity> {
-        val result = this.dbExecuted.find(("link.isSynced" equal false)
-            plus ("orgIndex" equal ObjectId(orgId))).limit(limitOutput)
+        val result = this.dbExecuted.find(
+            ("link.isSynced" equal false)
+                plus ("orgIndex" equal ObjectId(orgId))
+        ).limit(limitOutput)
 
         if (result.count() < 1) return emptyList()
         val output = result.map {
@@ -135,5 +139,35 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoAbsConn
         output.removeIf { it.isTempId }
 
         return output
+    }
+
+    override fun inserBlock(orgId: String, block: Int, persons: List<Person>): List<Person> {
+
+        val personInsert = persons.map {
+            it.orgId = orgId
+            val personDoc = it.buildInsertBson()
+            personDoc.append("orgIndex", ObjectId(orgId))
+            personDoc.append("insertBlock", block)
+            personDoc
+        }
+
+        return dbCollection.ffcInsert(personInsert)
+    }
+
+    override fun getBlock(orgId: String, block: Int): List<Person> {
+        return dbCollection.find("insertBlock" equal block).map { it.toJson().parseTo<Person>() }.toList()
+    }
+
+    override fun confirmBlock(orgId: String, block: Int) {
+        val listUnset = BasicBSONList()
+        listUnset.add("insertBlock" equal "")
+        val update = BasicDBObject()
+        update["\$unset"] = BasicDBObject("insertBlock", "")
+
+        dbCollection.updateMany("insertBlock" equal block, update, UpdateOptions())
+    }
+
+    override fun unConfirmBlock(orgId: String, block: Int) {
+        dbCollection.deleteMany("insertBlock" equal block)
     }
 }
