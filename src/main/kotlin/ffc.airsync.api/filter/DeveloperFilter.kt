@@ -18,19 +18,22 @@ class DeveloperFilter : ContainerResponseFilter {
 
     override fun filter(requestContext: ContainerRequestContext?, responseContext: ContainerResponseContext) {
 
-        var developer = resourceInfo.resourceMethod.getAnnotation(Developer::class.java)
-        if (developer == null) developer = resourceInfo.resourceClass.getAnnotation(Developer::class.java)
+        try {
+            var developer = resourceInfo.resourceMethod.getAnnotation(Developer::class.java)
+            if (developer == null) developer = resourceInfo.resourceClass.getAnnotation(Developer::class.java)
 
-        if (developer != null) {
-            responseContext.headers.add("access-control-allow-credentials", "true")
-            responseContext.headers.add("access-control-allow-origin", "")
-            responseContext.headers.add(
-                "Access-Control-Allow-Headers",
-                "http://localhost:3001, http://localhost:8080"
-            )
-            responseContext.headers.add(
-                "Access-Control-Expose-Headers", "Authorization"
-            )
+            if (developer != null) {
+                responseContext.headers.add("access-control-allow-credentials", "true")
+                responseContext.headers.add("access-control-allow-origin", "")
+                responseContext.headers.add(
+                    "Access-Control-Allow-Headers",
+                    "http://localhost:3001, http://localhost:8080"
+                )
+                responseContext.headers.add(
+                    "Access-Control-Expose-Headers", "Authorization"
+                )
+            }
+        } catch (ignore: java.lang.NullPointerException) {
         }
     }
 }
