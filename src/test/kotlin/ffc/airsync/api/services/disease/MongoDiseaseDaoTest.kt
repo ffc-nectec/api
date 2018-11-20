@@ -6,7 +6,7 @@ import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
 import ffc.airsync.api.services.MongoAbsConnect
 import ffc.entity.Lang
-import ffc.entity.healthcare.Disease
+import ffc.entity.healthcare.Icd10
 import ffc.entity.util.generateTempId
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
@@ -27,12 +27,12 @@ class MongoDiseaseDaoTest {
         MongoAbsConnect.setClient(client)
         dao = MongoDiseaseDao(serverAddress.hostString, serverAddress.port)
 
-        dao.insert(Disease(generateTempId(), "Fall", "HHXX001Y").apply { translation[Lang.th] = "อ้วนซ้ำซ้อน" })
+        dao.insert(Icd10("Fall", "HHXX001Y").apply { translation[Lang.th] = "อ้วนซ้ำซ้อน" })
         dao.insert(
-            Disease(
-                generateTempId(),
-                "Fall2",
-                "HHXX002Y",
+            Icd10(
+                id = generateTempId(),
+                name = "Fall2",
+                icd10 = "HHXX002Y",
                 isNCD = true,
                 isChronic = true,
                 isEpimedic = true
@@ -76,18 +76,18 @@ class MongoDiseaseDaoTest {
 
     @Test
     fun insertReturnResult() {
-        val result = dao.insert(Disease(generateTempId(), "Fall99", "HHXX099Y"))
+        val result = dao.insert(Icd10("Fall99", "HHXX099Y"))
 
         result.name `should equal` "Fall99"
     }
 
     @Test
     fun insertListAndQuery() {
-        val diseaseList = listOf<Disease>(
-            Disease(generateTempId(), "Fall3", "HHXX003T"),
-            Disease(generateTempId(), "Fall4", "HHXX004T")
+        val icd10List = listOf<Icd10>(
+            Icd10("Fall3", "HHXX003T"),
+            Icd10("Fall4", "HHXX004T")
         )
-        dao.insert(diseaseList)
+        dao.insert(icd10List)
 
         dao.find("HHXX003T").last().name `should equal` "Fall3"
         dao.find("HHXX004T").last().name `should equal` "Fall4"

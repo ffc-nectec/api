@@ -10,10 +10,9 @@ import ffc.entity.ThaiCitizenId
 import ffc.entity.ThaiHouseholdId
 import ffc.entity.gson.toJson
 import ffc.entity.healthcare.Chronic
-import ffc.entity.healthcare.Disease
+import ffc.entity.healthcare.Icd10
 import ffc.entity.place.House
 import ffc.entity.update
-import ffc.entity.util.generateTempId
 import me.piruin.geok.geometry.Point
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
@@ -72,7 +71,7 @@ class MongoHouseDaoTest {
             lastname = nameStruct[2]
             sex = if (nameStruct[0].trim() == "นาย") Person.Sex.MALE else Person.Sex.FEMALE
             birthDate = LocalDate.now().minusMonths(240)
-            chronics.add(Chronic(Disease(generateTempId(), "fair", "dx001")))
+            chronics.add(Chronic(Icd10("fair", "dx001")))
         }
     }
 
@@ -128,8 +127,8 @@ class MongoHouseDaoTest {
 
     @Test
     fun queryHouse() {
-        dao.findAll(ORG_ID, "ลัดดา") .size `should be equal to` 2
-        dao.findAll(ORG_ID, "999") .size `should be equal to` 1
+        dao.findAll(ORG_ID, "ลัดดา").size `should be equal to` 2
+        dao.findAll(ORG_ID, "999").size `should be equal to` 1
     }
 
     @Test

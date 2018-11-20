@@ -13,9 +13,8 @@ import ffc.entity.Person
 import ffc.entity.System
 import ffc.entity.ThaiCitizenId
 import ffc.entity.healthcare.Chronic
-import ffc.entity.healthcare.Disease
+import ffc.entity.healthcare.Icd10
 import ffc.entity.update
-import ffc.entity.util.generateTempId
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.joda.time.LocalDate
@@ -38,11 +37,13 @@ class MongoRelationsShipDaoTest {
         println("Init Database")
         server = MongoServer(MemoryBackend())
         val serverAddress = server.bind()
-        client = MongoClient(ServerAddress(serverAddress),
+        client = MongoClient(
+            ServerAddress(serverAddress),
             MongoClientOptions.Builder()
                 .maxConnectionIdleTime(5000)
                 .connectionsPerHost(5)
-                .build())
+                .build()
+        )
         MongoAbsConnect.setClient(client)
         daoPerson = MongoPersonDao(serverAddress.hostString, serverAddress.port)
         dao = MongoRelationsShipDao(serverAddress.hostString, serverAddress.port)
@@ -53,8 +54,8 @@ class MongoRelationsShipDaoTest {
             lastname = "โคตรกระบือ"
             sex = Person.Sex.MALE
             birthDate = LocalDate.now().minusYears(20)
-            chronics.add(Chronic(Disease(generateTempId(), "fair", "dxabc00x")))
-            chronics.add(Chronic(Disease(generateTempId(), "fair", "abcffe982")))
+            chronics.add(Chronic(Icd10("fair", "dxabc00x")))
+            chronics.add(Chronic(Icd10("fair", "abcffe982")))
             link = Link(System.JHICS)
             link!!.isSynced = false
             houseId = "12345678901"
@@ -66,8 +67,8 @@ class MongoRelationsShipDaoTest {
             lastname = "สมบูรณ์จิต"
             sex = Person.Sex.FEMALE
             birthDate = LocalDate.now().minusYears(27)
-            chronics.add(Chronic(Disease(generateTempId(), "floor", "I10")))
-            chronics.add(Chronic(Disease(generateTempId(), "fary", "I11")))
+            chronics.add(Chronic(Icd10("floor", "I10")))
+            chronics.add(Chronic(Icd10("fary", "I11")))
             link = Link(System.JHICS)
             link!!.isSynced = true
             houseId = "11111111111"
@@ -79,8 +80,8 @@ class MongoRelationsShipDaoTest {
             lastname = "สุดน่ารัก"
             sex = Person.Sex.FEMALE
             birthDate = LocalDate.now().minusYears(22)
-            chronics.add(Chronic(Disease(generateTempId(), "sleep", "I10")))
-            chronics.add(Chronic(Disease(generateTempId(), "god", "I11")))
+            chronics.add(Chronic(Icd10("sleep", "I10")))
+            chronics.add(Chronic(Icd10("god", "I11")))
             link = Link(System.JHICS)
             link!!.isSynced = false
             houseId = "99887744998"

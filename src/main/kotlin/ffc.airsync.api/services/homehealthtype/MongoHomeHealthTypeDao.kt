@@ -6,7 +6,7 @@ import ffc.airsync.api.services.util.equal
 import ffc.entity.Lang
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
-import ffc.entity.healthcare.CommunityServiceType
+import ffc.entity.healthcare.CommunityService.ServiceType
 import org.bson.Document
 import org.bson.types.BasicBSONList
 
@@ -19,7 +19,7 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
         }
     }
 
-    override fun insert(homeHealthTypee: CommunityServiceType): CommunityServiceType {
+    override fun insert(homeHealthTypee: ServiceType): ServiceType {
         val query = "id" equal homeHealthTypee.id
         val docHomeHealthType = Document.parse(homeHealthTypee.toJson())
         dbCollection.deleteMany(query)
@@ -30,8 +30,8 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
         return result.toJson().parseTo()
     }
 
-    private fun findMongo(query: String): List<CommunityServiceType> {
-        val result = arrayListOf<CommunityServiceType>()
+    private fun findMongo(query: String): List<ServiceType> {
+        val result = arrayListOf<ServiceType>()
         val regexQuery = Document("\$regex", query).append("\$options", "i")
         val queryDoc = BasicBSONList().apply {
             add("id" equal regexQuery)
@@ -41,26 +41,26 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
 
         resultQuery.forEach {
             it.remove("_id")
-            val healthMap = it.toJson().parseTo<CommunityServiceType>()
+            val healthMap = it.toJson().parseTo<ServiceType>()
             result.add(healthMap)
         }
 
         return result
     }
 
-    override fun find(query: String): List<CommunityServiceType> {
+    override fun find(query: String): List<ServiceType> {
         val find = findMongo(query)
         val result = groupingResult(find)
 
         return result.toSet().toList()
     }
 
-    private fun groupingResult(find: List<CommunityServiceType>): ArrayList<CommunityServiceType> {
-        val result = arrayListOf<CommunityServiceType>()
+    private fun groupingResult(find: List<ServiceType>): ArrayList<ServiceType> {
+        val result = arrayListOf<ServiceType>()
 
         find.forEach {
             val lastMap = find.findLastMap(it) ?: it
-            val communityServiceType = CommunityServiceType(lastMap.id, lastMap.name).apply {
+            val communityServiceType = ServiceType(lastMap.id, lastMap.name).apply {
                 translation[Lang.th] = name
             }
             result.add(communityServiceType)
@@ -68,10 +68,11 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
         return result
     }
 
-    private fun List<CommunityServiceType>.findLastMap(type: CommunityServiceType): CommunityServiceType? {
+    private fun List<ServiceType>.findLastMap(type: ServiceType): ServiceType? {
         return this.find {
             try {
-                it.id == type.link!!.keys["map"]
+                // it.id == type.link!!.keys["map"]
+                false
             } catch (ignore: Exception) {
                 false
             }
