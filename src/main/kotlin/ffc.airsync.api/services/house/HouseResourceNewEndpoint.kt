@@ -19,7 +19,6 @@ import javax.ws.rs.DELETE
 import javax.ws.rs.DefaultValue
 import javax.ws.rs.ForbiddenException
 import javax.ws.rs.GET
-import javax.ws.rs.NotFoundException
 import javax.ws.rs.POST
 import javax.ws.rs.PUT
 import javax.ws.rs.Path
@@ -54,7 +53,7 @@ class HouseResourceNewEndpoint {
         @PathParam("orgId") orgId: String
     ): FeatureCollection<House> {
         val houses = HouseService.getHouses(orgId, haveLocation = true)
-        if (houses.isEmpty()) throw NotFoundException("ไม่มีรายการบ้าน")
+        if (houses.isEmpty()) throw NoSuchElementException("ไม่มีรายการบ้าน")
         val geoReturn = FeatureCollection<House>()
         geoReturn.features.addAll(houses.map { Feature(it.location!!, it) })
         return geoReturn
@@ -120,7 +119,7 @@ class HouseResourceNewEndpoint {
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
     ): FeatureCollection<House> {
-        return HouseService.getSingleGeo(orgId, houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
+        return HouseService.getSingleGeo(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
     }
 
     @GET
@@ -142,7 +141,7 @@ class HouseResourceNewEndpoint {
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
     ): House {
-        return HouseService.getSingle(orgId, houseId) ?: throw NotFoundException("ไม่พบรหัสบ้าน $houseId")
+        return HouseService.getSingle(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
     }
 
     @POST
