@@ -39,8 +39,8 @@ class HealthCareServiceResource {
     ): Response {
         roleMapIsSync(healthCareService)
 
-        val respond = when (healthCareService) {
-            is HomeVisit -> {
+        val respond = when (healthCareService.type) {
+            "HomeVisit" -> {
                 notification.getFirebaseToken(orgId)
                 val result = healthCareServices.insert(healthCareService, orgId) as HomeVisit
                 notification.broadcastMessage(orgId, result)
@@ -70,8 +70,8 @@ class HealthCareServiceResource {
     ): Response {
         healthCareService.forEach { roleMapIsSync(it) }
 
-        val respond = when (healthCareService.first()) {
-            is HomeVisit -> healthCareServices.insert(healthCareService, orgId)
+        val respond = when (healthCareService.first().type) {
+            "HomeVisit" -> healthCareServices.insert(healthCareService, orgId)
             else -> null
         }
 

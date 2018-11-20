@@ -10,7 +10,7 @@ import ffc.airsync.api.services.util.listOf
 import ffc.airsync.api.services.util.toDocument
 import ffc.entity.Lang
 import ffc.entity.gson.parseTo
-import ffc.entity.healthcare.Disease
+import ffc.entity.healthcare.Icd10
 import org.bson.Document
 
 internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "disease"), DiseaseDao {
@@ -30,7 +30,7 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
         }
     }
 
-    override fun insert(disease: Disease): Disease {
+    override fun insert(disease: Icd10): Icd10 {
         val query = documentOf("icd10" to disease.icd10)
         dbCollection.deleteMany(query)
 
@@ -41,7 +41,7 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
 
     override fun find(query: String, lang: Lang) = find(query).translate(lang)
 
-    fun find(query: String): List<Disease> {
+    fun find(query: String): List<Icd10> {
         val regexQuery = Document("\$regex", query).append("\$options", "i")
         val listQuery = bsonListOf(
             "translation.th" equal regexQuery,
@@ -52,17 +52,18 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
         return dbCollection.find("\$or" equal listQuery).limit(100).listOf()
     }
 
-    override fun getByIcd10(icd10: String): Disease? {
+    override fun getByIcd10(icd10: String): Icd10? {
         val query = "icd10" equal icd10
         return dbCollection.find(query).first().toJson().parseTo()
     }
 
-    private fun List<Disease>.translate(lang: Lang): List<Disease> {
+    private fun List<Icd10>.translate(lang: Lang): List<Icd10> {
         return map {
             val nameLang = it.translation[lang] ?: it.name
             val nameEn = it.name
-            Disease(
-                it.id, nameLang,
+            Icd10(
+                id = it.id,
+                name = nameLang,
                 icd10 = it.icd10,
                 isChronic = it.isChronic,
                 isEpimedic = it.isEpimedic,

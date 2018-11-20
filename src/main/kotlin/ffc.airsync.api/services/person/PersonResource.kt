@@ -21,7 +21,7 @@ import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
-import ffc.airsync.api.services.disease.getDisease
+import ffc.airsync.api.services.disease.findIcd10
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.inRole
 import ffc.airsync.api.services.util.paging
@@ -64,7 +64,7 @@ class PersonResource {
     }
 
     private fun mapDeadIcd10(person: Person) {
-        person.death?.causes?.getDisease()?.let {
+        person.death?.causes?.findIcd10()?.let {
             person.death = Person.Death(person.death!!.date, it)
         }
     }

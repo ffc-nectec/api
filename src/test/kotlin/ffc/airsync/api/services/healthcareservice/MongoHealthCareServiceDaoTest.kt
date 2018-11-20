@@ -10,11 +10,10 @@ import ffc.entity.Person
 import ffc.entity.ThaiCitizenId
 import ffc.entity.User
 import ffc.entity.healthcare.BloodPressure
-import ffc.entity.healthcare.CommunityServiceType
-import ffc.entity.healthcare.Disease
+import ffc.entity.healthcare.CommunityService.ServiceType
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.HomeVisit
-import ffc.entity.healthcare.homeVisit
+import ffc.entity.healthcare.Icd10
 import ffc.entity.util.generateTempId
 import me.piruin.geok.geometry.Point
 import org.amshove.kluent.`should be equal to`
@@ -29,12 +28,11 @@ class MongoHealthCareServiceDaoTest {
     lateinit var dao: HealthCareServiceDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer
-    val comServType = CommunityServiceType(
+    val comServType = ServiceType(
         "1B0030",
         "ตรวจคัดกรองความเสี่ยง/โรคมะเร็งเต้านมได้ผลปกติ ผู้รับบริการเคยตรวจด้วยตนเองได้ผลปกติ"
     )
-    val hypertension = Disease(
-        "id2h3",
+    val hypertension = Icd10(
         "Hypertension",
         "i10",
         isEpimedic = false,
@@ -56,7 +54,7 @@ class MongoHealthCareServiceDaoTest {
         firstname = "Piruin"
         lastname = "Panichphol"
     }
-    val visit = provider.homeVisit(patient.id, comServType).apply {
+    val visit = HealthCareService(provider.id, patient.id, generateTempId()).apply {
         weight = 61.5
         height = 170.0
         bloodPressure = BloodPressure(145.0, 95.0)
@@ -66,12 +64,16 @@ class MongoHealthCareServiceDaoTest {
         bodyTemperature = 37.5
         location = Point(14.192390, 120.029384)
         syntom = "ทานอาหารได้น้อย เบื่ออาหาร"
-        detail = "ตรวจร่างกายทั่วไป / อธิบานผลเสียของโรค / เปิดโอกาสให้ผู้ป่วยซักถาม"
-        result = "ผู้ป่วยเข้าใจเกี่ยวกับโรค สามารถดูแลตัวเองได้และปฎิบัติตามคำแนะนำได้ดี"
-        plan = "ติดตามเยี่ยมปีละ 1 ครั้ง"
+        this.communityServices.add(
+            HomeVisit(comServType).apply {
+                detail = "ตรวจร่างกายทั่วไป / อธิบานผลเสียของโรค / เปิดโอกาสให้ผู้ป่วยซักถาม"
+                result = "ผู้ป่วยเข้าใจเกี่ยวกับโรค สามารถดูแลตัวเองได้และปฎิบัติตามคำแนะนำได้ดี"
+                plan = "ติดตามเยี่ยมปีละ 1 ครั้ง"
+            }
+        )
         nextAppoint = LocalDate.parse("2019-09-21")
     }
-    val visit2 = provider.homeVisit(patient.id, comServType).apply {
+    val visit2 = HealthCareService(provider.id, patient.id, generateTempId()).apply {
         weight = 65.0
         height = 170.0
         bloodPressure = BloodPressure(155.0, 99.0)
@@ -81,9 +83,13 @@ class MongoHealthCareServiceDaoTest {
         bodyTemperature = 37.5
         location = Point(14.192390, 120.029384)
         syntom = "ทานอาหารได้น้อย เบื่ออาหาร"
-        detail = "ตรวจร่างกายทั่วไป / อธิบานผลเสียของโรค / เปิดโอกาสให้ผู้ป่วยซักถาม"
-        result = "ผู้ป่วยเข้าใจเกี่ยวกับโรค สามารถดูแลตัวเองได้และปฎิบัติตามคำแนะนำได้ดี"
-        plan = "ติดตามเยี่ยมปีละ 1 ครั้ง"
+        this.communityServices.add(
+            HomeVisit(comServType).apply {
+                detail = "ตรวจร่างกายทั่วไป / อธิบานผลเสียของโรค / เปิดโอกาสให้ผู้ป่วยซักถาม"
+                result = "ผู้ป่วยเข้าใจเกี่ยวกับโรค สามารถดูแลตัวเองได้และปฎิบัติตามคำแนะนำได้ดี"
+                plan = "ติดตามเยี่ยมปีละ 1 ครั้ง"
+            }
+        )
         nextAppoint = LocalDate.parse("2019-09-24")
     }
 
@@ -107,7 +113,9 @@ class MongoHealthCareServiceDaoTest {
         val result = dao.insert(visit, ORG_ID)
 
         result.height `should equal` visit.height
-        (result as HomeVisit).nextAppoint `should equal` LocalDate.parse("2019-09-21")
+        /* ktlint-disable */
+        (result.communityServices.first() as HomeVisit).result `should equal` "ผู้ป่วยเข้าใจเกี่ยวกับโรค สามารถดูแลตัวเองได้และปฎิบัติตามคำแนะนำได้ดี"
+        /* ktlint-enable */
     }
 
     @Test
@@ -116,7 +124,9 @@ class MongoHealthCareServiceDaoTest {
         val find = dao.find(result.id, ORG_ID)
 
         result.id `should equal` find!!.id
-        (find as HomeVisit).nextAppoint `should equal` LocalDate.parse("2019-09-21")
+        /* ktlint-disable */
+        (find.communityServices.first() as HomeVisit).result `should equal` "ผู้ป่วยเข้าใจเกี่ยวกับโรค สามารถดูแลตัวเองได้และปฎิบัติตามคำแนะนำได้ดี"
+        /* ktlint-enable */
     }
 
     @Test

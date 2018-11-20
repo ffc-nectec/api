@@ -5,7 +5,7 @@ import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
 import ffc.airsync.api.services.MongoAbsConnect
-import ffc.entity.healthcare.CommunityServiceType
+import ffc.entity.healthcare.CommunityService.ServiceType
 import org.amshove.kluent.`should equal`
 import org.junit.After
 import org.junit.Before
@@ -24,8 +24,8 @@ class MongoHomeHealthTypeDaoTest {
         MongoAbsConnect.setClient(client)
         dao = MongoHomeHealthTypeDao(serverAddress.hostString, serverAddress.port)
 
-        dao.insert(CommunityServiceType("1A001", "เยี่ยมผู้ป่วยโรคเบาหวาน "))
-        dao.insert(CommunityServiceType("1D01300", "ให้ทันตสุขศึกษาหญิงตั้งครรภ์"))
+        dao.insert(ServiceType("1A001", "เยี่ยมผู้ป่วยโรคเบาหวาน "))
+        dao.insert(ServiceType("1D01300", "ให้ทันตสุขศึกษาหญิงตั้งครรภ์"))
     }
 
     @After
@@ -37,7 +37,7 @@ class MongoHomeHealthTypeDaoTest {
     @Test
     fun insertReturnResult() {
         val result = dao.insert(
-            CommunityServiceType(
+            ServiceType(
                 "1E11",
                 "การตรวจคัดกรองภาวะอ้วนในประชาชนอายุ 15 ปีขึ้นไป โดยการวัดเส้นรอบเอว หรือประเมินค่าดัชนีมวลกาย"
             )
