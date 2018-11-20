@@ -27,33 +27,32 @@ import ffc.entity.gson.toJson
 import ffc.entity.place.House
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
-import javax.ws.rs.BadRequestException
 
 object HouseService {
     fun createByOrg(orgId: String, houseList: List<House>): List<House> {
         printDebug("create house by org.")
         return houses.insert(orgId, houseList.map {
-            if (it.link == null) throw BadRequestException("เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link")
+            require(it.link != null) { "เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link" }
             it.link!!.isSynced = true
             it
         })
     }
 
     fun createByOrg(orgId: String, house: House): House {
-        if (house.link == null) throw BadRequestException("เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link")
+        require(house.link != null) { "เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link" }
         house.link!!.isSynced = true
         return houses.insert(orgId, house)
     }
 
     fun createByUser(orgId: String, houseList: List<House>): List<House> {
         return houses.insert(orgId, houseList.map {
-            if (it.link != null) throw BadRequestException("เมื่อสร้างด้วย user ไม่ต้องมีข้อมูล link")
+            require(it.link == null) { "เมื่อสร้างด้วย user ไม่ต้องมีข้อมูล link" }
             it
         })
     }
 
     fun createByUser(orgId: String, house: House): House {
-        if (house.link != null) throw BadRequestException("เมื่อสร้างด้วย user ไม่ต้องมีข้อมูล link")
+        require(house.link == null) { "เมื่อสร้างด้วย user ไม่ต้องมีข้อมูล link" }
         return houses.insert(orgId, house)
     }
 
@@ -96,7 +95,7 @@ object HouseService {
 
     fun getPerson(orgId: String, houseId: String): List<Person> {
         val person = persons.getPeopleInHouse(orgId, houseId)
-        return if (person.isNotEmpty()) person else throw NullPointerException("ไม่พบคนในบ้าน $houseId")
+        return if (person.isNotEmpty()) person else throw NoSuchElementException("ไม่พบคนในบ้าน $houseId")
     }
 }
 
