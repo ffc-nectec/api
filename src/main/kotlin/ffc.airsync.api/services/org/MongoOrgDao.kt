@@ -67,10 +67,7 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
             require(name.isNotEmpty()) { "โปรระบุชื่อ หน่วยงานที่ต้องการลงทะเบียนลงในตัวแปร name" }
             require(users.isNotEmpty()) { "โปรดลงทะเบียน user ในตัวแปร user ในหน่วยงานที่ต้องการลงทะเบียน" }
             require(users.find { it.role == User.Role.ORG } != null) { "ไม่มี User ที่เป็น Role ORG" }
-
-            if (link?.keys?.get("pcucode") is Number) {
-                throw ArithmeticException("pcucode ต้องเป็น String")
-            }
+            link?.keys?.get("pcucode")?.let { require(it is String) { "pcucode ใน bunndel ต้องเป็น String" } }
         }
     }
 
