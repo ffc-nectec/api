@@ -89,9 +89,10 @@ class HouseResourceNewEndpoint {
         house: House
     ): Response {
 
-        when (context!!.getLoginRole()) {
-            User.Role.ORG -> house.link?.isSynced = true
-            User.Role.ADMIN -> house.link?.isSynced = true
+        val role = context!!.getLoginRole()
+        when {
+            User.Role.ORG inRole role -> house.link?.isSynced = true
+            User.Role.ADMIN inRole role -> house.link?.isSynced = true
             else -> house.link?.isSynced = false
         }
 
