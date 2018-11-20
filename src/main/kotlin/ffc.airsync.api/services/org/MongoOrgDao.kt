@@ -57,7 +57,7 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
 
     private fun checkDuplication(organization: Organization) {
         val name = dbCollection.find("name" equal organization.name).first()
-        if (name != null) throw java.lang.ArithmeticException("ลงทะเบียน Org ซ้ำ")
+        require(name == null) { "ลงทะเบียน Org ซ้ำ" }
     }
 
     private fun validate(organization: Organization) {
@@ -73,7 +73,7 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
 
     override fun remove(orgId: String) {
         printDebug("Call OrgMongoDao remove $orgId")
-        dbCollection.findOneAndDelete("id" equal orgId) ?: throw NullPointerException("ไม่พบ Org $orgId ที่ต้องการลบ")
+        dbCollection.findOneAndDelete("id" equal orgId) ?: throw NoSuchElementException("ไม่พบ Org $orgId ที่ต้องการลบ")
     }
 
     override fun findAll(): List<Organization> {
@@ -102,7 +102,7 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
         val orgDoc = dbCollection.find("lastKnownIp" equal ipAddress)
         printDebug("\tQuery org from mongo $orgDoc")
         val orgList = orgDoc.convertToList<Organization>()
-        if (orgList.isEmpty()) throw NullPointerException("ไม่พบรายการลงทะเบียนในกลุ่มของ Org ip $ipAddress")
+        if (orgList.isEmpty()) throw NoSuchElementException("ไม่พบรายการลงทะเบียนในกลุ่มของ Org ip $ipAddress")
         return orgList
     }
 
