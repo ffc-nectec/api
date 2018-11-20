@@ -10,7 +10,6 @@ import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
 import ffc.entity.User
 import ffc.entity.place.House
-import ffc.entity.update
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import javax.annotation.security.RolesAllowed
@@ -90,16 +89,10 @@ class HouseResourceNewEndpoint {
         house: House
     ): Response {
 
-        when (context?.getLoginRole()) {
-            User.Role.ORG -> house.update(house.timestamp) {
-                house.link?.isSynced = true
-            }
-            User.Role.ADMIN -> house.update(house.timestamp) {
-                house.link?.isSynced = true
-            }
-            else -> house.update {
-                house.link?.isSynced = false
-            }
+        when (context!!.getLoginRole()) {
+            User.Role.ORG -> house.link?.isSynced = true
+            User.Role.ADMIN -> house.link?.isSynced = true
+            else -> house.link?.isSynced = false
         }
 
         val houseUpdate = HouseService.update(orgId, house, houseId)
@@ -157,7 +150,7 @@ class HouseResourceNewEndpoint {
     fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
         if (houseList == null) throw BadRequestException()
 
-        val role = context?.getLoginRole()
+        val role = context!!.getLoginRole()
         return when {
             User.Role.ORG inRole role -> {
                 val houseReturn = HouseService.createByOrg(orgId, houseList)
