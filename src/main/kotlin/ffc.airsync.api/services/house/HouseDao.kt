@@ -20,9 +20,10 @@ package ffc.airsync.api.services.house
 import ffc.airsync.api.services.DEFAULT_MONGO_HOST
 import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
+import ffc.airsync.api.services.Sync
 import ffc.entity.place.House
 
-interface HouseDao : Dao {
+interface HouseDao : Dao, Sync<House> {
     fun insert(orgId: String, house: House): House
     fun insert(orgId: String, house: List<House>): List<House>
 

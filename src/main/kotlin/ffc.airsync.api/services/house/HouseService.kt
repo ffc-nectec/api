@@ -29,13 +29,18 @@ import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 
 object HouseService {
-    fun createByOrg(orgId: String, houseList: List<House>): List<House> {
+    fun createByOrg(orgId: String, houseList: List<House>, block: Int = -1): List<House> {
         printDebug("create house by org.")
-        return houses.insert(orgId, houseList.map {
+        val house = houseList.map {
             require(it.link != null) { "เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link" }
             it.link!!.isSynced = true
             it
-        })
+        }
+
+        return if (block < 0)
+            houses.insert(orgId, house)
+        else
+            houses.insertBlock(orgId, block, house)
     }
 
     fun createByOrg(orgId: String, house: House): House {
@@ -44,11 +49,16 @@ object HouseService {
         return houses.insert(orgId, house)
     }
 
-    fun createByUser(orgId: String, houseList: List<House>): List<House> {
-        return houses.insert(orgId, houseList.map {
+    fun createByUser(orgId: String, houseList: List<House>, block: Int = -1): List<House> {
+
+        houseList.forEach {
             require(it.link == null) { "เมื่อสร้างด้วย user ไม่ต้องมีข้อมูล link" }
-            it
-        })
+        }
+
+        return if (block < 0)
+            houses.insert(orgId, houseList)
+        else
+            houses.insertBlock(orgId, block, houseList)
     }
 
     fun createByUser(orgId: String, house: House): House {

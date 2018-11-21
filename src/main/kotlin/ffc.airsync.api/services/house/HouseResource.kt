@@ -17,7 +17,6 @@ import javax.ws.rs.BadRequestException
 import javax.ws.rs.Consumes
 import javax.ws.rs.DELETE
 import javax.ws.rs.DefaultValue
-import javax.ws.rs.ForbiddenException
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.PUT
@@ -39,7 +38,27 @@ const val NEWPART_HOUSESERVICE = "house"
 class HouseResourceNewEndpoint {
 
     @Context
-    private var context: SecurityContext? = null
+    private lateinit var context: SecurityContext
+
+    @POST
+    @Path("/$ORGIDTYPE/houses")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
+        if (houseList == null) throw BadRequestException()
+
+        val role = context.getLoginRole()
+        return Response.status(Response.Status.CREATED).entity(validateHouse(role, orgId, houseList)).build()
+    }
+
+    @POST
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
+        if (house == null) throw BadRequestException()
+
+        val role = context.getLoginRole()
+        return Response.status(Response.Status.CREATED).entity(validateHouse(role, orgId, house)).build()
+    }
 
     @Developer
     @GET
@@ -79,6 +98,28 @@ class HouseResourceNewEndpoint {
         return HouseService.getHouses(orgId, query, haveLocation).paging(page, per_page)
     }
 
+    @GET
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
+    @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
+    @Cache(maxAge = 2)
+    fun getPersonInHouse(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String
+    ): List<Person> {
+        return HouseService.getPerson(orgId, houseId)
+    }
+
+    @GET
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @Cache(maxAge = 2)
+    fun getSingle(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String
+    ): House {
+        return HouseService.getSingle(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
+    }
+
     @PUT
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
@@ -88,7 +129,7 @@ class HouseResourceNewEndpoint {
         house: House
     ): Response {
 
-        val role = context!!.getLoginRole()
+        val role = context.getLoginRole()
         when {
             User.Role.ORG inRole role -> house.link?.isSynced = true
             User.Role.ADMIN inRole role -> house.link?.isSynced = true
@@ -120,84 +161,6 @@ class HouseResourceNewEndpoint {
         @PathParam("houseId") houseId: String
     ): FeatureCollection<House> {
         return HouseService.getSingleGeo(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
-    }
-
-    @GET
-    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
-    @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
-    @Cache(maxAge = 2)
-    fun getPersonInHouse(
-        @PathParam("orgId") orgId: String,
-        @PathParam("houseId") houseId: String
-    ): List<Person> {
-        return HouseService.getPerson(orgId, houseId)
-    }
-
-    @GET
-    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
-    @Cache(maxAge = 2)
-    fun getSingle(
-        @PathParam("orgId") orgId: String,
-        @PathParam("houseId") houseId: String
-    ): House {
-        return HouseService.getSingle(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
-    }
-
-    @POST
-    @Path("/$ORGIDTYPE/houses")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
-    fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
-        if (houseList == null) throw BadRequestException()
-
-        val role = context!!.getLoginRole()
-        return when {
-            User.Role.ORG inRole role -> {
-                val houseReturn = HouseService.createByOrg(orgId, houseList)
-                Response.status(Response.Status.CREATED).entity(houseReturn).build()
-            }
-            User.Role.ADMIN inRole role -> {
-                val houseReturn = HouseService.createByOrg(orgId, houseList)
-                Response.status(Response.Status.CREATED).entity(houseReturn).build()
-            }
-            User.Role.USER inRole role -> {
-                val houseReturn = HouseService.createByUser(orgId, houseList)
-                Response.status(Response.Status.CREATED).entity(houseReturn).build()
-            }
-            User.Role.PROVIDER inRole role -> {
-                val houseReturn = HouseService.createByUser(orgId, houseList)
-                Response.status(Response.Status.CREATED).entity(houseReturn).build()
-            }
-            else -> throw ForbiddenException("ไม่มีสิทธ์ ในการสร้างบ้าน")
-        }
-    }
-
-    @POST
-    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
-    fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
-        if (house == null) throw BadRequestException()
-
-        val role = context?.getLoginRole()
-        return when {
-            User.Role.ORG inRole role -> {
-                val houseReturn = HouseService.createByOrg(orgId, house)
-                Response.status(Response.Status.CREATED).entity(houseReturn).build()
-            }
-            User.Role.ADMIN inRole role -> {
-                val houseReturn = HouseService.createByOrg(orgId, house)
-                Response.status(Response.Status.CREATED).entity(houseReturn).build()
-            }
-            User.Role.USER inRole role -> {
-                val houseReturn = HouseService.createByUser(orgId, house)
-                Response.status(Response.Status.CREATED).entity(houseReturn).build()
-            }
-            User.Role.SURVEYOR inRole role -> {
-                val houseReturn = HouseService.createByUser(orgId, house)
-                Response.status(Response.Status.CREATED).entity(houseReturn).build()
-            }
-            else -> throw ForbiddenException("ไม่มีสิทธ์ ในการสร้างบ้าน")
-        }
     }
 
     @DELETE
