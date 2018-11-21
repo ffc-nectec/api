@@ -3,9 +3,10 @@ package ffc.airsync.api.services.healthcareservice
 import ffc.airsync.api.services.DEFAULT_MONGO_HOST
 import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
+import ffc.airsync.api.services.Sync
 import ffc.entity.healthcare.HealthCareService
 
-interface HealthCareServiceDao : Dao {
+interface HealthCareServiceDao : Dao, Sync<HealthCareService> {
     fun insert(healthCareService: HealthCareService, orgId: String): HealthCareService
     fun insert(healthCareService: List<HealthCareService>, orgId: String): List<HealthCareService>
 

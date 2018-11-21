@@ -6,7 +6,7 @@ import ffc.entity.Entity
  * ให้ Dao ที่ต้องการความสามารถในการ Sync สืบทอด ในตอนนี้ใช้คู่กับ
  * @see MongoSyncDao
  */
-interface SyncDao<T : Entity> {
+interface Sync<T : Entity> {
     /**
      * ใส่ข้อมูลพร้อมกับแป๊ะ Label block เอาไว้ด้วย
      * @param block หมายเลข block

@@ -20,11 +20,11 @@ package ffc.airsync.api.services.person
 import ffc.airsync.api.services.DEFAULT_MONGO_HOST
 import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
-import ffc.airsync.api.services.SyncDao
+import ffc.airsync.api.services.Sync
 import ffc.airsync.api.services.disease.findIcd10
 import ffc.entity.Person
 
-interface PersonDao : Dao, SyncDao<Person> {
+interface PersonDao : Dao, Sync<Person> {
     fun insert(orgId: String, person: Person): Person
     fun insert(orgId: String, personList: List<Person>): List<Person>
 

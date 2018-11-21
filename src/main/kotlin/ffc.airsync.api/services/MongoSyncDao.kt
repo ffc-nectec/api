@@ -18,7 +18,7 @@ import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 
 abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String, collection: String) :
-    MongoAbsConnect(host, port, dbName, collection), SyncDao<T> {
+    MongoAbsConnect(host, port, dbName, collection), Sync<T> {
 
     override fun insertBlock(orgId: String, block: Int, item: List<T>): List<T> {
         val itemInsert = item.map {
