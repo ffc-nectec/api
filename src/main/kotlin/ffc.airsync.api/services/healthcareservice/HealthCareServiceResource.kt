@@ -28,7 +28,7 @@ const val PART_HEALTHCARESERVICE = "healthcareservice"
 class HealthCareServiceResource {
 
     @Context
-    private var context: SecurityContext? = null
+    private lateinit var context: SecurityContext
 
     @POST
     @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE")
