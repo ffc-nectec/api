@@ -52,7 +52,7 @@ dependencies {
     compile "org.glassfish.jersey.media:jersey-media-json-jackson:$jerseyVersion"
     compile 'com.google.firebase:firebase-admin:5.11.0'
     compile "args4j:args4j:2.33"
-    compile "com.github.ffc-nectec:entities:4b800b7f84"
+    compile "com.github.ffc-nectec:entities:1.0.0-alpha12"
 
     compile 'com.github.piruin:jbcrypt:0.4'
     compile "joda-time:joda-time:2.9.9"
