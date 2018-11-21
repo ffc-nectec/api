@@ -19,7 +19,7 @@ package ffc.airsync.api.services.house
 
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.printDebug
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoSyncDao
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
@@ -32,7 +32,7 @@ import org.bson.Document
 import org.bson.types.ObjectId
 import javax.ws.rs.NotFoundException
 
-internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnect(host, port, "ffc", "house") {
+internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoSyncDao<House>(host, port, "ffc", "house") {
 
     init {
         mongoCreateHouseIndex()
@@ -115,7 +115,8 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoAbsConnec
     override fun findAll(orgId: String, queryStr: String?, haveLocation: Boolean?): List<House> {
         val query = "orgIndex" equal ObjectId(orgId)
         when (haveLocation) {
-            null -> { }
+            null -> {
+            }
             true -> query.append("location", "\$ne" equal null)
             else -> query.append("location", "\$eq" equal null)
         }
