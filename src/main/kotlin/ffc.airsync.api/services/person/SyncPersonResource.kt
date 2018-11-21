@@ -36,7 +36,7 @@ class SyncPersonResource {
         personList.forEach { person ->
             mapDeadIcd10(person)
         }
-        val persons = persons.inserBlock(orgId, block, personList)
+        val persons = persons.insertBlock(orgId, block, personList)
         return Response.status(Response.Status.CREATED).entity(persons).build()
     }
 

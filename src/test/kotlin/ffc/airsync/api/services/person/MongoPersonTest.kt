@@ -253,7 +253,7 @@ class MongoPersonTest {
 
     @Test
     fun getBlock() {
-        dao.inserBlock(ORG_ID, 2, arrayListOf<Person>().apply {
+        dao.insertBlock(ORG_ID, 2, arrayListOf<Person>().apply {
             add(missCat)
             add(misterDog)
             add(missRabbit)
@@ -264,7 +264,7 @@ class MongoPersonTest {
 
     @Test
     fun unconfirmBlock() {
-        dao.inserBlock(ORG_ID, 2, arrayListOf<Person>().apply {
+        dao.insertBlock(ORG_ID, 2, arrayListOf<Person>().apply {
             add(missCat)
             add(misterDog)
             add(missRabbit)
@@ -277,7 +277,7 @@ class MongoPersonTest {
 
     @Test
     fun confirmBlock() {
-        dao.inserBlock(ORG_ID, 2, arrayListOf<Person>().apply {
+        dao.insertBlock(ORG_ID, 2, arrayListOf<Person>().apply {
             add(missCat)
             add(misterDog)
             add(missRabbit)
