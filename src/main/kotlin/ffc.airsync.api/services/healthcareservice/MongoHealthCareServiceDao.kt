@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.healthcareservice
 
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoSyncDao
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.buildUpdateBson
 import ffc.airsync.api.services.util.equal
@@ -12,7 +12,7 @@ import org.bson.Document
 import org.bson.types.ObjectId
 
 class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
-    MongoAbsConnect(host, port, "ffc", "healthcareservice") {
+    MongoSyncDao<HealthCareService>(host, port, "ffc", "healthcareservice") {
 
     init {
         try {
