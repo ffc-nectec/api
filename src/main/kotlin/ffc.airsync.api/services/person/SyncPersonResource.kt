@@ -26,7 +26,7 @@ class SyncPersonResource : Sync<Person> {
     private var context: SecurityContext? = null
 
     @POST
-    @Path("/$ORGIDTYPE/person/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/personss/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     override fun insertBlock(
         @PathParam("orgId") orgId: String,
