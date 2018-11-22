@@ -25,7 +25,7 @@ internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, 
 
         try {
             dbCollection.createIndex(searchIndex, IndexOptions().unique(false))
-            dbCollection.createIndex(insertIndex, IndexOptions().unique(false))
+            dbCollection.createIndex(insertIndex, IndexOptions().unique(true))
         } catch (ignore: Exception) {
         }
     }
