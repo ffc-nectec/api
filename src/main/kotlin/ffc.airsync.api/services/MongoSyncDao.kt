@@ -29,7 +29,7 @@ abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String,
             itemDoc
         }
 
-        return when (item.first().type?.toString()) {
+        return when (item.first().type!!.toString()) {
             className<Person>() -> dbCollection.ffcInsert<Person>(itemInsert) as List<T>
             className<House>() -> dbCollection.ffcInsert<House>(itemInsert) as List<T>
             className<HealthCareService>() -> dbCollection.ffcInsert<HealthCareService>(itemInsert) as List<T>
