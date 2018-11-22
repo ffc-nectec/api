@@ -38,7 +38,7 @@ compileTestKotlin { kotlinOptions.jvmTarget = "1.8" }
 
 dependencies {
     def jettyVersion = "9.4.14.v20181114"
-    def jerseyVersion = "2.25.1"
+    def jerseyVersion = "2.7"
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
