@@ -78,9 +78,13 @@ internal class FFCApiServer(args: Array<String>) {
 
     private fun initDiseaseAndHomeHealtyType() {
         Thread {
+            println("1:3 Disease init.")
             DiseaseService.init()
+            println("2:3 HomeHealthTypeService init.")
             HomeHealthTypeService.init()
+            println("3:3 SpecialPpService init.")
             SpecialPpService.init()
+            println("Done init.")
         }.start()
     }
 
