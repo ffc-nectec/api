@@ -11,6 +11,8 @@ interface HomeHealthTypeDao : Dao {
         return homeHealthTypee.map { insert(it) }
     }
 
+    fun get(id: String): ServiceType?
+
     fun find(query: String): List<ServiceType>
 }
 
