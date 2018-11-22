@@ -33,11 +33,7 @@ class MongoSpecialPpType(host: String, port: Int) : MongoAbsConnect(host, port, 
             "id" equal regexQuery,
             "name" equal regexQuery
         )
-        val result = dbCollection.find("\$or" equal listQuery).limit(100).listOf<SpecialPP.PPType>()
 
-        return if (result.isNotEmpty())
-            result
-        else
-            throw NoSuchElementException("ไม่พบ PPType query $query")
+        return dbCollection.find("\$or" equal listQuery).limit(100).listOf()
     }
 }

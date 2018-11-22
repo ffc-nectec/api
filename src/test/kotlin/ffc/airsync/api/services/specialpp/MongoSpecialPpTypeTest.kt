@@ -43,7 +43,7 @@ class MongoSpecialPpTypeTest {
         dao.query("323").first().name `should be equal to` "เยี่ยมเบาตัว"
     }
 
-    @Test(expected = NoSuchElementException::class)
+    @Test
     fun queryFall() {
         dao.query("sadf").size `should be equal to` 0
     }
