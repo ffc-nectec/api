@@ -48,6 +48,10 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
         return result
     }
 
+    override fun get(id: String): ServiceType? {
+        return dbCollection.find("id" equal id).first()?.toJson()?.parseTo()
+    }
+
     override fun find(query: String): List<ServiceType> {
         val find = findMongo(query)
         val result = groupingResult(find)
