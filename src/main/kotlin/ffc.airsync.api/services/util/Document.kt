@@ -127,16 +127,18 @@ internal inline fun <reified T> MongoCollection<Document>.ffcUpdate(doc: Documen
 }
 
 internal inline fun <reified T> MongoCollection<Document>.ffcInsert(doc: List<Document>): List<T> {
-    val query = arrayListOf<Document>()
+    //val query = arrayListOf<Document>()
     doc.forEach {
         require(it["_id"] != null) { "ต้องมี _id ในขั้นตอนการ Insert" }
-        query.add("_id" equal it["_id"])
+        //query.add("_id" equal it["_id"])
     }
 
     insertMany(doc, InsertManyOptions())
 
-    return query.mapKt {
-        find(it).firstAs<T>()
+    return doc.mapKt {
+        val result = find(it).first()!!
+        result.remove("_id")
+        result.toJson().parseTo<T>()
     }
 }
 

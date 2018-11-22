@@ -30,13 +30,13 @@ abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String,
         }
 
         return when (item.first().type!!.toString()) {
-            className<Person>() -> dbCollection.ffcInsert<Person>(itemInsert) as List<T>
-            className<House>() -> dbCollection.ffcInsert<House>(itemInsert) as List<T>
-            className<HealthCareService>() -> dbCollection.ffcInsert<HealthCareService>(itemInsert) as List<T>
-            className<CommunityService>() -> dbCollection.ffcInsert<CommunityService>(itemInsert) as List<T>
-            className<HomeVisit>() -> dbCollection.ffcInsert<HomeVisit>(itemInsert) as List<T>
-            className<SpecialPP>() -> dbCollection.ffcInsert<SpecialPP>(itemInsert) as List<T>
-            className<NCDScreen>() -> dbCollection.ffcInsert<NCDScreen>(itemInsert) as List<T>
+            "Person" -> dbCollection.ffcInsert<Person>(itemInsert) as List<T>
+            "House" -> dbCollection.ffcInsert<House>(itemInsert) as List<T>
+            "HealthCareService" -> dbCollection.ffcInsert<HealthCareService>(itemInsert) as List<T>
+            "CommunityService" -> dbCollection.ffcInsert<CommunityService>(itemInsert) as List<T>
+            "HomeVisit" -> dbCollection.ffcInsert<HomeVisit>(itemInsert) as List<T>
+            "SpecialPP" -> dbCollection.ffcInsert<SpecialPP>(itemInsert) as List<T>
+            "NCDScreen" -> dbCollection.ffcInsert<NCDScreen>(itemInsert) as List<T>
             else -> emptyList()
         }
     }
@@ -46,17 +46,17 @@ abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String,
 
         try {
             return when (result.first()["type"]?.toString()) {
-                className<Person>() -> result.map { it.toJson().parseTo<Person>() }.toList() as List<T>
-                className<House>() -> result.map { it.toJson().parseTo<House>() }.toList() as List<T>
-                className<HealthCareService>() -> result.map {
+                "Person" -> result.map { it.toJson().parseTo<Person>() }.toList() as List<T>
+                "House" -> result.map { it.toJson().parseTo<House>() }.toList() as List<T>
+                "HealthCareService" -> result.map {
                     it.toJson().parseTo<HealthCareService>()
                 }.toList() as List<T>
-                className<CommunityService>() -> result.map {
+                "CommunityService" -> result.map {
                     it.toJson().parseTo<CommunityService>()
                 }.toList() as List<T>
-                className<HomeVisit>() -> result.map { it.toJson().parseTo<HomeVisit>() }.toList() as List<T>
-                className<SpecialPP>() -> result.map { it.toJson().parseTo<SpecialPP>() }.toList() as List<T>
-                className<NCDScreen>() -> result.map { it.toJson().parseTo<NCDScreen>() }.toList() as List<T>
+                "HomeVisit" -> result.map { it.toJson().parseTo<HomeVisit>() }.toList() as List<T>
+                "SpecialPP" -> result.map { it.toJson().parseTo<SpecialPP>() }.toList() as List<T>
+                "NCDScreen" -> result.map { it.toJson().parseTo<NCDScreen>() }.toList() as List<T>
                 else -> emptyList()
             }
         } catch (ex: java.lang.NullPointerException) {
@@ -77,6 +77,6 @@ abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String,
         dbCollection.deleteMany("insertBlock" equal block)
     }
 
-    private fun String.className() = Regex(""".*\.([\w\d]+)$""").matchEntire(this)?.groupValues?.last().toString()
+    private fun String.className() = Regex(""".*\.([\w\d]+)""").matchEntire(this)?.groupValues?.last().toString()
     private inline fun <reified T> className() = T::class.toString().className()
 }
