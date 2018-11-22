@@ -75,8 +75,7 @@ internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect
     private fun List<ServiceType>.findLastMap(type: ServiceType): ServiceType? {
         return this.find {
             try {
-                // it.id == type.link!!.keys["map"]
-                false
+                it.id == type.link!!.keys["map"]
             } catch (ignore: Exception) {
                 false
             }
