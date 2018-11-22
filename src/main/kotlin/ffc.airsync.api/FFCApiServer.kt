@@ -22,6 +22,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import ffc.airsync.api.services.disease.DiseaseService
 import ffc.airsync.api.services.homehealthtype.HomeHealthTypeService
+import ffc.airsync.api.services.specialpp.SpecialPpService
 import org.eclipse.jetty.server.Server
 import org.joda.time.DateTimeZone
 import org.kohsuke.args4j.CmdLineException
@@ -79,6 +80,7 @@ internal class FFCApiServer(args: Array<String>) {
         Thread {
             DiseaseService.init()
             HomeHealthTypeService.init()
+            SpecialPpService.init()
         }.start()
     }
 
