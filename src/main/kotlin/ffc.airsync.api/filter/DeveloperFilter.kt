@@ -19,7 +19,7 @@ class DeveloperFilter : ContainerResponseFilter {
     override fun filter(requestContext: ContainerRequestContext?, responseContext: ContainerResponseContext) {
 
         try {
-            var developer = resourceInfo.resourceMethod.getAnnotation(Developer::class.java)
+            var developer: Developer? = resourceInfo.resourceMethod.getAnnotation(Developer::class.java)
             if (developer == null) developer = resourceInfo.resourceClass.getAnnotation(Developer::class.java)
 
             if (developer != null) {
