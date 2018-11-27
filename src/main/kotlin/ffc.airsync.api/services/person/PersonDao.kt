@@ -37,6 +37,8 @@ interface PersonDao : Dao, Sync<Person> {
     fun remove(orgId: String)
     fun find(query: String, orgId: String): List<Person>
 
+    fun findHouseId(orgId: String, personId: String): String
+
     fun findByICD10(orgId: String, icd10: String): List<Person>
 }
 

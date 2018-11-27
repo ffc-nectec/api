@@ -113,6 +113,16 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
         return resultQuery.map { it.toJson().parseTo<Person>() }.toList()
     }
 
+    override fun findHouseId(orgId: String, personId: String): String {
+        return dbCollection
+            .find("_id" equal ObjectId(personId))
+            .projection(("houseId" equal 1) plus ("orgId" equal 1))
+            .firstOrNull()?.let {
+                require(it["orgId"].toString() == orgId) { "ไม่พบรหัส person id $personId ที่ค้นหา" }
+                it["houseId"].toString()
+            } ?: ""
+    }
+
     override fun findByICD10(orgId: String, icd10: String): List<Person> {
         val result = dbCollection
             .find("chronics.disease.icd10" equal icd10).limit(20)
