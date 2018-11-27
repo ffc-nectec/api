@@ -1,12 +1,10 @@
 package ffc.airsync.api.services
 
-import ffc.entity.Entity
-
 /**
  * ให้ Dao ที่ต้องการความสามารถในการ Sync สืบทอด ในตอนนี้ใช้คู่กับ
  * @see MongoSyncDao
  */
-interface Sync<T : Entity> {
+interface Sync<T> {
     /**
      * ใส่ข้อมูลพร้อมกับแป๊ะ Label block เอาไว้ด้วย
      * @param block หมายเลข block
