@@ -25,7 +25,7 @@ class MongoPersonTest {
     lateinit var dao: PersonDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer
-    val misterDog = Person().apply {
+    val `สมชาย` = Person().apply {
         identities.add(ThaiCitizenId("1231233123421"))
         prename = "นาย"
         firstname = "สมชาย"
@@ -38,7 +38,7 @@ class MongoPersonTest {
         link!!.isSynced = false
         houseId = "12345678901"
     }
-    val missCat = Person().apply {
+    val `สมหญิง` = Person().apply {
         identities.add(ThaiCitizenId("2123455687675"))
         prename = "นางสาว"
         firstname = "สมหญิง"
@@ -51,7 +51,7 @@ class MongoPersonTest {
         link!!.isSynced = true
         houseId = "11111111111"
     }
-    val missRabbit = Person().apply {
+    val `กระต่าย` = Person().apply {
         identities.add(ThaiCitizenId("1122399087432"))
         prename = "นางสาว"
         firstname = "กระต่าย"
@@ -114,7 +114,7 @@ class MongoPersonTest {
 
     @Test
     fun insert() {
-        val person = dao.insert(ORG_ID, misterDog)
+        val person = dao.insert(ORG_ID, `สมชาย`)
 
         person.isTempId `should be equal to` false
         person.firstname `should be equal to` "สมชาย"
@@ -123,8 +123,8 @@ class MongoPersonTest {
     @Test
     fun listInsert() {
         val persons = dao.insert(ORG_ID, arrayListOf<Person>().apply {
-            add(missCat)
-            add(misterDog)
+            add(`สมหญิง`)
+            add(`สมชาย`)
         })
 
         persons.count() `should be equal to` 2
@@ -136,7 +136,7 @@ class MongoPersonTest {
 
     @Test
     fun update() {
-        val missRabbit = dao.insert(ORG_ID, missRabbit)
+        val missRabbit = dao.insert(ORG_ID, `กระต่าย`)
         val person = dao.getPerson(ORG_ID, missRabbit.id)
         person.update {
             lastname = "สีขาว"
@@ -149,8 +149,8 @@ class MongoPersonTest {
     @Test
     fun findByOrgId() {
         dao.insert(ORG_ID, arrayListOf<Person>().apply {
-            add(missCat)
-            add(misterDog)
+            add(`สมหญิง`)
+            add(`สมชาย`)
         })
         val persons = dao.findByOrgId(ORG_ID)
         persons[1].isTempId `should be equal to` false
@@ -162,8 +162,8 @@ class MongoPersonTest {
     @Test
     fun getPeopleInHouse() {
         dao.insert(ORG_ID, arrayListOf<Person>().apply {
-            add(missCat)
-            add(misterDog)
+            add(`สมหญิง`)
+            add(`สมชาย`)
         })
 
         dao.getPeopleInHouse(ORG_ID, "12345678901").first().firstname `should be equal to` "สมชาย"
@@ -173,8 +173,8 @@ class MongoPersonTest {
     @Test
     fun removeGroupByOrg() {
         dao.insert(ORG_ID, arrayListOf<Person>().apply {
-            add(missCat)
-            add(misterDog)
+            add(`สมหญิง`)
+            add(`สมชาย`)
         })
 
         dao.remove(ORG_ID)
@@ -185,8 +185,8 @@ class MongoPersonTest {
     @Test
     fun getPerson() {
         val insert = dao.insert(ORG_ID, arrayListOf<Person>().apply {
-            add(missCat)
-            add(misterDog)
+            add(`สมหญิง`)
+            add(`สมชาย`)
         }).first()
         val result = dao.getPerson(ORG_ID, insert.id)
 
@@ -197,8 +197,8 @@ class MongoPersonTest {
     @Test
     fun findByName() {
         dao.insert(ORG_ID, arrayListOf<Person>().apply {
-            add(missCat)
-            add(misterDog)
+            add(`สมหญิง`)
+            add(`สมชาย`)
         })
 
         dao.find("สม", ORG_ID).count() `should be equal to` 2
@@ -211,8 +211,8 @@ class MongoPersonTest {
     @Test
     fun findByThaiCitizenId() {
         dao.insert(ORG_ID, arrayListOf<Person>().apply {
-            add(missCat)
-            add(misterDog)
+            add(`สมหญิง`)
+            add(`สมชาย`)
         })
 
         dao.find("2123455687675", ORG_ID).count() `should be equal to` 1
@@ -223,9 +223,9 @@ class MongoPersonTest {
     @Test
     fun findICD10() {
         dao.insert(ORG_ID, arrayListOf<Person>().apply {
-            add(missCat)
-            add(misterDog)
-            add(missRabbit)
+            add(`สมหญิง`)
+            add(`สมชาย`)
+            add(`กระต่าย`)
         })
         val result = dao.findByICD10(ORG_ID, "I11")
 
@@ -237,9 +237,9 @@ class MongoPersonTest {
     @Test
     fun syncData() {
         dao.insert(ORG_ID, arrayListOf<Person>().apply {
-            add(missCat)
-            add(misterDog)
-            add(missRabbit)
+            add(`สมหญิง`)
+            add(`สมชาย`)
+            add(`กระต่าย`)
         })
 
         dao.syncData(ORG_ID).count() `should be equal to` 2
@@ -247,16 +247,16 @@ class MongoPersonTest {
 
     @Test
     fun hashCodeTest() {
-        misterDog.hashCode() `should be equal to` misterDog.hashCode()
-        misterDog.hashCode() `should not be equal to` missCat.hashCode()
+        `สมชาย`.hashCode() `should be equal to` `สมชาย`.hashCode()
+        `สมชาย`.hashCode() `should not be equal to` `สมหญิง`.hashCode()
     }
 
     @Test
     fun getBlock() {
         dao.insertBlock(ORG_ID, 2, arrayListOf<Person>().apply {
-            add(missCat)
-            add(misterDog)
-            add(missRabbit)
+            add(`สมหญิง`)
+            add(`สมชาย`)
+            add(`กระต่าย`)
         })
 
         dao.getBlock(ORG_ID, 2).count() `should be equal to` 3
@@ -265,9 +265,9 @@ class MongoPersonTest {
     @Test
     fun unconfirmBlock() {
         dao.insertBlock(ORG_ID, 2, arrayListOf<Person>().apply {
-            add(missCat)
-            add(misterDog)
-            add(missRabbit)
+            add(`สมหญิง`)
+            add(`สมชาย`)
+            add(`กระต่าย`)
         })
 
         dao.unConfirmBlock(ORG_ID, 2)
@@ -278,14 +278,31 @@ class MongoPersonTest {
     @Test
     fun confirmBlock() {
         dao.insertBlock(ORG_ID, 2, arrayListOf<Person>().apply {
-            add(missCat)
-            add(misterDog)
-            add(missRabbit)
+            add(`สมหญิง`)
+            add(`สมชาย`)
+            add(`กระต่าย`)
         })
 
         dao.confirmBlock(ORG_ID, 2)
 
         dao.getBlock(ORG_ID, 2).count() `should be equal to` 0
         dao.find("", ORG_ID).count() `should be equal to` 4
+    }
+
+    @Test
+    fun findHouseId() {
+        val insert = dao.insertBlock(ORG_ID, 2, arrayListOf<Person>().apply {
+            add(`สมหญิง`)
+            add(`สมชาย`)
+            add(`กระต่าย`)
+        })
+
+        with(dao.findHouseId(ORG_ID, insert.first().id)) {
+            this `should be equal to` `สมหญิง`.houseId
+        }
+
+        with(dao.findHouseId(ORG_ID, insert.last().id)) {
+            this `should be equal to` `กระต่าย`.houseId
+        }
     }
 }
