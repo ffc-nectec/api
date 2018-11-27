@@ -1,6 +1,9 @@
 package ffc.airsync.api.services.notification
 
-import ffc.airsync.api.dao.MongoTestRule
+import com.mongodb.MongoClient
+import com.mongodb.ServerAddress
+import de.bwaldvogel.mongo.MongoServer
+import de.bwaldvogel.mongo.backend.memory.MemoryBackend
 import ffc.airsync.api.services.MongoAbsConnect
 import ffc.airsync.api.services.org.MongoOrgDao
 import ffc.entity.Link
@@ -11,14 +14,12 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.amshove.kluent.`should not equal`
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
 class MongoFirebaseNotificationTokenDaoTest {
 
-    @Rule
-    @JvmField
-    val mongo = MongoTestRule()
+    lateinit var client: MongoClient
+    lateinit var server: MongoServer
 
     lateinit var dao: MongoFirebaseNotificationTokenDao
 
@@ -27,11 +28,14 @@ class MongoFirebaseNotificationTokenDaoTest {
 
     @Before
     fun initDb() {
-        MongoAbsConnect.setClient(mongo.client)
+        server = MongoServer(MemoryBackend())
+        val serverAddress = server.bind()
+        client = MongoClient(ServerAddress(serverAddress))
+        MongoAbsConnect.setClient(client)
 
-        dao = MongoFirebaseNotificationTokenDao(mongo.address.hostString, mongo.address.port)
+        dao = MongoFirebaseNotificationTokenDao(serverAddress.hostString, serverAddress.port)
 
-        val orgDao = MongoOrgDao(mongo.address.hostString, mongo.address.port)
+        val orgDao = MongoOrgDao(serverAddress.hostString, serverAddress.port)
         hahahaOrg = orgDao.insert(Org("รพสตHAHAHA", "203.111.222.123").apply {
             tel = "02-388-5555"
             address = "166 ม.99 ต.เนคเทค อ.อยู่ดี จ.กินดี"
