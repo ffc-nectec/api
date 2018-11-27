@@ -13,6 +13,7 @@ import ffc.entity.User
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.amshove.kluent.`should not equal`
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
@@ -46,6 +47,12 @@ class MongoFirebaseNotificationTokenDaoTest {
             address = "161 ม.29 ต.สง่างาม อ.สดใส จ.ผิวผ่อง"
             link!!.keys["pcucode"] = "203"
         })
+    }
+
+    @After
+    fun tearDown() {
+        client.close()
+        server.shutdownNow()
     }
 
     fun Org(name: String = "NECTEC", ip: String = "127.0.01") = Organization().apply {
