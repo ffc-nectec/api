@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.org
 
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.services.analytic.analyzers
 import ffc.airsync.api.services.healthcareservice.healthCareServices
 import ffc.airsync.api.services.house.houses
 import ffc.airsync.api.services.person.persons
@@ -20,6 +21,7 @@ internal object OrgService {
         tokens.removeByOrgId(orgId)
         persons.remove(orgId)
         healthCareServices.remove(orgId)
+        analyzers.deleteByOrgId(orgId)
     }
 
     fun getMy(ipAddress: String): List<Organization> {
