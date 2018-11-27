@@ -25,7 +25,7 @@ class CacheFilter : ContainerResponseFilter {
 
     private fun isCacheable(responseContext: ContainerResponseContext): Boolean {
         val status = responseContext.status
-        return status >= 200 && status < 300 || status == 304
+        return status in 200..299 || status == 304
     }
 
     private fun build(cache: Cache): String {
