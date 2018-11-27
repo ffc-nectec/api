@@ -45,6 +45,15 @@ class ResourceAnalytic {
         analyzers.deleteByPersonId(orgId, personId)
     }
 
+    @DELETE
+    @Path("/$ORGIDTYPE/healthanalyze")
+    @RolesAllowed("ORG", "ADMIN")
+    fun deleteOrg(
+        @PathParam("orgId") orgId: String
+    ) {
+        analyzers.deleteByOrgId(orgId)
+    }
+
     @GET
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/healthanalyze")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
