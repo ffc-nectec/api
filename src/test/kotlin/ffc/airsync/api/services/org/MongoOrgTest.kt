@@ -16,7 +16,10 @@
  */
 package ffc.airsync.api.services.org
 
-import ffc.airsync.api.dao.MongoTestRule
+import com.mongodb.MongoClient
+import com.mongodb.ServerAddress
+import de.bwaldvogel.mongo.MongoServer
+import de.bwaldvogel.mongo.backend.memory.MemoryBackend
 import ffc.airsync.api.resourceFile
 import ffc.airsync.api.services.MongoAbsConnect
 import ffc.entity.Link
@@ -28,22 +31,27 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should equal`
 import org.amshove.kluent.`should not equal`
+import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
 class MongoOrgTest {
-    @Rule
-    @JvmField
-    val mongo = MongoTestRule()
+
+    lateinit var client: MongoClient
+    lateinit var server: MongoServer
+
     lateinit var dao: OrgDao
     lateinit var hahahaOrg: Organization
     lateinit var nectecOrg: Organization
 
     @Before
     fun initDb() {
-        MongoAbsConnect.setClient(mongo.client)
-        dao = MongoOrgDao(mongo.address.hostString, mongo.address.port)
+        server = MongoServer(MemoryBackend())
+        val serverAddress = server.bind()
+        client = MongoClient(ServerAddress(serverAddress))
+        MongoAbsConnect.setClient(client)
+
+        dao = MongoOrgDao(serverAddress.hostString, serverAddress.port)
 
         hahahaOrg = dao.insert(Org("รพสตHAHAHA", "203.111.222.123").apply {
             displayName = "รพ.สต.HAHAHA"
@@ -57,6 +65,12 @@ class MongoOrgTest {
             address = "161 ม.29 ต.สง่างาม อ.สดใส จ.ผิวผ่อง"
             link!!.keys["pcucode"] = "203"
         })
+    }
+
+    @After
+    fun tearDown() {
+        client.close()
+        server.shutdownNow()
     }
 
     fun Org(name: String = "NECTEC", ip: String = "127.0.01"): Organization =
