@@ -42,13 +42,13 @@ class MongoHealthCareServiceDaoTest {
         translation.put(Lang.th, "ความดันโลหิต")
     }
     val provider = User(
-        generateTempId(),
+        "87543432abcf432123456777",
         "blast",
         "123456",
         User.Role.PROVIDER,
         User.Role.ADMIN
     )
-    val patient = Person().apply {
+    val patient = Person("87543432abcf432123456799").apply {
         identities.add(ThaiCitizenId("1154785400590"))
         prename = "Mr."
         firstname = "Piruin"

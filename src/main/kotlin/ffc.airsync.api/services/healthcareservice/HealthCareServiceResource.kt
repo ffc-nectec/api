@@ -4,12 +4,15 @@ import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
 import ffc.airsync.api.services.VISITIDTYPE
+import ffc.airsync.api.services.analytic.analyzers
 import ffc.airsync.api.services.notification.broadcastMessage
 import ffc.airsync.api.services.notification.notification
+import ffc.airsync.api.services.person.persons
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.inRole
 import ffc.entity.User
 import ffc.entity.healthcare.HealthCareService
+import ffc.entity.healthcare.analyze.HealthAnalyzer
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.DELETE
 import javax.ws.rs.GET
@@ -39,6 +42,12 @@ class HealthCareServiceResource {
         notification.getFirebaseToken(orgId)
         val result = healthCareServices.insert(healthCareService, orgId)
         notification.broadcastMessage(orgId, result)
+
+        val analyzer = HealthAnalyzer()
+        val personId = healthCareService.patientId
+        val houseId = persons.findHouseId(orgId, personId)
+        analyzer.analyze(*healthCareServices.findByPatientId(orgId, personId).toTypedArray())
+        analyzers.insertAndRepeat(orgId, personId, houseId, analyzer)
         return result
     }
 
