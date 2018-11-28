@@ -56,6 +56,14 @@ class MongoAnalyticDAOTest {
     }
 
     @Test
+    fun insertAndRepeat() {
+        dao.insert(ORG_ID, patientId, houseId, analytic1)
+        dao.insertAndRepeat(ORG_ID, patientId, houseId2, analytic2)
+
+        dao.query(ORG_ID, "").size `should be equal to` 1
+    }
+
+    @Test
     fun getByPersonId() {
         dao.insert(ORG_ID, patientId, houseId, analytic1)
         dao.insert(ORG_ID, patientId2, houseId2, analytic2)

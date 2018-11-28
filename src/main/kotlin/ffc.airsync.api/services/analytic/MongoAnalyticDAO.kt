@@ -31,6 +31,16 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoAbs
         return dbCollection.find("personId" equal ObjectId(personId)).firstOrNull()!!.toJson().parseTo()
     }
 
+    override fun insertAndRepeat(
+        orgId: String,
+        personId: String,
+        houseId: String,
+        healthAnalyzer: HealthAnalyzer
+    ): HealthAnalyzer {
+        dbCollection.deleteMany("personId" equal ObjectId(personId))
+        return insert(orgId, personId, houseId, healthAnalyzer)
+    }
+
     override fun getByPersonId(orgId: String, personId: String): HealthAnalyzer {
         return dbCollection.find("personId" equal ObjectId(personId))
             .firstOrNull()?.toJson()?.parseTo()

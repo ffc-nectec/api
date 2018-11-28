@@ -13,6 +13,13 @@ interface AnalyticDAO : Dao {
         healthAnalyzer: HealthAnalyzer
     ): HealthAnalyzer
 
+    fun insertAndRepeat(
+        orgId: String,
+        personId: String,
+        houseId: String,
+        healthAnalyzer: HealthAnalyzer
+    ): HealthAnalyzer
+
     fun getByPersonId(orgId: String, personId: String): HealthAnalyzer
 
     fun getByHouseId(orgId: String, houseId: String): List<HealthAnalyzer>

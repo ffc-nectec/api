@@ -22,6 +22,10 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
     }
 
     override fun insert(healthCareService: HealthCareService, orgId: String): HealthCareService {
+
+        ObjectId(healthCareService.patientId)
+        ObjectId(healthCareService.providerId)
+
         val insertVisit = healthCareService.buildInsertBson()
             .append("orgIndex", ObjectId(orgId))
 
@@ -30,6 +34,8 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
 
     override fun insert(healthCareService: List<HealthCareService>, orgId: String): List<HealthCareService> {
         val healCare = healthCareService.map {
+            ObjectId(it.patientId)
+            ObjectId(it.providerId)
             it.buildInsertBson()
                 .append("orgIndex", ObjectId(orgId))
         }
