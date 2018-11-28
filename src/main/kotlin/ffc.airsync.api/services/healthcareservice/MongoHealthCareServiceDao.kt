@@ -50,7 +50,7 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
         return result.toJson().parseTo()
     }
 
-    override fun findByPatientId(personId: String, orgId: String): List<HealthCareService> {
+    override fun findByPatientId(orgId: String, personId: String): List<HealthCareService> {
         val query = Document("patientId", personId)
             .append("orgIndex", ObjectId(orgId))
         val result = dbCollection.find(query)
