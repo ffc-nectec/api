@@ -10,7 +10,6 @@ import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.inRole
 import ffc.entity.User
 import ffc.entity.healthcare.HealthCareService
-import ffc.entity.healthcare.HomeVisit
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.DELETE
 import javax.ws.rs.GET
@@ -19,7 +18,6 @@ import javax.ws.rs.PUT
 import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.core.Context
-import javax.ws.rs.core.Response
 import javax.ws.rs.core.SecurityContext
 
 const val PART_HEALTHCARESERVICE = "healthcareservice"
@@ -36,20 +34,12 @@ class HealthCareServiceResource {
     fun create(
         @PathParam("orgId") orgId: String,
         healthCareService: HealthCareService
-    ): Response {
+    ): HealthCareService {
         roleMapIsSync(healthCareService)
-
-        val respond = when (healthCareService.type) {
-            "HomeVisit" -> {
-                notification.getFirebaseToken(orgId)
-                val result = healthCareServices.insert(healthCareService, orgId) as HomeVisit
-                notification.broadcastMessage(orgId, result)
-                result
-            }
-            else -> null
-        }
-
-        return Response.status(201).entity(respond).build()
+        notification.getFirebaseToken(orgId)
+        val result = healthCareServices.insert(healthCareService, orgId)
+        notification.broadcastMessage(orgId, result)
+        return result
     }
 
     @DELETE
@@ -67,28 +57,17 @@ class HealthCareServiceResource {
     fun createList(
         @PathParam("orgId") orgId: String,
         healthCareService: List<HealthCareService>
-    ): Response {
+    ): List<HealthCareService> {
         healthCareService.forEach { roleMapIsSync(it) }
-
-        val respond = when (healthCareService.first().type) {
-            "HomeVisit" -> healthCareServices.insert(healthCareService, orgId)
-            else -> null
-        }
-
-        return Response.status(201).entity(respond).build()
+        return healthCareServices.insert(healthCareService, orgId)
     }
 
     @GET
     @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE/$VISITIDTYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
-    fun find(@PathParam("orgId") orgId: String, @PathParam("visitId") visitId: String): HomeVisit {
-
-        val result = healthCareServices.find(visitId, orgId)
-
-        return if (result != null)
-            result as HomeVisit
-        else throw NullPointerException("ไม่พบ ข้อมูลที่ค้นหา")
+    fun find(@PathParam("orgId") orgId: String, @PathParam("visitId") visitId: String): HealthCareService {
+        return healthCareServices.find(visitId, orgId) ?: throw NullPointerException("ไม่พบ ข้อมูลที่ค้นหา")
     }
 
     @PUT
