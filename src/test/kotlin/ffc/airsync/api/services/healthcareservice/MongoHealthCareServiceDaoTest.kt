@@ -132,7 +132,7 @@ class MongoHealthCareServiceDaoTest {
     @Test
     fun findByPersonId() {
         val result = dao.insert(visit, ORG_ID)
-        val find = dao.findByPatientId(result.patientId, ORG_ID)
+        val find = dao.findByPatientId(ORG_ID, result.patientId)
 
         find.size `should be equal to` 1
         find.first().syntom `should equal` result.syntom
