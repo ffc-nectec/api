@@ -1,0 +1,29 @@
+{
+  "result": {
+    "DM": {
+      "haveIssue": true,
+      "type": "HealthChecked",
+      "issue": "DM",
+      "date": "2019-02-28"
+    },
+    "CVD": {
+      "severity": "VERY_HI",
+      "type": "HealthProblem",
+      "issue": "CVD",
+      "date": "2019-02-28"
+    },
+    "DEMENTIA": {
+      "haveIssue": false,
+      "type": "HealthChecked",
+      "issue": "DEMENTIA",
+      "date": "2019-02-28"
+    },
+    "HT": {
+      "severity": "HI",
+      "type": "HealthProblem",
+      "issue": "HT",
+      "date": "2018-11-28"
+    }
+  },
+  "timestamp": "2018-11-28T13:24:17.567+07:00"
+}
