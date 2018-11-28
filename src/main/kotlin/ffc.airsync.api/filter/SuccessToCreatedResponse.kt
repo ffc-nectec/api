@@ -18,6 +18,7 @@
 package ffc.airsync.api.filter
 
 import javax.annotation.Priority
+import javax.ws.rs.HttpMethod
 import javax.ws.rs.Priorities
 import javax.ws.rs.container.ContainerRequestContext
 import javax.ws.rs.container.ContainerResponseContext
@@ -32,7 +33,7 @@ class SuccessToCreatedResponse : ContainerResponseFilter {
         requestContext: ContainerRequestContext,
         responseContext: ContainerResponseContext
     ) {
-        val isPost = requestContext.method.equals("port", ignoreCase = true)
+        val isPost = requestContext.method == HttpMethod.POST
 
         if (isPost && responseContext.status == 200) {
             responseContext.status = 201
