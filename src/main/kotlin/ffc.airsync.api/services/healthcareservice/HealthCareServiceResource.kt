@@ -93,7 +93,7 @@ class HealthCareServiceResource {
 
     private fun roleMapIsSync(healthCareService: HealthCareService) {
         if (healthCareService.link != null) {
-            val role = context?.getLoginRole()
+            val role = context.getLoginRole()
             when {
                 User.Role.ORG inRole role -> healthCareService.link?.isSynced = true
                 User.Role.ADMIN inRole role -> healthCareService.link?.isSynced = true
