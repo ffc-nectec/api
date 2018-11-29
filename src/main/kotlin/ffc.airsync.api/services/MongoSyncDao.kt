@@ -5,6 +5,7 @@ import com.mongodb.client.model.UpdateOptions
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
+import ffc.airsync.api.services.util.plus
 import ffc.entity.Entity
 import ffc.entity.Person
 import ffc.entity.gson.parseTo
@@ -70,11 +71,15 @@ abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String,
         val update = BasicDBObject()
         update["\$unset"] = BasicDBObject("insertBlock", "")
 
-        dbCollection.updateMany("insertBlock" equal block, update, UpdateOptions())
+        dbCollection.updateMany(
+            ("insertBlock" equal block) plus ("orgIndex" equal ObjectId(orgId)),
+            update,
+            UpdateOptions()
+        )
     }
 
     override fun unConfirmBlock(orgId: String, block: Int) {
-        dbCollection.deleteMany("insertBlock" equal block)
+        dbCollection.deleteMany(("insertBlock" equal block) plus ("orgIndex" equal ObjectId(orgId)))
     }
 
     private fun String.className() = Regex(""".*\.([\w\d]+)""").matchEntire(this)?.groupValues?.last().toString()
