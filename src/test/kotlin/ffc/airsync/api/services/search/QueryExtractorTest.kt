@@ -11,7 +11,7 @@ class QueryExtractorTest {
     fun extract() {
         val query = extractor.extract("ผู้สูงอายุที่เป็นโรคเบาหวาน")
 
-        query `should have value` Query("age", 60, Query.Operator.MORE_THAN)
+        query `should have value` Query("age", 60, Operator.MORE_THAN)
         query `should have value` Query("dm", true)
     }
 
