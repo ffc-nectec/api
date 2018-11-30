@@ -62,5 +62,4 @@ class FilterTest {
         chronics.add(Chronic(Icd10("เบาหวาน", "E10")))
         return this
     }
-
 }

@@ -28,12 +28,12 @@ class SyncResourceAnalytic {
         @PathParam("block") block: Int,
         healthAnalyzer: Map<String, HealthAnalyzer>
     ): Map<String, HealthAnalyzer> {
-
+        val houseId = ObjectId().toHexString()
         return analyzers.insertBlock(
             orgId = orgId,
             block = block,
             healthAnalyzer = healthAnalyzer,
-            lookupHouse = { ObjectId().toHexString() }
+            lookupHouse = { houseId }
         )
     }
 
