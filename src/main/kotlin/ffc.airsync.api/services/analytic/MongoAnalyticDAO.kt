@@ -90,7 +90,9 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoAbs
         healthAnalyzer: Map<String, HealthAnalyzer>
     ): Map<String, HealthAnalyzer> {
         val insertDoc = healthAnalyzer.map {
-            val itemDoc = buildInsertAnalyzerDoc(it.value, orgId, it.key, lookupHouse(it.key))
+            var houseId = lookupHouse(it.key)
+            if (houseId.isBlank()) houseId = ObjectId().toHexString()
+            val itemDoc = buildInsertAnalyzerDoc(it.value, orgId, it.key, houseId)
             itemDoc["insertBlock"] = block
             itemDoc["orgId"] = orgId
             itemDoc
