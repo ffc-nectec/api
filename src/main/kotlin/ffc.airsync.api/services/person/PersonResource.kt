@@ -22,6 +22,8 @@ import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
 import ffc.airsync.api.services.disease.findIcd10
+import ffc.airsync.api.services.search.QueryExtractor
+import ffc.airsync.api.services.search.filterFor
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.inRole
 import ffc.airsync.api.services.util.paging
@@ -117,11 +119,21 @@ class PersonResource {
         @PathParam("orgId") orgId: String,
         @QueryParam("query") query: String?
     ): List<Person> {
-        return if (query != null) {
-            persons.find(query, orgId)
+
+        val person = if (query != null) {
+            val queryMap = QueryExtractor().extract(query)
+            if (queryMap.size == 0)
+                persons.find(query, orgId)
+            else {
+                persons.findByOrgId(orgId).filter { p ->
+                    queryMap.all { filterFor(it.value)?.filter(p) == true }
+                }
+            }
         } else {
-            persons.findByOrgId(orgId).paging(page, per_page)
+            persons.findByOrgId(orgId)
         }
+
+        return person.paging(page, per_page)
     }
 
     @GET

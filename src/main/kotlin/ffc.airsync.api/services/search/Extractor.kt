@@ -8,7 +8,7 @@ interface Extractor<T> {
 class ElderExtractor : Extractor<Int> {
     override fun extractFrom(query: String): Query<Int>? {
         if (query.containSome("สูงอายุ", "คนแก่", "60 ปี")) {
-            return Query("age", 60, Query.Operator.MORE_THAN)
+            return Query("age", 60, Operator.MORE_THAN)
         }
         return null
     }
