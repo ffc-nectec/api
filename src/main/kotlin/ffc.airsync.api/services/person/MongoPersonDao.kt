@@ -21,6 +21,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
         try {
             dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
             dbCollection.createIndex("houseId" equal 1, IndexOptions().unique(false))
+            dbCollection.createIndex(("orgIndex" equal 1) plus ("_id" equal 1), IndexOptions().unique(true))
         } catch (ignore: Exception) {
         }
     }
@@ -115,10 +116,10 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
 
     override fun findHouseId(orgId: String, personId: String): String {
         return dbCollection
-            .find("_id" equal ObjectId(personId))
+            .find(("_id" equal ObjectId(personId)) plus ("orgIndex" equal ObjectId(orgId)))
             .projection(("houseId" equal 1) plus ("orgId" equal 1))
             .firstOrNull()?.let {
-                require(it["orgId"].toString() == orgId) { "ไม่พบรหัส person id $personId ที่ค้นหา" }
+                // require(it["orgId"].toString() == orgId) { "ไม่พบรหัส person id $personId ที่ค้นหา" }
                 it["houseId"].toString()
             } ?: ""
     }
