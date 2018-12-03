@@ -150,4 +150,16 @@ class MongoRelationsShipSyncDaoTest {
 
         dao.getBlock(ORG_ID, 1).size `should be equal to` 0
     }
+
+    @Test
+    fun removeByOrgId() {
+        val relation = HashMap<String, List<Person.Relationship>>()
+        relation[somChai.id] = somChai.relationships
+        relation[somYing.id] = somYing.relationships
+
+        dao.insertBlock(ORG_ID, 1, relation)
+        dao.removeByOrgId(ORG_ID)
+
+        dao.getBlock(ORG_ID, 1).size `should be equal to` 0
+    }
 }
