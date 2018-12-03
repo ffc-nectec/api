@@ -49,8 +49,8 @@ class MongoUserTest {
 
     val userList = listOf(
             User("maxkung", User.Role.ORG),
-            User("cat"),
-            User("dog"),
+        User("somYing"),
+        User("somChai"),
             User("adm"),
             User("ADM"),
             User("newuser"),
@@ -90,8 +90,8 @@ class MongoUserTest {
     @Test
     fun loginBlockUser() {
         UserDao.isBlockUser("maxkung") `should be equal to` false
-        UserDao.isBlockUser("cat") `should be equal to` false
-        UserDao.isBlockUser("dog") `should be equal to` false
+        UserDao.isBlockUser("somYing") `should be equal to` false
+        UserDao.isBlockUser("somChai") `should be equal to` false
         UserDao.isBlockUser("adm") `should be equal to` true
         UserDao.isBlockUser("ADM") `should be equal to` true
         UserDao.isBlockUser("newuser") `should be equal to` true

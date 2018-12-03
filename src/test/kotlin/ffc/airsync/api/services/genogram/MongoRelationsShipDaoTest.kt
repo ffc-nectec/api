@@ -28,8 +28,8 @@ class MongoRelationsShipDaoTest {
     lateinit var daoPerson: PersonDao
     lateinit var client: MongoClient
     lateinit var server: MongoServer
-    lateinit var dog: Person
-    lateinit var cat: Person
+    lateinit var somChai: Person
+    lateinit var somYing: Person
     lateinit var rabbit: Person
 
     @Before
@@ -47,7 +47,7 @@ class MongoRelationsShipDaoTest {
         MongoAbsConnect.setClient(client)
         daoPerson = MongoPersonDao(serverAddress.hostString, serverAddress.port)
         dao = MongoRelationsShipDao(serverAddress.hostString, serverAddress.port)
-        val misterDog = Person().apply {
+        val `สมชาย` = Person().apply {
             identities.add(ThaiCitizenId("1231233123421"))
             prename = "นาย"
             firstname = "สมชาย"
@@ -60,7 +60,7 @@ class MongoRelationsShipDaoTest {
             link!!.isSynced = false
             houseId = "12345678901"
         }
-        val missCat = Person().apply {
+        val `สมหญิง` = Person().apply {
             identities.add(ThaiCitizenId("2123455687675"))
             prename = "นางสาว"
             firstname = "สมหญิง"
@@ -73,7 +73,7 @@ class MongoRelationsShipDaoTest {
             link!!.isSynced = true
             houseId = "11111111111"
         }
-        val missRabbit = Person().apply {
+        val `กระต่าย` = Person().apply {
             identities.add(ThaiCitizenId("1122399087432"))
             prename = "นางสาว"
             firstname = "กระต่าย"
@@ -87,14 +87,14 @@ class MongoRelationsShipDaoTest {
             houseId = "99887744998"
         }
 
-        dog = daoPerson.insert(ORG_ID, misterDog)
-        cat = daoPerson.insert(ORG_ID, missCat)
-        rabbit = daoPerson.insert(ORG_ID, missRabbit)
+        somChai = daoPerson.insert(ORG_ID, `สมชาย`)
+        somYing = daoPerson.insert(ORG_ID, `สมหญิง`)
+        rabbit = daoPerson.insert(ORG_ID, `กระต่าย`)
 
-        dog.relationships.add(Person.Relationship(Person.Relate.Child, cat))
-        cat.relationships.add(Person.Relationship(Person.Relate.Father, dog))
-        daoPerson.update(ORG_ID, dog)
-        daoPerson.update(ORG_ID, cat)
+        somChai.relationships.add(Person.Relationship(Person.Relate.Child, somYing))
+        somYing.relationships.add(Person.Relationship(Person.Relate.Father, somChai))
+        daoPerson.update(ORG_ID, somChai)
+        daoPerson.update(ORG_ID, somYing)
     }
 
     @After
@@ -106,29 +106,29 @@ class MongoRelationsShipDaoTest {
 
     @Test
     fun get() {
-        val dogRelation = dao.get(ORG_ID, dog.id).first()
+        val dogRelation = dao.get(ORG_ID, somChai.id).first()
 
-        dogRelation.id `should be equal to` cat.id
+        dogRelation.id `should be equal to` somYing.id
         dogRelation.relate `should equal` Person.Relate.Child
     }
 
     @Test
     fun update() {
-        dog.update {
+        somChai.update {
             relationships.add(Person.Relationship(Person.Relate.Child, rabbit))
         }
-        val dogUpdate = dao.update(ORG_ID, dog.id, dog.relationships)
+        val dogUpdate = dao.update(ORG_ID, somChai.id, somChai.relationships)
 
         rabbit.update {
-            relationships.add(Person.Relationship(Person.Relate.Father, dog))
+            relationships.add(Person.Relationship(Person.Relate.Father, somChai))
         }
         val rabbitUpdate = dao.update(ORG_ID, rabbit.id, rabbit.relationships)
 
-        dogUpdate.first().id `should be equal to` cat.id
+        dogUpdate.first().id `should be equal to` somYing.id
         dogUpdate.last().id `should be equal to` rabbit.id
 
-        rabbitUpdate.first().id `should be equal to` dog.id
-        rabbitUpdate.last().id `should be equal to` dog.id
+        rabbitUpdate.first().id `should be equal to` somChai.id
+        rabbitUpdate.last().id `should be equal to` somChai.id
     }
 
     /**
@@ -136,16 +136,16 @@ class MongoRelationsShipDaoTest {
      */
     @Test
     fun collectGenogram() {
-        cat.update {
+        somYing.update {
             addRelationship(Pair(Person.Relate.Child, rabbit))
         }
-        daoPerson.update(ORG_ID, cat)
+        daoPerson.update(ORG_ID, somYing)
 
         rabbit.update {
-            addRelationship(Pair(Person.Relate.Mother, cat))
+            addRelationship(Pair(Person.Relate.Mother, somYing))
         }
         daoPerson.update(ORG_ID, rabbit)
-        val rela = dao.collectGenogram(ORG_ID, dog.id)
+        val rela = dao.collectGenogram(ORG_ID, somChai.id)
         rela.count() `should be equal to` 3
     }
 }

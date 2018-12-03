@@ -26,7 +26,7 @@ import ffc.entity.Person
 
 interface PersonDao : Dao, Sync<Person> {
     fun insert(orgId: String, person: Person): Person
-    fun insert(orgId: String, personList: List<Person>): List<Person>
+    fun insert(orgId: String, person: List<Person>): List<Person>
 
     fun update(orgId: String, person: Person): Person
 

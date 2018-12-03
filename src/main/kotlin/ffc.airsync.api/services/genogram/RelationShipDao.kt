@@ -11,6 +11,16 @@ interface GenoGramDao : Dao {
     fun get(orgId: String, personId: String): List<Person.Relationship>
     fun update(orgId: String, personId: String, relation: List<Person.Relationship>): List<Person.Relationship>
     fun collectGenogram(orgId: String, personId: String): List<Person>
+
+    fun insertBlock(
+        orgId: String,
+        block: Int,
+        relation: Map<String, List<Person.Relationship>>
+    ): Map<String, List<Person.Relationship>>
+
+    fun confirmBlock(orgId: String, block: Int)
+    fun unConfirmBlock(orgId: String, block: Int)
+    fun getBlock(orgId: String, block: Int): Map<String, List<Person.Relationship>>
 }
 
 fun Person.buildGeogramPerson(group: List<Person>): ffc.genogram.Person {

@@ -21,6 +21,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
         try {
             dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
             dbCollection.createIndex("houseId" equal 1, IndexOptions().unique(false))
+            dbCollection.createIndex("relationships.block" equal 1, IndexOptions().unique(false))
             dbCollection.createIndex(("orgIndex" equal 1) plus ("_id" equal 1), IndexOptions().unique(true))
         } catch (ignore: Exception) {
         }
@@ -34,8 +35,8 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
         return dbCollection.ffcInsert(personDoc)
     }
 
-    override fun insert(orgId: String, persons: List<Person>): List<Person> {
-        val personInsert = persons.map {
+    override fun insert(orgId: String, person: List<Person>): List<Person> {
+        val personInsert = person.map {
             it.orgId = orgId
             val personDoc = it.buildInsertBson()
             personDoc.append("orgIndex", ObjectId(orgId))
