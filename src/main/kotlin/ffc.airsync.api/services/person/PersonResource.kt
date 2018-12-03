@@ -21,6 +21,7 @@ import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
+import ffc.airsync.api.services.analytic.analyzers
 import ffc.airsync.api.services.disease.findIcd10
 import ffc.airsync.api.services.search.QueryExtractor
 import ffc.airsync.api.services.search.filterFor
@@ -126,7 +127,10 @@ class PersonResource {
                 persons.find(query, orgId)
             else {
                 persons.findByOrgId(orgId).filter { p ->
-                    queryMap.all { filterFor(it.value)?.filter(p) == true }
+                    p.bundle["analyze"] = analyzers.getByPersonId(orgId, p.id)
+                    queryMap.all {
+                        filterFor(it.value)?.filter(p) == true
+                    }
                 }
             }
         } else {
