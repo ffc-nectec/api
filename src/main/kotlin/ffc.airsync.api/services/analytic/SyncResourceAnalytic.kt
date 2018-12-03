@@ -4,7 +4,6 @@ import ffc.airsync.api.services.BLOCKTYPE
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.person.persons
 import ffc.entity.healthcare.analyze.HealthAnalyzer
-import org.bson.types.ObjectId
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
 import javax.ws.rs.DELETE
