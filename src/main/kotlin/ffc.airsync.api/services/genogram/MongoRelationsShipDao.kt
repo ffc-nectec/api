@@ -68,6 +68,13 @@ class MongoRelationsShipDao(host: String, port: Int) : MongoAbsConnect(host, por
         return collect
     }
 
+    override fun removeByOrgId(orgId: String) {
+        val update = BasicDBObject()
+        update["\$set"] = BasicDBObject("relationships", BasicBSONList())
+
+        dbCollection.updateMany("orgIndex" equal ObjectId(orgId), update, UpdateOptions())
+    }
+
     override fun insertBlock(
         orgId: String,
         block: Int,

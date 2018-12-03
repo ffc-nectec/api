@@ -12,6 +12,8 @@ interface GenoGramDao : Dao {
     fun update(orgId: String, personId: String, relation: List<Person.Relationship>): List<Person.Relationship>
     fun collectGenogram(orgId: String, personId: String): List<Person>
 
+    fun removeByOrgId(orgId: String)
+
     fun insertBlock(
         orgId: String,
         block: Int,
