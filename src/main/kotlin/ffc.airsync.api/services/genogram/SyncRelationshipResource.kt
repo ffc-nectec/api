@@ -32,7 +32,7 @@ class SyncRelationshipResource {
     fun insertBlock(
         @PathParam("orgId") orgId: String,
         @PathParam("block") block: Int,
-        relation: Map<String, List<Person.Relationship>>
+        relation: Map<String, @JvmSuppressWildcards List<Person.Relationship>>
     ): Map<String, List<Person.Relationship>> {
         return personRelationsShip.insertBlock(orgId, block, relation)
     }
