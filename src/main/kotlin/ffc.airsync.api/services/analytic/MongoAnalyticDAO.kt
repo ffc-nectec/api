@@ -110,8 +110,6 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoAbs
     }
 
     override fun confirmBlock(orgId: String, block: Int) {
-        val listUnset = BasicBSONList()
-        listUnset.add("insertBlock" equal "")
         val update = BasicDBObject()
         update["\$unset"] = BasicDBObject("insertBlock", "")
 
