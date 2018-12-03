@@ -26,7 +26,7 @@ class SyncHealthCareServiceResource : Sync<HealthCareService> {
     override fun insertBlock(
         @PathParam("orgId") orgId: String,
         @PathParam("block") block: Int,
-        item: List<HealthCareService>
+        item: List<@JvmSuppressWildcards HealthCareService>
     ): List<HealthCareService> {
         return healthCareServices.insertBlock(orgId, block, item)
     }
