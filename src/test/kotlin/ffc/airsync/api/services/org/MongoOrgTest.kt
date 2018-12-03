@@ -77,7 +77,7 @@ class MongoOrgTest {
         Organization().apply {
             this.name = name
             users.add(User("maxkung", User.Role.ORG))
-            users.add(User("cat"))
+            users.add(User("somYing"))
             bundle["lastKnownIp"] = ip // "203.111.222.123"
             link = Link(System.JHICS)
         }
@@ -197,7 +197,7 @@ class MongoOrgTest {
             name = "รพ1-สตสง่างง"
             displayName = "สง่างง"
             users.add(User("maxkung", User.Role.ORG))
-            users.add(User("cat"))
+            users.add(User("somYing"))
         })
 
         dao.find("รพ.1.").first().name `should be equal to` "รพ1-สตสง่างง"
@@ -209,7 +209,7 @@ class MongoOrgTest {
             name = "รพสต-พรทิพา1"
             displayName = "รพ.สต.พรทิพา สาขา 1"
             users.add(User("maxkung", User.Role.ORG))
-            users.add(User("cat"))
+            users.add(User("somYing"))
         })
 
         dao.find("รพสต-พรทิพา1").first().displayName `should equal` "รพ.สต.พรทิพา สาขา 1"
@@ -221,7 +221,7 @@ class MongoOrgTest {
             name = "รพสต-พรทิพา1"
             displayName = "รพ.สต. พรทิพา 1"
             users.add(User("maxkung", User.Role.ORG))
-            users.add(User("cat"))
+            users.add(User("somYing"))
         })
 
         dao.find("รพ.สต.พรทิพา1").first().displayName `should equal` "รพ.สต. พรทิพา 1"
