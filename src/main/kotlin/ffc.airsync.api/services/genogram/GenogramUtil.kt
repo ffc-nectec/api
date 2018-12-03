@@ -30,7 +30,7 @@ internal fun Map<Int, ArrayList<Person>>.toList(): List<Person> {
  */
 internal fun List<Person>.processGroupLayer(): Map<Int, ArrayList<Person>> {
     val result = hashMapOf<String, GenogramProcessProperty>()
-    calLayer(first(), this.addDummy(), result)
+    calLayer(first(), this.addDummy(), result, 0, 0)
     return groupLayer(result)
 }
 
@@ -79,14 +79,15 @@ private fun calLayer(
     person: Person?,
     listPerson: List<Person>,
     result: HashMap<String, GenogramProcessProperty>,
-    layer: Int = 0,
-    x: Int = 0
+    layer: Int,
+    x: Int
 ) {
     if (person == null) return
     if (person.bundle["genogram"] == "lock") return
     person.bundle["genogram"] = "lock"
 
-    result[person.id] = GenogramProcessProperty(person, layer, x)
+    val genogramProcessProperty = GenogramProcessProperty(person, layer, x, 0)
+    result[person.id] = genogramProcessProperty
 
     person.fatherId?.let { id ->
         calLayer(listPerson.find { it.id == id }, listPerson, result, layer - 1, x - 1)
@@ -98,10 +99,12 @@ private fun calLayer(
 
     person.relationships.filter { it.relate == Married }.forEach { rela ->
         calLayer(listPerson.find { it.id == rela.id }, listPerson, result, layer, x - 1)
+        genogramProcessProperty.plusDeep()
     }
 
     person.relationships.filter { it.relate == Divorced }.forEach { rela ->
         calLayer(listPerson.find { it.id == rela.id }, listPerson, result, layer, x + 1)
+        genogramProcessProperty.plusDeep()
     }
 
     person.relationships.filter { it.relate == Child }.forEach { rela ->
@@ -111,8 +114,11 @@ private fun calLayer(
     person.bundle.remove("genogram")
 }
 
-private data class GenogramProcessProperty(val person: Person, var layer: Int, var x: Int) {
+private data class GenogramProcessProperty(val person: Person, var layer: Int, var x: Int, var deep: Int) {
     val name = person.name
+    fun plusDeep() {
+        deep += 1
+    }
 }
 
 /**
