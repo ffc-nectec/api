@@ -8,6 +8,7 @@ import ffc.entity.User
 import javax.annotation.security.RolesAllowed
 import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.Consumes
+import javax.ws.rs.GET
 import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.POST
 import javax.ws.rs.Path
@@ -32,6 +33,13 @@ class UserResource {
         }
         val usersUpdate = UserService.create(orgId, users)
         return Response.status(Response.Status.CREATED).entity(usersUpdate).build()
+    }
+
+    @GET
+    @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
+    @RolesAllowed("ORG", "ADMIN")
+    fun get(@PathParam("orgUuid") orgId: String): Response {
+        return Response.status(Response.Status.CREATED).entity(users.findUser(orgId)).build()
     }
 
     @POST
