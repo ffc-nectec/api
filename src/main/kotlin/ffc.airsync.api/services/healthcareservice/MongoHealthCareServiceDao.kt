@@ -70,7 +70,7 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
             .append("orgIndex", ObjectId(orgId))
         val oldObject = dbCollection.find(query).first()!!
         val updateDocument = healthCareService.buildUpdateBson(oldObject)
-        val resultUpdate = dbCollection.updateOne(query, updateDocument)
+        val resultUpdate = dbCollection.replaceOne(query, updateDocument)
 
         check(resultUpdate.isModifiedCountAvailable) { "พารามิตเตอร์การ Update ผิดพลาด" }
         val result = dbCollection.find(query).first()
