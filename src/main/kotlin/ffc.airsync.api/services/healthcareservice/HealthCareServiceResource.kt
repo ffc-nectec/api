@@ -94,21 +94,19 @@ class HealthCareServiceResource {
     }
 
     private fun roleMapIsSync(healthCareService: HealthCareService) {
-        if (healthCareService.link != null) {
-            val role = context.getLoginRole()
-            when {
-                User.Role.ORG inRole role -> {
-                    require(healthCareService.link != null) { "จำเป็นต้องมีข้อมูล link " }
-                    healthCareService.link!!.isSynced = true
-                }
-                User.Role.ADMIN inRole role -> {
-                    require(healthCareService.link != null) { "จำเป็นต้องมีข้อมูล link " }
-                    healthCareService.link!!.isSynced = true
-                }
-                else -> {
-                    healthCareService.link = Link(System.JHICS)
-                    healthCareService.link!!.isSynced = false
-                }
+        val role = context.getLoginRole()
+        when {
+            User.Role.ORG inRole role -> {
+                require(healthCareService.link != null) { "จำเป็นต้องมีข้อมูล link " }
+                healthCareService.link!!.isSynced = true
+            }
+            User.Role.ADMIN inRole role -> {
+                require(healthCareService.link != null) { "จำเป็นต้องมีข้อมูล link " }
+                healthCareService.link!!.isSynced = true
+            }
+            else -> {
+                healthCareService.link = Link(System.JHICS)
+                healthCareService.link!!.isSynced = false
             }
         }
     }
