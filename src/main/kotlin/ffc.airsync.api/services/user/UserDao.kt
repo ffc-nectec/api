@@ -24,7 +24,7 @@ import ffc.entity.User
 
 interface UserDao : Dao {
     companion object {
-        private val userBlock = listOf("ADM", "adm", "newuser", "usr_db", "Drug_Store_Admin")
+        private val userBlock = listOf("ADM", "adm", "newuser", "usr_db", "Drug_Store_Admin", "Student_Update")
 
         fun isBlockUser(name: String) = userBlock.firstOrNull { it == name.trim() } != null
     }
