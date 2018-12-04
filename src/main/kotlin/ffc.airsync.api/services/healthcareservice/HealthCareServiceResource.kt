@@ -10,6 +10,8 @@ import ffc.airsync.api.services.notification.notification
 import ffc.airsync.api.services.person.persons
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.inRole
+import ffc.entity.Link
+import ffc.entity.System
 import ffc.entity.User
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.analyze.HealthAnalyzer
@@ -95,9 +97,18 @@ class HealthCareServiceResource {
         if (healthCareService.link != null) {
             val role = context.getLoginRole()
             when {
-                User.Role.ORG inRole role -> healthCareService.link?.isSynced = true
-                User.Role.ADMIN inRole role -> healthCareService.link?.isSynced = true
-                else -> healthCareService.link?.isSynced = false
+                User.Role.ORG inRole role -> {
+                    require(healthCareService.link != null) { "จำเป็นต้องมีข้อมูล link " }
+                    healthCareService.link!!.isSynced = true
+                }
+                User.Role.ADMIN inRole role -> {
+                    require(healthCareService.link != null) { "จำเป็นต้องมีข้อมูล link " }
+                    healthCareService.link!!.isSynced = true
+                }
+                else -> {
+                    healthCareService.link = Link(System.JHICS)
+                    healthCareService.link!!.isSynced = false
+                }
             }
         }
     }
