@@ -1,0 +1,40 @@
+[
+  {
+    "name": "newuser",
+    "password": "newuser",
+    "role": "USER",
+    "roles": [],
+    "link": {
+      "isSynced": true,
+      "lastSync": "2018-12-05T14:45:05.746Z",
+      "system": "JHICS",
+      "keys": {
+        "username": "newuser",
+        "pcucode": "0000x"
+      }
+    },
+    "id": "262631f79d774adcba2260081ade3c6e",
+    "type": "User",
+    "timestamp": "2018-12-05T14:45:05.746Z",
+    "bundle": {}
+  },
+  {
+    "name": "newuser",
+    "password": "newuser",
+    "role": "USER",
+    "roles": [],
+    "link": {
+      "isSynced": true,
+      "lastSync": "2018-12-05T14:45:05.746Z",
+      "system": "JHICS",
+      "keys": {
+        "username": "newuser",
+        "pcucode": "01092"
+      }
+    },
+    "id": "e26f89e32b5b48e2b576819ad33c4e93",
+    "type": "User",
+    "timestamp": "2018-12-05T14:45:05.746Z",
+    "bundle": {}
+  }
+]

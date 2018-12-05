@@ -76,17 +76,17 @@ class MongoOrgTest {
     fun Org(name: String = "NECTEC", ip: String = "127.0.01"): Organization =
         Organization().apply {
             this.name = name
-            users.add(User("maxkung", User.Role.ORG))
+            users.add(User("maxkung", User.Role.ADMIN))
             users.add(User("somYing"))
             bundle["lastKnownIp"] = ip // "203.111.222.123"
             link = Link(System.JHICS)
         }
 
-    fun User(name: String, role: User.Role = User.Role.USER): User =
+    fun User(name: String, role: User.Role = User.Role.PATIENT): User =
         User().apply {
             this.name = name
             password = "catbite"
-            this.role = role
+            roles.add(role)
         }
 
     @Test
@@ -196,7 +196,7 @@ class MongoOrgTest {
         dao.insert(Organization().apply {
             name = "รพ1-สตสง่างง"
             displayName = "สง่างง"
-            users.add(User("maxkung", User.Role.ORG))
+            users.add(User("maxkung", User.Role.ADMIN))
             users.add(User("somYing"))
         })
 
@@ -208,7 +208,7 @@ class MongoOrgTest {
         dao.insert(Organization().apply {
             name = "รพสต-พรทิพา1"
             displayName = "รพ.สต.พรทิพา สาขา 1"
-            users.add(User("maxkung", User.Role.ORG))
+            users.add(User("maxkung", User.Role.ADMIN))
             users.add(User("somYing"))
         })
 
@@ -220,7 +220,7 @@ class MongoOrgTest {
         dao.insert(Organization().apply {
             name = "รพสต-พรทิพา1"
             displayName = "รพ.สต. พรทิพา 1"
-            users.add(User("maxkung", User.Role.ORG))
+            users.add(User("maxkung", User.Role.ADMIN))
             users.add(User("somYing"))
         })
 
