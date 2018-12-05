@@ -31,17 +31,6 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
         return dbCollection.ffcInsert(insertVisit)
     }
 
-    private fun visitDocument(
-        healthCareService: HealthCareService,
-        orgId: String
-    ): Document {
-        val insertVisit = healthCareService.buildInsertBson()
-        insertVisit["orgIndex"] = ObjectId(orgId)
-        insertVisit["patientIdIndex"] = ObjectId(healthCareService.patientId)
-        insertVisit["providerIdIndex"] = ObjectId(healthCareService.providerId)
-        return insertVisit
-    }
-
     override fun insert(healthCareService: List<HealthCareService>, orgId: String): List<HealthCareService> {
         val healCare = healthCareService.map {
             visitDocument(it, orgId)
@@ -89,4 +78,15 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
     override fun remove(orgId: String) {
         dbCollection.deleteMany("orgIndex" equal ObjectId(orgId))
     }
+}
+
+fun HealthCareServiceDao.visitDocument(
+    healthCareService: HealthCareService,
+    orgId: String
+): Document {
+    val insertVisit = healthCareService.buildInsertBson()
+    insertVisit["orgIndex"] = ObjectId(orgId)
+    insertVisit["patientIdIndex"] = ObjectId(healthCareService.patientId)
+    insertVisit["providerIdIndex"] = ObjectId(healthCareService.providerId)
+    return insertVisit
 }
