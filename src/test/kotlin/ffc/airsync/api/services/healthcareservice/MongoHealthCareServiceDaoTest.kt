@@ -42,13 +42,13 @@ class MongoHealthCareServiceDaoTest {
         translation.put(Lang.th, "ความดันโลหิต")
     }
     val provider = User(
-        "87543432abcf432123456777",
+        "5bbd7f5ebc920637b04c7766",
         "blast",
         "123456",
         User.Role.PROVIDER,
         User.Role.ADMIN
     )
-    val patient = Person("87543432abcf432123456799").apply {
+    val patient = Person("5bbd7f5ebc920637b04c7799").apply {
         identities.add(ThaiCitizenId("1154785400590"))
         prename = "Mr."
         firstname = "Piruin"
@@ -131,11 +131,12 @@ class MongoHealthCareServiceDaoTest {
 
     @Test
     fun findByPersonId() {
-        val result = dao.insert(visit, ORG_ID)
-        val find = dao.findByPatientId(ORG_ID, result.patientId)
+        dao.insert(visit, ORG_ID)
+        dao.insert(visit2, ORG_ID)
+        val find = dao.findByPatientId(ORG_ID, patient.id)
 
-        find.size `should be equal to` 1
-        find.first().syntom `should equal` result.syntom
+        find.size `should be equal to` 2
+        find.first().syntom `should equal` visit.syntom
     }
 
     @Test
@@ -152,11 +153,12 @@ class MongoHealthCareServiceDaoTest {
     }
 
     @Test
-    fun get() {
+    fun getByOrgId() {
         val insert = dao.insert(visit, ORG_ID)
-        val result = dao.get(ORG_ID)
+        dao.insert(visit2, ORG_ID)
+        val result = dao.getByOrgId(ORG_ID)
 
-        result.count() `should be equal to` 1
+        result.count() `should be equal to` 2
         result.first().id `should be equal to` insert.id
     }
 
@@ -167,7 +169,7 @@ class MongoHealthCareServiceDaoTest {
 
         dao.remove(ORG_ID)
 
-        dao.get(ORG_ID).size `should be equal to` 0
+        dao.getByOrgId(ORG_ID).size `should be equal to` 0
     }
 
     @Test
@@ -179,7 +181,7 @@ class MongoHealthCareServiceDaoTest {
 
         dao.remove(ORG_ID)
 
-        dao.get(ORG_ID).size `should be equal to` 0
-        dao.get(orgId2).size `should be equal to` 1
+        dao.getByOrgId(ORG_ID).size `should be equal to` 0
+        dao.getByOrgId(orgId2).size `should be equal to` 1
     }
 }

@@ -10,7 +10,7 @@ interface HealthCareServiceDao : Dao, Sync<HealthCareService> {
     fun insert(healthCareService: HealthCareService, orgId: String): HealthCareService
     fun insert(healthCareService: List<HealthCareService>, orgId: String): List<HealthCareService>
 
-    fun get(orgId: String): List<HealthCareService>
+    fun getByOrgId(orgId: String): List<HealthCareService>
 
     fun find(id: String, orgId: String): HealthCareService?
     fun findByPatientId(orgId: String, personId: String): List<HealthCareService>
