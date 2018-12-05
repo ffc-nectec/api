@@ -57,15 +57,15 @@ class MongoFirebaseNotificationTokenDaoTest {
 
     fun Org(name: String = "NECTEC", ip: String = "127.0.01") = Organization().apply {
         this.name = name
-        users.add(User(name = "hello").apply { role = User.Role.ORG })
+        users.add(User(name = "hello").apply { roles.add(User.Role.ADMIN) })
         bundle["lastKnownIp"] = ip // "203.111.222.123"
         link = Link(System.JHICS)
     }
 
-    fun User(name: String, role: User.Role = User.Role.USER): User = User().apply {
+    fun User(name: String, role: User.Role = User.Role.PATIENT): User = User().apply {
         this.name = name
         password = "catbite"
-        this.role = role
+        this.roles.add(role)
     }
 
     @Test

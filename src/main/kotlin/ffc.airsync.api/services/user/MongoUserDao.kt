@@ -34,13 +34,13 @@ import org.bson.types.ObjectId
 internal class MongoUserDao(host: String, port: Int) : UserDao, MongoAbsConnect(host, port, "ffc", "organ") {
 
     override fun insertUser(user: User, orgId: String): User {
-        if (!user.isTempId) throw IllegalArgumentException("รุปแบบ id ต้องใช้ TempId ในการสร้าง User")
-        if (haveUserInDb(orgId, user)) throw IllegalArgumentException("มีการเพิ่มผู้ใช้ ${user.name} ซ้ำ")
-        val userStruct = "users" equal user.toDocument()
-        val userPush = "\$push" equal userStruct
+        if (!haveUserInDb(orgId, user)) {
+            if (!user.isTempId) throw IllegalArgumentException("รุปแบบ id ต้องใช้ TempId ในการสร้าง User")
+            val userStruct = "users" equal user.toDocument()
+            val userPush = "\$push" equal userStruct
 
-        dbCollection.updateOne("id" equal orgId, userPush)
-
+            dbCollection.updateOne("id" equal orgId, userPush)
+        }
         return findUser(orgId).find { it.name == user.name }
             ?: throw IllegalStateException("Server Error in call dev")
     }

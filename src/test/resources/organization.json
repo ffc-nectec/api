@@ -4,18 +4,24 @@
     {
       "name": "puy",
       "password": "hipuy",
-      "role": "USER",
+      "role": "ADMIN",
+      "roles": [
+        "ADMIN"
+      ],
       "id": "bdb8c14b3feb47dba0311cf6dd8233a6",
       "type": "User",
-      "timestamp": "2018-06-28T14:14:43.645+07:00"
+      "timestamp": "2018-06-28T14:14:43.645+07:00",
+      "bundle": {}
     },
     {
       "name": "pcu100214.airsync",
       "password": "a1e6-4f63e8295160",
-      "role": "ORG",
+      "role": "ADMIN",
+      "roles": [],
       "id": "5dc194a5b85b4733889247578e4bd5f0",
       "type": "User",
-      "timestamp": "2018-06-28T14:19:29.645+07:00"
+      "timestamp": "2018-06-28T14:19:29.645+07:00",
+      "bundle": {}
     }
   ],
   "link": {
@@ -30,4 +36,3 @@
   "type": "Organization",
   "timestamp": "2018-06-28T17:17:43.645+07:00"
 }
-
