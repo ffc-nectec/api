@@ -2,6 +2,8 @@ package ffc.airsync.api.services
 
 import com.mongodb.BasicDBObject
 import com.mongodb.client.model.UpdateOptions
+import ffc.airsync.api.services.healthcareservice.healthCareServices
+import ffc.airsync.api.services.healthcareservice.visitDocument
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
@@ -18,12 +20,23 @@ import ffc.entity.place.House
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 
+private const val HEALTHCARETYPE = "HealthCareService"
+private const val PERSONTYPE = "Person"
+private const val HOUSETYPE = "House"
+private const val COMMUNITYSERVICETYPE = "CommunityService"
+private const val HOMEVISITTYPE = "HomeVisit"
+private const val SPECIALPPTYPE = "SpecialPP"
+private const val NCDSCREENTYPE = "NCDScreen"
+
 abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String, collection: String) :
     MongoAbsConnect(host, port, dbName, collection), Sync<T> {
 
     override fun insertBlock(orgId: String, block: Int, item: List<T>): List<T> {
         val itemInsert = item.map {
-            val itemDoc = it.buildInsertBson()
+            val itemDoc = when (it.type) {
+                HEALTHCARETYPE -> healthCareServices.visitDocument(it as HealthCareService, orgId)
+                else -> it.buildInsertBson()
+            }
             itemDoc["orgIndex"] = ObjectId(orgId)
             itemDoc["insertBlock"] = block
             itemDoc["orgId"] = orgId
@@ -31,13 +44,13 @@ abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String,
         }
 
         return when (item.first().type!!.toString()) {
-            "Person" -> dbCollection.ffcInsert<Person>(itemInsert) as List<T>
-            "House" -> dbCollection.ffcInsert<House>(itemInsert) as List<T>
-            "HealthCareService" -> dbCollection.ffcInsert<HealthCareService>(itemInsert) as List<T>
-            "CommunityService" -> dbCollection.ffcInsert<CommunityService>(itemInsert) as List<T>
-            "HomeVisit" -> dbCollection.ffcInsert<HomeVisit>(itemInsert) as List<T>
-            "SpecialPP" -> dbCollection.ffcInsert<SpecialPP>(itemInsert) as List<T>
-            "NCDScreen" -> dbCollection.ffcInsert<NCDScreen>(itemInsert) as List<T>
+            PERSONTYPE -> dbCollection.ffcInsert<Person>(itemInsert) as List<T>
+            HOUSETYPE -> dbCollection.ffcInsert<House>(itemInsert) as List<T>
+            HEALTHCARETYPE -> dbCollection.ffcInsert<HealthCareService>(itemInsert) as List<T>
+            COMMUNITYSERVICETYPE -> dbCollection.ffcInsert<CommunityService>(itemInsert) as List<T>
+            HOMEVISITTYPE -> dbCollection.ffcInsert<HomeVisit>(itemInsert) as List<T>
+            SPECIALPPTYPE -> dbCollection.ffcInsert<SpecialPP>(itemInsert) as List<T>
+            NCDSCREENTYPE -> dbCollection.ffcInsert<NCDScreen>(itemInsert) as List<T>
             else -> emptyList()
         }
     }
@@ -47,17 +60,17 @@ abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String,
 
         try {
             return when (result.first()["type"]?.toString()) {
-                "Person" -> result.map { it.toJson().parseTo<Person>() }.toList() as List<T>
-                "House" -> result.map { it.toJson().parseTo<House>() }.toList() as List<T>
-                "HealthCareService" -> result.map {
+                PERSONTYPE -> result.map { it.toJson().parseTo<Person>() }.toList() as List<T>
+                HOUSETYPE -> result.map { it.toJson().parseTo<House>() }.toList() as List<T>
+                HEALTHCARETYPE -> result.map {
                     it.toJson().parseTo<HealthCareService>()
                 }.toList() as List<T>
-                "CommunityService" -> result.map {
+                COMMUNITYSERVICETYPE -> result.map {
                     it.toJson().parseTo<CommunityService>()
                 }.toList() as List<T>
-                "HomeVisit" -> result.map { it.toJson().parseTo<HomeVisit>() }.toList() as List<T>
-                "SpecialPP" -> result.map { it.toJson().parseTo<SpecialPP>() }.toList() as List<T>
-                "NCDScreen" -> result.map { it.toJson().parseTo<NCDScreen>() }.toList() as List<T>
+                HOMEVISITTYPE -> result.map { it.toJson().parseTo<HomeVisit>() }.toList() as List<T>
+                SPECIALPPTYPE -> result.map { it.toJson().parseTo<SpecialPP>() }.toList() as List<T>
+                NCDSCREENTYPE -> result.map { it.toJson().parseTo<NCDScreen>() }.toList() as List<T>
                 else -> emptyList()
             }
         } catch (ex: java.lang.NullPointerException) {
