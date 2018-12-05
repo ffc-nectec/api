@@ -41,29 +41,29 @@ class MongoUserTest {
     }
 
     fun Org(name: String = "NECTEC", ip: String = "127.0.01"): Organization =
-            Organization().apply {
-                this.name = name
-                bundle["lastKnownIp"] = ip // "203.111.222.123"
-                this.users = userList.toMutableList()
-            }
+        Organization().apply {
+            this.name = name
+            bundle["lastKnownIp"] = ip // "203.111.222.123"
+            this.users = userList.toMutableList()
+        }
 
     val userList = listOf(
-            User("maxkung", User.Role.ORG),
+        User("maxkung", User.Role.ADMIN),
         User("somYing"),
         User("somChai"),
-            User("adm"),
-            User("ADM"),
-            User("newuser"),
-            User("usr_db"),
-            User("Drug_Store_Admin")
+        User("adm"),
+        User("ADM"),
+        User("newuser"),
+        User("usr_db"),
+        User("Drug_Store_Admin")
     )
 
     fun User(name: String, role: User.Role = User.Role.USER): User =
-            User().apply {
-                this.name = name
-                password = "catbite"
-                this.role = role
-            }
+        User().apply {
+            this.name = name
+            password = "catbite"
+            this.roles.add(role)
+        }
 
     @Test
     fun findAll() {
