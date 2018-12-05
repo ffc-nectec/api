@@ -121,7 +121,7 @@ class MongoHealthCareServiceDaoTest {
     @Test
     fun find() {
         val result = dao.insert(visit, ORG_ID)
-        val find = dao.find(result.id, ORG_ID)
+        val find = dao.get(result.id, ORG_ID)
 
         result.id `should equal` find!!.id
         /* ktlint-disable */
@@ -133,7 +133,7 @@ class MongoHealthCareServiceDaoTest {
     fun findByPersonId() {
         dao.insert(visit, ORG_ID)
         dao.insert(visit2, ORG_ID)
-        val find = dao.findByPatientId(ORG_ID, patient.id)
+        val find = dao.getByPatientId(ORG_ID, patient.id)
 
         find.size `should be equal to` 2
         find.first().syntom `should equal` visit.syntom
@@ -148,8 +148,8 @@ class MongoHealthCareServiceDaoTest {
         val listResult = dao.insert(visitList, ORG_ID)
 
         listResult.size `should be equal to` 2
-        dao.find(listResult.first().id, ORG_ID)!!.weight `should equal` 61.5
-        dao.find(listResult.last().id, ORG_ID)!!.weight `should equal` 65.0
+        dao.get(listResult.first().id, ORG_ID)!!.weight `should equal` 61.5
+        dao.get(listResult.last().id, ORG_ID)!!.weight `should equal` 65.0
     }
 
     @Test

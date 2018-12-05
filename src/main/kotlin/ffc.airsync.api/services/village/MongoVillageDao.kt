@@ -24,7 +24,7 @@ class MongoVillageDao(host: String, port: Int) : VillageDao, MongoAbsConnect(hos
     override fun update(orgId: String, village: Village): Village {
         val oldDoc = dbCollection.find(village.buildQueryDoc()).first()
         require(oldDoc != null) { "ไม่มีข้อมูล Village ที่ต้องการ แก้ไขในระบบ" }
-        val villageDoc = village.buildUpdateBson(oldDoc)
+        val villageDoc = village.buildUpdateBson()
         return dbCollection.ffcUpdate(villageDoc)
     }
 
