@@ -17,32 +17,38 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
     init {
         try {
             dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
+            dbCollection.createIndex("patientIdIndex" equal 1, IndexOptions().unique(false))
+            dbCollection.createIndex("providerIdIndex" equal 1, IndexOptions().unique(false))
         } catch (ignore: Exception) {
         }
     }
 
     override fun insert(healthCareService: HealthCareService, orgId: String): HealthCareService {
 
-        ObjectId(healthCareService.patientId)
-        ObjectId(healthCareService.providerId)
-
-        val insertVisit = healthCareService.buildInsertBson()
-            .append("orgIndex", ObjectId(orgId))
+        val insertVisit = visitDocument(healthCareService, orgId)
 
         return dbCollection.ffcInsert(insertVisit)
     }
 
+    private fun visitDocument(
+        healthCareService: HealthCareService,
+        orgId: String
+    ): Document {
+        val insertVisit = healthCareService.buildInsertBson()
+        insertVisit.append("orgIndex", ObjectId(orgId))
+        insertVisit["patientIdIndex"] = ObjectId(healthCareService.patientId)
+        insertVisit["providerIdIndex"] = ObjectId(healthCareService.providerId)
+        return insertVisit
+    }
+
     override fun insert(healthCareService: List<HealthCareService>, orgId: String): List<HealthCareService> {
         val healCare = healthCareService.map {
-            ObjectId(it.patientId)
-            ObjectId(it.providerId)
-            it.buildInsertBson()
-                .append("orgIndex", ObjectId(orgId))
+            visitDocument(it, orgId)
         }
         return dbCollection.ffcInsert(healCare)
     }
 
-    override fun get(orgId: String): List<HealthCareService> {
+    override fun getByOrgId(orgId: String): List<HealthCareService> {
         return dbCollection.find("orgIndex" equal ObjectId(orgId))
             .map { it.toJson().parseTo<HealthCareService>() }.toList()
     }
@@ -57,10 +63,13 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
     }
 
     override fun findByPatientId(orgId: String, personId: String): List<HealthCareService> {
-        val query = Document("patientId", personId)
+        val query = Document("patientIdIndex", ObjectId(personId))
             .append("orgIndex", ObjectId(orgId))
         val result = dbCollection.find(query)
 
+        result.forEach {
+            check(it["orgIndex"].toString() == orgId) { "ไม่พบ health care service person id $personId" }
+        }
         check(result != null) { "ไม่พบ health care service person id $personId" }
         return result.map { it.toJson().parseTo<HealthCareService>() }.toList()
     }

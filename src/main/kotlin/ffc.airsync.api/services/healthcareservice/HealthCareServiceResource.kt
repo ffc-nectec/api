@@ -115,7 +115,10 @@ class HealthCareServiceResource {
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/$PART_HEALTHCARESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
-    fun getPerson(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<HealthCareService> {
+    fun getPerson(
+        @PathParam("orgId") orgId: String,
+        @PathParam("personId") personId: String
+    ): List<HealthCareService> {
         return healthCareServices.findByPatientId(orgId, personId)
     }
 }
