@@ -52,7 +52,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
         val personOldDoc = dbCollection.find(query).first()
 
         check(personOldDoc["orgId"] == orgId) { "ไม่พบคน" }
-        val personDoc = person.buildUpdateBson(personOldDoc)
+        val personDoc = person.buildUpdateBson()
 
         personDoc.append("orgIndex", ObjectId(orgId))
 

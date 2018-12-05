@@ -48,7 +48,7 @@ class HealthCareServiceResource {
         val analyzer = HealthAnalyzer()
         val personId = healthCareService.patientId
         val houseId = persons.findHouseId(orgId, personId)
-        analyzer.analyze(*healthCareServices.findByPatientId(orgId, personId).toTypedArray())
+        analyzer.analyze(*healthCareServices.getByPatientId(orgId, personId).toTypedArray())
         analyzers.insertAndRepeat(orgId, personId, houseId, analyzer)
         return result
     }
@@ -78,7 +78,7 @@ class HealthCareServiceResource {
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun find(@PathParam("orgId") orgId: String, @PathParam("visitId") visitId: String): HealthCareService {
-        return healthCareServices.find(visitId, orgId) ?: throw NullPointerException("ไม่พบ ข้อมูลที่ค้นหา")
+        return healthCareServices.get(visitId, orgId) ?: throw NullPointerException("ไม่พบ ข้อมูลที่ค้นหา")
     }
 
     @PUT
@@ -90,6 +90,7 @@ class HealthCareServiceResource {
         healthCareService: HealthCareService
     ): HealthCareService {
         roleMapIsSync(healthCareService)
+        require(visitId == healthCareService.id) { "รหัส ID การ Update ไม่ตรงกัน" }
         return healthCareServices.update(healthCareService, orgId)
     }
 
@@ -119,6 +120,6 @@ class HealthCareServiceResource {
         @PathParam("orgId") orgId: String,
         @PathParam("personId") personId: String
     ): List<HealthCareService> {
-        return healthCareServices.findByPatientId(orgId, personId)
+        return healthCareServices.getByPatientId(orgId, personId)
     }
 }

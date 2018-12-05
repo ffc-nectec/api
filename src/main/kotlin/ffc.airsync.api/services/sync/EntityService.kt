@@ -19,7 +19,7 @@ object EntityService {
 
     fun getHealthCareService(orgId: String): List<HealthCareService> {
         val result = healthCareServices.syncData(orgId).map {
-            healthCareServices.find(it.id, orgId) ?: HealthCareService("", "", "")
+            healthCareServices.get(it.id, orgId) ?: HealthCareService("", "", "")
         }.toMutableList()
 
         result.removeIf { it.patientId.isBlank() }

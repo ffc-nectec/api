@@ -12,8 +12,8 @@ interface HealthCareServiceDao : Dao, Sync<HealthCareService> {
 
     fun getByOrgId(orgId: String): List<HealthCareService>
 
-    fun find(id: String, orgId: String): HealthCareService?
-    fun findByPatientId(orgId: String, personId: String): List<HealthCareService>
+    fun get(id: String, orgId: String): HealthCareService?
+    fun getByPatientId(orgId: String, personId: String): List<HealthCareService>
 
     fun update(healthCareService: HealthCareService, orgId: String): HealthCareService
 

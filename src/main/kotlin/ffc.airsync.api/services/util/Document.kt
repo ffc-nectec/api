@@ -93,10 +93,9 @@ fun Entity.buildInsertBson(): Document {
  * มีการตรวจสอบ TempId
  * ทำให้ข้อมูล id กับ _id ตรงกัน
  * คัดลอก้อมูล bundle จาก ที่เก่า มาใส่ในชุดข้อมูลที่ Update
- * @param oldDoc ข้อมูล bson document เดิม
  * @return เอกสาร bson doc สำหรับการ update
  */
-fun Entity.buildUpdateBson(oldDoc: Document): Document {
+fun Entity.buildUpdateBson(): Document {
     if (isTempId) throw ForbiddenException("ข้อมูล $type ที่ใส่ไม่ตรงตามเงื่อนไข ตรวจสอบ $id : isTempId = $isTempId")
     return this.buildBsonDoc()
 }
