@@ -81,6 +81,20 @@ class MongoUserTest {
     }
 
     @Test
+    fun getUserById() {
+        val user = dao.insertUser(User("Sommai"), nectecOrg.id)
+
+        dao.getUserById(nectecOrg.id, user.id).name `should be equal to` user.name
+    }
+
+    @Test
+    fun getUserByName() {
+        dao.insertUser(User("Sommai"), nectecOrg.id)
+
+        dao.getUserByName(nectecOrg.id, "Sommai")!!.name `should be equal to` "Sommai"
+    }
+
+    @Test
     fun login() {
         val user = dao.findThat(nectecOrg.id, "maxkung", "catbite")
 

@@ -18,7 +18,6 @@
 package ffc.airsync.api.services.user
 
 import com.google.gson.Gson
-import ffc.airsync.api.printDebug
 import ffc.airsync.api.security.password
 import ffc.airsync.api.services.MongoAbsConnect
 import ffc.airsync.api.services.util.equal
@@ -39,22 +38,31 @@ internal class MongoUserDao(host: String, port: Int) : UserDao, MongoAbsConnect(
             val userStruct = "users" equal user.toDocument()
             val userPush = "\$push" equal userStruct
 
-            dbCollection.updateOne("id" equal orgId, userPush)
+            dbCollection.updateOne("_id" equal ObjectId(orgId), userPush)
         }
         return findUser(orgId).find { it.name == user.name }
             ?: throw IllegalStateException("Server Error in call dev")
     }
 
     private fun haveUserInDb(orgId: String, user: User): Boolean {
-        printDebug("\t\t\tCall haveUserInDb")
-        val userInDb = dbCollection.find("id" equal orgId).projection("users" equal 1).first()
-        printDebug("\t\t\tOrg in haveUserInDb = $userInDb")
-        val userList: Array<User>? = userInDb?.get("users")?.toJson()?.parseTo()
-        printDebug("\t\t\tUser obj = ${userList?.toJson()}")
-        val userDuplicate = userList?.find {
-            it.name == user.name
-        }
+        val userDuplicate = getUserByName(orgId, user.name)
         return (userDuplicate != null)
+    }
+
+    override fun getUserByName(orgId: String, name: String): User? {
+        val userInDb = dbCollection.find("_id" equal ObjectId(orgId)).projection("users" equal 1).first()
+        val userList: Array<User>? = userInDb?.get("users")?.toJson()?.parseTo()
+        return userList?.find {
+            it.name == name
+        }
+    }
+
+    override fun getUserById(orgId: String, userId: String): User {
+        val userInDb = dbCollection.find("_id" equal ObjectId(orgId)).projection("users" equal 1).first()
+        val userList: Array<User>? = userInDb?.get("users")?.toJson()?.parseTo()
+        return userList?.find {
+            it.id == userId
+        } ?: throw NoSuchElementException("ไม่พบ user Id $userId")
     }
 
     override fun updateUser(user: User, orgId: String): User {
@@ -68,10 +76,8 @@ internal class MongoUserDao(host: String, port: Int) : UserDao, MongoAbsConnect(
     }
 
     override fun findUser(orgId: String): List<User> {
-        printDebug("Find User in orgId $orgId")
         val userDocList = dbCollection
             .find("_id" equal ObjectId(orgId)).projection("users" equal 1).first() ?: return arrayListOf()
-        printDebug("\tuser list ${userDocList.toJson()}")
         return userDocList.getAs("users") ?: listOf()
     }
 
@@ -80,7 +86,7 @@ internal class MongoUserDao(host: String, port: Int) : UserDao, MongoAbsConnect(
     }
 
     override fun findThat(orgId: String, name: String, password: String): User? {
-        val orgDoc = dbCollection.find("id" equal orgId).first() ?: return null
+        val orgDoc = dbCollection.find("_id" equal ObjectId(orgId)).first() ?: return null
         val org = orgDoc.toJson().parseTo<Organization>()
         val user = org.users.find { it.name == name }
 
