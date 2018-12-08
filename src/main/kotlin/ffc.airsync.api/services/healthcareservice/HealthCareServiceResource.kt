@@ -42,6 +42,9 @@ class HealthCareServiceResource {
         @PathParam("orgId") orgId: String,
         healthCareService: HealthCareService
     ): HealthCareService {
+
+        `ตรวจสอบข้อมูลการเยี่ยมบ้านใหม่`(healthCareService)
+
         roleMapIsSync(healthCareService)
         printDebug("create health care ${healthCareService.toJson()}")
         notification.getFirebaseToken(orgId)
@@ -54,6 +57,22 @@ class HealthCareServiceResource {
         analyzer.analyze(*healthCareServices.getByPatientId(orgId, personId).toTypedArray())
         analyzers.insertAndRepeat(orgId, personId, houseId, analyzer)
         return result
+    }
+
+    private fun `ตรวจสอบข้อมูลการเยี่ยมบ้านใหม่`(healthCareService: HealthCareService) {
+        val patientId = healthCareService.patientId
+        val providerId = healthCareService.providerId
+        healthCareService.specialPPs.forEach {
+            require(it.isTempId) { "SpecialPP id ต้องเป็น TempId" }
+            require(it.patientId == patientId) { "patientId ผิดพลาด ${it.patientId} != $patientId" }
+            require(it.providerId == providerId) { "providerId ผิดพลาด ${it.providerId} != $providerId" }
+        }
+        healthCareService.communityServices.forEach {
+            require(it.isTempId) { "CommunityService id ต้องเป็น TempId" }
+        }
+        healthCareService.ncdScreen?.let {
+            require(it.isTempId) { "Ncd Screen id ต้องเป็น TempId" }
+        }
     }
 
     @DELETE
