@@ -91,9 +91,6 @@ class HealthCareServiceResource {
         @PathParam("visitId") visitId: String,
         healthCareService: HealthCareService
     ): HealthCareService {
-        healthCareService.update(DateTime.now()) {
-            TODO("รอลบออก Timestamp จะใช้จาก mobile") // เชียนค่าทับไปก่อน
-        }
         roleMapIsSync(healthCareService)
         require(visitId == healthCareService.id) { "รหัส ID การ Update ไม่ตรงกัน" }
         return healthCareServices.update(healthCareService, orgId)
