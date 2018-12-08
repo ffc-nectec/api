@@ -2,9 +2,11 @@ package ffc.airsync.api.services.house
 
 import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.filter.Developer
+import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.GEOJSONHeader
 import ffc.airsync.api.services.util.getLoginRole
+import ffc.airsync.api.services.util.getUserLogin
 import ffc.airsync.api.services.util.inRole
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
@@ -135,6 +137,8 @@ class HouseResourceNewEndpoint {
             User.Role.ADMIN inRole role -> house.link?.isSynced = true
             else -> house.link?.isSynced = false
         }
+
+        printDebug("House update user=${context.getUserLogin()} role=$role \n body=$house")
 
         val houseUpdate = HouseService.update(orgId, house, houseId)
         return Response.status(200).entity(houseUpdate).build()
