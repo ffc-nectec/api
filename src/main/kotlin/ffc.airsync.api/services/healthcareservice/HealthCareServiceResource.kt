@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.healthcareservice
 
 import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
 import ffc.airsync.api.services.VISITIDTYPE
@@ -13,6 +14,7 @@ import ffc.airsync.api.services.util.inRole
 import ffc.entity.Link
 import ffc.entity.System
 import ffc.entity.User
+import ffc.entity.gson.toJson
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.analyze.HealthAnalyzer
 import javax.annotation.security.RolesAllowed
@@ -41,6 +43,7 @@ class HealthCareServiceResource {
         healthCareService: HealthCareService
     ): HealthCareService {
         roleMapIsSync(healthCareService)
+        printDebug("create health care ${healthCareService.toJson()}")
         notification.getFirebaseToken(orgId)
         val result = healthCareServices.insert(healthCareService, orgId)
         notification.broadcastMessage(orgId, result)
