@@ -15,8 +15,6 @@ import ffc.entity.System
 import ffc.entity.User
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.analyze.HealthAnalyzer
-import ffc.entity.update
-import org.joda.time.DateTime
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.DELETE
 import javax.ws.rs.GET
