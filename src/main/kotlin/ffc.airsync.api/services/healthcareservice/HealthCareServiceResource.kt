@@ -15,6 +15,8 @@ import ffc.entity.System
 import ffc.entity.User
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.analyze.HealthAnalyzer
+import ffc.entity.update
+import org.joda.time.DateTime
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.DELETE
 import javax.ws.rs.GET
@@ -89,6 +91,9 @@ class HealthCareServiceResource {
         @PathParam("visitId") visitId: String,
         healthCareService: HealthCareService
     ): HealthCareService {
+        healthCareService.update(DateTime.now()) {
+            TODO("รอลบออก Timestamp จะใช้จาก mobile") // เชียนค่าทับไปก่อน
+        }
         roleMapIsSync(healthCareService)
         require(visitId == healthCareService.id) { "รหัส ID การ Update ไม่ตรงกัน" }
         return healthCareServices.update(healthCareService, orgId)
