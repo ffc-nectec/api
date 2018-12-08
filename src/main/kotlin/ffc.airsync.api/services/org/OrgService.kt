@@ -16,11 +16,11 @@ internal object OrgService {
     }
 
     fun remove(orgId: String) {
+        orgs.remove(orgId)
         analyzers.deleteByOrgId(orgId)
         healthCareServices.remove(orgId)
         houses.removeByOrgId(orgId)
         persons.remove(orgId)
-        orgs.remove(orgId)
         tokens.removeByOrgId(orgId)
     }
 
