@@ -3,7 +3,7 @@ package ffc.airsync.api.services
 import com.mongodb.BasicDBObject
 import com.mongodb.client.model.UpdateOptions
 import ffc.airsync.api.services.healthcareservice.healthCareServices
-import ffc.airsync.api.services.healthcareservice.visitDocument
+import ffc.airsync.api.services.healthcareservice.visitInsertDocument
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
@@ -34,7 +34,7 @@ abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String,
     override fun insertBlock(orgId: String, block: Int, item: List<T>): List<T> {
         val itemInsert = item.map {
             val itemDoc = when (it.type) {
-                HEALTHCARETYPE -> healthCareServices.visitDocument(it as HealthCareService, orgId)
+                HEALTHCARETYPE -> healthCareServices.visitInsertDocument(it as HealthCareService, orgId)
                 else -> it.buildInsertBson()
             }
             itemDoc["orgIndex"] = ObjectId(orgId)
