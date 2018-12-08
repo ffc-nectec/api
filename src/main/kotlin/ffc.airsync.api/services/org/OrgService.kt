@@ -16,12 +16,12 @@ internal object OrgService {
     }
 
     fun remove(orgId: String) {
-        orgs.remove(orgId)
-        houses.removeByOrgId(orgId)
-        tokens.removeByOrgId(orgId)
-        persons.remove(orgId)
-        healthCareServices.remove(orgId)
         analyzers.deleteByOrgId(orgId)
+        healthCareServices.remove(orgId)
+        houses.removeByOrgId(orgId)
+        persons.remove(orgId)
+        orgs.remove(orgId)
+        tokens.removeByOrgId(orgId)
     }
 
     fun getMy(ipAddress: String): List<Organization> {
