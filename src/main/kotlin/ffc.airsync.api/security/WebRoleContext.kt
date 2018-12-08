@@ -11,6 +11,7 @@ class WebRoleContext(val token: Token, val orgId: String?, val scheme: String) :
 
     init {
         userPrincipal = Principal { token.user.name }
+        println(" UserToken:${userPrincipal.name} ")
     }
 
     override fun isUserInRole(role: String?): Boolean {
