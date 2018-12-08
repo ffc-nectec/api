@@ -3,6 +3,7 @@ package ffc.airsync.api.services.healthcareservice
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.services.MongoSyncDao
 import ffc.airsync.api.services.util.buildInsertBson
+import ffc.airsync.api.services.util.buildUpdateBson
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
 import ffc.airsync.api.services.util.plus
@@ -26,14 +27,14 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
 
     override fun insert(healthCareService: HealthCareService, orgId: String): HealthCareService {
 
-        val insertVisit = visitDocument(healthCareService, orgId)
+        val insertVisit = visitInsertDocument(healthCareService, orgId)
 
         return dbCollection.ffcInsert(insertVisit)
     }
 
     override fun insert(healthCareService: List<HealthCareService>, orgId: String): List<HealthCareService> {
         val healCare = healthCareService.map {
-            visitDocument(it, orgId)
+            visitInsertDocument(it, orgId)
         }
         return dbCollection.ffcInsert(healCare)
     }
@@ -67,7 +68,7 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
     override fun update(healthCareService: HealthCareService, orgId: String): HealthCareService {
         val query = Document("_id", ObjectId(healthCareService.id))
             .append("orgIndex", ObjectId(orgId))
-        val insertDocument = visitDocument(healthCareService, orgId)
+        val insertDocument = visitUpdateDocument(healthCareService, orgId)
         val resultUpdate = dbCollection.replaceOne(query, insertDocument)
 
         check(resultUpdate.isModifiedCountAvailable) { "พารามิตเตอร์การ Update ผิดพลาด" }
@@ -80,11 +81,27 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
     }
 }
 
-fun HealthCareServiceDao.visitDocument(
+fun HealthCareServiceDao.visitInsertDocument(
     healthCareService: HealthCareService,
     orgId: String
 ): Document {
     val insertVisit = healthCareService.buildInsertBson()
+    return buildVisit(insertVisit, orgId, healthCareService)
+}
+
+fun HealthCareServiceDao.visitUpdateDocument(
+    healthCareService: HealthCareService,
+    orgId: String
+): Document {
+    val insertVisit = healthCareService.buildUpdateBson()
+    return buildVisit(insertVisit, orgId, healthCareService)
+}
+
+private fun buildVisit(
+    insertVisit: Document,
+    orgId: String,
+    healthCareService: HealthCareService
+): Document {
     insertVisit["orgIndex"] = ObjectId(orgId)
     insertVisit["patientIdIndex"] = ObjectId(healthCareService.patientId)
     insertVisit["providerIdIndex"] = ObjectId(healthCareService.providerId)
