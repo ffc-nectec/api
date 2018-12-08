@@ -15,7 +15,6 @@ import ffc.entity.place.House
 import ffc.entity.update
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
-import org.joda.time.DateTime
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.Consumes
@@ -132,9 +131,6 @@ class HouseResourceNewEndpoint {
         @PathParam("houseId") houseId: String,
         house: House
     ): Response {
-        house.update(DateTime.now()) {
-            TODO("รอลบออก Timestamp จะใช้จาก mobile") // เชียนค่าทับไปก่อน
-        }
         val role = context.getLoginRole()
         when {
             User.Role.ORG inRole role -> house.link?.isSynced = true
@@ -144,8 +140,9 @@ class HouseResourceNewEndpoint {
 
         printDebug("House update user=${context.getUserLogin()} role=$role \n body=$house")
 
-        val houseUpdate = HouseService.update(orgId, house, houseId)
+        val houseUpdate = HouseService.update(orgId, house.update { }, houseId)
         return Response.status(200).entity(houseUpdate).build()
+        TODO("รอลบออก Timestamp จะใช้จาก mobile") // เชียนค่าทับไปก่อน
     }
 
     @PUT
