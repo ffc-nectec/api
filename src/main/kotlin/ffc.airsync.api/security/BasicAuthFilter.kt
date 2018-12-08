@@ -1,5 +1,6 @@
 package ffc.airsync.api.security
 
+import ffc.airsync.api.services.util.getLoginRole
 import java.util.regex.Pattern
 import javax.annotation.Priority
 import javax.ws.rs.NotAuthorizedException
@@ -37,5 +38,10 @@ class BasicAuthFilter : ContainerRequestFilter {
             scheme = urlScheme,
             orgId = orgId
         )
+
+        val name = requestContext.securityContext.userPrincipal.name
+        val loginRole = requestContext.securityContext.getLoginRole()
+        val httpMethod = requestContext.method
+        println("User:$name Role:$loginRole Method:$httpMethod Url:$baseUrl")
     }
 }
