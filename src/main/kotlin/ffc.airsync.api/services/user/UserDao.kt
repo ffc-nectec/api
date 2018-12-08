@@ -32,6 +32,8 @@ interface UserDao : Dao {
     fun insertUser(user: User, orgId: String): User
     fun updateUser(user: User, orgId: String): User
 
+    fun getUserByName(orgId: String, name: String): User?
+    fun getUserById(orgId: String, userId: String): User
     fun findUser(orgId: String): List<User>
     fun findThat(orgId: String, name: String, password: String): User?
 }
