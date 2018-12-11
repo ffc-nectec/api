@@ -148,4 +148,9 @@ class MongoRelationsShipDaoTest {
         val rela = dao.collectGenogram(ORG_ID, somChai.id)
         rela.count() `should be equal to` 3
     }
+
+    @Test
+    fun getPerson() {
+        val result = daoPerson.getPerson(ORG_ID, somChai.id)
+    }
 }

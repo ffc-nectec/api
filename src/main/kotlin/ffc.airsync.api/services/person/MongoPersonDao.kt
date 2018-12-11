@@ -75,8 +75,10 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
         }
         require(result["orgId"].toString() == orgId) { "ไม่พบรหัส person id $personId ที่ค้นหา" }
 
-        (result["relationships"] as ArrayList<Document>).forEach {
-            it.remove("insertBlock")
+        (result["relationships"] as ArrayList<Document>).add("insertBlock" equal 12)
+
+        (result["relationships"] as ArrayList<Document>).removeIf {
+            it["insertBlock"] != null
         }
 
         return result.toJson().parseTo()
