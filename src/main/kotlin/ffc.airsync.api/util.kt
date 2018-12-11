@@ -19,6 +19,8 @@ package ffc.airsync.api
 
 import ffc.entity.Lang
 import ffc.entity.gson.parseTo
+import ffc.entity.gson.toJson
+import org.bson.Document
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import java.nio.charset.Charset
@@ -48,4 +50,13 @@ fun Locale.toLang(): Lang {
         "th" -> Lang.th
         else -> Lang.en
     }
+}
+
+fun Any.toDNA(): String {
+    val doc = Document.parse(this.toJson())
+    val type = this::class.toString()
+    doc.remove("id")
+    doc.remove("link")
+    doc.remove("timestamp")
+    return "${type.hashCode()}:${doc.toJson().hashCode()}"
 }
