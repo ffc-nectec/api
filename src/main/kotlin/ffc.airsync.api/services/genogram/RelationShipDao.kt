@@ -20,6 +20,8 @@ interface GenoGramDao : Dao {
         relation: Map<String, List<Person.Relationship>>
     ): Map<String, List<Person.Relationship>>
 
+    fun removeInsertBlock()
+
     fun confirmBlock(orgId: String, block: Int)
     fun unConfirmBlock(orgId: String, block: Int)
     fun getBlock(orgId: String, block: Int): Map<String, List<Person.Relationship>>

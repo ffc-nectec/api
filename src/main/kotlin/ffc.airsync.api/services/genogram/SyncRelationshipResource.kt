@@ -79,4 +79,12 @@ class SyncRelationshipResource {
     ) {
         personRelationsShip.removeByOrgId(orgId)
     }
+
+    @DELETE
+    @Path("/relationship/insertblock")
+    @RolesAllowed("ORG", "ADMIN")
+    @Cache(maxAge = 5)
+    fun removeInsert() {
+        personRelationsShip.removeInsertBlock()
+    }
 }

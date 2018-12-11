@@ -104,6 +104,13 @@ class MongoRelationsShipDao(host: String, port: Int) : MongoAbsConnect(host, por
         }
     }
 
+    override fun removeInsertBlock() {
+        val update = BasicDBObject()
+        update["\$pop"] = BasicDBObject("relationships.insertBlock", 0)
+
+        dbCollection.updateMany(Document(), update, UpdateOptions().upsert(true))
+    }
+
     override fun confirmBlock(orgId: String, block: Int) {
         val update = BasicDBObject()
         update["\$pop"] = BasicDBObject("relationships", "")
