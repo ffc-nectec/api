@@ -68,6 +68,14 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
     override fun update(healthCareService: HealthCareService, orgId: String): HealthCareService {
         val query = Document("_id", ObjectId(healthCareService.id))
             .append("orgIndex", ObjectId(orgId))
+
+        val oldHealthCareService: HealthCareService = dbCollection.find(query).firstOrNull()?.toJson()?.parseTo()
+            ?: throw NoSuchElementException("การ Update ผิดพลาด ไม่มีข้อมูลเดิมอยู่")
+
+        oldHealthCareService.link?.keys?.let {
+            healthCareService.link!!.keys = it
+        }
+
         val insertDocument = visitUpdateDocument(healthCareService, orgId)
         val resultUpdate = dbCollection.replaceOne(query, insertDocument)
 

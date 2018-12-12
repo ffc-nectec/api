@@ -43,36 +43,47 @@ class HealthCareServiceResource {
         healthCareService: HealthCareService
     ): HealthCareService {
 
+        val loginRole = context.getLoginRole()
+        if (!(User.Role.ADMIN inRole loginRole || User.Role.ORG inRole loginRole)) {
+            require(healthCareService.link == null) { "สร้าง healthCareService จาก User ต้องไม่มี link" }
+        } else {
+            require(healthCareService.link != null) { "ORG, ADMIN จำเป็นต้องมีข้อมูล link " }
+        }
+
         `ตรวจสอบข้อมูลการเยี่ยมบ้านใหม่`(healthCareService)
 
         roleMapIsSync(healthCareService)
         printDebug("create health care ${healthCareService.toJson()}")
-        notification.getFirebaseToken(orgId)
+        // notification.getFirebaseToken(orgId)
         val result = healthCareServices.insert(healthCareService, orgId)
         notification.broadcastMessage(orgId, result)
 
+        visitAnalyzer(healthCareService, orgId)
+        return result
+    }
+
+    @PUT
+    @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE/$VISITIDTYPE")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    fun update(
+        @PathParam("orgId") orgId: String,
+        @PathParam("visitId") visitId: String,
+        healthCareService: HealthCareService
+    ): HealthCareService {
+        roleMapIsSync(healthCareService)
+        require(visitId == healthCareService.id) { "รหัส ID การ Update ไม่ตรงกัน" }
+        val result = healthCareServices.update(healthCareService, orgId)
+        notification.broadcastMessage(orgId, result)
+        visitAnalyzer(healthCareService, orgId)
+        return result
+    }
+
+    private fun visitAnalyzer(healthCareService: HealthCareService, orgId: String) {
         val analyzer = HealthAnalyzer()
         val personId = healthCareService.patientId
         val houseId = persons.findHouseId(orgId, personId)
         analyzer.analyze(*healthCareServices.getByPatientId(orgId, personId).toTypedArray())
         analyzers.insertAndRepeat(orgId, personId, houseId, analyzer)
-        return result
-    }
-
-    private fun `ตรวจสอบข้อมูลการเยี่ยมบ้านใหม่`(healthCareService: HealthCareService) {
-        val patientId = healthCareService.patientId
-        val providerId = healthCareService.providerId
-        healthCareService.specialPPs.forEach {
-            require(it.isTempId) { "SpecialPP id ต้องเป็น TempId" }
-            require(it.patientId == patientId) { "patientId ผิดพลาด ${it.patientId} != $patientId" }
-            require(it.providerId == providerId) { "providerId ผิดพลาด ${it.providerId} != $providerId" }
-        }
-        healthCareService.communityServices.forEach {
-            require(it.isTempId) { "CommunityService id ต้องเป็น TempId" }
-        }
-        healthCareService.ncdScreen?.let {
-            require(it.isTempId) { "Ncd Screen id ต้องเป็น TempId" }
-        }
     }
 
     @DELETE
@@ -103,32 +114,18 @@ class HealthCareServiceResource {
         return healthCareServices.get(visitId, orgId) ?: throw NullPointerException("ไม่พบ ข้อมูลที่ค้นหา")
     }
 
-    @PUT
-    @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE/$VISITIDTYPE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
-    fun update(
-        @PathParam("orgId") orgId: String,
-        @PathParam("visitId") visitId: String,
-        healthCareService: HealthCareService
-    ): HealthCareService {
-        roleMapIsSync(healthCareService)
-        require(visitId == healthCareService.id) { "รหัส ID การ Update ไม่ตรงกัน" }
-        return healthCareServices.update(healthCareService, orgId)
-    }
-
     private fun roleMapIsSync(healthCareService: HealthCareService) {
         val role = context.getLoginRole()
         when {
             User.Role.ORG inRole role -> {
-                require(healthCareService.link != null) { "จำเป็นต้องมีข้อมูล link " }
                 healthCareService.link!!.isSynced = true
             }
             User.Role.ADMIN inRole role -> {
-                require(healthCareService.link != null) { "จำเป็นต้องมีข้อมูล link " }
                 healthCareService.link!!.isSynced = true
             }
             else -> {
-                healthCareService.link = Link(System.JHICS)
+                healthCareService.link =
+                    if (healthCareService.link == null) Link(System.JHICS) else healthCareService.link
                 healthCareService.link!!.isSynced = false
             }
         }
@@ -143,5 +140,21 @@ class HealthCareServiceResource {
         @PathParam("personId") personId: String
     ): List<HealthCareService> {
         return healthCareServices.getByPatientId(orgId, personId)
+    }
+
+    private fun `ตรวจสอบข้อมูลการเยี่ยมบ้านใหม่`(healthCareService: HealthCareService) {
+        val patientId = healthCareService.patientId
+        val providerId = healthCareService.providerId
+        healthCareService.specialPPs.forEach {
+            require(it.isTempId) { "SpecialPP id ต้องเป็น TempId" }
+            require(it.patientId == patientId) { "patientId ผิดพลาด ${it.patientId} != $patientId" }
+            require(it.providerId == providerId) { "providerId ผิดพลาด ${it.providerId} != $providerId" }
+        }
+        healthCareService.communityServices.forEach {
+            require(it.isTempId) { "CommunityService id ต้องเป็น TempId" }
+        }
+        healthCareService.ncdScreen?.let {
+            require(it.isTempId) { "Ncd Screen id ต้องเป็น TempId" }
+        }
     }
 }
