@@ -73,7 +73,8 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
             ?: throw NoSuchElementException("การ Update ผิดพลาด ไม่มีข้อมูลเดิมอยู่")
 
         oldHealthCareService.link?.keys?.let {
-            healthCareService.link!!.keys = it
+            if (it.isNotEmpty())
+                healthCareService.link!!.keys = it
         }
 
         val insertDocument = visitUpdateDocument(healthCareService, orgId)
