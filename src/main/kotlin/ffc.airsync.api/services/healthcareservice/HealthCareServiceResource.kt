@@ -42,7 +42,7 @@ class HealthCareServiceResource {
         @PathParam("orgId") orgId: String,
         healthCareService: HealthCareService
     ): HealthCareService {
-
+        printDebug("Visit Body:${healthCareService.toJson()}")
         val loginRole = context.getLoginRole()
         if (!(User.Role.ADMIN inRole loginRole || User.Role.ORG inRole loginRole)) {
             require(healthCareService.link == null) { "สร้าง healthCareService จาก User ต้องไม่มี link" }
