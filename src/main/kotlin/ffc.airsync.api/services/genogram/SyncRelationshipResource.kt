@@ -34,7 +34,12 @@ class SyncRelationshipResource {
         @PathParam("block") block: Int,
         relation: Map<String, @JvmSuppressWildcards List<Person.Relationship>>
     ): Map<String, List<Person.Relationship>> {
-        return personRelationsShip.insertBlock(orgId, block, relation)
+        try {
+            return personRelationsShip.insertBlock(orgId, block, relation)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw ex
+        }
     }
 
     @GET
@@ -45,7 +50,12 @@ class SyncRelationshipResource {
         @PathParam("orgId") orgId: String,
         @PathParam("block") block: Int
     ): Map<String, List<Person.Relationship>> {
-        return personRelationsShip.getBlock(orgId, block)
+        try {
+            return personRelationsShip.getBlock(orgId, block)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw ex
+        }
     }
 
     @PUT
@@ -56,7 +66,12 @@ class SyncRelationshipResource {
         @PathParam("orgId") orgId: String,
         @PathParam("block") block: Int
     ) {
-        personRelationsShip.confirmBlock(orgId, block)
+        try {
+            personRelationsShip.confirmBlock(orgId, block)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw ex
+        }
     }
 
     @DELETE
@@ -67,7 +82,12 @@ class SyncRelationshipResource {
         @PathParam("orgId") orgId: String,
         @PathParam("block") block: Int
     ) {
-        personRelationsShip.unConfirmBlock(orgId, block)
+        try {
+            personRelationsShip.unConfirmBlock(orgId, block)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw ex
+        }
     }
 
     @DELETE
@@ -77,7 +97,12 @@ class SyncRelationshipResource {
     fun cleanAll(
         @PathParam("orgId") orgId: String
     ) {
-        personRelationsShip.removeByOrgId(orgId)
+        try {
+            personRelationsShip.removeByOrgId(orgId)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw ex
+        }
     }
 
     @DELETE
@@ -85,6 +110,11 @@ class SyncRelationshipResource {
     @RolesAllowed("ORG", "ADMIN")
     @Cache(maxAge = 5)
     fun removeInsert() {
-        personRelationsShip.removeInsertBlock()
+        try {
+            personRelationsShip.removeInsertBlock()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            throw ex
+        }
     }
 }
