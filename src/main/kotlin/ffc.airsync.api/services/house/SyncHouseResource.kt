@@ -27,7 +27,7 @@ class SyncHouseResource : Sync<House> {
     private lateinit var context: SecurityContext
 
     @POST
-    @Path("/$ORGIDTYPE/house/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/houses/sync/$BLOCKTYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     override fun insertBlock(
         @PathParam("orgId") orgId: String,
@@ -38,7 +38,7 @@ class SyncHouseResource : Sync<House> {
     }
 
     @GET
-    @Path("/$ORGIDTYPE/house/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/houses/sync/$BLOCKTYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     override fun getBlock(
         @PathParam("orgId") orgId: String,
@@ -48,7 +48,7 @@ class SyncHouseResource : Sync<House> {
     }
 
     @PUT
-    @Path("/$ORGIDTYPE/house/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/houses/sync/$BLOCKTYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     override fun confirmBlock(
         @PathParam("orgId") orgId: String,
@@ -58,7 +58,7 @@ class SyncHouseResource : Sync<House> {
     }
 
     @DELETE
-    @Path("/$ORGIDTYPE/house/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/houses/sync/$BLOCKTYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     override fun unConfirmBlock(
         @PathParam("orgId") orgId: String,

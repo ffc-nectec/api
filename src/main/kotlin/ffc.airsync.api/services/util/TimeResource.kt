@@ -38,6 +38,13 @@ class TimeResource {
     }
 
     @GET
+    @Path("/freememory")
+    @Cache(maxAge = 2)
+    fun getFreeMemory(): Response {
+        return Response.status(200).entity(Runtime.getRuntime().freeMemory()).build()
+    }
+
+    @GET
     @Path("/servertime")
     @Cache(maxAge = 1)
     fun time(): TimeData {

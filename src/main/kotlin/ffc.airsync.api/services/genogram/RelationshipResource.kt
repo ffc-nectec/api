@@ -56,6 +56,7 @@ class RelationshipResource {
 
     @GET
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/genogram")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun getGenogramFamily(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): Family {
 

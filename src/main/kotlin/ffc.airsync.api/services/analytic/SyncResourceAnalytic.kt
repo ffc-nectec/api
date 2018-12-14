@@ -21,7 +21,7 @@ import javax.ws.rs.core.MediaType
 class SyncResourceAnalytic {
 
     @POST
-    @Path("/$ORGIDTYPE/healthanalyze/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/healthanalyzes/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     fun insertBlock(
         @PathParam("orgId") orgId: String,
@@ -37,7 +37,7 @@ class SyncResourceAnalytic {
     }
 
     @GET
-    @Path("/$ORGIDTYPE/healthanalyze/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/healthanalyzes/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     fun getBlock(
         @PathParam("orgId") orgId: String,
@@ -50,7 +50,7 @@ class SyncResourceAnalytic {
     }
 
     @PUT
-    @Path("/$ORGIDTYPE/healthanalyze/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/healthanalyzes/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     fun confirmBlock(
         @PathParam("orgId") orgId: String,
@@ -63,7 +63,7 @@ class SyncResourceAnalytic {
     }
 
     @DELETE
-    @Path("/$ORGIDTYPE/healthanalyze/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/healthanalyzes/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     fun unConfirmBlock(
         @PathParam("orgId") orgId: String,

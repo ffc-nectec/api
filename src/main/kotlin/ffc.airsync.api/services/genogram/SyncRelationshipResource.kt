@@ -26,7 +26,7 @@ class SyncRelationshipResource {
     private var context: SecurityContext? = null
 
     @POST
-    @Path("/$ORGIDTYPE/person/relationship/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/person/relationships/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     @Cache(maxAge = 5)
     fun insertBlock(
@@ -43,7 +43,7 @@ class SyncRelationshipResource {
     }
 
     @GET
-    @Path("/$ORGIDTYPE/person/relationship/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/person/relationships/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     @Cache(maxAge = 5)
     fun getBlock(
@@ -59,7 +59,7 @@ class SyncRelationshipResource {
     }
 
     @PUT
-    @Path("/$ORGIDTYPE/person/relationship/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/person/relationships/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     @Cache(maxAge = 5)
     fun confirmBlock(
@@ -75,7 +75,7 @@ class SyncRelationshipResource {
     }
 
     @DELETE
-    @Path("/$ORGIDTYPE/person/relationship/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/person/relationships/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     @Cache(maxAge = 5)
     fun unConfirmBlock(
@@ -91,7 +91,7 @@ class SyncRelationshipResource {
     }
 
     @DELETE
-    @Path("/$ORGIDTYPE/person/relationship/sync/clean")
+    @Path("/$ORGIDTYPE/person/relationships/sync/clean")
     @RolesAllowed("ORG", "ADMIN")
     @Cache(maxAge = 5)
     fun cleanAll(
