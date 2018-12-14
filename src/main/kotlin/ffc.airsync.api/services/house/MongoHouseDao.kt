@@ -29,6 +29,7 @@ import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import ffc.entity.place.House
 import org.bson.Document
+import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 import javax.ws.rs.NotFoundException
 
@@ -120,13 +121,17 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoSyncDao<H
             true -> query.append("location", "\$ne" equal null)
             else -> query.append("location", "\$eq" equal null)
         }
-        var houses = dbCollection.find(query).listOf<House>()
-        queryStr?.let {
-            houses = houses.filter {
-                it.no?.contains(queryStr) == true || it.villageName?.contains(queryStr) == true
-            }
+
+        if (queryStr != null) {
+            val regexQuery = Document("\$regex", queryStr).append("\$options", "i")
+            val orQuery = BasicBSONList()
+            orQuery.add("no" equal regexQuery)
+            orQuery.add("villageName" equal regexQuery)
+
+            query.append("\$or", orQuery)
         }
-        return houses
+
+        return dbCollection.find(query).listOf()
     }
 
     override fun find(orgId: String, houseId: String): House? {
