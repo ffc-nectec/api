@@ -153,7 +153,7 @@ class PersonResource {
 
     @GET
     @Path("/$ORGIDTYPE/person/icd10/{icd10:(\\w+)}")
-    @RolesAllowed("USER")
+    @RolesAllowed("USER", "PROVIDER", "SURVEYOR", "PATIENT")
     fun findByICD10(
         @PathParam("orgId") orgId: String,
         @PathParam("icd10") icd10: String

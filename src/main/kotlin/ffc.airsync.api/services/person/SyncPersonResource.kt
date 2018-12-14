@@ -26,7 +26,7 @@ class SyncPersonResource : Sync<Person> {
     private var context: SecurityContext? = null
 
     @POST
-    @Path("/$ORGIDTYPE/person/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/persons/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     override fun insertBlock(
         @PathParam("orgId") orgId: String,
@@ -40,7 +40,7 @@ class SyncPersonResource : Sync<Person> {
     }
 
     @PUT
-    @Path("/$ORGIDTYPE/person/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/persons/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     override fun confirmBlock(
         @PathParam("orgId") orgId: String,
@@ -50,7 +50,7 @@ class SyncPersonResource : Sync<Person> {
     }
 
     @DELETE
-    @Path("/$ORGIDTYPE/person/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/persons/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     override fun unConfirmBlock(
         @PathParam("orgId") orgId: String,
@@ -60,7 +60,7 @@ class SyncPersonResource : Sync<Person> {
     }
 
     @GET
-    @Path("/$ORGIDTYPE/person/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/persons/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     override fun getBlock(
         @PathParam("orgId") orgId: String,

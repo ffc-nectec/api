@@ -44,16 +44,6 @@ class HouseResourceNewEndpoint {
     private lateinit var context: SecurityContext
 
     @POST
-    @Path("/$ORGIDTYPE/houses")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
-    fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
-        if (houseList == null) throw BadRequestException()
-
-        val role = context.getLoginRole()
-        return Response.status(Response.Status.CREATED).entity(validateHouse(role, orgId, houseList)).build()
-    }
-
-    @POST
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
     fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
@@ -61,6 +51,16 @@ class HouseResourceNewEndpoint {
 
         val role = context.getLoginRole()
         return Response.status(Response.Status.CREATED).entity(validateHouse(role, orgId, house)).build()
+    }
+
+    @POST
+    @Path("/$ORGIDTYPE/houses")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
+        if (houseList == null) throw BadRequestException()
+
+        val role = context.getLoginRole()
+        return Response.status(Response.Status.CREATED).entity(validateHouse(role, orgId, houseList)).build()
     }
 
     @Developer

@@ -21,7 +21,7 @@ class SyncHealthCareServiceResource : Sync<HealthCareService> {
     private lateinit var context: SecurityContext
 
     @POST
-    @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE${'s'}/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     override fun insertBlock(
         @PathParam("orgId") orgId: String,
@@ -32,7 +32,7 @@ class SyncHealthCareServiceResource : Sync<HealthCareService> {
     }
 
     @GET
-    @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE${'s'}/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     override fun getBlock(
         @PathParam("orgId") orgId: String,
@@ -42,7 +42,7 @@ class SyncHealthCareServiceResource : Sync<HealthCareService> {
     }
 
     @PUT
-    @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE${'s'}/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     override fun confirmBlock(
         @PathParam("orgId") orgId: String,
@@ -52,7 +52,7 @@ class SyncHealthCareServiceResource : Sync<HealthCareService> {
     }
 
     @DELETE
-    @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE/sync/$BLOCKTYPE")
+    @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE${'s'}/sync/$BLOCKTYPE")
     @RolesAllowed("ORG", "ADMIN")
     override fun unConfirmBlock(
         @PathParam("orgId") orgId: String,
