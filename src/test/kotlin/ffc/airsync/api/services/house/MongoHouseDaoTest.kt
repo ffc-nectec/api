@@ -136,4 +136,23 @@ class MongoHouseDaoTest {
         dao.findAll(ORG_ID, haveLocation = true).size `should be equal to` 2
         dao.findAll(ORG_ID, haveLocation = false).size `should be equal to` 0
     }
+
+    @Test
+    fun sorting() {
+        dao.insert(ORG_ID, createHouse("11111111112", "900"))
+        dao.insert(ORG_ID, createHouse("11111111112", "888/1"))
+        dao.insert(ORG_ID, createHouse("11111111112", "888"))
+        dao.insert(ORG_ID, createHouse("11111111112", "81"))
+
+        val result = dao.findAll(ORG_ID)
+
+        result.map { it.no } `should equal` listOf(
+            "81",
+            "888",
+            "888/1",
+            "888/777",
+            "900",
+            "999/888"
+        )
+    }
 }
