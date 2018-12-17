@@ -21,21 +21,21 @@ import javax.ws.rs.core.MediaType
 class VillageResource {
     @POST
     @Path("/$ORGIDTYPE/village")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ORG", "ADMIN")
     fun create(@PathParam("orgId") orgId: String, village: Village): Village {
         return villages.insert(orgId, village)
     }
 
     @POST
     @Path("/$ORGIDTYPE/villages")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ORG", "ADMIN")
     fun create(@PathParam("orgId") orgId: String, village: List<Village>): List<Village> {
         return villages.insert(orgId, village)
     }
 
     @PUT
     @Path("/$ORGIDTYPE/village/$VILLAGETYPE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ORG", "ADMIN")
     fun update(
         @PathParam("orgId") orgId: String,
         @PathParam("villageId") villageId: String,
@@ -47,12 +47,21 @@ class VillageResource {
 
     @DELETE
     @Path("/$ORGIDTYPE/village/$VILLAGETYPE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ORG", "ADMIN")
     fun delete(
         @PathParam("orgId") orgId: String,
         @PathParam("villageId") villageId: String
     ) {
         return villages.delete(orgId, villageId)
+    }
+
+    @DELETE
+    @Path("/$ORGIDTYPE/villages")
+    @RolesAllowed("ORG", "ADMIN")
+    fun deleteOrg(
+        @PathParam("orgId") orgId: String
+    ) {
+        return villages.removeByOrgId(orgId)
     }
 
     @GET
