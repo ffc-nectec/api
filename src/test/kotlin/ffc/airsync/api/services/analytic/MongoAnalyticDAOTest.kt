@@ -96,7 +96,7 @@ class MongoAnalyticDAOTest {
     fun deleteByOrgId() {
         dao.insert(ORG_ID, patientId, houseId, analytic1)
         dao.insert(ORG_ID, patientId2, houseId, analytic2)
-        dao.deleteByOrgId(ORG_ID)
+        dao.removeByOrgId(ORG_ID)
 
         dao.getByPersonId(ORG_ID, patientId)
     }

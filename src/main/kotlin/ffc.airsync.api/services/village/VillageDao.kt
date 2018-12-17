@@ -20,6 +20,8 @@ interface VillageDao : Dao {
     fun find(orgId: String, query: String): List<Village>
 
     fun find(orgId: String): List<Village>
+
+    fun removeByOrgId(orgId: String)
 }
 
 val villages: VillageDao by lazy { MongoVillageDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }

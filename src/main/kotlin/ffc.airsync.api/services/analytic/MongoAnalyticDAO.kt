@@ -79,7 +79,7 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoAbs
         dbCollection.deleteMany("personId" equal ObjectId(personId))
     }
 
-    override fun deleteByOrgId(orgId: String) {
+    override fun removeByOrgId(orgId: String) {
         dbCollection.deleteMany("orgIndex" equal ObjectId(orgId))
     }
 

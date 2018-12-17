@@ -1,5 +1,6 @@
 package ffc.airsync.api.services.village
 
+import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.services.MongoAbsConnect
 import ffc.airsync.api.services.util.TextFindMongo
 import ffc.airsync.api.services.util.buildInsertBson
@@ -14,6 +15,11 @@ import ffc.entity.gson.parseTo
 import org.bson.types.ObjectId
 
 class MongoVillageDao(host: String, port: Int) : VillageDao, MongoAbsConnect(host, port, "ffc", "village") {
+
+    init {
+        dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
+    }
+
     override fun insert(orgId: String, village: Village): Village {
         val villageDoc = village.buildInsertBson()
         villageDoc.append("orgIndex", ObjectId(orgId))
@@ -58,5 +64,9 @@ class MongoVillageDao(host: String, port: Int) : VillageDao, MongoAbsConnect(hos
             ?: throw java.util.NoSuchElementException("ไม่พบข้อมูลการค้นหา")
 
         return findDoc.map { it.toJson().parseTo<Village>() }.toList()
+    }
+
+    override fun removeByOrgId(orgId: String) {
+        dbCollection.deleteMany("orgIndex" equal ObjectId(orgId))
     }
 }

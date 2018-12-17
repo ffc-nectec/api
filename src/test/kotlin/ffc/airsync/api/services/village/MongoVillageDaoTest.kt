@@ -9,6 +9,7 @@ import ffc.entity.Village
 import ffc.entity.place.Business
 import me.piruin.geok.geometry.Point
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should equal`
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -155,5 +156,13 @@ class MongoVillageDaoTest {
         val find = dao.find(ORG_ID).first()
 
         find.name `should be equal to` "หมู่บ้าน Nectec"
+    }
+
+    @Test
+    fun removeByOrgId() {
+        dao.insert(ORG_ID, village)
+        dao.removeByOrgId(ORG_ID)
+
+        dao.find(ORG_ID).firstOrNull() `should equal` null
     }
 }

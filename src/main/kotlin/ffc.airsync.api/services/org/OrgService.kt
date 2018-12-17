@@ -6,6 +6,7 @@ import ffc.airsync.api.services.healthcareservice.healthCareServices
 import ffc.airsync.api.services.house.houses
 import ffc.airsync.api.services.person.persons
 import ffc.airsync.api.services.token.tokens
+import ffc.airsync.api.services.village.villages
 import ffc.entity.Organization
 import ffc.entity.gson.toJson
 
@@ -17,11 +18,12 @@ internal object OrgService {
 
     fun remove(orgId: String) {
         orgs.remove(orgId)
-        analyzers.deleteByOrgId(orgId)
-        healthCareServices.remove(orgId)
+        analyzers.removeByOrgId(orgId)
+        healthCareServices.removeByOrgId(orgId)
         houses.removeByOrgId(orgId)
         persons.remove(orgId)
         tokens.removeByOrgId(orgId)
+        villages.removeByOrgId(orgId)
     }
 
     fun getMy(ipAddress: String): List<Organization> {

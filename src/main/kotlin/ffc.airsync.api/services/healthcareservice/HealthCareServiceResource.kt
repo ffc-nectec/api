@@ -92,7 +92,7 @@ class HealthCareServiceResource {
     fun delete(
         @PathParam("orgId") orgId: String
     ) {
-        healthCareServices.remove(orgId)
+        healthCareServices.removeByOrgId(orgId)
     }
 
     @POST

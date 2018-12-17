@@ -167,7 +167,7 @@ class MongoHealthCareServiceDaoTest {
         dao.insert(visit, ORG_ID)
         dao.insert(visit2, ORG_ID)
 
-        dao.remove(ORG_ID)
+        dao.removeByOrgId(ORG_ID)
 
         dao.getByOrgId(ORG_ID).size `should be equal to` 0
     }
@@ -179,7 +179,7 @@ class MongoHealthCareServiceDaoTest {
         dao.insert(visit, ORG_ID)
         dao.insert(visit2, orgId2)
 
-        dao.remove(ORG_ID)
+        dao.removeByOrgId(ORG_ID)
 
         dao.getByOrgId(ORG_ID).size `should be equal to` 0
         dao.getByOrgId(orgId2).size `should be equal to` 1
