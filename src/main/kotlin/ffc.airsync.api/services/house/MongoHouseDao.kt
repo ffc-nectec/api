@@ -18,6 +18,7 @@
 package ffc.airsync.api.services.house
 
 import com.mongodb.client.model.IndexOptions
+import com.mongodb.client.model.Sorts
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.MongoSyncDao
 import ffc.airsync.api.services.util.buildInsertBson
@@ -131,7 +132,10 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoSyncDao<H
             query.append("\$or", orQuery)
         }
 
-        return dbCollection.find(query).limit(50).listOf()
+        return dbCollection.find(query)
+            .sort(Sorts.ascending("villageName", "no"))
+            .limit(50)
+            .listOf()
     }
 
     override fun find(orgId: String, houseId: String): House? {
