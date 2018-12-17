@@ -131,7 +131,7 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoSyncDao<H
             query.append("\$or", orQuery)
         }
 
-        return dbCollection.find(query).listOf()
+        return dbCollection.find(query).limit(50).listOf()
     }
 
     override fun find(orgId: String, houseId: String): House? {
