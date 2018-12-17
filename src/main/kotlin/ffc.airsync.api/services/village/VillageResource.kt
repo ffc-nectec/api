@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.village
 
 import ffc.airsync.api.services.ORGIDTYPE
+import ffc.airsync.api.services.VILLAGETYPE
 import ffc.entity.Village
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
@@ -33,7 +34,7 @@ class VillageResource {
     }
 
     @PUT
-    @Path("/$ORGIDTYPE/village/VILLAGETYPE")
+    @Path("/$ORGIDTYPE/village/$VILLAGETYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun update(
         @PathParam("orgId") orgId: String,
@@ -45,7 +46,7 @@ class VillageResource {
     }
 
     @DELETE
-    @Path("/$ORGIDTYPE/village/VILLAGETYPE")
+    @Path("/$ORGIDTYPE/village/$VILLAGETYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun delete(
         @PathParam("orgId") orgId: String,
@@ -55,7 +56,7 @@ class VillageResource {
     }
 
     @GET
-    @Path("/$ORGIDTYPE/village/VILLAGETYPE")
+    @Path("/$ORGIDTYPE/village/$VILLAGETYPE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun get(
         @PathParam("orgId") orgId: String,
