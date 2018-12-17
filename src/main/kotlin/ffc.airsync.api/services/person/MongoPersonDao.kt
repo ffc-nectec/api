@@ -1,5 +1,6 @@
 package ffc.airsync.api.services.person
 
+import com.mongodb.client.FindIterable
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.services.MongoSyncDao
 import ffc.airsync.api.services.util.buildInsertBson
@@ -99,15 +100,42 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
     }
 
     override fun find(query: String, orgId: String): List<Person> {
-        val regexQuery = Document("\$regex", query).append("\$options", "i")
-        val queryTextCondition = BasicBSONList().apply {
-            val rex = Regex("""^\d+$""")
+        val regexStartWith = Document("\$regex", "^$query").append("\$options", "i")
+        val qeryIsNumber = Regex("""^\d{4}\d*$""").matches(query)
 
-            if (rex.matches(query)) {
-                add("identities.id" equal regexQuery)
+        val result1 = mongoSearch(qeryIsNumber, regexStartWith, orgId)
+            .map { it.toJson().parseTo<Person>() }.toList()
+
+        if (result1.size < 50) {
+            val output = arrayListOf<Person>()
+            output.addAll(result1)
+            val regexQuery = Document("\$regex", query).append("\$options", "i")
+            val result2 = mongoSearch(qeryIsNumber, regexQuery, orgId)
+                .map { it.toJson().parseTo<Person>() }.toList()
+            result2.forEach { person ->
+                if (result1.find { person.id == it.id } == null)
+                    output.add(person)
+            }
+
+            return output
+        } else {
+
+            return result1
+        }
+    }
+
+    private fun mongoSearch(
+        qeryIsNumber: Boolean,
+        regexSearch: Document?,
+        orgId: String
+    ): FindIterable<Document> {
+        val queryTextCondition = BasicBSONList().apply {
+
+            if (qeryIsNumber) {
+                add("identities.id" equal regexSearch)
             } else {
-                add("firstname" equal regexQuery)
-                add("lastname" equal regexQuery)
+                add("firstname" equal regexSearch)
+                add("lastname" equal regexSearch)
             }
         }
         val queryTextReg = "\$or" equal queryTextCondition
@@ -116,9 +144,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
             add(queryFixOrgIdDoc)
             add(queryTextReg)
         }
-        val resultQuery = dbCollection.find("\$and" equal fullQuery).limit(20)
-
-        return resultQuery.map { it.toJson().parseTo<Person>() }.toList()
+        return dbCollection.find("\$and" equal fullQuery).limit(50)
     }
 
     override fun findHouseId(orgId: String, personId: String): String {
