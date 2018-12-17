@@ -17,7 +17,7 @@ interface HealthCareServiceDao : Dao, Sync<HealthCareService> {
 
     fun update(healthCareService: HealthCareService, orgId: String): HealthCareService
 
-    fun remove(orgId: String)
+    fun removeByOrgId(orgId: String)
 }
 
 val healthCareServices: HealthCareServiceDao by lazy {

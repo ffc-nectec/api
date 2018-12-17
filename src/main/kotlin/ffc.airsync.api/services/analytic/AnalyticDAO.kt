@@ -28,7 +28,7 @@ interface AnalyticDAO : Dao {
 
     fun deleteByPersonId(orgId: String, personId: String)
 
-    fun deleteByOrgId(orgId: String)
+    fun removeByOrgId(orgId: String)
 
     fun insertBlock(
         orgId: String,

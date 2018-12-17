@@ -61,6 +61,6 @@ class ResourceAnalytic {
     fun deleteOrg(
         @PathParam("orgId") orgId: String
     ) {
-        analyzers.deleteByOrgId(orgId)
+        analyzers.removeByOrgId(orgId)
     }
 }

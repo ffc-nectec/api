@@ -74,7 +74,7 @@ class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port,
     }
 
     override fun remove(orgId: String) {
-        printDebug("Call OrgMongoDao remove $orgId")
+        printDebug("Call OrgMongoDao removeByOrgId $orgId")
         dbCollection.findOneAndDelete("id" equal orgId) ?: throw NoSuchElementException("ไม่พบ Org $orgId ที่ต้องการลบ")
     }
 

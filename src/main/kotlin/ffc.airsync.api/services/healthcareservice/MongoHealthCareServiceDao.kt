@@ -85,7 +85,7 @@ class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
         return result.toJson().parseTo()
     }
 
-    override fun remove(orgId: String) {
+    override fun removeByOrgId(orgId: String) {
         dbCollection.deleteMany("orgIndex" equal ObjectId(orgId))
     }
 }
