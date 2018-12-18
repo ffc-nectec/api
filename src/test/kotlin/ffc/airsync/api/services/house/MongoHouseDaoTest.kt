@@ -99,6 +99,7 @@ class MongoHouseDaoTest {
     fun timestampUpdate() {
         val houseFind = dao.find(ORG_ID, maxHouse.id)
         val oldTimestamp = houseFind!!.timestamp
+        Thread.sleep(100)
         houseFind.update<House> {
             road = "เชียงราก"
         }
