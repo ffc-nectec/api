@@ -22,7 +22,12 @@ class ErrorFilter : ExceptionMapper<WebApplicationException> {
         return Response.status(exception.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
     }
 
-    data class ErrorRes(val code: Int, val message: String?, val t: Throwable)
+    data class ErrorRes(val code: Int, val message: String?, val t: Throwable) {
+        init {
+            printDebug("Error Filter 500 $message")
+            t.printStackTrace()
+        }
+    }
 }
 
 @Provider
