@@ -30,8 +30,18 @@ class MongoVillageDaoTest {
         businessType = "อาคารปล่อยเช่า"
         location = Point(13.009, 100.3453)
     }
-    val village = Village().apply {
+    val nectecVillage = Village().apply {
         name = "หมู่บ้าน Nectec"
+        places.add(foodShop)
+        places.add(businsess)
+    }
+    val catVillage = Village().apply {
+        name = "หมู่บ้าน Cat"
+        places.add(foodShop)
+        places.add(businsess)
+    }
+    val rabbitVillage = Village().apply {
+        name = "หมู่บ้าน Rabbit"
         places.add(foodShop)
         places.add(businsess)
     }
@@ -54,16 +64,23 @@ class MongoVillageDaoTest {
 
     @Test
     fun insert() {
-        val villageInsert = dao.insert(ORG_ID, village)
+        val villageInsert = dao.insert(ORG_ID, nectecVillage)
 
-        villageInsert.name `should be equal to` village.name
+        villageInsert.name `should be equal to` nectecVillage.name
         villageInsert.isTempId `should be equal to` false
         villageInsert.places.first().type `should be equal to` "Business"
     }
 
     @Test
+    fun insertList() {
+        val result = dao.insert(ORG_ID, listOf(nectecVillage, catVillage, rabbitVillage))
+
+        result.size `should be equal to` 3
+    }
+
+    @Test
     fun update() {
-        val villageInsert = dao.insert(ORG_ID, village)
+        val villageInsert = dao.insert(ORG_ID, nectecVillage)
 
         villageInsert.name = "หมู่บ้าน หมีน้อย"
         villageInsert.places.removeIf { it.no == "117/8" }
@@ -75,7 +92,7 @@ class MongoVillageDaoTest {
 
     @Test(expected = java.lang.NullPointerException::class)
     fun deleteFound() {
-        val villageInsert = dao.insert(ORG_ID, village)
+        val villageInsert = dao.insert(ORG_ID, nectecVillage)
 
         dao.delete(ORG_ID, villageInsert.id)
         try {
@@ -88,7 +105,7 @@ class MongoVillageDaoTest {
 
     @Test(expected = java.lang.IllegalArgumentException::class)
     fun deleteNotFound() {
-        dao.insert(ORG_ID, village)
+        dao.insert(ORG_ID, nectecVillage)
 
         try {
             dao.delete(ORG_ID, ORG_ID)
@@ -100,15 +117,15 @@ class MongoVillageDaoTest {
 
     @Test
     fun getFound() {
-        val villageInsert = dao.insert(ORG_ID, village)
+        val villageInsert = dao.insert(ORG_ID, nectecVillage)
         val data = dao.get(ORG_ID, villageInsert.id)
 
-        data.name `should be equal to` village.name
+        data.name `should be equal to` nectecVillage.name
     }
 
     @Test(expected = java.lang.NullPointerException::class)
     fun getNotFound() {
-        dao.insert(ORG_ID, village)
+        dao.insert(ORG_ID, nectecVillage)
 
         try {
             dao.get(ORG_ID, "554d7f5ebc920637b04c7708")
@@ -120,7 +137,7 @@ class MongoVillageDaoTest {
 
     @Test
     fun findVillageName() {
-        dao.insert(ORG_ID, village)
+        dao.insert(ORG_ID, nectecVillage)
         val find = dao.find(ORG_ID, "Nectec").first()
 
         find.name `should be equal to` "หมู่บ้าน Nectec"
@@ -128,15 +145,15 @@ class MongoVillageDaoTest {
 
     @Test
     fun findPlacesName() {
-        dao.insert(ORG_ID, village)
-        val find = dao.find(ORG_ID, "บ้านเช่า").first()
+        dao.insert(ORG_ID, nectecVillage)
+        val find = dao.find(ORG_ID, "Nectec")
 
-        find.name `should be equal to` "หมู่บ้าน Nectec"
+        find.first().name `should be equal to` "หมู่บ้าน Nectec"
     }
 
     @Test
     fun findPlancesNo() {
-        dao.insert(ORG_ID, village)
+        dao.insert(ORG_ID, nectecVillage)
         val find = dao.find(ORG_ID, "117/8").first()
 
         find.name `should be equal to` "หมู่บ้าน Nectec"
@@ -144,7 +161,7 @@ class MongoVillageDaoTest {
 
     @Test(expected = java.util.NoSuchElementException::class)
     fun findFail() {
-        dao.insert(ORG_ID, village)
+        dao.insert(ORG_ID, nectecVillage)
         val find = dao.find(ORG_ID, "xxaabb").first()
 
         find.name `should be equal to` "หมู่บ้าน Nectec"
@@ -152,7 +169,7 @@ class MongoVillageDaoTest {
 
     @Test
     fun findOrgId() {
-        dao.insert(ORG_ID, village)
+        dao.insert(ORG_ID, nectecVillage)
         val find = dao.find(ORG_ID).first()
 
         find.name `should be equal to` "หมู่บ้าน Nectec"
@@ -160,7 +177,7 @@ class MongoVillageDaoTest {
 
     @Test
     fun removeByOrgId() {
-        dao.insert(ORG_ID, village)
+        dao.insert(ORG_ID, nectecVillage)
         dao.removeByOrgId(ORG_ID)
 
         dao.find(ORG_ID).firstOrNull() `should equal` null

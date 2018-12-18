@@ -54,7 +54,8 @@ class MongoVillageDao(host: String, port: Int) : VillageDao, MongoAbsConnect(hos
 
     override fun find(orgId: String, query: String): List<Village> {
         val stringQuery: TextFindMongo = { arrayListOf("name", "places.name", "places.no") }
-        val resultQuery = dbCollection.find(query.buildTextFindMongo(orgId, queryField = stringQuery)).limit(20)
+        val queryObj = query.buildTextFindMongo(orgId, queryField = stringQuery)
+        val resultQuery = dbCollection.find(queryObj).limit(20)
 
         return resultQuery.map { it.toJson().parseTo<Village>() }.toList()
     }
