@@ -24,7 +24,9 @@ class VillageResource {
     @Path("/$ORGIDTYPE/village")
     @RolesAllowed("ORG", "ADMIN")
     fun create(@PathParam("orgId") orgId: String, village: Village): Village {
-        return villages.insert(orgId, village)
+        return resorceCall {
+            villages.insert(orgId, village)
+        }
     }
 
     @POST
@@ -32,7 +34,7 @@ class VillageResource {
     @RolesAllowed("ORG", "ADMIN")
     fun create(@PathParam("orgId") orgId: String, village: List<Village>): List<Village> {
         printDebug("Create Village")
-        val output = villages.insert(orgId, village)
+        val output = resorceCall { villages.insert(orgId, village) }
         printDebug("Finish Create Village")
         return output
     }
@@ -46,7 +48,7 @@ class VillageResource {
         village: Village
     ): Village {
         require(villageId == village.id) { "ไม่สามารถ update ได้ เนื่องจาก id ไม่ตรงกับเอกสาร" }
-        return villages.update(orgId, village)
+        return resorceCall { villages.update(orgId, village) }
     }
 
     @DELETE
@@ -56,7 +58,7 @@ class VillageResource {
         @PathParam("orgId") orgId: String,
         @PathParam("villageId") villageId: String
     ) {
-        return villages.delete(orgId, villageId)
+        return resorceCall { villages.delete(orgId, villageId) }
     }
 
     @DELETE
@@ -65,7 +67,7 @@ class VillageResource {
     fun deleteOrg(
         @PathParam("orgId") orgId: String
     ) {
-        return villages.removeByOrgId(orgId)
+        return resorceCall { villages.removeByOrgId(orgId) }
     }
 
     @GET
@@ -75,7 +77,7 @@ class VillageResource {
         @PathParam("orgId") orgId: String,
         @PathParam("villageId") villageId: String
     ): Village {
-        return villages.get(orgId, villageId)
+        return resorceCall { villages.get(orgId, villageId) }
     }
 
     @GET
@@ -86,9 +88,18 @@ class VillageResource {
         @QueryParam("query") query: String?
     ): List<Village> {
         return if (query != null) {
-            villages.find(orgId, query)
+            resorceCall { villages.find(orgId, query) }
         } else {
             villages.find(orgId)
         }
+    }
+}
+
+fun <T> resorceCall(call: () -> T): T {
+    try {
+        return call()
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        throw ex
     }
 }
