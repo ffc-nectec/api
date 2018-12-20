@@ -76,9 +76,7 @@ class HouseResourceNewEndpoint {
     ): FeatureCollection<House> {
         val houses = HouseService.getHouses(orgId, haveLocation = true)
         if (houses.isEmpty()) throw NoSuchElementException("ไม่มีรายการบ้าน")
-        val geoReturn = FeatureCollection<House>()
-        geoReturn.features.addAll(houses.map { Feature(it.location!!, it) })
-        return geoReturn
+        return FeatureCollection(houses.map { Feature(it.location!!, it) })
     }
 
     @Developer

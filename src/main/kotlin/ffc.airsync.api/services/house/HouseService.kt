@@ -94,9 +94,7 @@ object HouseService {
     fun getSingleGeo(orgId: String, houseId: String): FeatureCollection<House>? {
         val house = getSingle(orgId, houseId) ?: return null
         if (house.location == null) return null
-        val geoJson = FeatureCollection<House>()
-        geoJson.features.add(house.toGeoJsonFeature())
-        return geoJson
+        return FeatureCollection(house.toGeoJsonFeature())
     }
 
     fun getSingle(orgId: String, houseId: String): House? {
