@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.village
 
 import ffc.airsync.api.printDebug
+import ffc.airsync.api.resorceCall
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.VILLAGETYPE
 import ffc.entity.Village
@@ -92,14 +93,5 @@ class VillageResource {
         } else {
             villages.find(orgId)
         }
-    }
-}
-
-fun <T> resorceCall(call: () -> T): T {
-    try {
-        return call()
-    } catch (ex: Exception) {
-        ex.printStackTrace()
-        throw ex
     }
 }

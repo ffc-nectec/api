@@ -1,5 +1,6 @@
 package ffc.airsync.api.services.house
 
+import ffc.airsync.api.resorceCall
 import ffc.airsync.api.services.BLOCKTYPE
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.Sync
@@ -34,7 +35,7 @@ class SyncHouseResource : Sync<House> {
         @PathParam("block") block: Int,
         item: List<House>
     ): List<House> {
-        return validateHouse(context.getLoginRole(), orgId, item)
+        return resorceCall { validateHouse(context.getLoginRole(), orgId, item) }
     }
 
     @GET
@@ -44,7 +45,7 @@ class SyncHouseResource : Sync<House> {
         @PathParam("orgId") orgId: String,
         @PathParam("block") block: Int
     ): List<House> {
-        return houses.getBlock(orgId, block)
+        return resorceCall { houses.getBlock(orgId, block) }
     }
 
     @PUT
@@ -54,7 +55,7 @@ class SyncHouseResource : Sync<House> {
         @PathParam("orgId") orgId: String,
         @PathParam("block") block: Int
     ) {
-        houses.confirmBlock(orgId, block)
+        resorceCall { houses.confirmBlock(orgId, block) }
     }
 
     @DELETE
@@ -64,6 +65,6 @@ class SyncHouseResource : Sync<House> {
         @PathParam("orgId") orgId: String,
         @PathParam("block") block: Int
     ) {
-        houses.unConfirmBlock(orgId, block)
+        resorceCall { houses.unConfirmBlock(orgId, block) }
     }
 }
