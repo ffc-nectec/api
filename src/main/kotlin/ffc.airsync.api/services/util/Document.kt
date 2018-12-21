@@ -133,7 +133,7 @@ internal inline fun <reified T> MongoCollection<Document>.ffcInsert(doc: List<Do
         //query.add("_id" equal it["_id"])
     }
 
-    smartInsert(doc)
+    smartInsert(doc, 0)
 
     return doc.mapKt {
         val result = find(it).first()!!
@@ -142,16 +142,16 @@ internal inline fun <reified T> MongoCollection<Document>.ffcInsert(doc: List<Do
     }
 }
 
-private fun MongoCollection<Document>.smartInsert(doc: List<Document>) {
+private fun MongoCollection<Document>.smartInsert(doc: List<Document>, deep: Int = 0) {
     try {
         insertMany(doc, InsertManyOptions())
     } catch (ex: MongoBulkWriteException) {
         val size = doc.size
         if (doc.size > 1) {
-            smartInsert(doc.subList(0, size / 2))
-            smartInsert(doc.subList((size / 2) + 1, size))
+            smartInsert(doc.subList(0, size / 2), deep + 1)
+            smartInsert(doc.subList((size / 2) + 1, size), deep + 1)
         } else
-            throw Exception("Insert many split smart error.")
+            throw ex
     }
 }
 
