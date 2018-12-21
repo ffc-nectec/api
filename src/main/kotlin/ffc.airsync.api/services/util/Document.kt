@@ -21,6 +21,7 @@ import com.mongodb.MongoBulkWriteException
 import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.InsertManyOptions
+import ffc.airsync.api.printDebug
 import ffc.airsync.api.security.password
 import ffc.entity.Entity
 import ffc.entity.User
@@ -150,8 +151,10 @@ private fun MongoCollection<Document>.smartInsert(doc: List<Document>, deep: Int
         if (doc.size > 1) {
             smartInsert(doc.subList(0, size / 2), deep + 1)
             smartInsert(doc.subList((size / 2) + 1, size), deep + 1)
-        } else
+        } else {
+            printDebug("Deep error $deep")
             throw ex
+        }
     }
 }
 
