@@ -17,6 +17,7 @@
 
 package ffc.airsync.api.services.util
 
+import com.mongodb.MongoBulkWriteException
 import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.InsertManyOptions
@@ -132,12 +133,25 @@ internal inline fun <reified T> MongoCollection<Document>.ffcInsert(doc: List<Do
         //query.add("_id" equal it["_id"])
     }
 
-    insertMany(doc, InsertManyOptions())
+    smartInsert(doc)
 
     return doc.mapKt {
         val result = find(it).first()!!
         result.remove("_id")
         result.toJson().parseTo<T>()
+    }
+}
+
+private fun MongoCollection<Document>.smartInsert(doc: List<Document>) {
+    try {
+        insertMany(doc, InsertManyOptions())
+    } catch (ex: MongoBulkWriteException) {
+        val size = doc.size
+        if (doc.size > 1) {
+            smartInsert(doc.subList(0, size / 2))
+            smartInsert(doc.subList((size / 2) + 1, size))
+        } else
+            throw Exception("Insert many split smart error.")
     }
 }
 
