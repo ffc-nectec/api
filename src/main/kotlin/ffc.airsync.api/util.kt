@@ -60,3 +60,12 @@ fun Any.toDNA(): String {
     doc.remove("timestamp")
     return "${type.hashCode()}:${doc.toJson().hashCode()}"
 }
+
+fun <T> resorceCall(call: () -> T): T {
+    try {
+        return call()
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        throw ex
+    }
+}
