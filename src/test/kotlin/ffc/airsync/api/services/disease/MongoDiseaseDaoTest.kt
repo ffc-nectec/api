@@ -18,7 +18,6 @@ class MongoDiseaseDaoTest {
 
     lateinit var dao: DiseaseDao
 
-
     @Before
     fun initDb() {
         dao = MongoDiseaseDao(mongo.address.hostString, mongo.address.port)

@@ -15,7 +15,6 @@ class MongoHomeHealthTypeDaoTest {
 
     lateinit var dao: HomeHealthTypeDao
 
-
     @Before
     fun initDb() {
         dao = MongoHomeHealthTypeDao(mongo.address.hostString, mongo.address.port)
