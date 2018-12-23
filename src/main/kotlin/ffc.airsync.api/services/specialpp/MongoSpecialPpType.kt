@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.specialpp
 
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.bsonListOf
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.listOf
@@ -10,7 +10,7 @@ import ffc.entity.gson.parseTo
 import ffc.entity.healthcare.SpecialPP
 import org.bson.Document
 
-class MongoSpecialPpType(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "specialpp"), SpecialPpDao {
+class MongoSpecialPpType(host: String, port: Int) : MongoDao(host, port, "ffc", "specialpp"), SpecialPpDao {
 
     init {
         dbCollection.createIndex("id" equal 1, IndexOptions().unique(true))

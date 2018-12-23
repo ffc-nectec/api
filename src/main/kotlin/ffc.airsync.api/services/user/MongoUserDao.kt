@@ -19,7 +19,7 @@ package ffc.airsync.api.services.user
 
 import com.google.gson.Gson
 import ffc.airsync.api.security.password
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.toDocument
 import ffc.entity.Organization
@@ -30,7 +30,7 @@ import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
 
-internal class MongoUserDao(host: String, port: Int) : UserDao, MongoAbsConnect(host, port, "ffc", "organ") {
+internal class MongoUserDao(host: String, port: Int) : UserDao, MongoDao(host, port, "ffc", "organ") {
 
     override fun insertUser(user: User, orgId: String): User {
         if (!haveUserInDb(orgId, user)) {

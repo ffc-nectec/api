@@ -3,7 +3,7 @@ package ffc.airsync.api.services.analytic
 import com.mongodb.BasicDBObject
 import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.UpdateOptions
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
@@ -12,7 +12,7 @@ import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 
-internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoAbsConnect(host, port, "ffc", "analytic") {
+internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao(host, port, "ffc", "analytic") {
 
     init {
         dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))

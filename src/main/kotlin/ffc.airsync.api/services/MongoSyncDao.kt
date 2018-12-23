@@ -29,7 +29,7 @@ private const val SPECIALPPTYPE = "SpecialPP"
 private const val NCDSCREENTYPE = "NCDScreen"
 
 abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String, collection: String) :
-    MongoAbsConnect(host, port, dbName, collection), Sync<T> {
+    MongoDao(host, port, dbName, collection), Sync<T> {
 
     override fun insertBlock(orgId: String, block: Int, item: List<T>): List<T> {
         val itemInsert = item.map {

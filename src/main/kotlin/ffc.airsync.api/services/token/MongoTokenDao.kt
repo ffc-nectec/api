@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.token
 
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 import ffc.entity.Token
 import ffc.entity.User
@@ -9,7 +9,7 @@ import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
 
-internal class MongoTokenDao(host: String, port: Int) : TokenDao, MongoAbsConnect(host, port, "ffc", "token") {
+internal class MongoTokenDao(host: String, port: Int) : TokenDao, MongoDao(host, port, "ffc", "token") {
     override fun create(user: User, orgId: String): Token {
         val generateId = ObjectId()
         val tokenMessage = Token(token = randomString.nextString(), user = user)

@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.homehealthtype
 
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 import ffc.entity.Lang
 import ffc.entity.gson.parseTo
@@ -10,7 +10,7 @@ import ffc.entity.healthcare.CommunityService.ServiceType
 import org.bson.Document
 import org.bson.types.BasicBSONList
 
-internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "homeHealthType"),
+internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoDao(host, port, "ffc", "homeHealthType"),
     HomeHealthTypeDao {
     init {
         try {
