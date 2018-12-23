@@ -25,16 +25,22 @@ import ffc.entity.place.House
 
 interface HouseDao : Dao, Sync<House> {
     fun insert(orgId: String, house: House): House
+
     fun insert(orgId: String, house: List<House>): List<House>
 
     fun update(orgId: String, house: House): House?
+
     fun update(orgId: String, houseList: List<House>): List<House>
 
     fun delete(orgId: String, houseId: String)
 
-    fun findAll(orgId: String, query: String? = null,
-                haveLocation: Boolean? = true,
-                villageName: String? = null): List<House>
+    fun findAll(
+        orgId: String,
+        query: String? = null,
+        haveLocation: Boolean? = true,
+        villageName: String? = null
+    ): List<House>
+
     fun find(orgId: String, houseId: String): House?
 
     fun removeByOrgId(orgId: String)
