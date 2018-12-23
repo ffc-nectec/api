@@ -1,10 +1,6 @@
 package ffc.airsync.api.services.healthcareservice
 
-import com.mongodb.MongoClient
-import com.mongodb.ServerAddress
-import de.bwaldvogel.mongo.MongoServer
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.MongoDbTestRule
 import ffc.entity.Lang
 import ffc.entity.Person
 import ffc.entity.ThaiCitizenId
@@ -19,15 +15,18 @@ import me.piruin.geok.geometry.Point
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.joda.time.LocalDate
-import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class MongoHealthCareServiceDaoTest {
+
+    @JvmField
+    @Rule
+    val mongo = MongoDbTestRule()
+
     val ORG_ID = "87543432abcf432123456785"
     lateinit var dao: HealthCareServiceDao
-    lateinit var client: MongoClient
-    lateinit var server: MongoServer
     val comServType = ServiceType(
         "1B0030",
         "ตรวจคัดกรองความเสี่ยง/โรคมะเร็งเต้านมได้ผลปกติ ผู้รับบริการเคยตรวจด้วยตนเองได้ผลปกติ"
@@ -95,17 +94,7 @@ class MongoHealthCareServiceDaoTest {
 
     @Before
     fun initDb() {
-        server = MongoServer(MemoryBackend())
-        val serverAddress = server.bind()
-        client = MongoClient(ServerAddress(serverAddress))
-        MongoAbsConnect.setClient(client)
-        dao = MongoHealthCareServiceDao(serverAddress.hostString, serverAddress.port)
-    }
-
-    @After
-    fun cleanDb() {
-        client.close()
-        server.shutdownNow()
+        dao = MongoHealthCareServiceDao(mongo.address.hostString, mongo.address.port)
     }
 
     @Test

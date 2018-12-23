@@ -1,24 +1,23 @@
 package ffc.airsync.api.services.village
 
-import com.mongodb.MongoClient
-import com.mongodb.ServerAddress
-import de.bwaldvogel.mongo.MongoServer
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.MongoDbTestRule
 import ffc.entity.Village
 import ffc.entity.place.Business
 import me.piruin.geok.geometry.Point
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
-import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class MongoVillageDaoTest {
+
+    @JvmField
+    @Rule
+    val mongo = MongoDbTestRule()
+
     private val ORG_ID = "5bbd7f5ebc920637b04c7796"
     lateinit var dao: VillageDao
-    lateinit var client: MongoClient
-    lateinit var server: MongoServer
     val foodShop = Business().apply {
         name = "ร้านอาหาร กินจุ"
         businessType = "ร้านอาหารริมทาง"
@@ -48,18 +47,7 @@ class MongoVillageDaoTest {
 
     @Before
     fun setUp() {
-        server = MongoServer(MemoryBackend())
-        val serverAddress = server.bind()
-        client = MongoClient(ServerAddress(serverAddress))
-        MongoAbsConnect.setClient(client)
-
-        dao = MongoVillageDao(serverAddress.hostString, serverAddress.port)
-    }
-
-    @After
-    fun tearDown() {
-        client.close()
-        server.shutdownNow()
+        dao = MongoVillageDao(mongo.address.hostString, mongo.address.port)
     }
 
     @Test

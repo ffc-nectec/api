@@ -1,10 +1,6 @@
 package ffc.airsync.api.services.person
 
-import com.mongodb.MongoClient
-import com.mongodb.ServerAddress
-import de.bwaldvogel.mongo.MongoServer
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.MongoDbTestRule
 import ffc.entity.Link
 import ffc.entity.Person
 import ffc.entity.System
@@ -16,15 +12,19 @@ import ffc.entity.update
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
 import org.joda.time.LocalDate
-import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class MongoPersonTest {
+
+    @JvmField
+    @Rule
+    val mongo = MongoDbTestRule()
+
     private val ORG_ID = "5bbd7f5ebc920637b04c7796"
     lateinit var dao: PersonDao
-    lateinit var client: MongoClient
-    lateinit var server: MongoServer
+
     val `สมชาย` = Person().apply {
         identities.add(ThaiCitizenId("1231233123421"))
         prename = "นาย"
@@ -97,19 +97,9 @@ class MongoPersonTest {
     @Before
     fun initDb() {
         personFromJson = json.parseTo()
-        server = MongoServer(MemoryBackend())
-        val serverAddress = server.bind()
-        client = MongoClient(ServerAddress(serverAddress))
-        MongoAbsConnect.setClient(client)
 
-        dao = MongoPersonDao(serverAddress.hostString, serverAddress.port)
+        dao = MongoPersonDao(mongo.address.hostString, mongo.address.port)
         dao.insert(ORG_ID, personFromJson)
-    }
-
-    @After
-    fun cleanDb() {
-        client.close()
-        server.shutdownNow()
     }
 
     @Test

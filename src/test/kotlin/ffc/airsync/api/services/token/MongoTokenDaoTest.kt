@@ -1,46 +1,35 @@
 package ffc.airsync.api.services.token
 
-import com.mongodb.MongoClient
-import com.mongodb.ServerAddress
-import de.bwaldvogel.mongo.MongoServer
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.MongoDbTestRule
 import ffc.entity.Token
 import ffc.entity.User
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.amshove.kluent.`should not be`
-import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class MongoTokenDaoTest {
+
+    @JvmField
+    @Rule
+    val mongo = MongoDbTestRule()
+
     private val ORG_ID = "5bbd7f5ebc920637b04c7796"
     lateinit var dao: TokenDao
-    lateinit var client: MongoClient
-    lateinit var server: MongoServer
     lateinit var tokenMax: Token
     lateinit var tokenBee: Token
 
     @Before
     fun initDb() {
-        server = MongoServer(MemoryBackend())
-        val serverAddress = server.bind()
-        client = MongoClient(ServerAddress(serverAddress))
-        MongoAbsConnect.setClient(client)
 
-        dao = MongoTokenDao(serverAddress.hostString, serverAddress.port)
+        dao = MongoTokenDao(mongo.address.hostString, mongo.address.port)
 
         tokenMax = dao.create(User("Thanachai", User.Role.ORG), ORG_ID)
         tokenBee = dao.create(User("Morakot", User.Role.USER), ORG_ID)
         dao.create(User("Cat", User.Role.USER), "5bbd7f5ebc920637b04c7797")
         dao.create(User("Dog", User.Role.USER), "5bbd7f5ebc920637b04c7797")
-    }
-
-    @After
-    fun cleanDb() {
-        client.close()
-        server.shutdownNow()
     }
 
     fun User(name: String, role: User.Role = User.Role.USER): User =

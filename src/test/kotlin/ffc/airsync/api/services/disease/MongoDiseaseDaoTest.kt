@@ -1,31 +1,27 @@
 package ffc.airsync.api.services.disease
 
-import com.mongodb.MongoClient
-import com.mongodb.ServerAddress
-import de.bwaldvogel.mongo.MongoServer
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.MongoDbTestRule
 import ffc.entity.Lang
 import ffc.entity.healthcare.Icd10
 import ffc.entity.util.generateTempId
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
-import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class MongoDiseaseDaoTest {
+
+    @JvmField
+    @Rule
+    val mongo = MongoDbTestRule()
+
     lateinit var dao: DiseaseDao
-    lateinit var client: MongoClient
-    lateinit var server: MongoServer
+
 
     @Before
     fun initDb() {
-        server = MongoServer(MemoryBackend())
-        val serverAddress = server.bind()
-        client = MongoClient(ServerAddress(serverAddress))
-        MongoAbsConnect.setClient(client)
-        dao = MongoDiseaseDao(serverAddress.hostString, serverAddress.port)
+        dao = MongoDiseaseDao(mongo.address.hostString, mongo.address.port)
 
         dao.insert(Icd10("Fall", "HHXX001Y").apply { translation[Lang.th] = "อ้วนซ้ำซ้อน" })
         dao.insert(
@@ -37,12 +33,6 @@ class MongoDiseaseDaoTest {
                 isChronic = true,
                 isEpimedic = true
             ).apply { translation[Lang.th] = "กินไม่หยุด" })
-    }
-
-    @After
-    fun cleanDb() {
-        client.close()
-        server.shutdownNow()
     }
 
     @Test

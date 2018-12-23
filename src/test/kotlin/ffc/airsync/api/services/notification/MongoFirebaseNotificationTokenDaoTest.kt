@@ -1,10 +1,6 @@
 package ffc.airsync.api.services.notification
 
-import com.mongodb.MongoClient
-import com.mongodb.ServerAddress
-import de.bwaldvogel.mongo.MongoServer
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.MongoDbTestRule
 import ffc.airsync.api.services.org.MongoOrgDao
 import ffc.entity.Link
 import ffc.entity.Organization
@@ -13,14 +9,15 @@ import ffc.entity.User
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.amshove.kluent.`should not equal`
-import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class MongoFirebaseNotificationTokenDaoTest {
 
-    lateinit var client: MongoClient
-    lateinit var server: MongoServer
+    @JvmField
+    @Rule
+    val mongo = MongoDbTestRule()
 
     lateinit var dao: MongoFirebaseNotificationTokenDao
 
@@ -29,10 +26,7 @@ class MongoFirebaseNotificationTokenDaoTest {
 
     @Before
     fun initDb() {
-        server = MongoServer(MemoryBackend())
-        val serverAddress = server.bind()
-        client = MongoClient(ServerAddress(serverAddress))
-        MongoAbsConnect.setClient(client)
+        val serverAddress = mongo.address
 
         dao = MongoFirebaseNotificationTokenDao(serverAddress.hostString, serverAddress.port)
 
@@ -47,12 +41,6 @@ class MongoFirebaseNotificationTokenDaoTest {
             address = "161 ม.29 ต.สง่างาม อ.สดใส จ.ผิวผ่อง"
             link!!.keys["pcucode"] = "203"
         })
-    }
-
-    @After
-    fun tearDown() {
-        client.close()
-        server.shutdownNow()
     }
 
     fun Org(name: String = "NECTEC", ip: String = "127.0.01") = Organization().apply {
