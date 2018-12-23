@@ -114,7 +114,7 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoSyncDao<H
         dbCollection.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบบ้าน id $houseId ให้ลบ")
     }
 
-    override fun findAll(orgId: String, queryStr: String?, haveLocation: Boolean?): List<House> {
+    override fun findAll(orgId: String, queryStr: String?, haveLocation: Boolean?, villageName: String?): List<House> {
         val query = "orgIndex" equal ObjectId(orgId)
         when (haveLocation) {
             null -> {
@@ -128,8 +128,10 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoSyncDao<H
             val orQuery = BasicBSONList()
             orQuery.add("no" equal regexQuery)
             orQuery.add("villageName" equal regexQuery)
-
             query.append("\$or", orQuery)
+        }
+        if (villageName != null) {
+            query.append("villageName", "\$eq" equal villageName)
         }
 
         return dbCollection.find(query)

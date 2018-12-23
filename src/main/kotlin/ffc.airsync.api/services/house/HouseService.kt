@@ -28,7 +28,8 @@ import ffc.entity.place.House
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 
-object HouseService {
+class HouseService(val housesDao: HouseDao = houses) {
+
     fun createByOrg(orgId: String, houseList: List<House>, block: Int = -1): List<House> {
         printDebug("create house by org.")
         val house = houseList.map {
@@ -38,15 +39,15 @@ object HouseService {
         }
 
         return if (block < 0)
-            houses.insert(orgId, house)
+            housesDao.insert(orgId, house)
         else
-            houses.insertBlock(orgId, block, house)
+            housesDao.insertBlock(orgId, block, house)
     }
 
     fun createByOrg(orgId: String, house: House): House {
         require(house.link != null) { "เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link" }
         house.link!!.isSynced = true
-        return houses.insert(orgId, house)
+        return housesDao.insert(orgId, house)
     }
 
     fun createByUser(orgId: String, houseList: List<House>, block: Int = -1): List<House> {
@@ -56,14 +57,14 @@ object HouseService {
         }
 
         return if (block < 0)
-            houses.insert(orgId, houseList)
+            housesDao.insert(orgId, houseList)
         else
-            houses.insertBlock(orgId, block, houseList)
+            housesDao.insertBlock(orgId, block, houseList)
     }
 
     fun createByUser(orgId: String, house: House): House {
         require(house.link == null) { "เมื่อสร้างด้วย user ไม่ต้องมีข้อมูล link" }
-        return houses.insert(orgId, house)
+        return housesDao.insert(orgId, house)
     }
 
     fun update(orgId: String, house: House, houseId: String): House {
@@ -79,7 +80,7 @@ object HouseService {
 
         printDebug("\tUpdate house to dao.")
 
-        val houseUpdate = houses.update(orgId, house.copy())
+        val houseUpdate = housesDao.update(orgId, house.copy())
 
         printDebug("Call send notification size list token = ${firebaseTokenGropOrg.size} ")
         notification.broadcastMessage(orgId, house)
@@ -88,7 +89,14 @@ object HouseService {
     }
 
     fun getHouses(orgId: String, query: String? = null, haveLocation: Boolean? = null): List<House> {
-        return houses.findAll(orgId, query, haveLocation)
+        var houseNo: String? = null
+        var villageName: String? = null
+        query?.let {
+            val result = Regex("(^.+) +(.+)").find(query)
+            houseNo = result?.groupValues?.get(1)
+            villageName = result?.groupValues?.get(2)
+        }
+        return housesDao.findAll(orgId, houseNo ?: query, haveLocation, villageName)
     }
 
     fun getSingleGeo(orgId: String, houseId: String): FeatureCollection<House>? {
@@ -98,7 +106,7 @@ object HouseService {
     }
 
     fun getSingle(orgId: String, houseId: String): House? {
-        return houses.find(orgId, houseId)
+        return housesDao.find(orgId, houseId)
     }
 
     fun getPerson(orgId: String, houseId: String): List<Person> {
@@ -110,3 +118,5 @@ object HouseService {
 private fun House.toGeoJsonFeature(): Feature<House> {
     return Feature(this.location!!, this)
 }
+
+internal val houseService by lazy { HouseService() }
