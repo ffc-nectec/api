@@ -21,16 +21,32 @@ import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.notification.broadcastMessage
 import ffc.airsync.api.services.notification.notification
 import ffc.airsync.api.services.person.persons
+import ffc.airsync.api.services.util.containsSome
 import ffc.entity.Person
+import ffc.entity.User
 import ffc.entity.copy
 import ffc.entity.gson.toJson
 import ffc.entity.place.House
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
+import javax.ws.rs.ForbiddenException
 
 class HouseService(val housesDao: HouseDao = houses) {
 
-    fun createByOrg(orgId: String, houseList: List<House>, block: Int = -1): List<House> {
+    fun create(
+        orgId: String,
+        role: List<User.Role>,
+        houseList: List<House>,
+        block: Int = -1
+    ): List<House> {
+        return when {
+            role.containsSome(User.Role.ORG, User.Role.ADMIN) -> createByOrg(orgId, houseList, block)
+            role.containsSome(User.Role.USER, User.Role.SURVEYOR) -> createByUser(orgId, houseList, block)
+            else -> throw ForbiddenException("ไม่มีสิทธ์ ในการสร้างบ้าน")
+        }
+    }
+
+    private fun createByOrg(orgId: String, houseList: List<House>, block: Int = -1): List<House> {
         printDebug("create house by org.")
         val house = houseList.map {
             require(it.link != null) { "เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link" }
@@ -44,14 +60,7 @@ class HouseService(val housesDao: HouseDao = houses) {
             housesDao.insertBlock(orgId, block, house)
     }
 
-    fun createByOrg(orgId: String, house: House): House {
-        require(house.link != null) { "เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link" }
-        house.link!!.isSynced = true
-        return housesDao.insert(orgId, house)
-    }
-
-    fun createByUser(orgId: String, houseList: List<House>, block: Int = -1): List<House> {
-
+    private fun createByUser(orgId: String, houseList: List<House>, block: Int = -1): List<House> {
         houseList.forEach {
             require(it.link == null) { "เมื่อสร้างด้วย user ไม่ต้องมีข้อมูล link" }
         }
@@ -62,7 +71,27 @@ class HouseService(val housesDao: HouseDao = houses) {
             housesDao.insertBlock(orgId, block, houseList)
     }
 
-    fun createByUser(orgId: String, house: House): House {
+    fun create(
+        orgId: String,
+        role: List<User.Role>,
+        house: House
+    ): House {
+        return when {
+            role.containsSome(User.Role.ORG, User.Role.ADMIN) ->
+                houseService.createByOrg(orgId, house)
+            role.containsSome(User.Role.USER, User.Role.SURVEYOR) ->
+                houseService.createByUser(orgId, house)
+            else -> throw ForbiddenException("ไม่มีสิทธ์ ในการสร้างบ้าน")
+        }
+    }
+
+    private fun createByOrg(orgId: String, house: House): House {
+        require(house.link != null) { "เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link" }
+        house.link!!.isSynced = true
+        return housesDao.insert(orgId, house)
+    }
+
+    private fun createByUser(orgId: String, house: House): House {
         require(house.link == null) { "เมื่อสร้างด้วย user ไม่ต้องมีข้อมูล link" }
         return housesDao.insert(orgId, house)
     }

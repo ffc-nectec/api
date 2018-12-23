@@ -3,8 +3,6 @@ package ffc.airsync.api.services.util
 import org.amshove.kluent.`should be`
 import org.junit.Test
 
-import org.junit.Assert.*
-
 class CollectionsTest {
 
     @Test

@@ -50,7 +50,7 @@ class HouseResourceNewEndpoint {
         if (house == null) throw BadRequestException()
 
         val role = context.getLoginRole()
-        return Response.status(Response.Status.CREATED).entity(validateHouse(role, orgId, house)).build()
+        return Response.status(Response.Status.CREATED).entity(houseService.create(orgId, role, house)).build()
     }
 
     @POST
@@ -60,7 +60,7 @@ class HouseResourceNewEndpoint {
         if (houseList == null) throw BadRequestException()
 
         val role = context.getLoginRole()
-        return Response.status(Response.Status.CREATED).entity(validateHouse(role, orgId, houseList)).build()
+        return Response.status(Response.Status.CREATED).entity(houseService.create(orgId, role, houseList)).build()
     }
 
     @Developer

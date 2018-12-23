@@ -4,8 +4,6 @@ import com.nhaarman.mockito_kotlin.verify
 import org.amshove.kluent.mock
 import org.junit.Test
 
-import org.junit.Assert.*
-
 class HouseServiceTest {
 
     val dao = mock<HouseDao>()
