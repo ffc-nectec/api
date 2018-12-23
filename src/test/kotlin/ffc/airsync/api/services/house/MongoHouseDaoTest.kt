@@ -1,14 +1,9 @@
 package ffc.airsync.api.services.house
 
-import com.mongodb.MongoClient
-import com.mongodb.ServerAddress
-import de.bwaldvogel.mongo.MongoServer
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.MongoDbTestRule
 import ffc.entity.Person
 import ffc.entity.ThaiCitizenId
 import ffc.entity.ThaiHouseholdId
-import ffc.entity.gson.toJson
 import ffc.entity.healthcare.Chronic
 import ffc.entity.healthcare.Icd10
 import ffc.entity.place.House
@@ -18,36 +13,27 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.amshove.kluent.`should not equal`
 import org.joda.time.LocalDate
-import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class MongoHouseDaoTest {
+
+    @JvmField
+    @Rule
+    val mongo = MongoDbTestRule()
+
     val ORG_ID = "87543432abcf432123456785"
     lateinit var dao: HouseDao
-    lateinit var client: MongoClient
-    lateinit var server: MongoServer
     lateinit var maxHouse: House
     lateinit var someHouse: House
 
     @Before
     fun initDb() {
-        server = MongoServer(MemoryBackend())
-        val serverAddress = server.bind()
-        client = MongoClient(ServerAddress(serverAddress))
-        MongoAbsConnect.setClient(client)
-        dao = MongoHouseDao(serverAddress.hostString, serverAddress.port)
-        val house = createHouse("12348764532", "999/888")
-        println("house obj = ${house.toJson()}")
+        dao = MongoHouseDao(mongo.address.hostString, mongo.address.port)
 
         maxHouse = dao.insert(ORG_ID, createHouse("12348764532", "999/888"))
         someHouse = dao.insert(ORG_ID, createHouse("11111111111", "888/777"))
-    }
-
-    @After
-    fun cleanDb() {
-        client.close()
-        server.shutdownNow()
     }
 
     fun createHouse(identity: String, no: String): House {

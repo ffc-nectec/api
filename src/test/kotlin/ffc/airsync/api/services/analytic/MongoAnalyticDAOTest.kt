@@ -1,24 +1,21 @@
 package ffc.airsync.api.services.analytic
 
-import com.mongodb.MongoClient
-import com.mongodb.ServerAddress
-import de.bwaldvogel.mongo.MongoServer
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import ffc.airsync.api.MongoDbTestRule
 import ffc.airsync.api.resourceFile
-import ffc.airsync.api.services.MongoAbsConnect
 import ffc.entity.gson.parseTo
 import ffc.entity.healthcare.analyze.HealthAnalyzer
 import ffc.entity.healthcare.analyze.HealthIssue.Issue
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
-import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class MongoAnalyticDAOTest {
 
-    lateinit var client: MongoClient
-    lateinit var server: MongoServer
+    @JvmField
+    @Rule
+    val mongo = MongoDbTestRule()
 
     private val ORG_ID = "5bbd7f5ebc920637b04c7796"
     private val patientId = "2bbd7f5ebc920637b04c7791"
@@ -32,18 +29,7 @@ class MongoAnalyticDAOTest {
 
     @Before
     fun setUp() {
-        server = MongoServer(MemoryBackend())
-        val serverAddress = server.bind()
-        client = MongoClient(ServerAddress(serverAddress))
-        MongoAbsConnect.setClient(client)
-
-        dao = MongoAnalyticDAO(serverAddress.hostString, serverAddress.port)
-    }
-
-    @After
-    fun tearDown() {
-        client.close()
-        server.shutdownNow()
+        dao = MongoAnalyticDAO(mongo.address.hostString, mongo.address.port)
     }
 
     @Test

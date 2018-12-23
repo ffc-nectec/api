@@ -1,30 +1,25 @@
 package ffc.airsync.api.services.specialpp
 
-import com.mongodb.MongoClient
-import com.mongodb.ServerAddress
-import de.bwaldvogel.mongo.MongoServer
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.MongoDbTestRule
 import ffc.entity.healthcare.SpecialPP
 import org.amshove.kluent.`should be equal to`
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class MongoSpecialPpTypeTest {
 
+    @JvmField
+    @Rule
+    val mongo = MongoDbTestRule()
+
     lateinit var dao: SpecialPpDao
-    lateinit var client: MongoClient
-    lateinit var server: MongoServer
 
     val ppType = SpecialPP.PPType("I3234", "เยี่ยมเบาตัว")
 
     @Before
     fun setUp() {
-        server = MongoServer(MemoryBackend())
-        val serverAddress = server.bind()
-        client = MongoClient(ServerAddress(serverAddress))
-        MongoAbsConnect.setClient(client)
-        dao = MongoSpecialPpType(serverAddress.hostString, serverAddress.port)
+        dao = MongoSpecialPpType(mongo.address.hostString, mongo.address.port)
         dao.insert(ppType)
     }
 

@@ -1,37 +1,27 @@
 package ffc.airsync.api.services.homehealthtype
 
-import com.mongodb.MongoClient
-import com.mongodb.ServerAddress
-import de.bwaldvogel.mongo.MongoServer
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.MongoDbTestRule
 import ffc.entity.healthcare.CommunityService.ServiceType
 import org.amshove.kluent.`should equal`
-import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class MongoHomeHealthTypeDaoTest {
+
+    @JvmField
+    @Rule
+    val mongo = MongoDbTestRule()
+
     lateinit var dao: HomeHealthTypeDao
-    lateinit var client: MongoClient
-    lateinit var server: MongoServer
+
 
     @Before
     fun initDb() {
-        server = MongoServer(MemoryBackend())
-        val serverAddress = server.bind()
-        client = MongoClient(ServerAddress(serverAddress))
-        MongoAbsConnect.setClient(client)
-        dao = MongoHomeHealthTypeDao(serverAddress.hostString, serverAddress.port)
+        dao = MongoHomeHealthTypeDao(mongo.address.hostString, mongo.address.port)
 
         dao.insert(ServiceType("1A001", "เยี่ยมผู้ป่วยโรคเบาหวาน "))
         dao.insert(ServiceType("1D01300", "ให้ทันตสุขศึกษาหญิงตั้งครรภ์"))
-    }
-
-    @After
-    fun cleanDb() {
-        client.close()
-        server.shutdownNow()
     }
 
     @Test
