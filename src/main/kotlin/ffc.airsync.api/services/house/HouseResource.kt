@@ -5,9 +5,9 @@ import ffc.airsync.api.filter.Developer
 import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.GEOJSONHeader
+import ffc.airsync.api.services.util.containsSome
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.getUserLogin
-import ffc.airsync.api.services.util.inRole
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
 import ffc.entity.User
@@ -74,7 +74,7 @@ class HouseResourceNewEndpoint {
         @QueryParam("per_page") @DefaultValue("200") per_page: Int,
         @PathParam("orgId") orgId: String
     ): FeatureCollection<House> {
-        val houses = HouseService.getHouses(orgId, haveLocation = true)
+        val houses = houseService.getHouses(orgId, haveLocation = true)
         if (houses.isEmpty()) throw NoSuchElementException("ไม่มีรายการบ้าน")
         return FeatureCollection(houses.map { Feature(it.location!!, it) })
     }
@@ -96,7 +96,7 @@ class HouseResourceNewEndpoint {
             "false" -> false
             else -> null
         }
-        return HouseService.getHouses(orgId, query, haveLocation).paging(page, per_page)
+        return houseService.getHouses(orgId, query, haveLocation).paging(page, per_page)
     }
 
     @GET
@@ -107,7 +107,7 @@ class HouseResourceNewEndpoint {
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
     ): List<Person> {
-        return HouseService.getPerson(orgId, houseId)
+        return houseService.getPerson(orgId, houseId)
     }
 
     @GET
@@ -118,7 +118,7 @@ class HouseResourceNewEndpoint {
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
     ): House {
-        return HouseService.getSingle(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
+        return houseService.getSingle(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
     }
 
     @PUT
@@ -131,14 +131,13 @@ class HouseResourceNewEndpoint {
     ): Response {
         val role = context.getLoginRole()
         when {
-            User.Role.ORG inRole role -> house.link?.isSynced = true
-            User.Role.ADMIN inRole role -> house.link?.isSynced = true
+            role.containsSome(User.Role.ORG, User.Role.ADMIN) -> house.link?.isSynced = true
             else -> house.link?.isSynced = false
         }
 
         printDebug("House update user=${context.getUserLogin()} role=$role \n body=$house")
 
-        val houseUpdate = HouseService.update(orgId, house.update { }, houseId)
+        val houseUpdate = houseService.update(orgId, house.update { }, houseId)
         return Response.status(200).entity(houseUpdate).build()
         TODO("รอลบออก Timestamp จะใช้จาก mobile") // เชียนค่าทับไปก่อน
     }
@@ -163,7 +162,7 @@ class HouseResourceNewEndpoint {
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
     ): FeatureCollection<House> {
-        return HouseService.getSingleGeo(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
+        return houseService.getSingleGeo(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
     }
 
     @DELETE

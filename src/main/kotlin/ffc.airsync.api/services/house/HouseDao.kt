@@ -32,7 +32,9 @@ interface HouseDao : Dao, Sync<House> {
 
     fun delete(orgId: String, houseId: String)
 
-    fun findAll(orgId: String, query: String? = null, haveLocation: Boolean? = true): List<House>
+    fun findAll(orgId: String, query: String? = null,
+                haveLocation: Boolean? = true,
+                villageName: String? = null): List<House>
     fun find(orgId: String, houseId: String): House?
 
     fun removeByOrgId(orgId: String)
