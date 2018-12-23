@@ -2,7 +2,7 @@ package ffc.airsync.api.services.genogram
 
 import com.mongodb.BasicDBObject
 import com.mongodb.client.model.UpdateOptions
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.person.persons
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.plus
@@ -15,7 +15,7 @@ import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 
-class MongoRelationsShipDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "person"), GenoGramDao {
+class MongoRelationsShipDao(host: String, port: Int) : MongoDao(host, port, "ffc", "person"), GenoGramDao {
     /**
      * ค้นหาข้อมูล genogram จาก person โดยจะดึงมาเฉพาะ field relation
      * @param personId รหัส id Person.id

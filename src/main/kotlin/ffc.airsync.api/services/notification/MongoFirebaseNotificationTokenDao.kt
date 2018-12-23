@@ -2,13 +2,13 @@ package ffc.airsync.api.services.notification
 
 import com.mongodb.BasicDBObject
 import ffc.airsync.api.printDebug
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 
 class MongoFirebaseNotificationTokenDao(
     host: String,
     port: Int
-) : MongoAbsConnect(host, port, "ffc", "organ"), NotifactionDao {
+) : MongoDao(host, port, "ffc", "organ"), NotifactionDao {
 
     override fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
         val query = "id" equal orgId

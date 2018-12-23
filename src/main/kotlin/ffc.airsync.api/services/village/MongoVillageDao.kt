@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.village
 
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.TextFindMongo
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.buildQueryDoc
@@ -14,7 +14,7 @@ import ffc.entity.Village
 import ffc.entity.gson.parseTo
 import org.bson.types.ObjectId
 
-class MongoVillageDao(host: String, port: Int) : VillageDao, MongoAbsConnect(host, port, "ffc", "village") {
+class MongoVillageDao(host: String, port: Int) : VillageDao, MongoDao(host, port, "ffc", "village") {
 
     init {
         dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))

@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.notification
 
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 import ffc.entity.Entity
 import ffc.entity.gson.parseTo
@@ -12,7 +12,7 @@ import org.bson.types.ObjectId
 class MongoFirebaseStatusDao(
     host: String,
     port: Int
-) : FirebaseStatusDao, MongoAbsConnect(host, port, "ffc", "firebasestatus") {
+) : FirebaseStatusDao, MongoDao(host, port, "ffc", "firebasestatus") {
 
     init {
         try {

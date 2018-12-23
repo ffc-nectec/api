@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.disease
 
 import com.mongodb.client.model.IndexOptions
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.bsonListOf
 import ffc.airsync.api.services.util.documentOf
 import ffc.airsync.api.services.util.equal
@@ -13,7 +13,7 @@ import ffc.entity.gson.parseTo
 import ffc.entity.healthcare.Icd10
 import org.bson.Document
 
-internal class MongoDiseaseDao(host: String, port: Int) : MongoAbsConnect(host, port, "ffc", "disease"), DiseaseDao {
+internal class MongoDiseaseDao(host: String, port: Int) : MongoDao(host, port, "ffc", "disease"), DiseaseDao {
 
     init {
         val searchIndex = documentOf(

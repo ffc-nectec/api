@@ -1,10 +1,8 @@
 package ffc.airsync.api
 
-import com.mongodb.MongoClient
-import com.mongodb.ServerAddress
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoDbConnector
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -26,16 +24,14 @@ class MongoDbTestRule : TestRule {
     fun before() {
         server = MongoServer(MemoryBackend())
         address = server.bind()
-        client = MongoClient(ServerAddress(address))
-        MongoAbsConnect.setClient(client)
+        MongoDbConnector.connect(address)
     }
 
     fun after() {
-        client.close()
+        MongoDbConnector.close()
         server.shutdownNow()
     }
 
-    private lateinit var client: MongoClient
     private lateinit var server: MongoServer
     lateinit var address: InetSocketAddress
 }

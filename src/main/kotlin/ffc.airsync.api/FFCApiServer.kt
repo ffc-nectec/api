@@ -20,6 +20,7 @@ package ffc.airsync.api
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
+import ffc.airsync.api.services.MongoDbConnector
 import ffc.airsync.api.services.disease.DiseaseService
 import ffc.airsync.api.services.homehealthtype.HomeHealthTypeService
 import ffc.airsync.api.services.specialpp.SpecialPpService
@@ -53,6 +54,7 @@ internal class FFCApiServer(args: Array<String>) {
     }
 
     fun run() {
+        MongoDbConnector.initialize()
         getFirebaseParameter()
         initDiseaseAndHomeHealtyType()
         runningProcess()

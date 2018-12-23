@@ -19,7 +19,7 @@ package ffc.airsync.api.services.org
 
 import com.mongodb.client.FindIterable
 import ffc.airsync.api.printDebug
-import ffc.airsync.api.services.MongoAbsConnect
+import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.toDocument
 import ffc.entity.Organization
@@ -30,7 +30,7 @@ import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 
-class MongoOrgDao(host: String, port: Int) : OrgDao, MongoAbsConnect(host, port, "ffc", "organ") {
+class MongoOrgDao(host: String, port: Int) : OrgDao, MongoDao(host, port, "ffc", "organ") {
     override fun insert(organization: Organization): Organization {
         validate(organization)
         checkDuplication(organization)

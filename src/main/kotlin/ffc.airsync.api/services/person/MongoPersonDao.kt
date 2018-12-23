@@ -165,7 +165,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
     }
 
     override fun syncData(orgId: String, limitOutput: Int): List<Entity> {
-        val result = this.dbExecuted.find(
+        val result = dbCollection.find(
             ("link.isSynced" equal false)
                 plus ("orgIndex" equal ObjectId(orgId))
         ).limit(limitOutput)
