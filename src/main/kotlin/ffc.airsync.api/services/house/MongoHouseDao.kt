@@ -131,7 +131,8 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoSyncDao<H
             query.append("\$or", orQuery)
         }
         if (villageName != null) {
-            query.append("villageName", "\$eq" equal villageName)
+            val regexQuery = Document("\$regex", villageName).append("\$options", "i")
+            query.append("villageName", regexQuery)
         }
 
         return dbCollection.find(query)

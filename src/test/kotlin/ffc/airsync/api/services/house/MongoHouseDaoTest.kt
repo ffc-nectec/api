@@ -128,7 +128,7 @@ class MongoHouseDaoTest {
     fun queryWithExplicitVillageName() {
         dao.findAll(ORG_ID, villageName = "ลัดดา").size `should equal` 2
         dao.findAll(ORG_ID, "999", villageName = "ลัดดา").size `should equal` 1
-        dao.findAll(ORG_ID, "999", villageName = "ลัด").size `should equal` 0
+        dao.findAll(ORG_ID, "999", villageName = "ลัด").size `should equal` 1
         dao.findAll(ORG_ID, "999", villageName = "หมู่ 4").size `should equal` 0
     }
 
