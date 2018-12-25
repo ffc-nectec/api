@@ -124,7 +124,7 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoSyncDao<H
         }
 
         if (queryStr != null) {
-            val regexQuery = Document("\$regex", queryStr).append("\$options", "i")
+            val regexQuery = Document("\$regex", "^$queryStr").append("\$options", "i")
             val orQuery = BasicBSONList()
             orQuery.add("no" equal regexQuery)
             orQuery.add("villageName" equal regexQuery)
