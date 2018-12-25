@@ -1,0 +1,202 @@
+[
+  {
+    "value": "ติดตามผู้ป่วยเบาหวานที่มีระดับน้ำตาลในเลือดสูงเกิน 200 mg% (DTX\u003d  mg%)",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "ติดตามเรื่องระดับความดันโลหิตของผู้ป่วย       159/79      mmHg",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "บุตรดูดนมได้ลูกต้อง ดูดเร็ว ดูดบ่อย ดูดถูกวิธี แข็งแรงสมบูรณ์",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "ผู้ป่วยช่วยเหลือตนเองไม่ได้",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "ผู้ป่วยช่วยเหลือตัวเองได้น้อย",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "ผู้ป่วยสามารถช่วยเหลือตนเองได้ดี",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "ผู้ป่วยสามารถเลี้ยงบุตรด้วยนมแม่ได้อย่างถูกต้องสามารถตอบคำถามได้อย่างถูกต้องเรื่องการรับประทานอาหารที่มีประโยชน์",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "รู้สึกตัว",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "สุขภาพแข็งแรงสมบูรณ์มาก",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "อาการทั่วไปปกติ",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "อาการทั่วไปปกติดี ผู้ป่วยสามารถดูแลตนเองได้",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "เปลี่ยนสายอาหารและสายปัสสาวะให้แก่ผู้ป่วย",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "เยี่ยมผู้สูงอายุประจำปี",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "แผลฝีเย็บแห้งดี",
+    "field": "HealthCareService.syntom"
+  },
+  {
+    "value": "จ่ายยาแก้เหงา เส้าสร้อย Soka ardoon",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "ทำกายภาพบำบัดแก่ผู้ป่วยโดยนักกายภาพบำบัด",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "ประเมินภาวะซึมเศร้า โดยนักจิตวิทยา \u003d ไม่มีภาวะซึมเศร้า",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "วัดความดัน และแนะนำในการดูแลสุขภาพให้เหมาะกับโรคประจำตัว",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "อาการอื่นๆทั่วไปปกติ",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "แนะนำกระตุ้นพัฒนาการเด็กให้เหมาะสมกับวัย",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "แนะนำเรื่องการดูแลให้นมบุตร",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "แนะนำเรื่องการทานอาหารและการออกกำลังกายเพื่อเพิ่มสมรรถภาพ ...",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "แนะนำเรื่องการทานอาหารและการออกกำลังกายให้เหมาะสมกับวัย",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "แนะนำเรื่องการรับประทานยาเกี่ยวกับโรค และไปรับการรักษาอย่างต่อเนื่อง",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "แนะนำเรื่องการรับประทานยาและไปรับการรักษาอย่างต่อเนื่อง",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "แนะนำเรื่องการรับประทานอาหารให้เหมาะสมกับโรคที่เป็นอยู่",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "แนะนำเรื่องการออกกำลังกายอย่างสม่ำเสมอเกี่ยวกับโรคที่ตนเองเป็นอยู่",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "แพทย์แผนไทยนวดผ่อนคลายความเครียด",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "ใส่สายสวนปัสสาวะ และใส่สายอาหารแก่ผู้ป่วย",
+    "field": "HomeVisit.detail"
+  },
+  {
+    "value": "ญาติสามารถดูแลผู้สูงอายุได้ดี",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "ต้องการญาติดูแลผู้ป่วยใกล้ชิด",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "นัดตรวจภายในหลังคลอดบุตร",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "นัดเยี่ยมหลังคลอดและตรวจหลังคลอด 6สัปดาห์",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "ป้องกันการเกิดภาวะเเทรกซ้อน",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "ป้องกันการเกิดแผลกดทับ และอาการแทรกซ้อน",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "ผู้ป่วยช่วยเหลือตัวเองเลี้ยงลูกด้วยนมแม่ได้อย่างถูกต้อง ตอบคำถาม ดูดเร็ว ดูดบ่อย ดูดถูกวิธี",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "ผู้ป่วยสามารถทำตามคำแนะนำได้เป็นอย่างดี",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "มารดามีความรู้และจะพาบุตรไปฉีดวัคซีน DTP+HB 1 อายุ 2 เดือน และตรวจพัฒนาการ",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "มารดาสามารถดูแลบุตรได้เเป็นอย่างดี",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "ระวังการเกิดอุบัติเหตุ การรับประทานยาและการควบคุมอาหาร",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "ลดอาหารจำพวกแป้ง ขนมหวาน",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "สามารถดูแลตนเองได้เป็นอย่างดี",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "เยี่ยมทุก 3 เดือน",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "เยี่ยมทุกวัน วัดความดื้อ ทุกครั้งที่ไปเยี่ยม",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "เยี่ยมทุกเดือน",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "เยี่ยมปีละ 1 ครั้ง",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "เยี่ยมอาทิตย์ละ 1 ครั้ง",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "แนะนำการทำกายภาพบำบัดแก่ญาติผู้ป่วย",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "แนะนำญาติดูแลสายสวนปัสสาวะไม่ให้บิดงอ",
+    "field": "HomeVisit.result"
+  },
+  {
+    "value": "แนะนำเรื่องการรับประทานยาอย่างต่อเนื่อง และไปพบแพทย์ตามนัด",
+    "field": "HomeVisit.result"
+  }
+]
