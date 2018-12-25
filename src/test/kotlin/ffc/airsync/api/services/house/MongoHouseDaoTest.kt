@@ -138,11 +138,13 @@ class MongoHouseDaoTest {
         dao.insert(ORG_ID, createHouse("11111111112", "888/1"))
         dao.insert(ORG_ID, createHouse("11111111112", "888"))
         dao.insert(ORG_ID, createHouse("11111111112", "81"))
+        dao.insert(ORG_ID, createHouse("11111111112", "91"))
 
         val result = dao.findAll(ORG_ID)
 
         result.map { it.no } `should equal` listOf(
             "81",
+            "91",
             "888",
             "888/1",
             "888/777",

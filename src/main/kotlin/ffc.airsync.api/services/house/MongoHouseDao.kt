@@ -135,11 +135,18 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoSyncDao<H
             query.append("villageName", regexQuery)
         }
 
-        return dbCollection.find(query)
+        val house = dbCollection.find(query)
             .sort(Sorts.ascending("villageName", "no"))
             .limit(50)
-            .listOf()
+            .listOf<House>()
+        return house.sortedWith(compareBy<House> { it.villageName }
+            .thenBy { it.noWithoutTail?.length }
+            .thenBy { it.no }
+        )
     }
+
+    val House.noWithoutTail
+        get() = no?.replace(Regex("^(.+)(/.*)\$"), "$1")
 
     override fun find(orgId: String, houseId: String): House? {
         printDebug("Call find in house dao.")
