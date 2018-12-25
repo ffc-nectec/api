@@ -137,7 +137,7 @@ internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoSyncDao<H
 
         val house = dbCollection.find(query)
             .sort(Sorts.ascending("villageName", "no"))
-            .limit(50)
+            .limit(100)
             .listOf<House>()
         return house.sortedWith(compareBy<House> { it.villageName }
             .thenBy { it.noWithoutTail?.length }
