@@ -2,7 +2,6 @@ package ffc.airsync.api.services.analytic
 
 import ffc.airsync.api.services.BLOCKTYPE
 import ffc.airsync.api.services.ORGIDTYPE
-import ffc.airsync.api.services.person.persons
 import ffc.entity.healthcare.analyze.HealthAnalyzer
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
@@ -31,8 +30,7 @@ class SyncResourceAnalytic {
         return analyzers.insertBlock(
             orgId = orgId,
             block = block,
-            healthAnalyzer = healthAnalyzer,
-            lookupHouse = { persons.findHouseId(orgId, it) }
+            healthAnalyzer = healthAnalyzer
         )
     }
 

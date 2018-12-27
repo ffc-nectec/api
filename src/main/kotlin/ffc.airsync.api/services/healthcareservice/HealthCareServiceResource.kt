@@ -8,7 +8,6 @@ import ffc.airsync.api.services.VISITIDTYPE
 import ffc.airsync.api.services.analytic.analyzers
 import ffc.airsync.api.services.notification.broadcastMessage
 import ffc.airsync.api.services.notification.notification
-import ffc.airsync.api.services.person.persons
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.inRole
 import ffc.entity.Link
@@ -81,9 +80,8 @@ class HealthCareServiceResource {
     private fun visitAnalyzer(healthCareService: HealthCareService, orgId: String) {
         val analyzer = HealthAnalyzer()
         val personId = healthCareService.patientId
-        val houseId = persons.findHouseId(orgId, personId)
         analyzer.analyze(*healthCareServices.getByPatientId(orgId, personId).toTypedArray())
-        analyzers.insertAndRepeat(orgId, personId, houseId, analyzer)
+        analyzers.insert(orgId, personId, analyzer)
     }
 
     @DELETE

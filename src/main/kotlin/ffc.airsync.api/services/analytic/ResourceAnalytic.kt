@@ -2,7 +2,6 @@ package ffc.airsync.api.services.analytic
 
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
-import ffc.airsync.api.services.person.persons
 import ffc.entity.healthcare.analyze.HealthAnalyzer
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
@@ -29,7 +28,6 @@ class ResourceAnalytic {
     ): HealthAnalyzer {
         return analyzers.insert(
             orgId = orgId,
-            houseId = persons.findHouseId(orgId, personId),
             personId = personId,
             healthAnalyzer = healthAnalyzer
         )
