@@ -38,7 +38,7 @@ abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String,
                 HEALTHCARETYPE -> healthCareServices.visitInsertDocument(it as HealthCareService, orgId)
                 PERSONTYPE -> {
                     val personDoc = it.buildInsertBson()
-                    (it as Person).birthDate?.toInterval()?.toDurationMillis()?.let { time ->
+                    (it as Person).birthDate?.toDate()?.time?.let { time ->
                         personDoc.append("birthDateMongo", BsonDateTime(time))
                     }
                     personDoc
