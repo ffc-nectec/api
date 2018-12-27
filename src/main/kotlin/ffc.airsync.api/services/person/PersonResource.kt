@@ -23,8 +23,6 @@ import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
 import ffc.airsync.api.services.analytic.analyzers
 import ffc.airsync.api.services.disease.findIcd10
-import ffc.airsync.api.services.search.QueryExtractor
-import ffc.airsync.api.services.search.filterFor
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.inRole
 import ffc.airsync.api.services.util.paging
@@ -122,17 +120,11 @@ class PersonResource {
     ): List<Person> {
 
         val person = if (query != null) {
-            val queryMap = QueryExtractor().extract(query)
-            if (queryMap.size == 0)
+            val output = arrayListOf<Person>()
+            output.addAll(analyzers.smartQuery(orgId, query))
+            if (output.size < per_page)
                 persons.find(query, orgId)
-            else {
-                persons.findByOrgId(orgId).filter { p ->
-                    p.bundle["analyze"] = analyzers.getByPersonId(orgId, p.id)
-                    queryMap.all {
-                        filterFor(it.value)?.filter(p) == true
-                    }
-                }
-            }
+            output
         } else {
             persons.findByOrgId(orgId)
         }
