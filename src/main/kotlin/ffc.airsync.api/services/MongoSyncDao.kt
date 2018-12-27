@@ -17,7 +17,7 @@ import ffc.entity.healthcare.HomeVisit
 import ffc.entity.healthcare.NCDScreen
 import ffc.entity.healthcare.SpecialPP
 import ffc.entity.place.House
-import org.bson.BsonTimestamp
+import org.bson.BsonDateTime
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 
@@ -39,7 +39,7 @@ abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String,
                 PERSONTYPE -> {
                     val personDoc = it.buildInsertBson()
                     (it as Person).birthDate?.toInterval()?.toDurationMillis()?.let { time ->
-                        personDoc.append("birthDateMongo", BsonTimestamp(time))
+                        personDoc.append("birthDateMongo", BsonDateTime(time))
                     }
                     personDoc
                 }
