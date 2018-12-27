@@ -56,7 +56,6 @@ dependencies {
 
     compile 'com.github.piruin:jbcrypt:0.4'
     compile "joda-time:joda-time:2.9.9"
-    // compile 'me.piruin:geok-gson:1.0.0-alpha-2'
     compile "org.mongodb:mongo-java-driver:3.6.3"
     compile 'com.github.ffc-nectec.genogram:genogram:1.0.0-alpha4'
 
