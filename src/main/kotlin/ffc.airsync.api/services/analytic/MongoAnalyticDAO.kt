@@ -3,15 +3,20 @@ package ffc.airsync.api.services.analytic
 import com.mongodb.BasicDBObject
 import com.mongodb.client.model.UpdateOptions
 import ffc.airsync.api.services.MongoDao
+import ffc.airsync.api.services.search.Operator
+import ffc.airsync.api.services.search.Query
+import ffc.airsync.api.services.search.QueryExtractor
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.plus
 import ffc.entity.Person
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import ffc.entity.healthcare.analyze.HealthAnalyzer
+import org.bson.BsonDateTime
 import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
+import org.joda.time.LocalDate
 
 internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao(host, port, "ffc", "person") {
 
@@ -115,5 +120,46 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
         update["\$set"] = BasicDBObject("healthAnalyze", null)
 
         dbCollection.updateMany(query, update, UpdateOptions())
+    }
+
+    override fun smartQuery(orgId: String, query: String): List<Person> {
+
+        val extractor = QueryExtractor()
+        val queryExtractor = extractor.extract(query)
+        val mongoQuery = BasicBSONList()
+        mongoQuery.add("orgIndex" equal ObjectId(orgId))
+
+        queryExtractor.forEach { key, value ->
+            if (key == "age") ageFilter(value, mongoQuery)
+            if (key == "dm") {
+                if (value.operator == Operator.EQAUL)
+                    mongoQuery.add("healthAnalyze.result.DM" equal ("\$exists" equal true))
+                else
+                    mongoQuery.add("healthAnalyze.result.DM" equal ("\$exists" equal false))
+            }
+        }
+
+        return dbCollection.find("\$and" equal mongoQuery).limit(50).map {
+            it.toJson().parseTo<Person>()
+        }?.toList() ?: throw NoSuchElementException("ไม่พบ สิ่งที่ค้้นหา")
+    }
+
+    private fun ageFilter(
+        value: Query<Any>,
+        mongoQuery: BasicBSONList
+    ) {
+        val minusYears = LocalDate.now().minusYears(value.value.toString().toInt())
+        val calDate = BsonDateTime(minusYears.toDate().time)
+        when (value.operator) {
+            Operator.MORE_THAN -> {
+                mongoQuery.add("birthDateMongo" equal ("\$lte" equal calDate))
+            }
+            Operator.LESS_THEN -> {
+                mongoQuery.add("birthDateMongo" equal ("\$gte" equal calDate))
+            }
+            else -> {
+                mongoQuery.add("birthDateMongo" equal ("\$eq" equal calDate))
+            }
+        }
     }
 }

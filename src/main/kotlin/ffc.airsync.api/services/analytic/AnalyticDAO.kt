@@ -19,6 +19,8 @@ interface AnalyticDAO : Dao {
 
     fun query(orgId: String, query: String): List<Person>
 
+    fun smartQuery(orgId: String, query: String): List<Person>
+
     fun deleteByPersonId(orgId: String, personId: String)
 
     fun removeByOrgId(orgId: String)
