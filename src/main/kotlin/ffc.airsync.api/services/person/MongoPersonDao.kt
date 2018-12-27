@@ -34,7 +34,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
         val personDoc = person.buildInsertBson()
         personDoc.append("orgIndex", ObjectId(orgId))
 
-        person.birthDate?.toInterval()?.toDurationMillis()?.let {
+        person.birthDate?.toDate()?.time?.let {
             personDoc.append("birthDateMongo", BsonDateTime(it))
         }
 
@@ -46,7 +46,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
             it.orgId = orgId
             val personDoc = it.buildInsertBson()
             personDoc.append("orgIndex", ObjectId(orgId))
-            it.birthDate?.toInterval()?.toDurationMillis()?.let { time ->
+            it.birthDate?.toDate()?.time?.let { time ->
                 personDoc.append("birthDateMongo", BsonDateTime(time))
             }
             personDoc
@@ -64,7 +64,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
         val personDoc = person.buildUpdateBson()
 
         personDoc.append("orgIndex", ObjectId(orgId))
-        person.birthDate?.toInterval()?.toDurationMillis()?.let {
+        person.birthDate?.toDate()?.time?.let {
             personDoc.append("birthDateMongo", BsonDateTime(it))
         }
 
