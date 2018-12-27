@@ -137,7 +137,7 @@ internal inline fun <reified T> MongoCollection<Document>.ffcInsert(doc: List<Do
     smartInsert(doc, 0)
 
     return doc.mapKt {
-        val result = find(it).first()!!
+        val result = find("_id" equal ObjectId(it["_id"].toString())).first()!!
         result.remove("_id")
         result.toJson().parseTo<T>()
     }
