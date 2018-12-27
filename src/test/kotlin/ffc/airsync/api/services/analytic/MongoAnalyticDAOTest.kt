@@ -34,6 +34,9 @@ class MongoAnalyticDAOTest {
 
     val analytic1 = resourceFile("analytic.json").parseTo<HealthAnalyzer>()
     val analytic2 = resourceFile("analytic2.json").parseTo<HealthAnalyzer>()
+    val analyticNotDM = resourceFile("analyticNotDM.json").parseTo<HealthAnalyzer>()
+    val analyticNotDMHT = resourceFile("analyticNotDMHT.json").parseTo<HealthAnalyzer>()
+    val analyticNotHT = resourceFile("analyticNotHT.json").parseTo<HealthAnalyzer>()
 
     @Before
     fun setUp() {
@@ -169,6 +172,56 @@ class MongoAnalyticDAOTest {
         dao.getBlock(ORG_ID, 1).size `should be equal to` 0
         dao.query(ORG_ID, "").size `should be equal to` 0
     }
+
+    @Test
+    fun smartQueryFoundOld() {
+        dao.insert(ORG_ID, somChai.id, analyticNotDMHT)
+        dao.insert(ORG_ID, somYing.id, analytic2)
+
+        val result = dao.smartQuery(ORG_ID, "ผู้สูงอายุ")
+
+        result.size `should be equal to` 1
+        result.first().name `should be equal to` somChai.name
+    }
+
+    @Test
+    fun smartQueryFoundDM() {
+        dao.insert(ORG_ID, somYing.id, analyticNotHT)
+
+        val result = dao.smartQuery(ORG_ID, "เบาหวาน")
+
+        result.size `should be equal to` 1
+        result.first().name `should be equal to` somYing.name
+    }
+
+    @Test
+    fun smartQueryNotFoundDM() {
+        dao.insert(ORG_ID, somYing.id, analyticNotDM)
+
+        val result = dao.smartQuery(ORG_ID, "เบาหวาน")
+
+        result.size `should be equal to` 0
+    }
+
+    @Test
+    fun smartQueryFoundOldDM() {
+        dao.insert(ORG_ID, somChai.id, analyticNotHT)
+        dao.insert(ORG_ID, somYing.id, analytic2)
+
+        val result = dao.smartQuery(ORG_ID, "ผู้สูงอายุที่เป็นโรคเบาหวาน")
+
+        result.size `should be equal to` 1
+        result.first().name `should be equal to` somChai.name
+    }
+
+    @Test
+    fun smartQueryNotFoundOldDM() {
+        dao.insert(ORG_ID, somYing.id, analytic2)
+
+        val result = dao.smartQuery(ORG_ID, "ผู้สูงอายุที่เป็นโรคเบาหวาน")
+
+        result.size `should be equal to` 0
+    }
 }
 
 private val `สมชาย` = Person().apply {
@@ -177,7 +230,7 @@ private val `สมชาย` = Person().apply {
     firstname = "สมชาย"
     lastname = "โคตรกระบือ"
     sex = Person.Sex.MALE
-    birthDate = LocalDate.now().minusYears(20)
+    birthDate = LocalDate.now().minusYears(70)
     chronics.add(Chronic(Icd10("fair", "dxabc00x")))
     chronics.add(Chronic(Icd10("fair", "abcffe982")))
     link = Link(System.JHICS)
