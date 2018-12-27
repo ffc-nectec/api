@@ -12,7 +12,7 @@ import ffc.airsync.api.services.util.plus
 import ffc.entity.Entity
 import ffc.entity.Person
 import ffc.entity.gson.parseTo
-import org.bson.BsonTimestamp
+import org.bson.BsonDateTime
 import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
@@ -35,7 +35,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
         personDoc.append("orgIndex", ObjectId(orgId))
 
         person.birthDate?.toInterval()?.toDurationMillis()?.let {
-            personDoc.append("birthDateMongo", BsonTimestamp(it))
+            personDoc.append("birthDateMongo", BsonDateTime(it))
         }
 
         return dbCollection.ffcInsert(personDoc)
@@ -47,7 +47,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
             val personDoc = it.buildInsertBson()
             personDoc.append("orgIndex", ObjectId(orgId))
             it.birthDate?.toInterval()?.toDurationMillis()?.let { time ->
-                personDoc.append("birthDateMongo", BsonTimestamp(time))
+                personDoc.append("birthDateMongo", BsonDateTime(time))
             }
             personDoc
         }
@@ -65,7 +65,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
 
         personDoc.append("orgIndex", ObjectId(orgId))
         person.birthDate?.toInterval()?.toDurationMillis()?.let {
-            personDoc.append("birthDateMongo", BsonTimestamp(it))
+            personDoc.append("birthDateMongo", BsonDateTime(it))
         }
 
         dbCollection.replaceOne(query, personDoc)
