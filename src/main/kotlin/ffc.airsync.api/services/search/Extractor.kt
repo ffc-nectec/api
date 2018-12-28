@@ -46,3 +46,13 @@ class AgeExtractor : Extractor<Int> {
         return null
     }
 }
+
+class NcdsExtractor : Extractor<Boolean> {
+
+    override fun extractFrom(query: String): Query<Boolean>? {
+        if (query.containSome("ncd")) {
+            return Query("ncd", true)
+        }
+        return null
+    }
+}
