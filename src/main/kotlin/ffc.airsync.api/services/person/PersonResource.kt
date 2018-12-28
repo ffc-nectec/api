@@ -122,8 +122,13 @@ class PersonResource {
         val person = if (query != null) {
             val output = arrayListOf<Person>()
             output.addAll(analyzers.smartQuery(orgId, query))
-            if (output.size < per_page)
-                output.addAll(persons.find(query, orgId))
+            if (output.size < per_page) {
+                persons.find(query, orgId).forEach { person ->
+                    if (output.find { person.id == it.id } == null) {
+                        output.add(person)
+                    }
+                }
+            }
             output
         } else {
             persons.findByOrgId(orgId)
