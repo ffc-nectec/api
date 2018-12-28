@@ -175,9 +175,12 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
             }
         }
 
-        return dbCollection.find("\$and" equal mongoQuery).limit(50).map {
-            it.toJson().parseTo<Person>()
-        }?.toList() ?: throw NoSuchElementException("ไม่พบ สิ่งที่ค้้นหา")
+        return if (mongoQuery.size > 1)
+            dbCollection.find("\$and" equal mongoQuery).limit(50).map {
+                it.toJson().parseTo<Person>()
+            }?.toList() ?: throw NoSuchElementException("ไม่พบ สิ่งที่ค้้นหา")
+        else
+            emptyList()
     }
 
     private fun ageFilter(
