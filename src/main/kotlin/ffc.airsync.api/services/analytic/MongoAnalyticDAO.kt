@@ -136,6 +136,12 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
             if (key == "age") ageFilter(value, mongoQuery)
             if (key == "male") if (value.value == true) mongoQuery.add("sex" equal "MALE")
             if (key == "female") if (value.value == true) mongoQuery.add("sex" equal "FEMALE")
+            if (key == "activelow") if (value.value == true) {
+                mongoQuery.add("healthAnalyze.result.ACTIVITIES.severity" equal "LOW")
+            }
+            if (key == "activemid") if (value.value == true) {
+                mongoQuery.add("healthAnalyze.result.ACTIVITIES.severity" equal "MID")
+            }
             if (key == "dm") {
                 if (value.operator == Operator.EQAUL) {
                     val orQuery = BasicBSONList()
