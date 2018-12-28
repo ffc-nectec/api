@@ -76,3 +76,23 @@ class NcdsExtractor : Extractor<Boolean> {
         return null
     }
 }
+
+class MaleExtractor : Extractor<Boolean> {
+
+    override fun extractFrom(query: String): Query<Boolean>? {
+        if (query.containSome("ผู้ชาย")) {
+            return Query("male", true)
+        }
+        return null
+    }
+}
+
+class FemaleExtractor : Extractor<Boolean> {
+
+    override fun extractFrom(query: String): Query<Boolean>? {
+        if (query.containSome("ผู้หญิง")) {
+            return Query("female", true)
+        }
+        return null
+    }
+}
