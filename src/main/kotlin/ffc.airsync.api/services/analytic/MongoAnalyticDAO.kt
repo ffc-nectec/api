@@ -74,7 +74,10 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
     }
 
     override fun removeByOrgId(orgId: String) {
-        dbCollection.deleteMany("orgIndex" equal ObjectId(orgId))
+        val update = BasicDBObject()
+        update["\$set"] = BasicDBObject("healthAnalyze", null)
+
+        dbCollection.updateMany("orgIndex" equal ObjectId(orgId), update, UpdateOptions())
     }
 
     override fun insertBlock(
