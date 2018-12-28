@@ -5,7 +5,8 @@ class QueryExtractor {
     val extractor = listOf<Extractor<*>>(
         ElderExtractor(),
         DmExtractor(),
-        HtExtractor()
+        HtExtractor(),
+        AgeExtractor()
     )
 
     val queryMap = mutableMapOf<String, Query<Any>>()
