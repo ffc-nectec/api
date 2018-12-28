@@ -96,3 +96,23 @@ class FemaleExtractor : Extractor<Boolean> {
         return null
     }
 }
+
+class ActiveLowExtractor : Extractor<Boolean> {
+
+    override fun extractFrom(query: String): Query<Boolean>? {
+        if (query.containSome("ติดเตียง")) {
+            return Query("activelow", true)
+        }
+        return null
+    }
+}
+
+class ActiveMidExtractor : Extractor<Boolean> {
+
+    override fun extractFrom(query: String): Query<Boolean>? {
+        if (query.containSome("ติดบ้าน")) {
+            return Query("activemid", true)
+        }
+        return null
+    }
+}
