@@ -123,7 +123,7 @@ class PersonResource {
             val output = arrayListOf<Person>()
             output.addAll(analyzers.smartQuery(orgId, query))
             if (output.size < per_page)
-                persons.find(query, orgId)
+                output.addAll(persons.find(query, orgId))
             output
         } else {
             persons.findByOrgId(orgId)
