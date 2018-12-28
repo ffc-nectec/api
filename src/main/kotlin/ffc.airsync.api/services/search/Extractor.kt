@@ -36,12 +36,32 @@ class HtExtractor : Extractor<Boolean> {
 
 class AgeExtractor : Extractor<Int> {
     override fun extractFrom(query: String): Query<Int>? {
-        val age = Regex("""อายุ (\d+)""").matchEntire(query)?.groupValues?.lastOrNull().let {
-            it ?: Regex("""อายุ(\d+)""").matchEntire(query)?.groupValues?.lastOrNull()
-        }?.toIntOrNull()
+        val age = Regex("""อายุ ?(\d+)""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age != null) {
             return Query("age", age, Operator.EQAUL)
+        }
+        return null
+    }
+}
+
+class AgeMoreExtractor : Extractor<Int> {
+    override fun extractFrom(query: String): Query<Int>? {
+        val age = Regex("""อายุมากกว่า ?(\d+)""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+
+        if (age != null) {
+            return Query("age", age, Operator.MORE_THAN)
+        }
+        return null
+    }
+}
+
+class AgeLessExtractor : Extractor<Int> {
+    override fun extractFrom(query: String): Query<Int>? {
+        val age = Regex("""อายุน้อยกว่า ?(\d+)""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+
+        if (age != null) {
+            return Query("age", age, Operator.MORE_THAN)
         }
         return null
     }

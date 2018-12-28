@@ -135,10 +135,35 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
         queryExtractor.forEach { key, value ->
             if (key == "age") ageFilter(value, mongoQuery)
             if (key == "dm") {
-                if (value.operator == Operator.EQAUL)
-                    mongoQuery.add("healthAnalyze.result.DM" equal ("\$exists" equal true))
-                else
+                if (value.operator == Operator.EQAUL) {
+                    val orQuery = BasicBSONList()
+                    orQuery.add("healthAnalyze.result.DM" equal ("\$exists" equal true))
+                    orQuery.add("chronics.disease.icd10" equal dmMongoRex)
+                    mongoQuery.add("\$or" equal orQuery)
+                } else {
                     mongoQuery.add("healthAnalyze.result.DM" equal ("\$exists" equal false))
+                }
+            }
+            if (key == "ht") {
+                if (value.operator == Operator.EQAUL) {
+                    val orQuery = BasicBSONList()
+                    orQuery.add("healthAnalyze.result.HT" equal ("\$exists" equal true))
+                    orQuery.add("chronics.disease.icd10" equal htMongoRex)
+                    mongoQuery.add("\$or" equal orQuery)
+                } else {
+                    mongoQuery.add("healthAnalyze.result.DM" equal ("\$exists" equal false))
+                }
+            }
+            if (key == "ncd") {
+                if (value.value == true) {
+                    val orQuery = BasicBSONList()
+                    orQuery.add("healthAnalyze.result.DM" equal ("\$exists" equal true))
+                    orQuery.add("healthAnalyze.result.HT" equal ("\$exists" equal true))
+                    orQuery.add("chronics.disease.icd10" equal dmMongoRex)
+                    orQuery.add("chronics.disease.icd10" equal htMongoRex)
+
+                    mongoQuery.add("\$or" equal orQuery)
+                }
             }
         }
 
@@ -164,5 +189,10 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
                 mongoQuery.add("birthDateMongo" equal ("\$eq" equal calDate))
             }
         }
+    }
+
+    companion object {
+        val dmMongoRex = Document("\$regex", "^e1[0-4].*$").append("\$options", "i")
+        val htMongoRex = Document("\$regex", "^i1[0-5].*$").append("\$options", "i")
     }
 }
