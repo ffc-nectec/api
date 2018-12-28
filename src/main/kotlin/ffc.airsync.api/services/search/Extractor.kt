@@ -33,3 +33,16 @@ class HtExtractor : Extractor<Boolean> {
         return null
     }
 }
+
+class AgeExtractor : Extractor<Int> {
+    override fun extractFrom(query: String): Query<Int>? {
+        val age = Regex("""อายุ (\d+)""").matchEntire(query)?.groupValues?.lastOrNull().let {
+            it ?: Regex("""อายุ(\d+)""").matchEntire(query)?.groupValues?.lastOrNull()
+        }?.toIntOrNull()
+
+        if (age != null) {
+            return Query("age", age, Operator.EQAUL)
+        }
+        return null
+    }
+}
