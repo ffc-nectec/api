@@ -2,6 +2,7 @@ package ffc.airsync.api.services.analytic
 
 import com.mongodb.BasicDBObject
 import com.mongodb.client.model.UpdateOptions
+import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.search.Operator
 import ffc.airsync.api.services.search.Query
@@ -133,9 +134,16 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
         mongoQuery.add("orgIndex" equal ObjectId(orgId))
 
         queryExtractor.forEach { key, value ->
-            if (key == "age") ageFilter(value, mongoQuery)
-            if (key == "male") if (value.value == true) mongoQuery.add("sex" equal "MALE")
-            if (key == "female") if (value.value == true) mongoQuery.add("sex" equal "FEMALE")
+            printDebug("$key Filter ${value.operator} ${value.value}")
+            if (key == "age") {
+                ageFilter(value, mongoQuery)
+            }
+            if (key == "male") if (value.value == true) {
+                mongoQuery.add("sex" equal "MALE")
+            }
+            if (key == "female") if (value.value == true) {
+                mongoQuery.add("sex" equal "FEMALE")
+            }
             if (key == "activitiesvhi") if (value.value == true) {
                 mongoQuery.add("healthAnalyze.result.ACTIVITIES.severity" equal "VERY_HI")
             }
