@@ -116,3 +116,131 @@ class ActiveMidExtractor : Extractor<Boolean> {
         return null
     }
 }
+
+/*
+ "CATARACT": {
+                "haveIssue": false,
+                "type": "HealthChecked",
+                "issue": "CATARACT",
+                "date": "2018-01-19"
+            }
+ */
+class CataractExtractor : Extractor<Boolean> {
+
+    override fun extractFrom(query: String): Query<Boolean>? {
+        if (query.containSome("ต้อกระจก")) {
+            return Query("cataract", true)
+        }
+        return null
+    }
+}
+
+/*
+"FARSIGHTED": {
+                "haveIssue": false,
+                "type": "HealthChecked",
+                "issue": "FARSIGHTED",
+                "date": "2018-01-19"
+            }
+ */
+class FarsightedExtractor : Extractor<Boolean> {
+
+    override fun extractFrom(query: String): Query<Boolean>? {
+        if (query.containSome("สายตายาว")) {
+            return Query("farsighted", true)
+        }
+        return null
+    }
+}
+
+/*
+
+            "GLAUCOMA": {
+                "haveIssue": false,
+                "type": "HealthChecked",
+                "issue": "GLAUCOMA",
+                "date": "2018-01-19"
+            }
+ */
+class GlaucomaExtractor : Extractor<Boolean> {
+
+    override fun extractFrom(query: String): Query<Boolean>? {
+        if (query.containSome("ต้อหิน")) {
+            return Query("glaucoma", true)
+        }
+        return null
+    }
+}
+
+/*
+"AMD": {
+                "haveIssue": false,
+                "type": "HealthChecked",
+                "issue": "AMD",
+                "date": "2018-01-19"
+            },
+ */
+class AmdExtractor : Extractor<Boolean> {
+
+    override fun extractFrom(query: String): Query<Boolean>? {
+        if (query.containSome("จอประสาทตาเสื่อม")) {
+            return Query("amd", true)
+        }
+        return null
+    }
+}
+
+/*
+"NEARSIGHTED": {
+                "haveIssue": false,
+                "type": "HealthChecked",
+                "issue": "NEARSIGHTED",
+                "date": "2018-01-19"
+            },
+ */
+class NearsightedExtractor : Extractor<Boolean> {
+
+    override fun extractFrom(query: String): Query<Boolean>? {
+        if (query.containSome("สายตาสั้น")) {
+            return Query("nearsighted", true)
+        }
+        return null
+    }
+}
+
+/*
+"CVD": {
+                "severity": "OK",
+                "type": "HealthProblem",
+                "issue": "CVD",
+                "date": "2018-01-19"
+            },
+ */
+class CvdExtractor : Extractor<Boolean> {
+
+    override fun extractFrom(query: String): Query<Boolean>? {
+        if (query.containSome("โรคหัวใจ")) {
+            return Query("cvd", true)
+        }
+        return null
+    }
+}
+
+/*
+
+            "OA_KNEE": {
+                "haveIssue": false,
+                "type": "HealthChecked",
+                "issue": "OA_KNEE",
+                "date": "2018-01-19"
+            },
+ */
+class OaKneeExtractor : Extractor<Boolean> {
+
+    override fun extractFrom(query: String): Query<Boolean>? {
+        if (query.containSome("ข้อเข่าเสื่อม")) {
+            return Query("oaknee", true)
+        }
+        return null
+    }
+}
