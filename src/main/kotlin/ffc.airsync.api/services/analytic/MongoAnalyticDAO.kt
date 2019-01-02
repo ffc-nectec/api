@@ -153,28 +153,28 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
             if (key == "dm") {
                 if (value.operator == Operator.EQAUL) {
                     val orQuery = BasicBSONList()
-                    orQuery.add("healthAnalyze.result.DM" equal ("\$exists" equal true))
+                    orQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
                     orQuery.add("chronics.disease.icd10" equal dmMongoRex)
                     mongoQuery.add("\$or" equal orQuery)
                 } else {
-                    mongoQuery.add("healthAnalyze.result.DM" equal ("\$exists" equal false))
+                    mongoQuery.add("healthAnalyze.result.DM.haveIssue" equal false)
                 }
             }
             if (key == "ht") {
                 if (value.operator == Operator.EQAUL) {
                     val orQuery = BasicBSONList()
-                    orQuery.add("healthAnalyze.result.HT" equal ("\$exists" equal true))
+                    orQuery.add("healthAnalyze.result.HT.haveIssue" equal true)
                     orQuery.add("chronics.disease.icd10" equal htMongoRex)
                     mongoQuery.add("\$or" equal orQuery)
                 } else {
-                    mongoQuery.add("healthAnalyze.result.DM" equal ("\$exists" equal false))
+                    mongoQuery.add("healthAnalyze.result.DM.haveIssue" equal false)
                 }
             }
             if (key == "ncd") {
                 if (value.value == true) {
                     val orQuery = BasicBSONList()
-                    orQuery.add("healthAnalyze.result.DM" equal ("\$exists" equal true))
-                    orQuery.add("healthAnalyze.result.HT" equal ("\$exists" equal true))
+                    orQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
+                    orQuery.add("healthAnalyze.result.HT.haveIssue" equal true)
                     orQuery.add("chronics.disease.icd10" equal dmMongoRex)
                     orQuery.add("chronics.disease.icd10" equal htMongoRex)
 
