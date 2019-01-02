@@ -12,8 +12,8 @@ class QueryExtractor {
         NcdsExtractor(),
         MaleExtractor(),
         FemaleExtractor(),
-        ActiveLowExtractor(),
-        ActiveMidExtractor()
+        ActivitiesVeryHiExtractor(),
+        ActivitiesMidExtractor()
     )
 
     val queryMap = mutableMapOf<String, Query<Any>>()
