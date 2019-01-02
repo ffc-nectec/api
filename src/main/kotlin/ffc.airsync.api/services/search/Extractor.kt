@@ -36,7 +36,7 @@ class HtExtractor : Extractor<Boolean> {
 
 class AgeExtractor : Extractor<Int> {
     override fun extractFrom(query: String): Query<Int>? {
-        val age = Regex("""^อายุ ?(\d+)""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+        val age = Regex("""^.*อายุ ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age != null) {
             return Query("age", age, Operator.EQAUL)
@@ -47,7 +47,7 @@ class AgeExtractor : Extractor<Int> {
 
 class AgeMoreExtractor : Extractor<Int> {
     override fun extractFrom(query: String): Query<Int>? {
-        val age = Regex("""อายุมากกว่า ?(\d+)""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+        val age = Regex(""".*อายุมากกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age != null) {
             return Query("age", age, Operator.MORE_THAN)
@@ -58,7 +58,7 @@ class AgeMoreExtractor : Extractor<Int> {
 
 class AgeLessExtractor : Extractor<Int> {
     override fun extractFrom(query: String): Query<Int>? {
-        val age = Regex("""อายุน้อยกว่า ?(\d+)""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+        val age = Regex(""".*อายุน้อยกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age != null) {
             return Query("age", age, Operator.LESS_THEN)
