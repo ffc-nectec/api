@@ -69,7 +69,10 @@ class AgeLessExtractor : Extractor<Int> {
 
 class AgeBetweenExtractor : Extractor<List<Int>> {
     override fun extractFrom(query: String): Query<List<Int>>? {
-        val ageBetween = Regex(""".*อายุระหว่าง ?(\d+) ?(ปี)? ?ถึง ?(\d+).*""").matchEntire(query)?.groupValues
+        var ageBetween = Regex(""".*อายุระหว่าง ?(\d+) ?(ปี)? ?ถึง ?(\d+).*""").matchEntire(query)?.groupValues
+        if (ageBetween == null) {
+            ageBetween = Regex(""".*อายุระหว่าง ?(\d+) ?- ?(\d+).*""").matchEntire(query)?.groupValues
+        }
         val ageStart = ageBetween?.get(1)?.toIntOrNull()
         val ageEnd = ageBetween?.lastOrNull()?.toIntOrNull()
 
