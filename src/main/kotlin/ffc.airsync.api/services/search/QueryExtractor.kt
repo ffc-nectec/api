@@ -9,6 +9,7 @@ class QueryExtractor {
         AgeExtractor(),
         AgeMoreExtractor(),
         AgeLessExtractor(),
+        AgeBetweenExtractor(),
         NcdsExtractor(),
         MaleExtractor(),
         FemaleExtractor(),
