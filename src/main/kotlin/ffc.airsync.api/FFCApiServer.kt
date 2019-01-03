@@ -24,7 +24,6 @@ import ffc.airsync.api.services.MongoDbConnector
 import ffc.airsync.api.services.disease.DiseaseService
 import ffc.airsync.api.services.homehealthtype.HomeHealthTypeService
 import ffc.airsync.api.services.specialpp.SpecialPpService
-import ffc.airsync.api.services.template.TemplateService
 import org.eclipse.jetty.server.Server
 import org.joda.time.DateTimeZone
 import org.kohsuke.args4j.CmdLineException
@@ -81,14 +80,12 @@ internal class FFCApiServer(args: Array<String>) {
 
     private fun initDiseaseAndHomeHealtyType() {
         Thread {
-            println("1:4 Disease init.")
+            println("1:1 Disease init.")
             DiseaseService.init()
-            println("2:4 HomeHealthTypeService init.")
+            println("2:2 HomeHealthTypeService init.")
             HomeHealthTypeService.init()
-            println("3:4 SpecialPpService init.")
+            println("3:3 SpecialPpService init.")
             SpecialPpService.init()
-            println("4:4 Template init.")
-            TemplateService.init()
             println("Done init.")
         }.start()
     }

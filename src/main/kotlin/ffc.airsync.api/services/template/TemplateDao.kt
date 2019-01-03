@@ -5,12 +5,13 @@ import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.entity.Template
 
 interface TemplateDao {
-    fun insert(template: Template)
-    fun insert(template: List<Template>) {
-        template.forEach { insert(it) }
+    fun insert(orgId: String, template: Template)
+    fun insert(orgId: String, template: List<Template>) {
+        template.forEach { insert(orgId, it) }
     }
 
-    fun find(query: String): List<Template>
+    fun find(orgId: String, query: String): List<Template>
+    fun removeByOrgId(orgId: String)
 }
 
 val templates: TemplateDao by lazy { MongoTemplateDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }

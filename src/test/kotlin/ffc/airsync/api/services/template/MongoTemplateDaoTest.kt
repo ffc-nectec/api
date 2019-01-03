@@ -12,6 +12,8 @@ class MongoTemplateDaoTest {
     @JvmField
     @Rule
     val mongo = MongoDbTestRule()
+    private val ORG_ID = "5bbd7f5ebc920637b04c7796"
+    private val ORG_ID2 = "5bbd7f5ebc920637b04c7799"
 
     lateinit var dao: TemplateDao
 
@@ -25,13 +27,13 @@ class MongoTemplateDaoTest {
 
     @Test
     fun insert() {
-        dao.insert(template1)
-        dao.insert(template2)
+        dao.insert(ORG_ID, template1)
+        dao.insert(ORG_ID2, template2)
     }
 
     @Test
     fun insertList() {
-        dao.insert(ArrayList<Template>().apply {
+        dao.insert(ORG_ID, ArrayList<Template>().apply {
             add(template1)
             add(template2)
         })
@@ -39,19 +41,29 @@ class MongoTemplateDaoTest {
 
     @Test
     fun insertAndFind() {
-        dao.insert(template1)
-        dao.insert(template2)
+        dao.insert(ORG_ID, template1)
+        dao.insert(ORG_ID, template2)
 
-        dao.find("ตัวร้อน").last().value `should be equal to` "ปวดหัวตัวร้อน"
+        dao.find(ORG_ID, "ตัวร้อน").last().value `should be equal to` "ปวดหัวตัวร้อน"
     }
 
     @Test
     fun insertListAndFind() {
-        dao.insert(ArrayList<Template>().apply {
+        dao.insert(ORG_ID, ArrayList<Template>().apply {
             add(template1)
             add(template2)
         })
 
-        dao.find("ตัวร้อน").last().value `should be equal to` "ปวดหัวตัวร้อน"
+        dao.find(ORG_ID, "ตัวร้อน").last().value `should be equal to` "ปวดหัวตัวร้อน"
+    }
+
+    @Test
+    fun delete() {
+        dao.insert(ORG_ID, template1)
+        dao.insert(ORG_ID2, template2)
+
+        dao.removeByOrgId(ORG_ID)
+        dao.find(ORG_ID, "").isEmpty() `should be equal to` true
+        dao.find(ORG_ID2, "").isNotEmpty() `should be equal to` true
     }
 }
