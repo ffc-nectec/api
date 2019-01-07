@@ -134,7 +134,7 @@ class PersonResource {
         } else {
             persons.findByOrgId(orgId)
         }
-        return person.sortedWith(compareBy<Person> { it.age })
+        return person.sortedWith(compareBy<Person> { it.name })
             .paging(page, per_page)
     }
 
