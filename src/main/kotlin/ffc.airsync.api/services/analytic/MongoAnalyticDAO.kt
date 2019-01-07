@@ -135,7 +135,6 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
 
         queryExtractor.forEach { key, value ->
             printDebug("$key Filter ${value.operator} ${value.value}")
-            if (key == "age") ageFilter(value, mongoQuery)
 
             if (key == "agebetween") {
                 if (value.operator == Operator.EQAUL) {
@@ -143,7 +142,8 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
                     ageFilter(Query("age", v.first(), Operator.MORE_THAN), mongoQuery)
                     ageFilter(Query("age", v.last(), Operator.LESS_THEN), mongoQuery)
                 }
-            }
+            } else if (key == "age") ageFilter(value, mongoQuery)
+
             if (key == "male") if (value.value == true) {
                 mongoQuery.add("sex" equal "MALE")
             }
