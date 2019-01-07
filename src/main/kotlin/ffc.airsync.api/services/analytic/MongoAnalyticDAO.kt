@@ -142,7 +142,12 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
                     ageFilter(Query("age", v.first(), Operator.MORE_THAN), mongoQuery)
                     ageFilter(Query("age", v.last(), Operator.LESS_THEN), mongoQuery)
                 }
-            } else if (key == "age") ageFilter(value, mongoQuery)
+            }
+
+            if (key == "age") {
+                if (!queryExtractor.containsKey("agebetween"))
+                    ageFilter(value, mongoQuery)
+            }
 
             if (key == "male") if (value.value == true) {
                 mongoQuery.add("sex" equal "MALE")
