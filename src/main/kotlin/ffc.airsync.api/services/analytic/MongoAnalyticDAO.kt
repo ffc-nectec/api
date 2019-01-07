@@ -145,7 +145,6 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
 
                         mongoQuery.add("death" equal ("\$exists" equal false))
                     }
-
                 "age" ->
                     if (!queryExtractor.containsKey("agebetween")) {
                         ageFilter(value, mongoQuery)
@@ -190,6 +189,32 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
 
                         mongoQuery.add("\$or" equal orQuery)
                     }
+                "cataract" ->
+                    if (value.value == true)
+                        mongoQuery.add("healthAnalyze.result.CATARACT.haveIssue" equal true)
+
+                "farsighted" ->
+                    if (value.value == true)
+                        mongoQuery.add("healthAnalyze.result.FARSIGHTED.haveIssue" equal true)
+                "glaucoma" ->
+                    if (value.value == true)
+                        mongoQuery.add("healthAnalyze.result.GLAUCOMA.haveIssue" equal true)
+                "amd" ->
+                    if (value.value == true)
+                        mongoQuery.add("healthAnalyze.result.AMD.haveIssue" equal true)
+                "nearsighted" ->
+                    if (value.value == true)
+                        mongoQuery.add("healthAnalyze.result.NEARSIGHTED.haveIssue" equal true)
+                "cvd" ->
+                    if (value.value == true) {
+                        val orQuery = BasicBSONList()
+                        orQuery.add("healthAnalyze.result.CVD.severity" equal "VERY_HI")
+                        orQuery.add("healthAnalyze.result.CVD.severity" equal "MID")
+                        mongoQuery.add("\$or" equal orQuery)
+                    }
+                "oaknee" ->
+                    if (value.value == true)
+                        mongoQuery.add("healthAnalyze.result.OA_KNEE.haveIssue" equal true)
             }
         }
 
