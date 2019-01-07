@@ -241,9 +241,8 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
             }
             else -> {
                 val minus1Day = BsonDateTime(minusYears.plusYears(1).toDate().time)
-                val plus1Day = BsonDateTime(minusYears.minusYears(1).toDate().time)
                 mongoQuery.add("birthDateMongo" equal ("\$lt" equal minus1Day))
-                mongoQuery.add("birthDateMongo" equal ("\$gt" equal plus1Day))
+                mongoQuery.add("birthDateMongo" equal ("\$gt" equal calDate))
             }
         }
     }
