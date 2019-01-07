@@ -136,47 +136,43 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
         queryExtractor.forEach { key, value ->
             printDebug("$key Filter ${value.operator} ${value.value}")
 
-            if (key == "agebetween") {
-                if (value.operator == Operator.EQAUL) {
-                    val v = value.value as List<Int>
-                    ageFilter(Query("age", v.first(), Operator.MORE_THAN), mongoQuery)
-                    ageFilter(Query("age", v.last(), Operator.LESS_THEN), mongoQuery)
+            when (key) {
+                "agebetween" ->
+                    if (value.operator == Operator.EQAUL) {
+                        val v = value.value as List<Int>
+                        ageFilter(Query("age", v.first(), Operator.MORE_THAN), mongoQuery)
+                        ageFilter(Query("age", v.last(), Operator.LESS_THEN), mongoQuery)
 
-                    mongoQuery.add("death" equal ("\$exists" equal false))
-                }
-            }
+                        mongoQuery.add("death" equal ("\$exists" equal false))
+                    }
 
-            if (key == "age") {
-                if (!queryExtractor.containsKey("agebetween")) {
-                    ageFilter(value, mongoQuery)
-                    mongoQuery.add("death" equal ("\$exists" equal false))
-                }
-            }
-
-            if (key == "male") if (value.value == true) {
-                mongoQuery.add("sex" equal "MALE")
-            }
-            if (key == "female") if (value.value == true) {
-                mongoQuery.add("sex" equal "FEMALE")
-            }
-            if (key == "activitiesvhi") if (value.value == true) {
-                mongoQuery.add("healthAnalyze.result.ACTIVITIES.severity" equal "VERY_HI")
-            }
-            if (key == "activitiesmid") if (value.value == true) {
-                mongoQuery.add("healthAnalyze.result.ACTIVITIES.severity" equal "MID")
-            }
-            if (key == "dm") {
-                if (value.operator == Operator.EQAUL) {
-                    val orQuery = BasicBSONList()
-                    orQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
-                    orQuery.add("chronics.disease.icd10" equal dmMongoRex)
-                    mongoQuery.add("\$or" equal orQuery)
-                } else {
-                    mongoQuery.add("healthAnalyze.result.DM.haveIssue" equal false)
-                }
-            }
-            if (key == "ht") {
-                if (value.operator == Operator.EQAUL) {
+                "age" ->
+                    if (!queryExtractor.containsKey("agebetween")) {
+                        ageFilter(value, mongoQuery)
+                        mongoQuery.add("death" equal ("\$exists" equal false))
+                    }
+                "male" ->
+                    if (value.value == true)
+                        mongoQuery.add("sex" equal "MALE")
+                "female" ->
+                    if (value.value == true)
+                        mongoQuery.add("sex" equal "FEMALE")
+                "activitiesvhi" ->
+                    if (value.value == true)
+                        mongoQuery.add("healthAnalyze.result.ACTIVITIES.severity" equal "VERY_HI")
+                "activitiesmid" ->
+                    if (value.value == true)
+                        mongoQuery.add("healthAnalyze.result.ACTIVITIES.severity" equal "MID")
+                "dm" ->
+                    if (value.operator == Operator.EQAUL) {
+                        val orQuery = BasicBSONList()
+                        orQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
+                        orQuery.add("chronics.disease.icd10" equal dmMongoRex)
+                        mongoQuery.add("\$or" equal orQuery)
+                    } else {
+                        mongoQuery.add("healthAnalyze.result.DM.haveIssue" equal false)
+                    }
+                "ht" -> if (value.operator == Operator.EQAUL) {
                     val orQuery = BasicBSONList()
                     orQuery.add("healthAnalyze.result.HT.haveIssue" equal true)
                     orQuery.add("chronics.disease.icd10" equal htMongoRex)
@@ -184,17 +180,16 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
                 } else {
                     mongoQuery.add("healthAnalyze.result.DM.haveIssue" equal false)
                 }
-            }
-            if (key == "ncd") {
-                if (value.value == true) {
-                    val orQuery = BasicBSONList()
-                    orQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
-                    orQuery.add("healthAnalyze.result.HT.haveIssue" equal true)
-                    orQuery.add("chronics.disease.icd10" equal dmMongoRex)
-                    orQuery.add("chronics.disease.icd10" equal htMongoRex)
+                "ncd" ->
+                    if (value.value == true) {
+                        val orQuery = BasicBSONList()
+                        orQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
+                        orQuery.add("healthAnalyze.result.HT.haveIssue" equal true)
+                        orQuery.add("chronics.disease.icd10" equal dmMongoRex)
+                        orQuery.add("chronics.disease.icd10" equal htMongoRex)
 
-                    mongoQuery.add("\$or" equal orQuery)
-                }
+                        mongoQuery.add("\$or" equal orQuery)
+                    }
             }
         }
 
