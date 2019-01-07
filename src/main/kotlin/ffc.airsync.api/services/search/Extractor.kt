@@ -77,7 +77,7 @@ class AgeBetweenExtractor : Extractor<List<Int>> {
         val ageEnd = ageBetween?.lastOrNull()?.toIntOrNull()
 
         if (ageStart != null && ageEnd != null) {
-            return Query("agebetween", listOf(ageStart, ageEnd), Operator.LESS_THEN)
+            return Query("agebetween", listOf(ageStart, ageEnd), Operator.EQAUL)
         }
         return null
     }
