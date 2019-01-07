@@ -146,7 +146,7 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
                         mongoQuery.add("death" equal ("\$exists" equal false))
                     }
                 "age" ->
-                    if (!queryExtractor.containsKey("agebetween")) {
+                    if (queryExtractor["agebetween"] == null) {
                         ageFilter(value, mongoQuery)
                         mongoQuery.add("death" equal ("\$exists" equal false))
                     }
