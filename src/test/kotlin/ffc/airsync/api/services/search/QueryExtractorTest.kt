@@ -21,4 +21,46 @@ class QueryExtractorTest {
 
         query `should have value` Query("ht", true)
     }
+
+    @Test
+    fun male() {
+        val query = extractor.extract("เบาหวานผู้ชายอายุ 50")
+
+        query `should have value` Query("male", true)
+    }
+
+    @Test
+    fun female() {
+        val query = extractor.extract("ผู้หญิงที่เป็นความดันสูง")
+
+        query `should have value` Query("female", true)
+    }
+
+    @Test
+    fun age() {
+        val query = extractor.extract("ผู้หญิงอายุ 24 ปี ที่เป็นความดันสูง")
+
+        query `should have value` Query("age", 24, Operator.EQAUL)
+    }
+
+    @Test
+    fun ageMore() {
+        val query = extractor.extract("ผู้หญิงอายุมากกว่า 24 ปี ที่เป็นความดันสูง")
+
+        query `should have value` Query("age", 24, Operator.MORE_THAN)
+    }
+
+    @Test
+    fun ageLess() {
+        val query = extractor.extract("ผู้หญิงอายุน้อยกว่า 24 ปี ที่เป็นความดันสูง")
+
+        query `should have value` Query("age", 24, Operator.LESS_THEN)
+    }
+
+    @Test
+    fun ageBetween() {
+        val query = extractor.extract("อายุ 20 ถึง 60 ปี")
+
+        query `should have value` Query("agebetween", listOf(20, 60), Operator.EQAUL)
+    }
 }
