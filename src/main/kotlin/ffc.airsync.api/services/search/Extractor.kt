@@ -50,7 +50,7 @@ class AgeMoreExtractor : Extractor<Int> {
         var age = Regex(""".*อายุมากกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age == null)
-            age = Regex(""".*(\d+) ?ปีขึ้นไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+            age = Regex(""".* ?(\d+) ?ปีขึ้นไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age == null)
             age = Regex(""".*อายุ ?(\d+) ?(ปี)?ขึ้นไป.*""").matchEntire(query)?.groupValues?.get(1)?.toIntOrNull()
@@ -70,7 +70,7 @@ class AgeLessExtractor : Extractor<Int> {
         var age = Regex(""".*อายุน้อยกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age == null)
-            age = Regex(""".*(\d+) ?ปีลงไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+            age = Regex(""".* ?(\d+) ?ปีลงไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age == null)
             age = Regex(""".*อายุต่ำกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
