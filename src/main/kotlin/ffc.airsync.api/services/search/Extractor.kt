@@ -52,6 +52,9 @@ class AgeMoreExtractor : Extractor<Int> {
         if (age == null)
             age = Regex(""".*(\d+) ?(ปี)?ขึ้นไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
+        if (age == null)
+            age = Regex(""".*อายุสูงกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+
         if (age != null) {
             return Query("age", age, Operator.MORE_THAN)
         }
