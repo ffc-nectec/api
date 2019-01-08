@@ -63,4 +63,18 @@ class QueryExtractorTest {
 
         query `should have value` Query("agebetween", listOf(20, 60), Operator.EQAUL)
     }
+
+    @Test
+    fun ageMoreFemale() {
+        val query = extractor.extract("อายุ 65 ขึ้นไป")
+
+        query `should have value` Query("age", 65, Operator.MORE_THAN)
+    }
+
+    @Test
+    fun ageMore2Female() {
+        val query = extractor.extract("อายุ 65 ปีขึ้นไป")
+
+        query `should have value` Query("age", 65, Operator.MORE_THAN)
+    }
 }
