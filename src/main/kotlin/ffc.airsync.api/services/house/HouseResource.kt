@@ -107,6 +107,10 @@ class HouseResourceNewEndpoint {
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
     ): List<Person> {
+        houseService.getSingle(orgId, houseId).let {
+            require(it != null) { "ไม่พบข้อมูลบ้าน" }
+            require(it.no?.trim() != "0") { "ไม่สามารถดูสมาชิกในบ้านนอกเขตได้" }
+        }
         return houseService.getPerson(orgId, houseId)
     }
 
