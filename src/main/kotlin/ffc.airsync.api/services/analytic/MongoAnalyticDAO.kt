@@ -209,15 +209,14 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
                         if (value.value == true)
                             mongoQuery.add("healthAnalyze.result.NEARSIGHTED.haveIssue" equal true)
                     "cvd" ->
-                        if (value.value == true) {
-                            val semiOrQuery = BasicBSONList()
-                            semiOrQuery.add("healthAnalyze.result.CVD.severity" equal "VERY_HI")
-                            semiOrQuery.add("healthAnalyze.result.CVD.severity" equal "MID")
-                            mongoQuery.add("\$or" equal semiOrQuery)
-                        }
+                        if (value.value == true)
+                            mongoQuery.add("healthAnalyze.result.CVD.haveIssue" equal true)
                     "oaknee" ->
                         if (value.value == true)
                             mongoQuery.add("healthAnalyze.result.OA_KNEE.haveIssue" equal true)
+                    "depressive" ->
+                        if (value.value == true)
+                            mongoQuery.add("healthAnalyze.result.DEPRESSIVE.haveIssue" equal true)
                 }
             }
             if (orQuery.isNotEmpty())

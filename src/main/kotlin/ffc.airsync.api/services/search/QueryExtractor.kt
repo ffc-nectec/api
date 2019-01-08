@@ -21,7 +21,8 @@ class QueryExtractor {
         AmdExtractor(),
         NearsightedExtractor(),
         CvdExtractor(),
-        OaKneeExtractor()
+        OaKneeExtractor(),
+        DepressiveExtractor()
     )
 
     val queryMap = mutableMapOf<String, Query<Any>>()
