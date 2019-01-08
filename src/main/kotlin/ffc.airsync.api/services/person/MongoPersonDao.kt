@@ -111,14 +111,22 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
     }
 
     override fun find(query: String, orgId: String): List<Person> {
+        val output = arrayListOf<Person>()
         val regexStartWith = Document("\$regex", "^$query").append("\$options", "i")
         val qeryIsNumber = Regex("""^\d{4}\d*$""").matches(query)
+
+        query.split(" ").let {
+            if (it.size == 2) {
+                output.addAll(mongoNameLastNameSearch(it.first(), it.last(), orgId).map {
+                    it.toJson().parseTo<Person>()
+                }.toList())
+            }
+        }
 
         val result1 = mongoSearch(qeryIsNumber, regexStartWith, orgId)
             .map { it.toJson().parseTo<Person>() }.toList()
 
         if (result1.size < 50) {
-            val output = arrayListOf<Person>()
             output.addAll(result1)
             val regexQuery = Document("\$regex", query).append("\$options", "i")
             val result2 = mongoSearch(qeryIsNumber, regexQuery, orgId)
@@ -133,6 +141,17 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
 
             return result1
         }
+    }
+
+    private fun mongoNameLastNameSearch(firstName: String, lastName: String, orgId: String): FindIterable<Document> {
+        val firstNameRex = Document("\$regex", "^$firstName").append("\$options", "i")
+        val lastNameRex = Document("\$regex", "^$lastName").append("\$options", "i")
+        val queryTextCondition = BasicBSONList().apply {
+            add("orgIndex" equal ObjectId(orgId))
+            add("firstname" equal firstNameRex)
+            add("lastname" equal lastNameRex)
+        }
+        return dbCollection.find("\$and" equal queryTextCondition).limit(50)
     }
 
     private fun mongoSearch(
