@@ -142,14 +142,6 @@ class ActivitiesMidExtractor : Extractor<Boolean> {
     }
 }
 
-/*
- "CATARACT": {
-                "haveIssue": false,
-                "type": "HealthChecked",
-                "issue": "CATARACT",
-                "date": "2018-01-19"
-            }
- */
 class CataractExtractor : Extractor<Boolean> {
 
     override fun extractFrom(query: String): Query<Boolean>? {
@@ -160,14 +152,6 @@ class CataractExtractor : Extractor<Boolean> {
     }
 }
 
-/*
-"FARSIGHTED": {
-                "haveIssue": false,
-                "type": "HealthChecked",
-                "issue": "FARSIGHTED",
-                "date": "2018-01-19"
-            }
- */
 class FarsightedExtractor : Extractor<Boolean> {
 
     override fun extractFrom(query: String): Query<Boolean>? {
@@ -178,15 +162,6 @@ class FarsightedExtractor : Extractor<Boolean> {
     }
 }
 
-/*
-
-            "GLAUCOMA": {
-                "haveIssue": false,
-                "type": "HealthChecked",
-                "issue": "GLAUCOMA",
-                "date": "2018-01-19"
-            }
- */
 class GlaucomaExtractor : Extractor<Boolean> {
 
     override fun extractFrom(query: String): Query<Boolean>? {
@@ -197,14 +172,6 @@ class GlaucomaExtractor : Extractor<Boolean> {
     }
 }
 
-/*
-"AMD": {
-                "haveIssue": false,
-                "type": "HealthChecked",
-                "issue": "AMD",
-                "date": "2018-01-19"
-            },
- */
 class AmdExtractor : Extractor<Boolean> {
 
     override fun extractFrom(query: String): Query<Boolean>? {
@@ -215,14 +182,6 @@ class AmdExtractor : Extractor<Boolean> {
     }
 }
 
-/*
-"NEARSIGHTED": {
-                "haveIssue": false,
-                "type": "HealthChecked",
-                "issue": "NEARSIGHTED",
-                "date": "2018-01-19"
-            },
- */
 class NearsightedExtractor : Extractor<Boolean> {
 
     override fun extractFrom(query: String): Query<Boolean>? {
@@ -233,14 +192,6 @@ class NearsightedExtractor : Extractor<Boolean> {
     }
 }
 
-/*
-"CVD": {
-                "severity": "OK",
-                "type": "HealthProblem",
-                "issue": "CVD",
-                "date": "2018-01-19"
-            },
- */
 class CvdExtractor : Extractor<Boolean> {
 
     override fun extractFrom(query: String): Query<Boolean>? {
@@ -251,15 +202,6 @@ class CvdExtractor : Extractor<Boolean> {
     }
 }
 
-/*
-
-            "OA_KNEE": {
-                "haveIssue": false,
-                "type": "HealthChecked",
-                "issue": "OA_KNEE",
-                "date": "2018-01-19"
-            },
- */
 class OaKneeExtractor : Extractor<Boolean> {
 
     override fun extractFrom(query: String): Query<Boolean>? {
