@@ -50,16 +50,16 @@ class AgeMoreExtractor : Extractor<Int> {
         var age = Regex(""".*อายุมากกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age == null)
-            age = Regex(""".* ?(\d+) ?ปีขึ้นไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+            age = Regex(""".*อายุ ?(\d+) ?ปีขึ้นไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age == null)
             age = Regex(""".*อายุ ?(\d+) ?ขึ้นไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age == null)
-            age = Regex(""".*อายุ ?(\d+) ?ปีขึ้นไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+            age = Regex(""".*อายุสูงกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age == null)
-            age = Regex(""".*อายุสูงกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+            age = Regex(""".* (\d+) ?ปีขึ้นไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age != null) {
             return Query("age", age, Operator.MORE_THAN)
@@ -73,9 +73,6 @@ class AgeLessExtractor : Extractor<Int> {
         var age = Regex(""".*อายุน้อยกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age == null)
-            age = Regex(""".* ?(\d+) ?ปีลงไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
-
-        if (age == null)
             age = Regex(""".*อายุต่ำกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age == null)
@@ -83,6 +80,9 @@ class AgeLessExtractor : Extractor<Int> {
 
         if (age == null)
             age = Regex(""".*อายุ ?(\d+) ?ลงไป.*""").matchEntire(query)?.groupValues?.get(1)?.toIntOrNull()
+
+        if (age == null)
+            age = Regex(""".* (\d+) ?ปีลงไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age != null) {
             return Query("age", age, Operator.LESS_THEN)
