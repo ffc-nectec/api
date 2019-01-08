@@ -18,6 +18,8 @@ import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 import org.joda.time.LocalDate
+import java.sql.Time
+import kotlin.system.measureTimeMillis
 
 internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao(host, port, "ffc", "person") {
 
@@ -127,103 +129,108 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
     }
 
     override fun smartQuery(orgId: String, query: String): List<Person> {
+        var result: List<Person> = emptyList()
+        val runtime = measureTimeMillis {
+            val extractor = QueryExtractor()
+            val queryExtractor = extractor.extract(query)
+            val mongoQuery = BasicBSONList()
+            mongoQuery.add("orgIndex" equal ObjectId(orgId))
 
-        val extractor = QueryExtractor()
-        val queryExtractor = extractor.extract(query)
-        val mongoQuery = BasicBSONList()
-        mongoQuery.add("orgIndex" equal ObjectId(orgId))
+            queryExtractor.forEach { key, value ->
+                printDebug("$key Filter ${value.operator} ${value.value}")
 
-        queryExtractor.forEach { key, value ->
-            printDebug("$key Filter ${value.operator} ${value.value}")
+                when (key) {
+                    "agebetween" ->
+                        if (value.operator == Operator.EQAUL) {
+                            val v = value.value as List<Int>
+                            ageFilter(Query("age", v.first(), Operator.MORE_THAN), mongoQuery)
+                            ageFilter(Query("age", v.last(), Operator.LESS_THEN), mongoQuery)
 
-            when (key) {
-                "agebetween" ->
-                    if (value.operator == Operator.EQAUL) {
-                        val v = value.value as List<Int>
-                        ageFilter(Query("age", v.first(), Operator.MORE_THAN), mongoQuery)
-                        ageFilter(Query("age", v.last(), Operator.LESS_THEN), mongoQuery)
-
-                        mongoQuery.add("death" equal ("\$exists" equal false))
-                    }
-                "age" ->
-                    if (queryExtractor["agebetween"] == null) {
-                        ageFilter(value, mongoQuery)
-                        mongoQuery.add("death" equal ("\$exists" equal false))
-                    }
-                "male" ->
-                    if (value.value == true)
-                        mongoQuery.add("sex" equal "MALE")
-                "female" ->
-                    if (value.value == true)
-                        mongoQuery.add("sex" equal "FEMALE")
-                "activitiesvhi" ->
-                    if (value.value == true)
-                        mongoQuery.add("healthAnalyze.result.ACTIVITIES.severity" equal "VERY_HI")
-                "activitiesmid" ->
-                    if (value.value == true)
-                        mongoQuery.add("healthAnalyze.result.ACTIVITIES.severity" equal "MID")
-                "dm" ->
-                    if (value.operator == Operator.EQAUL) {
+                            mongoQuery.add("death" equal ("\$exists" equal false))
+                        }
+                    "age" ->
+                        if (queryExtractor["agebetween"] == null) {
+                            ageFilter(value, mongoQuery)
+                            mongoQuery.add("death" equal ("\$exists" equal false))
+                        }
+                    "male" ->
+                        if (value.value == true)
+                            mongoQuery.add("sex" equal "MALE")
+                    "female" ->
+                        if (value.value == true)
+                            mongoQuery.add("sex" equal "FEMALE")
+                    "activitiesvhi" ->
+                        if (value.value == true)
+                            mongoQuery.add("healthAnalyze.result.ACTIVITIES.severity" equal "VERY_HI")
+                    "activitiesmid" ->
+                        if (value.value == true)
+                            mongoQuery.add("healthAnalyze.result.ACTIVITIES.severity" equal "MID")
+                    "dm" ->
+                        if (value.operator == Operator.EQAUL) {
+                            val orQuery = BasicBSONList()
+                            orQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
+                            orQuery.add("chronics.disease.icd10" equal dmMongoRex)
+                            mongoQuery.add("\$or" equal orQuery)
+                        } else {
+                            mongoQuery.add("healthAnalyze.result.DM.haveIssue" equal false)
+                        }
+                    "ht" -> if (value.operator == Operator.EQAUL) {
                         val orQuery = BasicBSONList()
-                        orQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
-                        orQuery.add("chronics.disease.icd10" equal dmMongoRex)
+                        orQuery.add("healthAnalyze.result.HT.haveIssue" equal true)
+                        orQuery.add("chronics.disease.icd10" equal htMongoRex)
                         mongoQuery.add("\$or" equal orQuery)
                     } else {
                         mongoQuery.add("healthAnalyze.result.DM.haveIssue" equal false)
                     }
-                "ht" -> if (value.operator == Operator.EQAUL) {
-                    val orQuery = BasicBSONList()
-                    orQuery.add("healthAnalyze.result.HT.haveIssue" equal true)
-                    orQuery.add("chronics.disease.icd10" equal htMongoRex)
-                    mongoQuery.add("\$or" equal orQuery)
-                } else {
-                    mongoQuery.add("healthAnalyze.result.DM.haveIssue" equal false)
+                    "ncd" ->
+                        if (value.value == true) {
+                            val orQuery = BasicBSONList()
+                            orQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
+                            orQuery.add("healthAnalyze.result.HT.haveIssue" equal true)
+                            orQuery.add("chronics.disease.icd10" equal dmMongoRex)
+                            orQuery.add("chronics.disease.icd10" equal htMongoRex)
+
+                            mongoQuery.add("\$or" equal orQuery)
+                        }
+                    "cataract" ->
+                        if (value.value == true)
+                            mongoQuery.add("healthAnalyze.result.CATARACT.haveIssue" equal true)
+
+                    "farsighted" ->
+                        if (value.value == true)
+                            mongoQuery.add("healthAnalyze.result.FARSIGHTED.haveIssue" equal true)
+                    "glaucoma" ->
+                        if (value.value == true)
+                            mongoQuery.add("healthAnalyze.result.GLAUCOMA.haveIssue" equal true)
+                    "amd" ->
+                        if (value.value == true)
+                            mongoQuery.add("healthAnalyze.result.AMD.haveIssue" equal true)
+                    "nearsighted" ->
+                        if (value.value == true)
+                            mongoQuery.add("healthAnalyze.result.NEARSIGHTED.haveIssue" equal true)
+                    "cvd" ->
+                        if (value.value == true) {
+                            val orQuery = BasicBSONList()
+                            orQuery.add("healthAnalyze.result.CVD.severity" equal "VERY_HI")
+                            orQuery.add("healthAnalyze.result.CVD.severity" equal "MID")
+                            mongoQuery.add("\$or" equal orQuery)
+                        }
+                    "oaknee" ->
+                        if (value.value == true)
+                            mongoQuery.add("healthAnalyze.result.OA_KNEE.haveIssue" equal true)
                 }
-                "ncd" ->
-                    if (value.value == true) {
-                        val orQuery = BasicBSONList()
-                        orQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
-                        orQuery.add("healthAnalyze.result.HT.haveIssue" equal true)
-                        orQuery.add("chronics.disease.icd10" equal dmMongoRex)
-                        orQuery.add("chronics.disease.icd10" equal htMongoRex)
-
-                        mongoQuery.add("\$or" equal orQuery)
-                    }
-                "cataract" ->
-                    if (value.value == true)
-                        mongoQuery.add("healthAnalyze.result.CATARACT.haveIssue" equal true)
-
-                "farsighted" ->
-                    if (value.value == true)
-                        mongoQuery.add("healthAnalyze.result.FARSIGHTED.haveIssue" equal true)
-                "glaucoma" ->
-                    if (value.value == true)
-                        mongoQuery.add("healthAnalyze.result.GLAUCOMA.haveIssue" equal true)
-                "amd" ->
-                    if (value.value == true)
-                        mongoQuery.add("healthAnalyze.result.AMD.haveIssue" equal true)
-                "nearsighted" ->
-                    if (value.value == true)
-                        mongoQuery.add("healthAnalyze.result.NEARSIGHTED.haveIssue" equal true)
-                "cvd" ->
-                    if (value.value == true) {
-                        val orQuery = BasicBSONList()
-                        orQuery.add("healthAnalyze.result.CVD.severity" equal "VERY_HI")
-                        orQuery.add("healthAnalyze.result.CVD.severity" equal "MID")
-                        mongoQuery.add("\$or" equal orQuery)
-                    }
-                "oaknee" ->
-                    if (value.value == true)
-                        mongoQuery.add("healthAnalyze.result.OA_KNEE.haveIssue" equal true)
             }
+
+            result = if (mongoQuery.size > 1)
+                dbCollection.find("\$and" equal mongoQuery).limit(50).map {
+                    it.toJson().parseTo<Person>()
+                }?.toList() ?: throw NoSuchElementException("ไม่พบ สิ่งที่ค้้นหา")
+            else
+                result
         }
 
-        return if (mongoQuery.size > 1)
-            dbCollection.find("\$and" equal mongoQuery).limit(50).map {
-                it.toJson().parseTo<Person>()
-            }?.toList() ?: throw NoSuchElementException("ไม่พบ สิ่งที่ค้้นหา")
-        else
-            emptyList()
+        printDebug("\t\tSmart query runtime ${Time(runtime)}")
+        return result
     }
 
     private fun ageFilter(
