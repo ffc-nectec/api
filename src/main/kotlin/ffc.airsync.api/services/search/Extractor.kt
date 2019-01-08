@@ -203,6 +203,16 @@ class AmdExtractor : Extractor<Boolean> {
     }
 }
 
+class DepressiveExtractor : Extractor<Boolean> {
+
+    override fun extractFrom(query: String): Query<Boolean>? {
+        if (query.containSome("ซึมเศร้า")) {
+            return Query("depressive", true)
+        }
+        return null
+    }
+}
+
 class NearsightedExtractor : Extractor<Boolean> {
 
     override fun extractFrom(query: String): Query<Boolean>? {
