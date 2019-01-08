@@ -140,7 +140,7 @@ class FemaleExtractor : Extractor<Boolean> {
 class ActivitiesVeryHiExtractor : Extractor<Boolean> {
 
     override fun extractFrom(query: String): Query<Boolean>? {
-        if (query.containSome("ติดเตียง")) {
+        if (query.containSome("ติดเตียง", "ภาวะพึ่งพิง")) {
             return Query("activitiesvhi", true)
         }
         return null
@@ -150,7 +150,7 @@ class ActivitiesVeryHiExtractor : Extractor<Boolean> {
 class ActivitiesMidExtractor : Extractor<Boolean> {
 
     override fun extractFrom(query: String): Query<Boolean>? {
-        if (query.containSome("ติดบ้าน")) {
+        if (query.containSome("ติดบ้าน", "ภาวะพึ่งพิง")) {
             return Query("activitiesmid", true)
         }
         return null
