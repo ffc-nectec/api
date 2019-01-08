@@ -50,7 +50,7 @@ class AgeMoreExtractor : Extractor<Int> {
         var age = Regex(""".*อายุมากกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age == null)
-            age = Regex(""".*อายุ ?(\d+) ?ขึ้นไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+            age = Regex(""".*(\d+) ?(ปี)?ขึ้นไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age != null) {
             return Query("age", age, Operator.MORE_THAN)
