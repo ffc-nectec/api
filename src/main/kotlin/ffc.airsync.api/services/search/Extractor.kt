@@ -50,7 +50,10 @@ class AgeMoreExtractor : Extractor<Int> {
         var age = Regex(""".*อายุมากกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
 
         if (age == null)
-            age = Regex(""".*(\d+) ?(ปี)?ขึ้นไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+            age = Regex(""".*(\d+) ?ปีขึ้นไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+
+        if (age == null)
+            age = Regex(""".*อายุ ?(\d+) ?(ปี)?ขึ้นไป.*""").matchEntire(query)?.groupValues?.get(1)?.toIntOrNull()
 
         if (age == null)
             age = Regex(""".*อายุสูงกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
@@ -64,7 +67,16 @@ class AgeMoreExtractor : Extractor<Int> {
 
 class AgeLessExtractor : Extractor<Int> {
     override fun extractFrom(query: String): Query<Int>? {
-        val age = Regex(""".*อายุน้อยกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+        var age = Regex(""".*อายุน้อยกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+
+        if (age == null)
+            age = Regex(""".*(\d+) ?ปีลงไป.*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+
+        if (age == null)
+            age = Regex(""".*อายุต่ำกว่า ?(\d+).*""").matchEntire(query)?.groupValues?.lastOrNull()?.toIntOrNull()
+
+        if (age == null)
+            age = Regex(""".*อายุ(\d+) ?(ปี)?ลงไป.*""").matchEntire(query)?.groupValues?.get(1)?.toIntOrNull()
 
         if (age != null) {
             return Query("age", age, Operator.LESS_THEN)
