@@ -38,7 +38,7 @@ class UserResource {
     @GET
     @Developer
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun get(@PathParam("orgUuid") orgId: String): Response {
         return Response.status(Response.Status.CREATED).entity(users.findUser(orgId)).build()
     }
