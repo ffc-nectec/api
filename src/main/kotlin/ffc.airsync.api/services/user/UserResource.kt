@@ -36,6 +36,7 @@ class UserResource {
     }
 
     @GET
+    @Developer
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     @RolesAllowed("ORG", "ADMIN")
     fun get(@PathParam("orgUuid") orgId: String): Response {
