@@ -34,8 +34,8 @@ interface OrgDao : Dao {
 }
 
 val orgs: OrgDao by lazy { MongoOrgDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
-private const val thaiCharacters = """กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮa-zA-Z"""
-private const val thaiVowels = """ะาิีึืุูเแโไใัํำ่้๊๋็์ฤฦ0-9\-"""
+private const val thaiCharacters = """เแโไใกขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮa-zA-Z"""
+private const val thaiVowels = """ะาิีึืุูัํำ่้๊๋็์ฤฦ0-9\-"""
 private val thaiRegx = Regex("^[$thaiCharacters][$thaiCharacters$thaiVowels]+\$")
 
 /**

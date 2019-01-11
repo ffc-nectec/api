@@ -212,4 +212,15 @@ class MongoOrgTest {
 
         dao.find("รพ.สต.พรทิพา1").first().displayName `should equal` "รพ.สต. พรทิพา 1"
     }
+
+    @Test
+    fun testBug() {
+
+        val maeOrg = dao.insert(Org("โรงพยาบาลส่งเสริมสุขภาพตำบลแม่ข้าวต้ม", "192.168.99.3").apply {
+            displayName = "รพ.สต.โรงพยาบาลส่งเสริมสุขภาพตำบลแม่ข้าวต้ม"
+            tel = "037-261-044"
+            address = "161 ม.29 ต.สง่างาม อ.สดใส จ.ผิวผ่อง"
+            link!!.keys["pcucode"] = "203"
+        })
+    }
 }
