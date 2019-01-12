@@ -166,30 +166,32 @@ internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao
                     "activitiesmid" ->
                         if (value.value == true)
                             orQuery.add("healthAnalyze.result.ACTIVITIES.severity" equal "MID")
-                    "dm" ->
-                        if (value.operator == Operator.EQAUL) {
-                            val semiOrQuery = BasicBSONList()
-                            semiOrQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
-                            semiOrQuery.add("chronics.disease.icd10" equal dmMongoRex)
-                            mongoQuery.add("\$or" equal semiOrQuery)
-                        } else {
-                            mongoQuery.add("healthAnalyze.result.DM.haveIssue" equal false)
-                        }
-                    "ht" -> if (value.operator == Operator.EQAUL) {
-                        val semiOrQuery = BasicBSONList()
-                        semiOrQuery.add("healthAnalyze.result.HT.haveIssue" equal true)
-                        semiOrQuery.add("chronics.disease.icd10" equal htMongoRex)
-                        mongoQuery.add("\$or" equal semiOrQuery)
+                    "dm" -> if (value.operator == Operator.EQAUL) {
+                        //TODO find dm/ht in chronice after or healthanalyzer can analyze in chronice
+//                        val semiOrQuery = BasicBSONList()
+//                        semiOrQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
+//                        semiOrQuery.add("chronics.disease.icd10" equal dmMongoRex)
+//                        mongoQuery.add("\$or" equal semiOrQuery)
+                        mongoQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
                     } else {
                         mongoQuery.add("healthAnalyze.result.DM.haveIssue" equal false)
+                    }
+                    "ht" -> if (value.operator == Operator.EQAUL) {
+//                        val semiOrQuery = BasicBSONList()
+//                        semiOrQuery.add("healthAnalyze.result.HT.haveIssue" equal true)
+//                        semiOrQuery.add("chronics.disease.icd10" equal htMongoRex)
+//                        mongoQuery.add("\$or" equal semiOrQuery)
+                        mongoQuery.add("healthAnalyze.result.HT.haveIssue" equal true)
+                    } else {
+                        mongoQuery.add("healthAnalyze.result.HT.haveIssue" equal false)
                     }
                     "ncd" ->
                         if (value.value == true) {
                             val semiOrQuery = BasicBSONList()
                             semiOrQuery.add("healthAnalyze.result.DM.haveIssue" equal true)
                             semiOrQuery.add("healthAnalyze.result.HT.haveIssue" equal true)
-                            semiOrQuery.add("chronics.disease.icd10" equal dmMongoRex)
-                            semiOrQuery.add("chronics.disease.icd10" equal htMongoRex)
+                            //semiOrQuery.add("chronics.disease.icd10" equal dmMongoRex)
+                            //semiOrQuery.add("chronics.disease.icd10" equal htMongoRex)
                             mongoQuery.add("\$or" equal semiOrQuery)
                         }
                     "cataract" ->
