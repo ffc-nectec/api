@@ -23,6 +23,7 @@ import ffc.airsync.api.services.Dao
 import ffc.airsync.api.services.Sync
 import ffc.airsync.api.services.disease.findIcd10
 import ffc.entity.Person
+import ffc.entity.healthcare.analyze.HealthIssue
 
 interface PersonDao : Dao, Sync<Person> {
     fun insert(orgId: String, person: Person): Person
@@ -31,6 +32,7 @@ interface PersonDao : Dao, Sync<Person> {
     fun update(orgId: String, person: Person): Person
 
     fun getPerson(orgId: String, personId: String): Person
+    fun getAnalyticByHouseId(orgId: String, houseId: String): Map<HealthIssue.Issue, List<HealthIssue>>
 
     fun findByOrgId(orgId: String): List<Person>
     fun getPeopleInHouse(orgId: String, houseId: String): List<Person>

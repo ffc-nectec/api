@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.person
 
 import ffc.airsync.api.MongoDbTestRule
+import ffc.airsync.api.resourceFile
 import ffc.entity.Link
 import ffc.entity.Person
 import ffc.entity.System
@@ -8,6 +9,8 @@ import ffc.entity.ThaiCitizenId
 import ffc.entity.gson.parseTo
 import ffc.entity.healthcare.Chronic
 import ffc.entity.healthcare.Icd10
+import ffc.entity.healthcare.analyze.HealthAnalyzer
+import ffc.entity.healthcare.analyze.HealthIssue
 import ffc.entity.update
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
@@ -34,6 +37,7 @@ class MongoPersonTest {
         birthDate = LocalDate.now().minusYears(20)
         chronics.add(Chronic(Icd10("fair", "dxabc00x")))
         chronics.add(Chronic(Icd10("fair", "abcffe982")))
+        healthAnalyze = resourceFile("analyticNotDM.json").parseTo<HealthAnalyzer>()
         link = Link(System.JHICS)
         link!!.isSynced = false
         houseId = "12345678901"
@@ -47,6 +51,7 @@ class MongoPersonTest {
         birthDate = LocalDate.now().minusYears(27)
         chronics.add(Chronic(Icd10("floor", "I10")))
         chronics.add(Chronic(Icd10("fary", "I11")))
+        healthAnalyze = resourceFile("analyticNotHT.json").parseTo<HealthAnalyzer>()
         link = Link(System.JHICS)
         link!!.isSynced = true
         houseId = "11111111111"
@@ -294,5 +299,17 @@ class MongoPersonTest {
         with(dao.findHouseId(ORG_ID, insert.last().id)) {
             this `should be equal to` `กระต่าย`.houseId
         }
+    }
+
+    @Test
+    fun getAnalyticByHouseId() {
+        dao.insert(ORG_ID, arrayListOf<Person>().apply {
+            add(`สมหญิง`)
+            add(`สมชาย`)
+        })
+        val result = dao.getAnalyticByHouseId(ORG_ID, "12345678901")
+        result.size `should be equal to` 3
+        result[HealthIssue.Issue.HT]!!.first().haveIssue `should be equal to` false
+        result[HealthIssue.Issue.DEMENTIA]!!.last().type `should be equal to` "HealthChecked"
     }
 }

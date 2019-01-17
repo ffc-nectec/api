@@ -12,6 +12,9 @@ import ffc.airsync.api.services.util.plus
 import ffc.entity.Entity
 import ffc.entity.Person
 import ffc.entity.gson.parseTo
+import ffc.entity.gson.toJson
+import ffc.entity.healthcare.analyze.HealthAnalyzer
+import ffc.entity.healthcare.analyze.HealthIssue
 import org.bson.BsonDateTime
 import org.bson.Document
 import org.bson.types.BasicBSONList
@@ -23,6 +26,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
         try {
             dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
             dbCollection.createIndex("houseId" equal 1, IndexOptions().unique(false))
+            dbCollection.createIndex(("houseId" equal 1) plus ("orgIndex" equal 1), IndexOptions().unique(false))
             dbCollection.createIndex("relationships.block" equal 1, IndexOptions().unique(false))
             dbCollection.createIndex(("orgIndex" equal 1) plus ("_id" equal 1), IndexOptions().unique(true))
         } catch (ignore: Exception) {
@@ -106,6 +110,25 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
             .map { it.toJson().parseTo<Person>() }.toList()
     }
 
+    override fun getAnalyticByHouseId(orgId: String, houseId: String): Map<HealthIssue.Issue, List<HealthIssue>> {
+        val result = dbCollection.find(("houseId" equal houseId) plus ("orgIndex" equal ObjectId(orgId)))
+            .projection("healthAnalyze" equal 1)
+            .map {
+                it["healthAnalyze"]?.toJson()?.parseTo<HealthAnalyzer>()
+            }.toMutableList()
+        result.removeIf { it == null }
+        val output = hashMapOf<HealthIssue.Issue, ArrayList<HealthIssue>>()
+
+        result.map { it!! }.forEach {
+            it.result.forEach { key, value ->
+                if (output[key] == null)
+                    output[key] = arrayListOf()
+                output[key]!!.add(value)
+            }
+        }
+        return output
+    }
+
     override fun remove(orgId: String) {
         dbCollection.deleteMany("orgIndex" equal ObjectId(orgId))
     }
@@ -126,7 +149,7 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
         val result1 = mongoSearch(qeryIsNumber, regexStartWith, orgId)
             .map { it.toJson().parseTo<Person>() }.toList()
 
-        if (result1.size < 50) {
+        return if (result1.size < 50) {
             output.addAll(result1)
             val regexQuery = Document("\$regex", query).append("\$options", "i")
             val result2 = mongoSearch(qeryIsNumber, regexQuery, orgId)
@@ -136,10 +159,10 @@ internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao
                     output.add(person)
             }
 
-            return output
+            output
         } else {
 
-            return result1
+            result1
         }
     }
 
