@@ -33,9 +33,6 @@ class SyncPersonResource : Sync<Person> {
         @PathParam("block") block: Int,
         item: List<Person>
     ): List<Person> {
-        item.forEach { person ->
-            mapDeadIcd10(person)
-        }
         return persons.insertBlock(orgId, block, item)
     }
 
