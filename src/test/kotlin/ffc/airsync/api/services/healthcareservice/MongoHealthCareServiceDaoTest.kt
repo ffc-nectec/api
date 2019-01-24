@@ -142,6 +142,20 @@ class MongoHealthCareServiceDaoTest {
     }
 
     @Test
+    fun update() {
+        val visitList = arrayListOf<HealthCareService>()
+        visitList.add(visit)
+        visitList.add(visit2)
+
+        val healthCareService = dao.insert(visitList, ORG_ID).first()
+
+        healthCareService.pulseRate `should equal` visit.pulseRate
+        healthCareService.pulseRate = 90.5
+
+        dao.update(healthCareService, ORG_ID).pulseRate `should equal` 90.5
+    }
+
+    @Test
     fun getByOrgId() {
         val insert = dao.insert(visit, ORG_ID)
         dao.insert(visit2, ORG_ID)
