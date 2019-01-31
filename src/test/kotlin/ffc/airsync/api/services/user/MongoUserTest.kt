@@ -22,37 +22,37 @@ class MongoUserTest {
 
     @Before
     fun initDb() {
-        val serverAddress = mongo.address
-
-        dao = MongoUserDao(serverAddress.hostString, serverAddress.port)
+        dao = MongoUserDao(mongo.address)
         val org = Org("รพสตNectec", "192.168.99.3")
-        nectecOrg = MongoOrgDao(serverAddress.hostString, serverAddress.port).insert(org)
+        nectecOrg = MongoOrgDao(mongo.address).insert(org)
     }
 
-    fun Org(name: String = "NECTEC", ip: String = "127.0.01"): Organization =
-        Organization().apply {
-            this.name = name
-            bundle["lastKnownIp"] = ip // "203.111.222.123"
-            this.users = userList.toMutableList()
-        }
+    companion object {
+        fun Org(name: String = "NECTEC", ip: String = "127.0.01"): Organization =
+            Organization().apply {
+                this.name = name
+                bundle["lastKnownIp"] = ip // "203.111.222.123"
+                this.users = userList.toMutableList()
+            }
 
-    val userList = listOf(
-        User("maxkung", User.Role.ADMIN),
-        User("somYing"),
-        User("somChai"),
-        User("adm"),
-        User("ADM"),
-        User("newuser"),
-        User("usr_db"),
-        User("Drug_Store_Admin")
-    )
+        val userList = listOf(
+            User("maxkung", User.Role.ADMIN),
+            User("somYing"),
+            User("somChai"),
+            User("adm"),
+            User("ADM"),
+            User("newuser"),
+            User("usr_db"),
+            User("Drug_Store_Admin")
+        )
 
-    fun User(name: String, role: User.Role = User.Role.USER): User =
-        User().apply {
-            this.name = name
-            password = "catbite"
-            this.roles.add(role)
-        }
+        fun User(name: String, role: User.Role = User.Role.USER): User =
+            User().apply {
+                this.name = name
+                password = "catbite"
+                this.roles.add(role)
+            }
+    }
 
     @Test
     fun findAll() {

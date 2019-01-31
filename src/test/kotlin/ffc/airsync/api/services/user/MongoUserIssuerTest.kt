@@ -27,11 +27,9 @@ class MongoUserIssuerTest {
 
     @Before
     fun initDb() {
-        val serverAddress = mongo.address
-
-        dao = MongoUserDao(serverAddress.hostString, serverAddress.port)
+        dao = MongoUserDao(mongo.address)
         val org = Org("รพสตNectec", "192.168.99.3")
-        nectecOrg = MongoOrgDao(serverAddress.hostString, serverAddress.port).insert(org)
+        nectecOrg = MongoOrgDao(mongo.address).insert(org)
     }
 
     fun Org(name: String = "NECTEC", ip: String = "127.0.01"): Organization =
