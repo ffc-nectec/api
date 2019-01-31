@@ -5,7 +5,6 @@ import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.user.users
 import org.joda.time.DateTime
 import javax.annotation.security.RolesAllowed
-import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.NotFoundException
 import javax.ws.rs.PUT
@@ -14,17 +13,18 @@ import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 
-@Consumes(MediaType.APPLICATION_JSON)
+@Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 class LegalResource {
 
-    val privacy by lazy { LegalDocuments(LegalDocument.Type.privacy) }
-    val terms by lazy { LegalDocuments(LegalDocument.Type.terms) }
+    private val privacy by lazy { LegalDocuments(LegalDocument.Type.privacy) }
+
+    private val terms by lazy { LegalDocuments(LegalDocument.Type.terms) }
 
     @GET
     @Path("/legal/privacy/latest")
     @Cache(maxAge = 3600 * 24)
-    @Produces("text/markdown")
+    @Produces("text/markdown; charset=utf-8")
     fun getPrivacy(): String {
         return privacy.latest.content
     }
@@ -32,7 +32,7 @@ class LegalResource {
     @GET
     @Path("/legal/terms/latest")
     @Cache(maxAge = 3600 * 24)
-    @Produces("text/markdown")
+    @Produces("text/markdown; charset=utf-8")
     fun getTerms(): String {
         return terms.latest.content
     }
