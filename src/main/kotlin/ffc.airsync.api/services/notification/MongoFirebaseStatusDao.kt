@@ -9,10 +9,7 @@ import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
 
-class MongoFirebaseStatusDao(
-    host: String,
-    port: Int
-) : FirebaseStatusDao, MongoDao(host, port, "ffc", "firebasestatus") {
+class MongoFirebaseStatusDao : FirebaseStatusDao, MongoDao("ffc", "firebasestatus") {
 
     init {
         try {

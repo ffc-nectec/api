@@ -5,10 +5,7 @@ import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 
-class MongoFirebaseNotificationTokenDao(
-    host: String,
-    port: Int
-) : MongoDao(host, port, "ffc", "organ"), NotifactionDao {
+class MongoFirebaseNotificationTokenDao : MongoDao("ffc", "organ"), NotifactionDao {
 
     override fun createFirebase(orgId: String, firebaseToken: String, isOrg: Boolean) {
         val query = "id" equal orgId

@@ -29,8 +29,8 @@ private const val HOMEVISITTYPE = "HomeVisit"
 private const val SPECIALPPTYPE = "SpecialPP"
 private const val NCDSCREENTYPE = "NCDScreen"
 
-abstract class MongoSyncDao<T : Entity>(host: String, port: Int, dbName: String, collection: String) :
-    MongoDao(host, port, dbName, collection), Sync<T> {
+abstract class MongoSyncDao<T : Entity>(dbName: String, collection: String) :
+    MongoDao(dbName, collection), Sync<T> {
 
     override fun insertBlock(orgId: String, block: Int, item: List<T>): List<T> {
         val itemInsert = item.map {

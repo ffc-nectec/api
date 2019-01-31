@@ -19,7 +19,7 @@ class MongoSpecialPpTypeTest {
 
     @Before
     fun setUp() {
-        dao = MongoSpecialPpType(mongo.address.hostString, mongo.address.port)
+        dao = MongoSpecialPpType()
         dao.insert(ppType)
     }
 

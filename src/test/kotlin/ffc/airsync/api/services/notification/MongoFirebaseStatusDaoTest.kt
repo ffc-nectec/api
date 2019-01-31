@@ -20,7 +20,7 @@ class MongoFirebaseStatusDaoTest {
 
     @Before
     fun initDb() {
-        dao = MongoFirebaseStatusDao(mongo.address.hostString, mongo.address.port)
+        dao = MongoFirebaseStatusDao()
 
         dao.insert("5bbd7f5ebc920637b04c7796", id1)
         dao.insert("5bbd7f5ebc920637b04c7796", id2)

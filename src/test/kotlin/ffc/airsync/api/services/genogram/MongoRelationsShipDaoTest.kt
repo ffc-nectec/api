@@ -72,10 +72,9 @@ class MongoRelationsShipDaoTest {
 
     @Before
     fun initDb() {
-        val serverAddress = mongo.address
 
-        daoPerson = MongoPersonDao(serverAddress.hostString, serverAddress.port)
-        dao = MongoRelationsShipDao(serverAddress.hostString, serverAddress.port)
+        daoPerson = MongoPersonDao()
+        dao = MongoRelationsShipDao()
 
         somChai = daoPerson.insert(ORG_ID, `สมชาย`)
         somYing = daoPerson.insert(ORG_ID, `สมหญิง`)

@@ -13,7 +13,7 @@ import ffc.entity.gson.parseTo
 import ffc.entity.healthcare.Icd10
 import org.bson.Document
 
-internal class MongoDiseaseDao(host: String, port: Int) : MongoDao(host, port, "ffc", "disease"), DiseaseDao {
+internal class MongoDiseaseDao : MongoDao("ffc", "disease"), DiseaseDao {
 
     init {
         val searchIndex = documentOf(

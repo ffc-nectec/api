@@ -94,7 +94,7 @@ class MongoHealthCareServiceDaoTest {
 
     @Before
     fun initDb() {
-        dao = MongoHealthCareServiceDao(mongo.address.hostString, mongo.address.port)
+        dao = MongoHealthCareServiceDao()
     }
 
     @Test

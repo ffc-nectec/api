@@ -15,7 +15,7 @@ import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 
-class MongoRelationsShipDao(host: String, port: Int) : MongoDao(host, port, "ffc", "person"), GenoGramDao {
+class MongoRelationsShipDao : MongoDao("ffc", "person"), GenoGramDao {
     /**
      * ค้นหาข้อมูล genogram จาก person โดยจะดึงมาเฉพาะ field relation
      * @param personId รหัส id Person.id

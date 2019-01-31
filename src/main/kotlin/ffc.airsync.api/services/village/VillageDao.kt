@@ -1,7 +1,5 @@
 package ffc.airsync.api.services.village
 
-import ffc.airsync.api.services.DEFAULT_MONGO_HOST
-import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
 import ffc.entity.Village
 
@@ -24,4 +22,4 @@ interface VillageDao : Dao {
     fun removeByOrgId(orgId: String)
 }
 
-val villages: VillageDao by lazy { MongoVillageDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
+val villages: VillageDao by lazy { MongoVillageDao() }

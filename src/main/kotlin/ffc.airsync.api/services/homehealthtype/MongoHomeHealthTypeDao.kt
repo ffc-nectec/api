@@ -10,7 +10,7 @@ import ffc.entity.healthcare.CommunityService.ServiceType
 import org.bson.Document
 import org.bson.types.BasicBSONList
 
-internal class MongoHomeHealthTypeDao(host: String, port: Int) : MongoDao(host, port, "ffc", "homeHealthType"),
+internal class MongoHomeHealthTypeDao : MongoDao("ffc", "homeHealthType"),
     HomeHealthTypeDao {
     init {
         try {

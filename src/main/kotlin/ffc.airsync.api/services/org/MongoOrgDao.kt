@@ -29,11 +29,8 @@ import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
-import java.net.InetSocketAddress
 
-class MongoOrgDao(host: String, port: Int) : OrgDao, MongoDao(host, port, "ffc", "organ") {
-
-    constructor(address: InetSocketAddress) : this(address.hostName, address.port)
+class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
 
     override fun insert(organization: Organization): Organization {
         validate(organization)

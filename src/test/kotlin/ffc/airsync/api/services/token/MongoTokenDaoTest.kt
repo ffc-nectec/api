@@ -24,7 +24,7 @@ class MongoTokenDaoTest {
     @Before
     fun initDb() {
 
-        dao = MongoTokenDao(mongo.address.hostString, mongo.address.port)
+        dao = MongoTokenDao()
 
         tokenMax = dao.create(User("Thanachai", User.Role.ORG), ORG_ID)
         tokenBee = dao.create(User("Morakot", User.Role.USER), ORG_ID)

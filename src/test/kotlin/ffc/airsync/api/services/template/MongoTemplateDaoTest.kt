@@ -22,7 +22,7 @@ class MongoTemplateDaoTest {
 
     @Before
     fun setUp() {
-        dao = MongoTemplateDao(mongo.address.hostString, mongo.address.port)
+        dao = MongoTemplateDao()
     }
 
     @Test

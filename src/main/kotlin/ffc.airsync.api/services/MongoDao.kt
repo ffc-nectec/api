@@ -16,14 +16,12 @@ const val DEFAULT_MONGO_HOST = "127.0.0.1"
 const val DEFAULT_MONGO_PORT = 27017
 
 abstract class MongoDao(
-    private val host: String,
-    private val port: Int,
     val dbName: String,
     val collection: String,
-    private val mongoInitRun: mongoInit? = null
+    mongoInitRun: mongoInit? = null
 ) : Dao {
 
-    val mongoClient: MongoClient
+    private val mongoClient: MongoClient
     protected lateinit var dbCollection: MongoCollection<Document>
 
     init {

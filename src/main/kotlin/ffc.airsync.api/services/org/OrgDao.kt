@@ -17,8 +17,6 @@
 
 package ffc.airsync.api.services.org
 
-import ffc.airsync.api.services.DEFAULT_MONGO_HOST
-import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
 import ffc.entity.Organization
 
@@ -33,7 +31,7 @@ interface OrgDao : Dao {
     fun findByIpAddress(ipAddress: String): List<Organization>
 }
 
-val orgs: OrgDao by lazy { MongoOrgDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
+val orgs: OrgDao by lazy { MongoOrgDao() }
 private const val thaiCharacters = """เแโไใกขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮa-zA-Z"""
 private const val thaiVowels = """ะาิีึืุูัํำ่้๊๋็์ฤฦ0-9\-"""
 private val thaiRegx = Regex("^[$thaiCharacters][$thaiCharacters$thaiVowels]+\$")

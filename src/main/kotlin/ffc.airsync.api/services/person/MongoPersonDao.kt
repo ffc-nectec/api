@@ -20,7 +20,7 @@ import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 
-internal class MongoPersonDao(host: String, port: Int) : PersonDao, MongoSyncDao<Person>(host, port, "ffc", "person") {
+internal class MongoPersonDao : PersonDao, MongoSyncDao<Person>("ffc", "person") {
 
     init {
         try {

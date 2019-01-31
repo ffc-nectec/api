@@ -9,7 +9,7 @@ import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
 
-internal class MongoTokenDao(host: String, port: Int) : TokenDao, MongoDao(host, port, "ffc", "token") {
+internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
     override fun create(user: User, orgId: String): Token {
         val generateId = ObjectId()
         val tokenMessage = Token(token = randomString.nextString(), user = user)

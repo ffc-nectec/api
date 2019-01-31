@@ -10,7 +10,7 @@ import ffc.entity.gson.parseTo
 import ffc.entity.healthcare.SpecialPP
 import org.bson.Document
 
-class MongoSpecialPpType(host: String, port: Int) : MongoDao(host, port, "ffc", "specialpp"), SpecialPpDao {
+class MongoSpecialPpType : MongoDao("ffc", "specialpp"), SpecialPpDao {
 
     init {
         dbCollection.createIndex("id" equal 1, IndexOptions().unique(true))

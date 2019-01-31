@@ -103,7 +103,7 @@ class MongoPersonTest {
     fun initDb() {
         personFromJson = json.parseTo()
 
-        dao = MongoPersonDao(mongo.address.hostString, mongo.address.port)
+        dao = MongoPersonDao()
         dao.insert(ORG_ID, personFromJson)
     }
 

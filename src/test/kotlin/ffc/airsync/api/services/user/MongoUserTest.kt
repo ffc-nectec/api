@@ -22,9 +22,9 @@ class MongoUserTest {
 
     @Before
     fun initDb() {
-        dao = MongoUserDao(mongo.address)
+        dao = MongoUserDao()
         val org = Org("รพสตNectec", "192.168.99.3")
-        nectecOrg = MongoOrgDao(mongo.address).insert(org)
+        nectecOrg = MongoOrgDao().insert(org)
     }
 
     companion object {
