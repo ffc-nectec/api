@@ -1,6 +1,14 @@
 # FFC API
 [![Build Status](https://travis-ci.org/ffc-nectec/api.svg?branch=master)](https://travis-ci.org/ffc-nectec/api)
 
+## PARAMETER
+require environment parameter
+- `MONGO_URI`
+- `MONGODB_DBNAME`
+- `FIREBASE_CONFIG`
+- `PRIVACY_URI`
+- `TERMS_URI`
+
 ## License
 
     Copyright 2018 NECTEC
