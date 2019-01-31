@@ -29,8 +29,11 @@ import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.ObjectId
+import java.net.InetSocketAddress
 
 internal class MongoUserDao(host: String, port: Int) : UserDao, MongoDao(host, port, "ffc", "organ") {
+
+    constructor(address: InetSocketAddress) : this(address.hostName, address.port)
 
     override fun insertUser(user: User, orgId: String): User {
         if (!haveUserInDb(orgId, user)) {
