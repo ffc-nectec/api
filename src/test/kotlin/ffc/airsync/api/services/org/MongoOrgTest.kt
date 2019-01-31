@@ -43,7 +43,7 @@ class MongoOrgTest {
 
     @Before
     fun initDb() {
-        dao = MongoOrgDao(mongo.address.hostString, mongo.address.port)
+        dao = MongoOrgDao()
 
         hahahaOrg = dao.insert(Org("รพสตHAHAHA", "203.111.222.123").apply {
             displayName = "รพ.สต.HAHAHA"

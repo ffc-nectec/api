@@ -14,7 +14,7 @@ import ffc.entity.Village
 import ffc.entity.gson.parseTo
 import org.bson.types.ObjectId
 
-class MongoVillageDao(host: String, port: Int) : VillageDao, MongoDao(host, port, "ffc", "village") {
+class MongoVillageDao : VillageDao, MongoDao("ffc", "village") {
 
     init {
         dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))

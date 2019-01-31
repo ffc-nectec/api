@@ -34,7 +34,7 @@ import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 import javax.ws.rs.NotFoundException
 
-internal class MongoHouseDao(host: String, port: Int) : HouseDao, MongoSyncDao<House>(host, port, "ffc", "house") {
+internal class MongoHouseDao : HouseDao, MongoSyncDao<House>("ffc", "house") {
 
     init {
         mongoCreateHouseIndex()

@@ -17,7 +17,7 @@ class MongoHomeHealthTypeDaoTest {
 
     @Before
     fun initDb() {
-        dao = MongoHomeHealthTypeDao(mongo.address.hostString, mongo.address.port)
+        dao = MongoHomeHealthTypeDao()
 
         dao.insert(ServiceType("1A001", "เยี่ยมผู้ป่วยโรคเบาหวาน "))
         dao.insert(ServiceType("1D01300", "ให้ทันตสุขศึกษาหญิงตั้งครรภ์"))

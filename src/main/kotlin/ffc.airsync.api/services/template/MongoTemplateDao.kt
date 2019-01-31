@@ -10,7 +10,7 @@ import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 
-class MongoTemplateDao(host: String, port: Int) : MongoDao(host, port, "ffc", "template"), TemplateDao {
+class MongoTemplateDao : MongoDao("ffc", "template"), TemplateDao {
 
     init {
         dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))

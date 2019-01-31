@@ -47,7 +47,7 @@ class MongoVillageDaoTest {
 
     @Before
     fun setUp() {
-        dao = MongoVillageDao(mongo.address.hostString, mongo.address.port)
+        dao = MongoVillageDao()
     }
 
     @Test

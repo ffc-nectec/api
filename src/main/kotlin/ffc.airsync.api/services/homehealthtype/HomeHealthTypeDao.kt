@@ -1,7 +1,5 @@
 package ffc.airsync.api.services.homehealthtype
 
-import ffc.airsync.api.services.DEFAULT_MONGO_HOST
-import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
 import ffc.entity.healthcare.CommunityService.ServiceType
 
@@ -16,4 +14,4 @@ interface HomeHealthTypeDao : Dao {
     fun find(query: String): List<ServiceType>
 }
 
-val homeHealthTypes: HomeHealthTypeDao by lazy { MongoHomeHealthTypeDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
+val homeHealthTypes: HomeHealthTypeDao by lazy { MongoHomeHealthTypeDao() }

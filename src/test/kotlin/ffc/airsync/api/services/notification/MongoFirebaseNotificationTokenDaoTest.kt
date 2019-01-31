@@ -26,11 +26,9 @@ class MongoFirebaseNotificationTokenDaoTest {
 
     @Before
     fun initDb() {
-        val serverAddress = mongo.address
+        dao = MongoFirebaseNotificationTokenDao()
 
-        dao = MongoFirebaseNotificationTokenDao(serverAddress.hostString, serverAddress.port)
-
-        val orgDao = MongoOrgDao(serverAddress.hostString, serverAddress.port)
+        val orgDao = MongoOrgDao()
         hahahaOrg = orgDao.insert(Org("รพสตHAHAHA", "203.111.222.123").apply {
             tel = "02-388-5555"
             address = "166 ม.99 ต.เนคเทค อ.อยู่ดี จ.กินดี"

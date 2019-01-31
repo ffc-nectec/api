@@ -21,7 +21,7 @@ import org.joda.time.LocalDate
 import java.sql.Time
 import kotlin.system.measureTimeMillis
 
-internal class MongoAnalyticDAO(host: String, port: Int) : AnalyticDAO, MongoDao(host, port, "ffc", "person") {
+internal class MongoAnalyticDAO : AnalyticDAO, MongoDao("ffc", "person") {
 
     override fun insert(
         orgId: String,

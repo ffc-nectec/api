@@ -26,13 +26,13 @@ class MongoUserLegalAgreementDaoTest {
 
     @Before
     fun setUp() {
-        val orgDao = MongoOrgDao(mongo.address)
+        val orgDao = MongoOrgDao()
         orgDao.insert(MongoUserTest.Org("Dummy"))
         val org = orgDao.insert(MongoUserTest.Org("รพสตNectec"))
         maxKung = org.users.first { it.name == "maxkung" }
         somying = org.users.first { it.name == "somYing" }
 
-        dao = MongoUserLegalAgreementDao(mongo.address)
+        dao = MongoUserLegalAgreementDao()
     }
 
     @Test

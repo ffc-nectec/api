@@ -1,7 +1,5 @@
 package ffc.airsync.api.services.analytic
 
-import ffc.airsync.api.services.DEFAULT_MONGO_HOST
-import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
 import ffc.entity.Person
 import ffc.entity.healthcare.analyze.HealthAnalyzer
@@ -47,4 +45,4 @@ interface AnalyticDAO : Dao {
     ): Map<String, HealthAnalyzer>
 }
 
-val analyzers: AnalyticDAO by lazy { MongoAnalyticDAO(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
+val analyzers: AnalyticDAO by lazy { MongoAnalyticDAO() }

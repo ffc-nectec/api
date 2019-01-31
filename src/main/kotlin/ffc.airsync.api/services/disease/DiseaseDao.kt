@@ -1,7 +1,5 @@
 package ffc.airsync.api.services.disease
 
-import ffc.airsync.api.services.DEFAULT_MONGO_HOST
-import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.Dao
 import ffc.entity.Lang
 import ffc.entity.healthcare.Disease
@@ -17,7 +15,7 @@ interface DiseaseDao : Dao {
     fun find(query: String = "", lang: Lang = Lang.th): List<Icd10>
 }
 
-val diseases: DiseaseDao by lazy { MongoDiseaseDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
+val diseases: DiseaseDao by lazy { MongoDiseaseDao() }
 
 /**
  * Lookup disease by icd10

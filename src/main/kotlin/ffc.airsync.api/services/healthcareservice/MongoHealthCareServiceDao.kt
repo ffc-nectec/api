@@ -12,8 +12,8 @@ import ffc.entity.healthcare.HealthCareService
 import org.bson.Document
 import org.bson.types.ObjectId
 
-class MongoHealthCareServiceDao(host: String, port: Int) : HealthCareServiceDao,
-    MongoSyncDao<HealthCareService>(host, port, "ffc", "healthcareservice") {
+class MongoHealthCareServiceDao : HealthCareServiceDao,
+    MongoSyncDao<HealthCareService>("ffc", "healthcareservice") {
 
     init {
         try {

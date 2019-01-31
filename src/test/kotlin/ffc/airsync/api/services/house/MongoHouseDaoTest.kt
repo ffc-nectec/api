@@ -30,7 +30,7 @@ class MongoHouseDaoTest {
 
     @Before
     fun initDb() {
-        dao = MongoHouseDao(mongo.address.hostString, mongo.address.port)
+        dao = MongoHouseDao()
 
         maxHouse = dao.insert(ORG_ID, createHouse("12348764532", "999/888"))
         someHouse = dao.insert(ORG_ID, createHouse("11111111111", "888/777"))

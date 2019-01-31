@@ -1,7 +1,5 @@
 package ffc.airsync.api.services.user.legal
 
-import ffc.airsync.api.services.DEFAULT_MONGO_HOST
-import ffc.airsync.api.services.DEFAULT_MONGO_PORT
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.toDocument
@@ -9,7 +7,6 @@ import ffc.entity.User
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
-import java.net.InetSocketAddress
 
 interface LegalAgreementDao {
 
@@ -18,12 +15,9 @@ interface LegalAgreementDao {
     fun lastAgreementOf(user: User, type: LegalDocument.Type): Agreement?
 }
 
-val LEGAL_AGREEMENTS: LegalAgreementDao by lazy { MongoUserLegalAgreementDao(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT) }
+val LEGAL_AGREEMENTS: LegalAgreementDao by lazy { MongoUserLegalAgreementDao() }
 
-internal class MongoUserLegalAgreementDao(host: String, port: Int) : LegalAgreementDao,
-    MongoDao(host, port, "ffc", "organ") {
-
-    constructor(address: InetSocketAddress) : this(address.hostName, address.port)
+internal class MongoUserLegalAgreementDao : LegalAgreementDao, MongoDao("ffc", "organ") {
 
     override fun saveAgreement(user: User, type: LegalDocument.Type, agreement: Agreement) {
         println("user.name = ${user.name}")

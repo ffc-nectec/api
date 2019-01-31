@@ -40,8 +40,8 @@ class MongoAnalyticDAOTest {
 
     @Before
     fun setUp() {
-        dao = MongoAnalyticDAO(mongo.address.hostString, mongo.address.port)
-        personDao = MongoPersonDao(mongo.address.hostString, mongo.address.port)
+        dao = MongoAnalyticDAO()
+        personDao = MongoPersonDao()
 
         somChai = personDao.insert(ORG_ID, สมชาย)
         somYing = personDao.insert(ORG_ID, `สมหญิง`)

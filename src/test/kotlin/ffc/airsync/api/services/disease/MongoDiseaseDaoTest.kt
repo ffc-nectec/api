@@ -20,7 +20,7 @@ class MongoDiseaseDaoTest {
 
     @Before
     fun initDb() {
-        dao = MongoDiseaseDao(mongo.address.hostString, mongo.address.port)
+        dao = MongoDiseaseDao()
 
         dao.insert(Icd10("Fall", "HHXX001Y").apply { translation[Lang.th] = "อ้วนซ้ำซ้อน" })
         dao.insert(
