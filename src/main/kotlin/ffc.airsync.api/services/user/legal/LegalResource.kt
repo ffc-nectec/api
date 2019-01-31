@@ -3,6 +3,7 @@ package ffc.airsync.api.services.user.legal
 import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.user.users
+import org.joda.time.DateTime
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
@@ -34,6 +35,17 @@ class LegalResource {
     @Produces("text/markdown")
     fun getTerms(): String {
         return terms.latest.content
+    }
+
+    @GET
+    @Path("/legal/refresh")
+    @Cache(maxAge = 3600)
+    fun refresh(): Map<String, Any> {
+        LegalDocuments.refresh()
+        return mapOf(
+            "message" to "refreshed",
+            "timestamp" to DateTime.now()
+        )
     }
 
     @GET
