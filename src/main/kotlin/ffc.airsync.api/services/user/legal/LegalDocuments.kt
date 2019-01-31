@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.user.legal
 
-import ffc.entity.User
-import java.io.File
+import ffc.airsync.api.services.util.UriReader
+import java.net.URI
 
 class LegalDocuments(
     val type: LegalDocument.Type,
@@ -16,27 +16,19 @@ class LegalDocuments(
         var terms: LegalDocument = readTerms()
             internal set
 
-        private fun readPrivacy() = LegalDocument(LegalDocument.Type.privacy, File(System.getenv("PRIVACY_PATH")).readText())
+        private fun readPrivacy() = LegalDocument(
+            LegalDocument.Type.privacy,
+            UriReader(URI(System.getenv("PRIVACY_URI"))).readAsString()
+        )
 
-        private fun readTerms() = LegalDocument(LegalDocument.Type.terms, File(System.getenv("TERMS_PATH")).readText())
+        private fun readTerms() = LegalDocument(
+            LegalDocument.Type.terms,
+            UriReader(URI(System.getenv("TERMS_URI"))).readAsString()
+        )
 
         fun refresh() {
             privacy = readPrivacy()
             terms = readTerms()
         }
-    }
-}
-
-internal fun User.agreementWith(doc: LegalDocument, agreementDao: LegalAgreementDao = LEGAL_AGREEMENTS): Agreement? {
-    val agreement = agreementDao.lastAgreementOf(this, doc.type)
-    return if (agreement?.version == doc.version) agreement else null
-}
-
-internal fun User.agreeWith(doc: LegalDocument, dao: LegalAgreementDao = LEGAL_AGREEMENTS): Boolean {
-    try {
-        dao.saveAgreement(this, doc.type, Agreement(doc.version))
-        return true
-    } catch (exception: Exception) {
-        return false
     }
 }
