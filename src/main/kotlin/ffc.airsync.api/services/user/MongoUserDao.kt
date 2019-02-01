@@ -34,6 +34,7 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
 
     override fun insertUser(user: User, orgId: String): User {
         if (!haveUserInDb(orgId, user)) {
+            user.orgId = orgId
             if (!user.isTempId) throw IllegalArgumentException("รุปแบบ id ต้องใช้ TempId ในการสร้าง User")
             val userStruct = "users" equal user.toDocument()
             val userPush = "\$push" equal userStruct
