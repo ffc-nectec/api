@@ -21,7 +21,6 @@ internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
     }
 
     override fun find(token: String): Token? {
-        // printDebug("Token Dao find $token")
         val tokenDoc = dbCollection.find("token" equal token.trim()).first() ?: return null
         return tokenDoc.toJson().parseTo()
     }

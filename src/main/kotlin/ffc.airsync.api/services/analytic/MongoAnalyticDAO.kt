@@ -2,7 +2,7 @@ package ffc.airsync.api.services.analytic
 
 import com.mongodb.BasicDBObject
 import com.mongodb.client.model.UpdateOptions
-import ffc.airsync.api.printDebug
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.search.Operator
 import ffc.airsync.api.services.search.Query
@@ -138,7 +138,7 @@ internal class MongoAnalyticDAO : AnalyticDAO, MongoDao("ffc", "person") {
 
             val orQuery = BasicBSONList()
             queryExtractor.forEach { key, value ->
-                printDebug("$key Filter ${value.operator} ${value.value}")
+                logger.debug("$key Filter ${value.operator} ${value.value}")
 
                 when (key) {
                     "agebetween" ->
@@ -232,7 +232,7 @@ internal class MongoAnalyticDAO : AnalyticDAO, MongoDao("ffc", "person") {
                 result
         }
 
-        printDebug("\t\tSmart query runtime ${Time(runtime)}")
+        logger.debug("\t\tSmart query runtime ${Time(runtime)}")
         return result
     }
 
@@ -258,7 +258,6 @@ internal class MongoAnalyticDAO : AnalyticDAO, MongoDao("ffc", "person") {
     }
 
     companion object {
-        val dmMongoRex = Document("\$regex", "^e1[0-4].*$").append("\$options", "i")
-        val htMongoRex = Document("\$regex", "^i1[0-5].*$").append("\$options", "i")
+        val logger = getLogger()
     }
 }

@@ -17,14 +17,16 @@
 
 package ffc.airsync.api.services.util
 
-import ffc.airsync.api.printDebug
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("ffc.airsync.api.services.util")
 
 interface AddItmeAction {
     fun onAddItemAction(itemIndex: Int)
 }
 
 private fun itemRenderPerPage(page: Int, per_page: Int, count: Int, onAddItemAction: AddItmeAction) {
-    printDebug("Item per page page=$page per_page=$per_page count=$count")
+    logger.debug("Item per page page=$page per_page=$per_page count=$count")
     val fromItem = ((page - 1) * per_page) + 1
     var toItem = (page) * per_page
 
@@ -33,8 +35,7 @@ private fun itemRenderPerPage(page: Int, per_page: Int, count: Int, onAddItemAct
         toItem = count
     }
 
-    printDebug("page $page per_page $per_page")
-    printDebug("from $fromItem to $toItem")
+    logger.debug("page $page per_page $per_page from $fromItem to $toItem")
 
     try {
         (fromItem..toItem).forEach {

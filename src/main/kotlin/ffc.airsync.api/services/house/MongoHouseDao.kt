@@ -19,7 +19,7 @@ package ffc.airsync.api.services.house
 
 import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.Sorts
-import ffc.airsync.api.printDebug
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.MongoSyncDao
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.equal
@@ -68,24 +68,23 @@ internal class MongoHouseDao : HouseDao, MongoSyncDao<House>("ffc", "house") {
     }
 
     override fun update(orgId: String, house: House): House? {
-        printDebug("Call MongoHouseDao.upldate ${house.toJson()}")
         val query = "_id" equal ObjectId(house.id)
 
-        printDebug("\tquery old house ")
+        logger.trace("\tquery old house ")
         val oldHouseDoc = (dbCollection.find(query).first() ?: throw NullPointerException("ไม่มีบ้านตาม id ให้ Update"))
 
         check(oldHouseDoc["orgIndex"] == ObjectId(orgId)) { "houseId out of organization" }
 
-        printDebug("\tget orgId $orgId")
-        printDebug("\tcreate update doc")
+        logger.trace("\tget orgId $orgId")
+        logger.trace("\tcreate update doc")
         // val updateHouseDoc = createDocument(ObjectId(house.id), orgId, house, geoPoint)
         val updateDoc = Document.parse(house.toJson())
         updateDoc.append("id", house.id)
         updateDoc.append("orgIndex", ObjectId(orgId))
 
-        printDebug("\tcall collection.update (oldDoc, updateDoc)")
-        printDebug("\t\tOld doc =    $oldHouseDoc")
-        printDebug("\t\tUpdate doc = $updateDoc")
+        logger.trace("\tcall collection.update (oldDoc, updateDoc)")
+        logger.trace("\t\tOld doc =    $oldHouseDoc")
+        logger.trace("\t\tUpdate doc = $updateDoc")
 
         try {
             dbCollection.replaceOne(query, updateDoc)
@@ -95,7 +94,7 @@ internal class MongoHouseDao : HouseDao, MongoSyncDao<House>("ffc", "house") {
             exo.stackTrace = ex.stackTrace
             throw exo
         }
-        printDebug("\tDone mongo update house.")
+        logger.debug("\tDone mongo update house.")
         return find(orgId, house.id)
     }
 
@@ -149,7 +148,7 @@ internal class MongoHouseDao : HouseDao, MongoSyncDao<House>("ffc", "house") {
         get() = no?.replace(Regex("^(.+)(/.*)\$"), "$1")
 
     override fun find(orgId: String, houseId: String): House? {
-        printDebug("Call find in house dao.")
+        logger.debug("Call find in house dao.")
         val house = dbCollection.find("_id" equal ObjectId(houseId))?.first()
 
         if (house?.get("orgIndex") != ObjectId(orgId)) return null
@@ -158,5 +157,9 @@ internal class MongoHouseDao : HouseDao, MongoSyncDao<House>("ffc", "house") {
 
     override fun removeByOrgId(orgId: String) {
         dbCollection.deleteMany("orgIndex" equal ObjectId(orgId))
+    }
+
+    companion object {
+        private val logger = getLogger()
     }
 }

@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.notification
 
 import com.mongodb.BasicDBObject
-import ffc.airsync.api.printDebug
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 
@@ -33,7 +33,7 @@ class MongoFirebaseNotificationTokenDao : MongoDao("ffc", "organ"), NotifactionD
 
     override fun getFirebaseToken(orgId: String): List<String> {
         try {
-            printDebug("Get firebase token.")
+            logger.debug("Get firebase token.")
             val firebaseTokenList = arrayListOf<String>()
             val firebaseOrgDoc = dbCollection.find("id" equal orgId).first()
             val firebaseMobile = firebaseOrgDoc["mobileFirebaseToken"] as List<*>?
@@ -43,7 +43,7 @@ class MongoFirebaseNotificationTokenDao : MongoDao("ffc", "organ"), NotifactionD
 
             firebaseMobile?.forEach {
                 if (it != "null") {
-                    printDebug("\t\t\t\t\t$it")
+                    logger.trace("\t\t\t\t\t$it")
                     firebaseTokenList.add(it.toString())
                 }
             }
@@ -52,5 +52,9 @@ class MongoFirebaseNotificationTokenDao : MongoDao("ffc", "organ"), NotifactionD
             ex.printStackTrace()
             throw ex
         }
+    }
+
+    companion object {
+        private val logger = getLogger()
     }
 }

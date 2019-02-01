@@ -21,7 +21,6 @@ import com.mongodb.MongoBulkWriteException
 import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.InsertManyOptions
-import ffc.airsync.api.printDebug
 import ffc.airsync.api.security.password
 import ffc.entity.Entity
 import ffc.entity.User
@@ -31,6 +30,7 @@ import ffc.entity.gson.toJson
 import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
+import org.slf4j.LoggerFactory
 import javax.ws.rs.ForbiddenException
 import kotlin.collections.List
 import kotlin.collections.arrayListOf
@@ -38,6 +38,8 @@ import kotlin.collections.forEach
 import kotlin.collections.putAll
 import kotlin.collections.toMap
 import kotlin.collections.map as mapKt
+
+private val logger = LoggerFactory.getLogger("ffc.airsync.api.services.util")
 
 inline fun <reified T> FindIterable<Document>.firstAs(): T = first().toJson().parseTo<T>()
 
@@ -152,7 +154,7 @@ private fun MongoCollection<Document>.smartInsert(doc: List<Document>, deep: Int
             smartInsert(doc.subList(0, size / 2), deep + 1)
             smartInsert(doc.subList((size / 2) + 1, size), deep + 1)
         } else {
-            printDebug("Deep error $deep")
+            logger.debug("mongo smart insert /2 error $deep")
             throw ex
         }
     }

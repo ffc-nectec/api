@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.notification
 
-import ffc.airsync.api.printDebug
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.ORGIDTYPE
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
@@ -16,11 +16,13 @@ import javax.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_JSON)
 class FirebaseResource {
 
+    private val logger = getLogger()
+
     @POST
     @Path("/$ORGIDTYPE/firebasetoken")
     @RolesAllowed("ORG", "ADMIN")
     fun updateToken(@PathParam("orgId") orgId: String, firebaseToken: HashMap<String, String>): Response {
-        printDebug("Call update Firebase Token OrgID $orgId Firebase Token = ${firebaseToken["firebasetoken"]}")
+        logger.debug("Call update Firebase Token OrgID $orgId Firebase Token = ${firebaseToken["firebasetoken"]}")
 
         notification.createFirebase(orgId, firebaseToken["firebasetoken"]!!, true)
 
@@ -31,7 +33,7 @@ class FirebaseResource {
     @Path("/$ORGIDTYPE/mobilefirebasetoken")
     @RolesAllowed("USER", "PROVIDER", "SURVEYOR")
     fun createToken(@PathParam("orgId") orgId: String, firebaseToken: HashMap<String, String>): Response {
-        printDebug("Call update Firebase Token by OrgID $orgId Firebase Token = ${firebaseToken["firebasetoken"]}")
+        logger.debug("Call update Firebase Token by OrgID $orgId Firebase Token = ${firebaseToken["firebasetoken"]}")
         notification.createFirebase(orgId, firebaseToken["firebasetoken"]!!, false)
 
         return Response.status(200).build()
