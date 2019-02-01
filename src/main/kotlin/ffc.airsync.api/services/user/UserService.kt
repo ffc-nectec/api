@@ -15,6 +15,7 @@ object UserService {
         if (UserDao.isBlockUser(username)) throw ForbiddenException("User ไม่มีสิทธิ์ในการใช้งาน")
         val user = users.findThat(orgId, username, pass)
         if (user != null) {
+            user.orgId = orgId
             return tokens.create(user, orgId)
         }
         throw NotAuthorizedException("Not Auth")
