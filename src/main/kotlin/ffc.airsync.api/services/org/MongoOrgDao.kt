@@ -26,6 +26,7 @@ import ffc.entity.Organization
 import ffc.entity.User
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
+import org.apache.logging.log4j.LogManager
 import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
@@ -78,7 +79,8 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
     }
 
     override fun remove(orgId: String) {
-        logger.debug("RemoveByOrgId $orgId")
+        val lll = LogManager.getLogger("DDDD")
+        lll.info("RemoveByOrgId $orgId")
         dbCollection.findOneAndDelete("id" equal orgId) ?: throw NoSuchElementException("ไม่พบ Org $orgId ที่ต้องการลบ")
     }
 
