@@ -28,11 +28,6 @@ import java.time.ZoneId
 import java.util.Locale
 import java.util.TimeZone
 
-val debug = System.getenv("FFC_DEBUG")
-fun <T> printDebug(infoDebug: T) {
-    if (debug == null) println(infoDebug)
-}
-
 private val bangkokTimeZone = TimeZone.getTimeZone(ZoneId.of("Asia/Bangkok"))
 
 val DATETIMEBANGKOK: DateTime get() = DateTime(DateTimeZone.forTimeZone(bangkokTimeZone))

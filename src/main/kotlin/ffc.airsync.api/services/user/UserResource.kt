@@ -1,7 +1,7 @@
 package ffc.airsync.api.services.user
 
 import ffc.airsync.api.filter.Developer
-import ffc.airsync.api.printDebug
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.getHeaderMap
 import ffc.entity.User
@@ -54,13 +54,16 @@ class UserResource {
         val user = userpass.get(index = 0)
         val pass = userpass.get(index = 1)
 
-        printDebug("Mobile Login Auid = " + orgId + " User = " + user + " Pass = " + pass)
+        logger.info("Mobile Login Org: $orgId User = $user")
         val tokenMessage = UserService.login(orgId, user, pass)
 
-        printDebug("Token is $tokenMessage")
         return Response.status(Response.Status.CREATED)
             .entity(tokenMessage)
             .header("Authorization", "Bearer ${tokenMessage.token}")
             .build()
+    }
+
+    companion object {
+        val logger = getLogger()
     }
 }

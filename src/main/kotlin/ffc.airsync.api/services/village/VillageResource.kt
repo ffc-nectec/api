@@ -1,6 +1,5 @@
 package ffc.airsync.api.services.village
 
-import ffc.airsync.api.printDebug
 import ffc.airsync.api.resorceCall
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.VILLAGETYPE
@@ -34,9 +33,7 @@ class VillageResource {
     @Path("/$ORGIDTYPE/villages")
     @RolesAllowed("ORG", "ADMIN")
     fun create(@PathParam("orgId") orgId: String, village: List<Village>): List<Village> {
-        printDebug("Create Village")
         val output = resorceCall { villages.insert(orgId, village) }
-        printDebug("Finish Create Village")
         return output
     }
 

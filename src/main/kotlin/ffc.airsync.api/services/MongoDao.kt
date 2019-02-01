@@ -2,7 +2,7 @@ package ffc.airsync.api.services
 
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
-import ffc.airsync.api.printDebug
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.plus
 import ffc.entity.Entity
@@ -38,17 +38,17 @@ abstract class MongoDao(
     }
 
     private fun getDbCollection() {
-        printDebug("Mongo getCollection $collection")
-        printDebug("\tDebug client = $mongoClient")
+        val logger = getLogger()
+        logger.debug("Mongo getCollection $collection")
         val databaseName = System.getenv("MONGODB_DBNAME")
         if (databaseName != null) {
-            printDebug("\t mongoUrl != null get systemenv $databaseName")
-            this.dbCollection = mongoClient!!.getDatabase(databaseName).getCollection(collection)
+            logger.debug("\t mongoUrl != null get systemenv $databaseName")
+            this.dbCollection = mongoClient.getDatabase(databaseName).getCollection(collection)
 
-            printDebug("\tSuccess create and connect db collection.")
+            logger.debug("\tSuccess create and connect db collection.")
         } else {
-            printDebug("\t MongoUrl is null")
-            this.dbCollection = mongoClient!!.getDatabase(dbName).getCollection(collection)
+            logger.debug("\t MongoUrl is null")
+            this.dbCollection = mongoClient.getDatabase(dbName).getCollection(collection)
         }
     }
 

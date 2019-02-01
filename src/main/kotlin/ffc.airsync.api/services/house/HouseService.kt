@@ -17,7 +17,7 @@
 
 package ffc.airsync.api.services.house
 
-import ffc.airsync.api.printDebug
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.notification.broadcastMessage
 import ffc.airsync.api.services.notification.notification
 import ffc.airsync.api.services.person.persons
@@ -25,13 +25,13 @@ import ffc.airsync.api.services.util.containsSome
 import ffc.entity.Person
 import ffc.entity.User
 import ffc.entity.copy
-import ffc.entity.gson.toJson
 import ffc.entity.place.House
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import javax.ws.rs.ForbiddenException
 
 class HouseService(val housesDao: HouseDao = houses) {
+    val logger = getLogger()
 
     fun create(
         orgId: String,
@@ -47,7 +47,6 @@ class HouseService(val housesDao: HouseDao = houses) {
     }
 
     private fun createByOrg(orgId: String, houseList: List<House>, block: Int = -1): List<House> {
-        printDebug("create house by org.")
         val house = houseList.map {
             require(it.link != null) { "เมื่อสร้างด้วย org จำเป็นต้องมีข้อมูล link" }
             it.link!!.isSynced = true
@@ -97,21 +96,19 @@ class HouseService(val housesDao: HouseDao = houses) {
     }
 
     fun update(orgId: String, house: House, houseId: String): House {
-        printDebug("Update house orgid $orgId house_id $houseId house ${house.toJson()}")
-
         require(houseId == house.id) { "เลขบ้านที่ระบุใน url part ไม่ตรงกับข้อมูล id ที่ต้องการแก้ไข" }
         require(house.id != "") { "ไม่มี id ไม่มีการใช้ตัวแปร _id แล้ว" }
 
         house.people.clear()
 
-        printDebug("\t\tGet firebase token.")
+        logger.debug("\t\tGet firebase token.")
         val firebaseTokenGropOrg = notification.getFirebaseToken(orgId)
 
-        printDebug("\tUpdate house to dao.")
+        logger.debug("\tUpdate house to dao.")
 
         val houseUpdate = housesDao.update(orgId, house.copy())
 
-        printDebug("Call send notification size list token = ${firebaseTokenGropOrg.size} ")
+        logger.debug("send notification size list token = ${firebaseTokenGropOrg.size} ")
         notification.broadcastMessage(orgId, house)
 
         return houseUpdate!!

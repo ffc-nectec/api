@@ -2,12 +2,10 @@ package ffc.airsync.api.services.house
 
 import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.filter.Developer
-import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.GEOJSONHeader
 import ffc.airsync.api.services.util.containsSome
 import ffc.airsync.api.services.util.getLoginRole
-import ffc.airsync.api.services.util.getUserLogin
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
 import ffc.entity.User
@@ -139,11 +137,8 @@ class HouseResourceNewEndpoint {
             else -> house.link?.isSynced = false
         }
 
-        printDebug("House update user=${context.getUserLogin()} role=$role \n body=$house")
-
         val houseUpdate = houseService.update(orgId, house.update { }, houseId)
         return Response.status(200).entity(houseUpdate).build()
-        TODO("รอลบออก Timestamp จะใช้จาก mobile") // เชียนค่าทับไปก่อน
     }
 
     @PUT

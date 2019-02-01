@@ -19,7 +19,7 @@ package ffc.airsync.api.services.org
 
 import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.filter.Developer
-import ffc.airsync.api.printDebug
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.ipAddress
 import ffc.entity.Organization
@@ -42,6 +42,9 @@ import javax.ws.rs.core.Response
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class OrgResource {
+    companion object {
+        val logger = getLogger()
+    }
 
     @Context
     lateinit var req: HttpServletRequest
@@ -52,6 +55,7 @@ class OrgResource {
             it.roles.add(it.role)
         }
         val org = OrgService.register(organization.apply { bundle["lastKnownIp"] = req.ipAddress() })
+        logger.info("Register organization Name: ${org.name} Id:${org.id}")
         return Response.status(201).entity(org).build()
     }
 
@@ -63,7 +67,7 @@ class OrgResource {
         @QueryParam("query") query: String?
     ): List<Organization> {
         return if (my) {
-            printDebug("Find Organization with ip-address = ${req.ipAddress()}")
+            logger.debug("Find Organization with ip-address = ${req.ipAddress()}")
             OrgService.getMy(req.ipAddress())
         } else {
             val queryFind = query ?: ""
@@ -82,7 +86,7 @@ class OrgResource {
     @Path("/$ORGIDTYPE")
     @RolesAllowed("ORG", "ADMIN")
     fun remove(@PathParam("orgId") orgId: String): Response {
-        printDebug("Remove org $orgId")
+        logger.info("Remove organization Id: $orgId")
         OrgService.remove(orgId)
         return Response.status(200).build()
     }

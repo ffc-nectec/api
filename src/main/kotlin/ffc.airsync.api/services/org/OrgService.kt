@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.org
 
-import ffc.airsync.api.printDebug
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.analytic.analyzers
 import ffc.airsync.api.services.healthcareservice.healthCareServices
 import ffc.airsync.api.services.house.houses
@@ -11,8 +11,9 @@ import ffc.entity.Organization
 import ffc.entity.gson.toJson
 
 internal object OrgService {
+    val logger = getLogger()
     fun register(organization: Organization): Organization {
-        printDebug("\t\tCall mongo insert organization ${organization.toJson()}")
+        logger.debug("\t\tCall mongo insert organization ${organization.toJson()}")
         return orgs.insert(organization)
     }
 
@@ -27,7 +28,7 @@ internal object OrgService {
     }
 
     fun getMy(ipAddress: String): List<Organization> {
-        printDebug("Get my org $ipAddress")
+        logger.info("Organization by ip: $ipAddress")
         val orgList = orgs.findByIpAddress(ipAddress)
         val orgReturn = hiddenPrivate(orgList)
         if (orgReturn.isEmpty()) throw NullPointerException("ไม่มีข้อมูลลงทะเบียน")
@@ -50,7 +51,6 @@ internal object OrgService {
      * เรียกดูรายชื่อ Organization ที่ลงทะเบียนไว้ทั้งหมด
      */
     fun get(): List<Organization> {
-        printDebug("Get all org")
         val orgList = orgs.findAll()
         if (orgList.isEmpty()) throw NullPointerException("ไม่มีข้อมูลลงทะเบียน")
         return hiddenPrivate(orgList)

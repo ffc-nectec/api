@@ -19,7 +19,6 @@ package ffc.airsync.api.services.notification
 
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
-import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.healthcareservice.PART_HEALTHCARESERVICE
 import ffc.airsync.api.services.house.NEWPART_HOUSESERVICE
 import ffc.entity.Entity
@@ -27,6 +26,9 @@ import ffc.entity.gson.toJson
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.HomeVisit
 import ffc.entity.place.House
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("ffc.airsync.api.services.notification")
 
 fun <T : Entity> NotifactionDao.broadcastMessage(orgId: String, vararg entitys: T) {
     val clientAddress = getFirebaseToken(orgId)
@@ -45,7 +47,7 @@ fun <T : Entity> NotifactionDao.broadcastMessage(orgId: String, vararg entitys: 
 }
 
 private fun <T : Entity> send(entity: T, clientAddress: List<String>, urlPart: String) {
-    printDebug("FB token = $clientAddress ${entity.type} = ${entity.toJson()}")
+    logger.debug("Firebase token = $clientAddress ${entity.type} = ${entity.toJson()}")
     clientAddress.forEach {
         if (it.isNotEmpty())
             putEntityToFirebase(entity, it, urlPart, entity.type)
@@ -67,7 +69,7 @@ private fun <T : Entity> putEntityToFirebase(
         .putData("url", "/$urlPart/${entity.id}").setToken(registrationToken).build()
     try {
         val response = FirebaseMessaging.getInstance().sendAsync(message).get()
-        printDebug("Successfully sent firebase message response = $response")
+        logger.debug("Successfully sent firebase message response = $response")
     } catch (ex: java.lang.Exception) {
         check(false) { "Fail send message firebase \n ${ex.toJson()}" }
     }

@@ -18,7 +18,7 @@
 package ffc.airsync.api.services.person
 
 import ffc.airsync.api.filter.Cache
-import ffc.airsync.api.printDebug
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
 import ffc.airsync.api.services.analytic.analyzers
@@ -55,8 +55,6 @@ class PersonResource {
     @Path("/$ORGIDTYPE/persons")
     @RolesAllowed("ORG", "ADMIN")
     fun creates(@PathParam("orgId") orgId: String, personList: List<Person>): Response {
-        printDebug("\nCall create person by ip = ")
-
         personList.forEach { person ->
             mapDeadIcd10(person)
         }
@@ -74,7 +72,6 @@ class PersonResource {
     @Path("/$ORGIDTYPE/persons")
     @RolesAllowed("ORG", "ADMIN")
     fun delete(@PathParam("orgId") orgId: String): Response {
-        printDebug("\nCall create person by ip = ")
         persons.remove(orgId)
         return Response.status(Response.Status.FOUND).build()
     }
@@ -83,7 +80,6 @@ class PersonResource {
     @Path("/$ORGIDTYPE/person")
     @RolesAllowed("ORG", "ADMIN")
     fun create(@PathParam("orgId") orgId: String, person: Person): Response {
-        printDebug("\nCall create person by ip = ")
         mapDeadIcd10(person)
         val persons = persons.insert(orgId, person)
         return Response.status(Response.Status.CREATED).entity(persons).build()
@@ -118,11 +114,11 @@ class PersonResource {
         @PathParam("orgId") orgId: String,
         @QueryParam("query") query: String?
     ): List<Person> {
-
+        logger.debug("Find person with $query")
         val person = if (query != null) {
             val output = arrayListOf<Person>()
             output.addAll(analyzers.smartQuery(orgId, query))
-            printDebug("size smart query ${output.size}")
+            logger.debug("size smart query ${output.size}")
             if (output.size < per_page) {
                 persons.find(query, orgId).forEach { person ->
                     if (output.find { person.id == it.id } == null) {
@@ -157,5 +153,9 @@ class PersonResource {
         @PathParam("icd10") icd10: String
     ): List<Person> {
         return persons.findByICD10(orgId, icd10)
+    }
+
+    companion object {
+        val logger = getLogger()
     }
 }

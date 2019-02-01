@@ -1,7 +1,6 @@
 package ffc.airsync.api.services.healthcareservice
 
 import ffc.airsync.api.filter.Cache
-import ffc.airsync.api.printDebug
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
 import ffc.airsync.api.services.VISITIDTYPE
@@ -13,7 +12,6 @@ import ffc.airsync.api.services.util.inRole
 import ffc.entity.Link
 import ffc.entity.System
 import ffc.entity.User
-import ffc.entity.gson.toJson
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.analyze.HealthAnalyzer
 import javax.annotation.security.RolesAllowed
@@ -41,7 +39,6 @@ class HealthCareServiceResource {
         @PathParam("orgId") orgId: String,
         healthCareService: HealthCareService
     ): HealthCareService {
-        printDebug("Visit Body:${healthCareService.toJson()}")
         val loginRole = context.getLoginRole()
         if (!(User.Role.ADMIN inRole loginRole || User.Role.ORG inRole loginRole)) {
             require(healthCareService.link == null) { "สร้าง healthCareService จาก User ต้องไม่มี link" }
@@ -52,7 +49,6 @@ class HealthCareServiceResource {
         `ตรวจสอบข้อมูลการเยี่ยมบ้านใหม่`(healthCareService)
 
         roleMapIsSync(healthCareService)
-        printDebug("create health care ${healthCareService.toJson()}")
         // notification.getFirebaseToken(orgId)
         val result = healthCareServices.insert(healthCareService, orgId)
         notification.broadcastMessage(orgId, result)

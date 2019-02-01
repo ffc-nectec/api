@@ -18,7 +18,7 @@
 package ffc.airsync.api.services.org
 
 import com.mongodb.client.FindIterable
-import ffc.airsync.api.printDebug
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.toDocument
@@ -31,6 +31,9 @@ import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 
 class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
+    companion object {
+        val logger = getLogger()
+    }
 
     override fun insert(organization: Organization): Organization {
         validate(organization)
@@ -75,12 +78,11 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
     }
 
     override fun remove(orgId: String) {
-        printDebug("Call OrgMongoDao removeByOrgId $orgId")
+        logger.debug("RemoveByOrgId $orgId")
         dbCollection.findOneAndDelete("id" equal orgId) ?: throw NoSuchElementException("ไม่พบ Org $orgId ที่ต้องการลบ")
     }
 
     override fun findAll(): List<Organization> {
-        printDebug("Mongo findAll() org")
         return dbCollection.find().convertToList()
     }
 
@@ -93,17 +95,16 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
     }
 
     override fun findById(orgId: String): Organization {
-        printDebug("Find by orgId = $orgId")
+        logger.debug("Find by orgId = $orgId")
         val query = "id" equal orgId
         val orgDocument = dbCollection.find(query).first()
-        printDebug("\torgDoc ${orgDocument.toJson()}")
         return orgDocument.toJson().parseTo()
     }
 
     override fun findByIpAddress(ipAddress: String): List<Organization> {
-        printDebug("Mongo findAll org ip $ipAddress")
+        logger.debug("Mongo findAll org ip $ipAddress")
         val orgDoc = dbCollection.find("lastKnownIp" equal ipAddress)
-        printDebug("\tQuery org from mongo $orgDoc")
+        logger.debug("\tQuery org from mongo $orgDoc")
         val orgList = orgDoc.convertToList<Organization>()
         if (orgList.isEmpty()) throw NoSuchElementException("ไม่พบรายการลงทะเบียนในกลุ่มของ Org ip $ipAddress")
         return orgList
