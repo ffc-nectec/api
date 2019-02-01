@@ -1,5 +1,6 @@
 package ffc.airsync.api.security
 
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.util.getLoginRole
 import java.util.regex.Pattern
 import javax.annotation.Priority
@@ -8,6 +9,8 @@ import javax.ws.rs.Priorities
 import javax.ws.rs.container.ContainerRequestContext
 import javax.ws.rs.container.ContainerRequestFilter
 import javax.ws.rs.ext.Provider
+
+private val logger = BasicAuthFilter().getLogger()
 
 @Priority(Priorities.AUTHENTICATION)
 @Provider
@@ -22,12 +25,10 @@ class BasicAuthFilter : ContainerRequestFilter {
         if (matcherOrgId.find()) {
             orgId = matcherOrgId.group(1)
         }
-        // printDebug("Auth filter parth ${requestContext.method} url $baseUrl \t Org id = $orgId")
         val authenInfo: BasicTokenInfo
 
         try {
             authenInfo = BasicTokenInfo(requestContext)
-            // printDebug("Finish create TokenInfo")
         } catch (ex: NotAuthorizedException) {
             return
         }
@@ -42,6 +43,6 @@ class BasicAuthFilter : ContainerRequestFilter {
         val name = requestContext.securityContext.userPrincipal.name
         val loginRole = requestContext.securityContext.getLoginRole()
         val httpMethod = requestContext.method
-        println("User:$name Role:$loginRole Method:$httpMethod Url:$baseUrl")
+        logger.info("Basic auth log User:$name Role:$loginRole Org:$orgId Method:$httpMethod Url:$baseUrl")
     }
 }
