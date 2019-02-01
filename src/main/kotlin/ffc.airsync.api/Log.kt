@@ -1,8 +1,8 @@
 package ffc.airsync.api
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 fun Any.getLogger(): Logger {
-    return LoggerFactory.getLogger(this::class.java)
+    return LogManager.getLogger(this::class.java)
 }

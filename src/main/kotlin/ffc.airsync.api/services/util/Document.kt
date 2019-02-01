@@ -27,10 +27,10 @@ import ffc.entity.User
 import ffc.entity.copy
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
+import org.apache.logging.log4j.LogManager
 import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
-import org.slf4j.LoggerFactory
 import javax.ws.rs.ForbiddenException
 import kotlin.collections.List
 import kotlin.collections.arrayListOf
@@ -39,7 +39,7 @@ import kotlin.collections.putAll
 import kotlin.collections.toMap
 import kotlin.collections.map as mapKt
 
-private val logger = LoggerFactory.getLogger("ffc.airsync.api.services.util")
+private val logger = LogManager.getLogger("ffc.airsync.api.services.util")
 
 inline fun <reified T> FindIterable<Document>.firstAs(): T = first().toJson().parseTo<T>()
 

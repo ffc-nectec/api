@@ -17,9 +17,9 @@
 
 package ffc.airsync.api.services.util
 
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.LogManager
 
-private val logger = LoggerFactory.getLogger("ffc.airsync.api.services.util")
+private val logger = LogManager.getLogger("ffc.airsync.api.services.util")
 
 interface AddItmeAction {
     fun onAddItemAction(itemIndex: Int)

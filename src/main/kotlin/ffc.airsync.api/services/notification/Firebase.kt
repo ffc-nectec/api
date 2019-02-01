@@ -26,9 +26,9 @@ import ffc.entity.gson.toJson
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.HomeVisit
 import ffc.entity.place.House
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.LogManager
 
-private val logger = LoggerFactory.getLogger("ffc.airsync.api.services.notification")
+private val logger = LogManager.getLogger("ffc.airsync.api.services.notification")
 
 fun <T : Entity> NotifactionDao.broadcastMessage(orgId: String, vararg entitys: T) {
     val clientAddress = getFirebaseToken(orgId)
