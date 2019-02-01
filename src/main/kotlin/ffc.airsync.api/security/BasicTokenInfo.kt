@@ -11,13 +11,11 @@ class BasicTokenInfo(requestContext: ContainerRequestContext) {
     val token: Token
 
     init {
-        // printDebug("TokenInfo class in filter")
         val authorization = requestContext.headers[AUTHORIZATION_PROPERTY]
 
         if (authorization != null) {
             try {
                 token = findToken(getBasicToken(authorization))
-                // printDebug("\t\ttoken user= ${token.user}")
                 checkTokenExpire()
             } catch (e: Exception) {
                 e.printStackTrace()
