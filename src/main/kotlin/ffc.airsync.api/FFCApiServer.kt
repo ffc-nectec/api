@@ -36,13 +36,15 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.TimeZone
 
-internal class FFCApiServer(args: Array<String>) {
+internal class FFCApiServer(val args: Array<String>) {
     @Option(name = "-dev", usage = "mode")
     protected var dev = false
     @Option(name = "-port", usage = "port destination ownAction start server")
     protected var port = DEFAULT_PORT
     @Option(name = "-host", usage = "port destination ownAction start server")
     protected var host = DEFAULT_HOST
+
+    val logger = getLogger()
 
     init {
         try {
@@ -54,14 +56,18 @@ internal class FFCApiServer(args: Array<String>) {
     }
 
     fun run() {
+        logger.info("Start api parameter $args")
+        logger.info("Init MogoDB connection.")
         MongoDbConnector.initialize()
+        logger.info("Init firebase config.")
         getFirebaseParameter()
+        logger.info("Init lookup.")
         initDiseaseAndHomeHealtyType()
+        logger.info("Start main process.")
         runningProcess()
     }
 
     private fun runningProcess() {
-        println("Start main process")
         val context = ServletContextBuilder.build()
         val server = Server(JettyServerTuning.threadPool)
 
@@ -69,9 +75,9 @@ internal class FFCApiServer(args: Array<String>) {
         server.handler = context
         server.addBean(JettyServerTuning.getMonitor(server))
         try {
-            println("Start server bind port $port")
+            logger.info("Start server bind port $port")
             server.start()
-            println("Running process")
+            logger.info("Running server main process.")
             server.join()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -79,14 +85,15 @@ internal class FFCApiServer(args: Array<String>) {
     }
 
     private fun initDiseaseAndHomeHealtyType() {
+
         Thread {
-            println("1:1 Disease init.")
+            logger.info("1:1 Disease lookup init.")
             DiseaseService.init()
-            println("2:2 HomeHealthTypeService init.")
+            logger.info("2:2 HomeHealthTypeService lookup init.")
             HomeHealthTypeService.init()
-            println("3:3 SpecialPpService init.")
+            logger.info("3:3 SpecialPpService lookup init.")
             SpecialPpService.init()
-            println("Done init.")
+            logger.info("Done lookup init.")
         }.start()
     }
 
@@ -99,9 +106,9 @@ internal class FFCApiServer(args: Array<String>) {
                 .setDatabaseUrl("https://ffc-nectec.firebaseio.com")
                 .build()
             firebaseApp = FirebaseApp.initializeApp(options)
-            // logger.log(Level.FINE, "Load config firebase from file.");
+            logger.debug("Load firebase config from file.")
         } catch (e: IOException) {
-            e.printStackTrace()
+            logger.debug("Load firebase config from system env FIREBASE_CONFIG")
             val firebaseConfigString = System.getenv("FIREBASE_CONFIG")
             val byteFirebaseConfig = firebaseConfigString.toByteArray()
             val streamFirebaseConfig = ByteArrayInputStream(byteFirebaseConfig)
@@ -112,6 +119,7 @@ internal class FFCApiServer(args: Array<String>) {
                     .setDatabaseUrl("https://ffc-nectec.firebaseio.com")
                     .build()
             } catch (e1: IOException) {
+                logger.info("Cannot load filebase config.")
                 e1.printStackTrace()
             }
 
