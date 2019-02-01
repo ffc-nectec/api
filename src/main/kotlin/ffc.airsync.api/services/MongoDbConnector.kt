@@ -4,6 +4,7 @@ import com.mongodb.MongoClient
 import com.mongodb.MongoClientOptions
 import com.mongodb.MongoClientURI
 import com.mongodb.ServerAddress
+import ffc.airsync.api.getLogger
 import java.net.InetSocketAddress
 
 class MongoDbConnector {
@@ -21,11 +22,16 @@ class MongoDbConnector {
             get() = _client!!
 
         fun initialize() {
+            val logger = this.getLogger()
             val systemEnv = System.getenv("MONGODB_URI")
-            if (!systemEnv.isNullOrBlank())
+            if (!systemEnv.isNullOrBlank()) {
+                logger.debug("Run wiht system env MONGODB_URI")
+                logger.trace("MONGODB_URI = $systemEnv")
                 connect(systemEnv)
-            else
+            } else {
+                logger.debug("Run wiht local host $DEFAULT_MONGO_HOST port $DEFAULT_MONGO_PORT")
                 connect(DEFAULT_MONGO_HOST, DEFAULT_MONGO_PORT)
+            }
         }
 
         fun connect(address: InetSocketAddress) {

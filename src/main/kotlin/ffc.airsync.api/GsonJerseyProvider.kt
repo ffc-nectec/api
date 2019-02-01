@@ -38,7 +38,7 @@ import javax.ws.rs.ext.Provider
 @Produces(MediaType.APPLICATION_JSON, "application/vnd.geo+json")
 @Consumes(MediaType.APPLICATION_JSON, "application/vnd.geo+json")
 class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
-
+    val logger = getLogger()
     override fun isReadable(
         type: Class<*>?,
         genericType: Type?,
@@ -63,6 +63,7 @@ class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
                     return ffcGson.fromJson<Any>(it, genericType)
                 } catch (ex: java.lang.NumberFormatException) {
                     ex.printStackTrace()
+                    logger.info("Json error ${ex.message}")
                     val errormess = BadRequestException("JSON error ${ex.message}")
                     errormess.stackTrace = ex.stackTrace
                     throw errormess
