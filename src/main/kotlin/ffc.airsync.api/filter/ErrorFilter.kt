@@ -1,5 +1,6 @@
 package ffc.airsync.api.filter
 
+import com.mongodb.MongoException
 import ffc.airsync.api.getLogger
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.ForbiddenException
@@ -15,7 +16,7 @@ import javax.ws.rs.ext.Provider
 
 data class ErrorDetail(val code: Int, val message: String?, val t: Throwable) {
     init {
-        this.getLogger().debug("${t.message}")
+        getLogger().debug("${t.message}")
         t.printStackTrace()
     }
 }
@@ -23,9 +24,22 @@ data class ErrorDetail(val code: Int, val message: String?, val t: Throwable) {
 @Provider
 class ErrorFilter : ExceptionMapper<WebApplicationException> {
     override fun toResponse(exception: WebApplicationException): Response {
-        this.getLogger().info("Api wrong ${exception.message}")
+        if (exception.response.status in 400..499) {
+            getLogger().info("Client Error", exception)
+        } else {
+            getLogger().error("Server Error", exception)
+        }
         val err = ErrorDetail(exception.response.status, exception.message, exception)
         return Response.status(exception.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
+    }
+}
+
+@Provider
+class MongoExceptionFilter : ExceptionMapper<MongoException> {
+    override fun toResponse(exception: MongoException): Response {
+        getLogger().error("MongoClient Error", exception)
+        val err = ErrorDetail(500, exception.message, exception)
+        return Response.status(500).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
     }
 }
 
