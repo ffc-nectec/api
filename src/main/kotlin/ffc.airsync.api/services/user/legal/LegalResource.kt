@@ -51,7 +51,7 @@ class LegalResource(
     }
 
     @GET
-    @Path("org/$ORGIDTYPE/user/{userId}/agreement/privacy/latest")
+    @Path("/legal/privacy/latest/agreement/$ORGIDTYPE/{userId}")
     @Cache(maxAge = 3600)
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun checkPrivacyAgreementOf(
@@ -59,11 +59,12 @@ class LegalResource(
         @PathParam("userId") userId: String
     ): Agreement {
         val user = usersDao!!.getUserById(orgId, userId)
-        return user.agreementWith(privacy.latest, legalDao!!) ?: throw NotFoundException()
+        return user.agreementWith(privacy.latest, legalDao!!)
+            ?: throw NotFoundException("ไม่พบการยอมรับนโยบายความเป็นส่วนตัวฉบับล่าสุด")
     }
 
     @GET
-    @Path("/org/$ORGIDTYPE/user/{userId}/agreement/terms/latest")
+    @Path("/legal/terms/latest/agreement/$ORGIDTYPE/{userId}/")
     @Cache(maxAge = 3600)
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun checkTermsAgreementOf(
@@ -71,11 +72,12 @@ class LegalResource(
         @PathParam("userId") userId: String
     ): Agreement {
         val user = usersDao!!.getUserById(orgId, userId)
-        return user.agreementWith(privacy.latest, legalDao!!) ?: throw NotFoundException()
+        return user.agreementWith(privacy.latest, legalDao!!)
+            ?: throw NotFoundException("ไม่พบการยอมรับเงื่อนไขการใช้งานฉบับล่าสุด")
     }
 
     @POST
-    @Path("/org/$ORGIDTYPE/user/{userId}/agreement/privacy/{version}")
+    @Path("/legal/privacy/{version}/agreement/$ORGIDTYPE/{userId}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun agreePrivacy(
         @PathParam("orgId") orgId: String,
@@ -87,7 +89,7 @@ class LegalResource(
     }
 
     @POST
-    @Path("/org/$ORGIDTYPE/user/{userId}/agreement/terms/{version}")
+    @Path("/legal/terms/{version}/agreement/$ORGIDTYPE/{userId}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun agreeTerms(
         @PathParam("orgId") orgId: String,

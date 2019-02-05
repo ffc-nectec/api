@@ -71,7 +71,7 @@ class LegalResourceTest : JerseyTest() {
         whenever(mockAgreementDao.lastAgreementOf(dummyUser, LegalDocument.Type.privacy))
             .thenAnswer { Agreement(dummyPrivacy.latest.version) }
 
-        val res = target("org/${dummyUser.orgId}/user/${dummyUser.id}/agreement/privacy/latest").request().get()
+        val res = target("legal/privacy/latest/agreement/${dummyUser.orgId}/${dummyUser.id}").request().get()
 
         println(res.readEntity(String::class.java))
         res.status `should be equal to` 200
@@ -79,14 +79,14 @@ class LegalResourceTest : JerseyTest() {
 
     @Test
     fun notFoundAgreement() {
-        val res = target("org/${dummyUser.orgId}/user/${dummyUser.id}/agreement/privacy/latest").request().get()
+        val res = target("legal/privacy/latest/agreement/${dummyUser.orgId}/${dummyUser.id}").request().get()
 
         res.status `should be equal to` 404
     }
 
     @Test
     fun agreeTerm() {
-        val res = target("org/${dummyUser.orgId}/user/${dummyUser.id}/agreement/terms/${dummyTerms.latest.version}")
+        val res = target("legal/terms/${dummyTerms.latest.version}/agreement/${dummyUser.orgId}/${dummyUser.id}")
             .request().post(null)
 
         res.status `should be equal to` 204
@@ -94,7 +94,7 @@ class LegalResourceTest : JerseyTest() {
 
     @Test
     fun agreeNotLatestTerm() {
-        val res = target("org/${dummyUser.orgId}/user/${dummyUser.id}/agreement/terms/a1b2c3")
+        val res = target("legal/terms/1253ds4djh/agreement/${dummyUser.orgId}/${dummyUser.id}")
             .request().post(null)
 
         res.status `should be equal to` 400
