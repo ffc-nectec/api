@@ -94,7 +94,6 @@ class LegalResource(
         @PathParam("userId") userId: String,
         @PathParam("version") version: String
     ) {
-        //throw BadRequestException()
         require(version == terms.latest.version) { "Not acceptable Terms of Uses's version [$version]" }
         usersDao!!.getUserById(orgId, userId).agreeWith(terms.latest, legalDao!!)
     }
