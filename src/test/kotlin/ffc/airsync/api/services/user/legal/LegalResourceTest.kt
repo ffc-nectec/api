@@ -86,14 +86,16 @@ class LegalResourceTest : JerseyTest() {
 
     @Test
     fun agreeTerm() {
-        val res = target("org/${dummyUser.orgId}/user/${dummyUser.id}/agreement/terms/${dummyTerms.latest.version}").request().post(null)
+        val res = target("org/${dummyUser.orgId}/user/${dummyUser.id}/agreement/terms/${dummyTerms.latest.version}")
+            .request().post(null)
 
         res.status `should be equal to` 204
     }
 
     @Test
     fun agreeNotLatestTerm() {
-        val res = target("org/${dummyUser.orgId}/user/${dummyUser.id}/agreement/terms/a1b2c3").request().post(null)
+        val res = target("org/${dummyUser.orgId}/user/${dummyUser.id}/agreement/terms/a1b2c3")
+            .request().post(null)
 
         res.status `should be equal to` 400
     }
