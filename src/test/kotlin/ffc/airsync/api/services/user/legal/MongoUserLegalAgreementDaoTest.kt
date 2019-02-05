@@ -7,6 +7,7 @@ import ffc.airsync.api.services.user.MongoUserTest
 import ffc.entity.User
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should equal`
+import org.joda.time.DateTime
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -51,9 +52,10 @@ class MongoUserLegalAgreementDaoTest {
 
     @Test
     fun manyVersion() {
-        dao.saveAgreement(maxKung, terms.type, Agreement("1"))
-        dao.saveAgreement(maxKung, terms.type, Agreement("2"))
-        dao.saveAgreement(maxKung, terms.type, Agreement("3"))
+        val now = DateTime.now()
+        dao.saveAgreement(maxKung, terms.type, Agreement("1", now.minusWeeks(2)))
+        dao.saveAgreement(maxKung, terms.type, Agreement("2", now.minusMinutes(1)))
+        dao.saveAgreement(maxKung, terms.type, Agreement("3", now))
 
         dao.lastAgreementOf(maxKung, LegalDocument.Type.terms)!!.let { it.version `should equal` "3" }
         dao.lastAgreementOf(maxKung, LegalDocument.Type.privacy) `should be` null
