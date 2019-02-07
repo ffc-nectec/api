@@ -169,6 +169,6 @@ class HouseResourceNewEndpoint {
     @RolesAllowed("ORG", "ADMIN")
     fun delete(@PathParam("orgId") orgId: String): Response {
         houses.removeByOrgId(orgId)
-        return Response.status(Response.Status.FOUND).build()
+        return Response.status(Response.Status.OK).build()
     }
 }

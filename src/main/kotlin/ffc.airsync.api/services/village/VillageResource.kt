@@ -15,6 +15,7 @@ import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
 import javax.ws.rs.QueryParam
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -55,8 +56,9 @@ class VillageResource {
     fun delete(
         @PathParam("orgId") orgId: String,
         @PathParam("villageId") villageId: String
-    ) {
-        return resorceCall { villages.delete(orgId, villageId) }
+    ): Response {
+        resorceCall { villages.delete(orgId, villageId) }
+        return Response.status(Response.Status.OK).build()
     }
 
     @DELETE
@@ -64,8 +66,9 @@ class VillageResource {
     @RolesAllowed("ORG", "ADMIN")
     fun deleteOrg(
         @PathParam("orgId") orgId: String
-    ) {
-        return resorceCall { villages.removeByOrgId(orgId) }
+    ): Response {
+        resorceCall { villages.removeByOrgId(orgId) }
+        return Response.status(Response.Status.OK).build()
     }
 
     @GET
