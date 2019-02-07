@@ -18,12 +18,12 @@ class LegalDocuments(
 
         private fun readPrivacy() = LegalDocument(
             LegalDocument.Type.privacy,
-            UriReader(URI(System.getenv("PRIVACY_URI"))).readAsString()
+            UriReader(URI(System.getenv("PRIVACY_URI"))).readAsString().trim()
         )
 
         private fun readTerms() = LegalDocument(
             LegalDocument.Type.terms,
-            UriReader(URI(System.getenv("TERMS_URI"))).readAsString()
+            UriReader(URI(System.getenv("TERMS_URI"))).readAsString().trim()
         )
 
         fun refresh() {
