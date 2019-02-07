@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.user.legal
 
 import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.user.UserDao
 import ffc.airsync.api.services.user.users
@@ -22,12 +23,14 @@ class LegalResource(
     var legalDao: LegalAgreementDao? = LEGAL_AGREEMENTS,
     var usersDao: UserDao? = users
 ) {
+    val logger by lazy { getLogger() }
 
     @GET
     @Path("/legal/privacy/latest")
     @Cache(maxAge = 3600 * 24)
     @Produces("text/markdown; charset=utf-8")
     fun getPrivacy(): String {
+        logger.debug("latest privacy[${privacy.latest.version}]")
         return privacy.latest.content
     }
 
@@ -36,6 +39,7 @@ class LegalResource(
     @Cache(maxAge = 3600 * 24)
     @Produces("text/markdown; charset=utf-8")
     fun getTerms(): String {
+        logger.debug("latest terms[${terms.latest.version}]")
         return terms.latest.content
     }
 
@@ -46,6 +50,8 @@ class LegalResource(
         LegalDocuments.refresh()
         return mapOf(
             "message" to "refreshed",
+            "privacyVersion" to privacy.latest.version,
+            "termsVersion" to terms.latest.version,
             "timestamp" to DateTime.now()
         )
     }
@@ -86,6 +92,7 @@ class LegalResource(
     ) {
         require(version == privacy.latest.version) { "Not acceptable Privacy Policy's version [$version]" }
         usersDao!!.getUserById(orgId, userId).agreeWith(privacy.latest, legalDao!!)
+        logger.info("user[$userId] accept privacy[$version]")
     }
 
     @POST
@@ -98,5 +105,6 @@ class LegalResource(
     ) {
         require(version == terms.latest.version) { "Not acceptable Terms of Uses's version [$version]" }
         usersDao!!.getUserById(orgId, userId).agreeWith(terms.latest, legalDao!!)
+        logger.info("user[$userId] accept terms[$version]")
     }
 }
