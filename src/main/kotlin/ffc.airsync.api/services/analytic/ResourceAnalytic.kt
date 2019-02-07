@@ -12,6 +12,7 @@ import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -49,8 +50,9 @@ class ResourceAnalytic {
     fun delete(
         @PathParam("orgId") orgId: String,
         @PathParam("personId") personId: String
-    ) {
+    ): Response {
         analyzers.deleteByPersonId(orgId, personId)
+        return Response.status(Response.Status.OK).build()
     }
 
     @DELETE
@@ -58,7 +60,8 @@ class ResourceAnalytic {
     @RolesAllowed("ORG", "ADMIN")
     fun deleteOrg(
         @PathParam("orgId") orgId: String
-    ) {
+    ): Response {
         analyzers.removeByOrgId(orgId)
+        return Response.status(Response.Status.OK).build()
     }
 }
