@@ -29,7 +29,7 @@ abstract class MongoDao(
             mongoClient = MongoDbConnector.client
             getDbCollection()
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            getLogger().error(ex.message)
             val exOut = javax.ws.rs.InternalServerErrorException(ex.message)
             exOut.stackTrace = ex.stackTrace
             throw exOut

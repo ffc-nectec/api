@@ -51,7 +51,7 @@ internal class FFCApiServer(val args: Array<String>) {
             val parser = CmdLineParser(this)
             parser.parseArgument(*args)
         } catch (cmd: CmdLineException) {
-            cmd.printStackTrace()
+            logger.error(cmd.message)
         }
     }
 
@@ -80,7 +80,8 @@ internal class FFCApiServer(val args: Array<String>) {
             logger.info("Running server main process.")
             server.join()
         } catch (e: Exception) {
-            e.printStackTrace()
+            logger.error(e.message)
+            e.printStackTrace() // e Log
         }
     }
 
@@ -119,8 +120,8 @@ internal class FFCApiServer(val args: Array<String>) {
                     .setDatabaseUrl("https://ffc-nectec.firebaseio.com")
                     .build()
             } catch (e1: IOException) {
-                logger.info("Cannot load filebase config.")
-                e1.printStackTrace()
+                logger.info("Cannot load filebase config. ${e1.message}")
+                e1.printStackTrace() // i Log
             }
 
             firebaseApp = FirebaseApp.initializeApp(options!!)

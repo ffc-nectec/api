@@ -49,7 +49,7 @@ class MongoFirebaseNotificationTokenDao : MongoDao("ffc", "organ"), NotifactionD
             }
             return firebaseTokenList
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            logger.info(ex.message)
             throw ex
         }
     }

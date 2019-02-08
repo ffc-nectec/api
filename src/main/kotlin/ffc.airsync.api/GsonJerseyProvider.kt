@@ -62,7 +62,6 @@ class GsonJerseyProvider : MessageBodyWriter<Any>, MessageBodyReader<Any> {
                 try {
                     return ffcGson.fromJson<Any>(it, genericType)
                 } catch (ex: java.lang.NumberFormatException) {
-                    ex.printStackTrace()
                     logger.info("Json error ${ex.message}")
                     val errormess = BadRequestException("JSON error ${ex.message}")
                     errormess.stackTrace = ex.stackTrace

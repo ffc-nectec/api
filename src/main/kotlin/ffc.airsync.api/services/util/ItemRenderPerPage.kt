@@ -42,7 +42,7 @@ private fun itemRenderPerPage(page: Int, per_page: Int, count: Int, onAddItemAct
             onAddItemAction.onAddItemAction(it - 1)
         }
     } catch (ex: Exception) {
-        ex.printStackTrace()
+        logger.error(ex.message)
         throw ex
     }
 }
