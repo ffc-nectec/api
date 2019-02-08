@@ -44,9 +44,7 @@ internal class MongoHouseDao : HouseDao, MongoSyncDao<House>("ffc", "house") {
         try {
             dbCollection.createIndex("location" equal "2dsphere", IndexOptions().unique(false))
             dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            throw ex
+        } catch (ignore: Exception) {
         }
     }
 
@@ -89,7 +87,6 @@ internal class MongoHouseDao : HouseDao, MongoSyncDao<House>("ffc", "house") {
         try {
             dbCollection.replaceOne(query, updateDoc)
         } catch (ex: Exception) {
-            ex.printStackTrace()
             val exo = javax.ws.rs.InternalServerErrorException(ex.message)
             exo.stackTrace = ex.stackTrace
             throw exo

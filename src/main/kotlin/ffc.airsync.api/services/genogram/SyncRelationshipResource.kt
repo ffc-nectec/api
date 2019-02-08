@@ -1,6 +1,7 @@
 package ffc.airsync.api.services.genogram
 
 import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.BLOCKTYPE
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.entity.Person
@@ -24,6 +25,7 @@ import javax.ws.rs.core.SecurityContext
 class SyncRelationshipResource {
     @Context
     private var context: SecurityContext? = null
+    private val logger = getLogger()
 
     @POST
     @Path("/$ORGIDTYPE/person/relationships/sync/$BLOCKTYPE")
@@ -37,7 +39,8 @@ class SyncRelationshipResource {
         try {
             return personRelationsShip.insertBlock(orgId, block, relation)
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            logger.error(ex.message)
+            ex.printStackTrace() // e Log
             throw ex
         }
     }
@@ -53,7 +56,8 @@ class SyncRelationshipResource {
         try {
             return personRelationsShip.getBlock(orgId, block)
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            logger.error(ex.message)
+            ex.printStackTrace() // e Log
             throw ex
         }
     }
@@ -69,7 +73,8 @@ class SyncRelationshipResource {
         try {
             personRelationsShip.confirmBlock(orgId, block)
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            logger.error(ex.message)
+            ex.printStackTrace() // e Log
             throw ex
         }
     }
@@ -85,7 +90,8 @@ class SyncRelationshipResource {
         try {
             personRelationsShip.unConfirmBlock(orgId, block)
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            logger.error(ex.message)
+            ex.printStackTrace() // e Log
             throw ex
         }
     }
@@ -100,7 +106,8 @@ class SyncRelationshipResource {
         try {
             personRelationsShip.removeByOrgId(orgId)
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            logger.error(ex.message)
+            ex.printStackTrace() // e Log
             throw ex
         }
     }
@@ -113,7 +120,8 @@ class SyncRelationshipResource {
         try {
             personRelationsShip.removeInsertBlock()
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            logger.error(ex.message)
+            ex.printStackTrace() // e Log
             throw ex
         }
     }

@@ -18,7 +18,6 @@ class BasicTokenInfo(requestContext: ContainerRequestContext) {
                 token = findToken(getBasicToken(authorization))
                 checkTokenExpire()
             } catch (e: Exception) {
-                e.printStackTrace()
                 throw e
             }
         } else {

@@ -60,7 +60,6 @@ fun <T> resorceCall(call: () -> T): T {
     try {
         return call()
     } catch (ex: Exception) {
-        ex.printStackTrace()
         throw ex
     }
 }
