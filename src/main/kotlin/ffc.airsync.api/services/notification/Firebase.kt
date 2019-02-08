@@ -41,8 +41,7 @@ fun <T : Entity> NotifactionDao.broadcastMessage(orgId: String, vararg entitys: 
                 else -> send(entity, clientAddress, "else")
             }
         } catch (ex: Exception) {
-            logger.error(ex.message)
-            ex.printStackTrace() // e Log
+            logger.error(ex.message, ex)
         }
     }
 }

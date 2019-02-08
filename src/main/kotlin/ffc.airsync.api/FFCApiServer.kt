@@ -80,8 +80,7 @@ internal class FFCApiServer(val args: Array<String>) {
             logger.info("Running server main process.")
             server.join()
         } catch (e: Exception) {
-            logger.error(e.message)
-            e.printStackTrace() // e Log
+            logger.error(e.message, e)
         }
     }
 
@@ -120,8 +119,7 @@ internal class FFCApiServer(val args: Array<String>) {
                     .setDatabaseUrl("https://ffc-nectec.firebaseio.com")
                     .build()
             } catch (e1: IOException) {
-                logger.info("Cannot load filebase config. ${e1.message}")
-                e1.printStackTrace() // i Log
+                logger.info("Cannot load filebase config. ${e1.message}", e1)
             }
 
             firebaseApp = FirebaseApp.initializeApp(options!!)
