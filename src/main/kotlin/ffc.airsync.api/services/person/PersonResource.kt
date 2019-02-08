@@ -50,6 +50,7 @@ import javax.ws.rs.core.SecurityContext
 class PersonResource {
     @Context
     private var context: SecurityContext? = null
+    val logger = getLogger()
 
     @POST
     @Path("/$ORGIDTYPE/persons")
@@ -143,19 +144,5 @@ class PersonResource {
         @PathParam("personId") personId: String
     ): Person {
         return persons.getPerson(orgId, personId)
-    }
-
-    @GET
-    @Path("/$ORGIDTYPE/person/icd10/{icd10:([\\w\\d]+)}")
-    @RolesAllowed("USER", "PROVIDER", "SURVEYOR", "PATIENT")
-    fun findByICD10(
-        @PathParam("orgId") orgId: String,
-        @PathParam("icd10") icd10: String
-    ): List<Person> {
-        return persons.findByICD10(orgId, icd10)
-    }
-
-    companion object {
-        val logger = getLogger()
     }
 }
