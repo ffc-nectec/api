@@ -21,6 +21,7 @@ import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.filter.Developer
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.ORGIDTYPE
+import ffc.airsync.api.services.util.getUserLogin
 import ffc.airsync.api.services.util.ipAddress
 import ffc.entity.Organization
 import javax.annotation.security.RolesAllowed
@@ -37,11 +38,16 @@ import javax.ws.rs.QueryParam
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import javax.ws.rs.core.SecurityContext
 
 @Path("/org")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 class OrgResource {
+
+    @Context
+    private var context: SecurityContext? = null
+
     companion object {
         val logger = getLogger()
     }
@@ -86,7 +92,7 @@ class OrgResource {
     @Path("/$ORGIDTYPE")
     @RolesAllowed("ORG", "ADMIN")
     fun remove(@PathParam("orgId") orgId: String): Response {
-        logger.info("Remove organization Id: $orgId")
+        logger.info("Remove organization by user ${context!!.getUserLogin()} Organization id: $orgId")
         OrgService.remove(orgId)
         return Response.status(200).build()
     }
