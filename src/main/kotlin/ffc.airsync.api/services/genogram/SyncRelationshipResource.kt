@@ -39,8 +39,7 @@ class SyncRelationshipResource {
         try {
             return personRelationsShip.insertBlock(orgId, block, relation)
         } catch (ex: Exception) {
-            logger.error(ex.message)
-            ex.printStackTrace() // e Log
+            logger.error(ex.message, ex)
             throw ex
         }
     }
@@ -56,8 +55,7 @@ class SyncRelationshipResource {
         try {
             return personRelationsShip.getBlock(orgId, block)
         } catch (ex: Exception) {
-            logger.error(ex.message)
-            ex.printStackTrace() // e Log
+            logger.error(ex.message, ex)
             throw ex
         }
     }
@@ -73,8 +71,7 @@ class SyncRelationshipResource {
         try {
             personRelationsShip.confirmBlock(orgId, block)
         } catch (ex: Exception) {
-            logger.error(ex.message)
-            ex.printStackTrace() // e Log
+            logger.error(ex.message, ex)
             throw ex
         }
     }
@@ -90,8 +87,7 @@ class SyncRelationshipResource {
         try {
             personRelationsShip.unConfirmBlock(orgId, block)
         } catch (ex: Exception) {
-            logger.error(ex.message)
-            ex.printStackTrace() // e Log
+            logger.error(ex.message, ex)
             throw ex
         }
     }
@@ -106,8 +102,7 @@ class SyncRelationshipResource {
         try {
             personRelationsShip.removeByOrgId(orgId)
         } catch (ex: Exception) {
-            logger.error(ex.message)
-            ex.printStackTrace() // e Log
+            logger.error(ex.message, ex)
             throw ex
         }
     }
@@ -120,8 +115,7 @@ class SyncRelationshipResource {
         try {
             personRelationsShip.removeInsertBlock()
         } catch (ex: Exception) {
-            logger.error(ex.message)
-            ex.printStackTrace() // e Log
+            logger.error(ex.message, ex)
             throw ex
         }
     }

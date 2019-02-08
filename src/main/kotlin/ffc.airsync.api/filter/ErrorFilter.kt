@@ -16,8 +16,7 @@ import javax.ws.rs.ext.Provider
 
 data class ErrorDetail(val code: Int, val message: String?, val t: Throwable) {
     init {
-        getLogger().debug("${t.message}")
-        t.printStackTrace() // d Log
+        getLogger().debug("${t.message}", t)
     }
 }
 
