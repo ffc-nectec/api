@@ -13,6 +13,6 @@ jobs:
 
     steps:
       - checkout
-      - run: gradle dependencies
-      - run: gradle build
+      - run: gradlew dependencies
+      - run: gradlew build
       - run: cp build/bin/*.jar /tmp/artifacts
