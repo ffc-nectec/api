@@ -41,6 +41,8 @@ jobs:
           environment:
             PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
             TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
+            MONGODB_URI: mongodb://localhost:27017/data
+            MONGODB_DBNAME: data
           command: |
             java -jar /tmp/artifacts/ffc-api.jar -port 8080 &
             sleep 5s
