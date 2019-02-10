@@ -26,8 +26,3 @@ jobs:
       - run: gradle test
       - run: gradle build
       - run: cp build/bin/*.jar /tmp/artifacts
-
-      # Save artifacts
-      - store_artifacts:
-        path: /tmp/artifacts
-        destination: build
