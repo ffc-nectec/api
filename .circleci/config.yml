@@ -13,6 +13,5 @@ jobs:
 
     steps:
       - checkout
-      - run: gradle dependencies
       - run: gradle build --scan
       - run: cp build/bin/*.jar /tmp/artifacts
