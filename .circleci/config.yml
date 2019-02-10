@@ -14,7 +14,53 @@ jobs:
     steps:
       - checkout
       - run: gradle dependencies
-
-      - run: gradle test
       - run: gradle build
       - run: cp build/bin/*.jar /tmp/artifacts
+
+deploy-stage:
+  branches:
+    only:
+      - circleCi
+  docker:
+    - image: circleci/openjdk:8-jdk
+    - image: circleci/mongo:4.0
+    - image: circleci/node:11
+  environment:
+    PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
+    TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
+    MONGODB_URI: mongodb://localhost:27017/data
+    MONGODB_DBNAME: data
+
+  working_directory: /tmp/my-project
+  steps:
+    - run:
+      name: clone test
+      command: echo 'clone test'
+    - run:
+      # https://learning.getpostman.com/docs/postman/collection_runs/command_line_integration_with_newman/
+      name: Install postman
+      command: npm install -g newman
+    - run:
+      name: start service
+      command: |
+        java -jar /tmp/artifacts/ffc-api.jar -port 8080 &
+        sleep 5s
+    - run:
+      name: test postman
+      command: |
+        echo 'newman run mycollection.json'
+
+workflows:
+  version: 2
+  build-test:
+    jobs:
+      - build:
+        filters:
+          branches:
+            only: circleCi
+      - deploy-stage:
+        requires:
+          - build
+        filters:
+          branches:
+            only: circleCi
