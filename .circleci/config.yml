@@ -5,7 +5,7 @@ jobs:
       only:
         - circleCi
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: java:8
     working_directory: ~/repo
     environment:
       PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
@@ -13,5 +13,5 @@ jobs:
 
     steps:
       - checkout
-      - run: gradle build --scan
+      - run: gradle build
       - run: cp build/bin/*.jar /tmp/artifacts
