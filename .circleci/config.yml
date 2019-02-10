@@ -1,18 +1,27 @@
-version: 2.1
+version: 2
 jobs:
   build:
     docker:
       - image: circleci/openjdk:8-jdk
     working_directory: ~/my-project
+    environment:
+      PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
+      TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
 
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-
+      - run: gradle dependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
 
-      - run:
-          environment:
-            PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
-            TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
-          command: gradlew build
+      - run: gradle test
+      - run: gradle build
       - run: cp build/bin/*.jar /tmp/artifacts
 
       # Save artifacts
@@ -26,6 +35,11 @@ jobs:
       - image: circleci/openjdk:8-jdk
       - image: circleci/mongo:4.0
       - image: circleci/node:11
+    environment:
+      PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
+      TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
+      MONGODB_URI: mongodb://localhost:27017/data
+      MONGODB_DBNAME: data
 
     working_directory: /tmp/my-project
     steps:
@@ -38,11 +52,6 @@ jobs:
           command: npm install -g newman
       - run:
           name: start service
-          environment:
-            PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
-            TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
-            MONGODB_URI: mongodb://localhost:27017/data
-            MONGODB_DBNAME: data
           command: |
             java -jar /tmp/artifacts/ffc-api.jar -port 8080 &
             sleep 5s
