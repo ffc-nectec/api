@@ -1,6 +1,9 @@
 version: 2
 jobs:
   build:
+    branches:
+      only:
+        - circleCi
     docker:
       - image: circleci/openjdk:8-jdk
     working_directory: ~/my-project
@@ -31,6 +34,9 @@ jobs:
 
 
   deploy-stage:
+    branches:
+      only:
+        - circleCi
     docker:
       - image: circleci/openjdk:8-jdk
       - image: circleci/mongo:4.0
