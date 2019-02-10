@@ -75,8 +75,8 @@ workflows:
           branches:
             only: circleCi
       - deploy-stage:
-          requires:
-            - build
-          filters:
-            branches:
-              only: circleCi
+        requires:
+          - build
+        filters:
+          branches:
+            only: circleCi
