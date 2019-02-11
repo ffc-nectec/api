@@ -22,4 +22,5 @@ jobs:
           paths:
             - ~/.gradle
           key: v1-depen-{{ checksum "build.gradle" }}
-      - run: ./gradlew build
+      - run: ./gradlew build --info
+      - run: cp build/bin/*.jar /cloud/app/
