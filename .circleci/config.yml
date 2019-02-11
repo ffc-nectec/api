@@ -61,7 +61,7 @@ jobs:
           command: 'find build/bin/'
       - run:
           name: run ffc
-          command: 'java -jar build/bin/ffc-api.jar -port 23453 &'
+          command: 'java -jar workspace/ffc-api.jar -port 23453 &'
       - run:
           name: Sleep
           command: 'sleep 6'
