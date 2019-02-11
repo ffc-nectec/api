@@ -34,25 +34,7 @@ jobs:
           path: /tmp/artifacts
           destination: build
       - run:
-          name: clone test
-          command: echo 'clone test'
-      - run:
-          name: Install node.js
-          command: 'sudo apt-get install nodejs'
-      - run:
-          name: Install npm
-          command: 'sudo apt-get install npm'
-      - run:
-          # https://learning.getpostman.com/docs/postman/collection_runs/command_line_integration_with_newman/
-          name: Install postman
-          command: npm install -g newman
-      - run:
           name: start service
           command: |
             java -jar /tmp/artifacts/ffc-api.jar -port 8080 &
             sleep 5s
-      - run:
-          name: test postman
-          command: |
-            echo 'newman run mycollection.json'
-
