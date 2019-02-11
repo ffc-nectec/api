@@ -53,7 +53,7 @@ jobs:
           command: find workspace
       - run:
           name: run ffc
-          command: 'java -jar workspace/ffc-api.jar -port 23453'
+          command: 'java -jar workspace/ffc-api.jar -port 23453 &'
       - run:
           name: Sleep
           command: 'sleep 6'
