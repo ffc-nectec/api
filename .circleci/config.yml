@@ -6,13 +6,10 @@ jobs:
         - circleCi
     docker:
       - image: java:8
-      - image: circleci/mongo:4.0
     working_directory: ~/repo
     environment:
       PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
       TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
-      MONGODB_URI: mongodb://localhost:27017/data
-      MONGODB_DBNAME: data
 
     steps:
       - checkout
@@ -30,3 +27,25 @@ jobs:
           command: ./gradlew jar
       - run: 'ls -al'
       - run: 'pwd'
+
+  testrun:
+    branches:
+      only:
+        - circleCi
+    docker:
+      - image: java:8
+          environment:
+            PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
+            TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
+            MONGODB_URI: mongodb://localhost:27017/data
+            MONGODB_DBNAME: data
+      - image: circleci/mongo:4.0
+    working_directory: ~/repo
+
+    steps:
+      - run:
+          name: run ffc
+          command: 'java -jar build/bin/ffc-api.jar &'
+      - run:
+          name: Sleep
+          command: 'sleep 5'
