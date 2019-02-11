@@ -1,12 +1,29 @@
-version: 2
-jobs:
-  build:
-    branches:
-      only:
-        - circleCi
+version: 2.1
+executors:
+  my-build:
     docker:
       - image: java:8
     working_directory: ~/repo
+
+  my-test:
+    docker:
+      - image: java:8
+          environment:
+            PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
+            TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
+            MONGODB_URI: mongodb://localhost:27017/data
+            MONGODB_DBNAME: data
+      - image: circleci/mongo:4.0
+    working_directory: ~/repo
+
+
+jobs:
+  build:
+    executor: my-build
+    branches:
+      only:
+        - circleCi
+
     environment:
       PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
       TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
@@ -29,19 +46,10 @@ jobs:
       - run: 'pwd'
 
   testrun:
+    executor: my-test
     branches:
       only:
         - circleCi
-    docker:
-      - image: java:8
-        environment:
-          PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
-          TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
-          MONGODB_URI: mongodb://localhost:27017/data
-          MONGODB_DBNAME: data
-      - image: circleci/mongo:4.0
-    working_directory: ~/repo
-
     steps:
       - run:
           name: run ffc
@@ -51,10 +59,11 @@ jobs:
           command: 'sleep 5'
 
 workflows:
-  version: 2
-  buildtest:
-    jobs:
-      - build
-      - testrun:
-          requires:
-            - build
+  version: 2.1
+
+flow:
+  jobs:
+    - build
+    - testrun
+      require:
+        - build
