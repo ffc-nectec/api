@@ -4,14 +4,11 @@ executors:
     docker:
       - image: java:8
     working_directory: ~/repo
-
   my-test:
     docker:
       - image: java:8
       - image: circleci/mongo:4.0
     working_directory: ~/repo
-
-
 jobs:
   build:
     executor: my-build
