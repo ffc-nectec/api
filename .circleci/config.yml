@@ -11,6 +11,9 @@ executors:
     working_directory: ~/repo
 jobs:
   build:
+    branches:
+      only:
+        - circleCi
     executor: my-build
     environment:
       PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
@@ -34,6 +37,9 @@ jobs:
       - run: 'pwd'
 
   testrun:
+    branches:
+      only:
+        - circleCi
     executor: my-test
     environment:
       PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
