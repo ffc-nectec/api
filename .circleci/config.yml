@@ -41,6 +41,9 @@ jobs:
       MONGODB_DBNAME: data
     steps:
       - run:
+          name: print env
+          command: 'printenv'
+      - run:
           name: run ffc
           command: 'java -jar build/bin/ffc-api.jar -port 23453 &'
       - run:
@@ -48,7 +51,7 @@ jobs:
           command: 'sleep 6'
       - run:
           name: Test get web service startup
-          command: 'curl http://localhost:23453/v0'
+          command: 'curl http://127.0.0.1:23453/v0'
 
 workflows:
   version: 2
