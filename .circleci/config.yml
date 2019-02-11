@@ -41,8 +41,11 @@ jobs:
       MONGODB_DBNAME: data
     steps:
       - run:
-          name: print env
+          name: Print env
           command: 'printenv'
+      - run:
+          name: Print file build.
+          command: 'find build/'
       - run:
           name: run ffc
           command: 'java -jar build/bin/ffc-api.jar -port 23453 &'
