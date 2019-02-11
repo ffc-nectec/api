@@ -49,3 +49,12 @@ jobs:
       - run:
           name: Sleep
           command: 'sleep 5'
+
+workflows:
+  version: 2
+  buildtest:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: circleCi
