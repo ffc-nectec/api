@@ -28,9 +28,6 @@ jobs:
       - run:
           name: Create jar
           command: ./gradlew jar
-      - run: cp build/bin/*.jar /tmp/artifacts
-      - run:
-          name: start service
-          command: |
-            java -jar /tmp/artifacts/ffc-api.jar -port 8080 &
-            sleep 5s
+      - run: ls -al
+      - run: pwd
+      - run: true
