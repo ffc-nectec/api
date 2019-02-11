@@ -71,10 +71,12 @@ workflows:
       - build:
           filters:
             branches:
-              only: circleCi
+              only:
+                - circleCi
       - test-run:
           requires:
             - build
           filters:
             branches:
-              only: circleCi
+              only:
+                - circleCi
