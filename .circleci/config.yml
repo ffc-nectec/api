@@ -61,3 +61,6 @@ workflows:
       - testrun:
           requires:
             - build
+          filters:
+            branches:
+              only: circleCi
