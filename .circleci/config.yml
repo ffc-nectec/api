@@ -48,11 +48,16 @@ jobs:
           command: 'sleep 6'
 
 workflows:
-  version: 2.1
-
-flow:
-  jobs:
-    - build
-    - testrun:
-        requires:
-          - build
+  version: 2
+  flow:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
+      - testrun:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
