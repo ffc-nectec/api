@@ -29,10 +29,6 @@ jobs:
           name: Create jar
           command: ./gradlew jar
       - run: cp build/bin/*.jar /tmp/artifacts
-
-      - store_artifacts:
-          path: /tmp/artifacts
-          destination: build
       - run:
           name: start service
           command: |
