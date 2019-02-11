@@ -1,8 +1,5 @@
 version: 2.1
 executors:
-  my-test:
-    docker:
-      - image: circleci/mongo:4.0
 jobs:
   build:
     docker:
@@ -38,7 +35,7 @@ jobs:
   testrun:
     docker:
       - image: java:8
-    executor: my-test
+      - image: circleci/mongo:4.0
     working_directory: ~/repo
     environment:
       PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
