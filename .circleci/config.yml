@@ -46,6 +46,9 @@ jobs:
       - run:
           name: Sleep
           command: 'sleep 6'
+      - run:
+          name: Test get web service startup
+          command: 'curl http://localhost:8080/v0'
 
 workflows:
   version: 2
