@@ -54,10 +54,10 @@ workflows:
       - build:
           filters:
             branches:
-              only: master
+              only: circleCi
       - testrun:
           requires:
             - build
           filters:
             branches:
-              only: master
+              only: circleCi
