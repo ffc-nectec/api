@@ -64,6 +64,6 @@ workflows:
 flow:
   jobs:
     - build
-    - testrun
-      requires:
-        - build
+    - testrun:
+        requires:
+          - build
