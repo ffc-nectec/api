@@ -34,11 +34,11 @@ jobs:
         - circleCi
     docker:
       - image: java:8
-          environment:
-            PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
-            TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
-            MONGODB_URI: mongodb://localhost:27017/data
-            MONGODB_DBNAME: data
+        environment:
+          PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
+          TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
+          MONGODB_URI: mongodb://localhost:27017/data
+          MONGODB_DBNAME: data
       - image: circleci/mongo:4.0
     working_directory: ~/repo
 
