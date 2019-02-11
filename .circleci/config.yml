@@ -28,6 +28,5 @@ jobs:
       - run:
           name: Create jar
           command: ./gradlew jar
-      - run: ls -al
-      - run: pwd
-      - run: true
+      - run: 'ls -al'
+      - run: 'pwd'
