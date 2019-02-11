@@ -65,4 +65,5 @@ flow:
   jobs:
     - build
     - testrun
-      requires: build
+      requires:
+        - build
