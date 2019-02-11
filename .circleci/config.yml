@@ -44,6 +44,11 @@ jobs:
           name: Print env
           command: 'printenv'
       - run:
+          name: ls -al
+          command: |
+            ls -al
+            pwd
+      - run:
           name: Print file build.
           command: 'find build/bin/'
       - run:
