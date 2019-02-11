@@ -12,10 +12,6 @@ executors:
 jobs:
   build:
     executor: my-build
-    branches:
-      only:
-        - circleCi
-
     environment:
       PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
       TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
@@ -39,9 +35,6 @@ jobs:
 
   testrun:
     executor: my-test
-    branches:
-      only:
-        - circleCi
     environment:
       PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
       TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
