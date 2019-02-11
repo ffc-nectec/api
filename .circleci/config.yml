@@ -49,17 +49,6 @@ jobs:
       - attach_workspace:
           at: ~/repo/workspace
       - run:
-          name: Print env
-          command: 'printenv'
-      - run:
-          name: ls -al
-          command: |
-            ls -al
-            pwd
-      - run:
-          name: Print file build.
-          command: 'find build/bin/'
-      - run:
           name: run ffc
           command: 'java -jar workspace/ffc-api.jar -port 23453 &'
       - run:
