@@ -49,6 +49,9 @@ jobs:
       - attach_workspace:
           at: ~/repo/workspace
       - run:
+          name: Print workspace
+          command: find workspace
+      - run:
           name: run ffc
           command: 'java -jar workspace/ffc-api.jar -port 23453 &'
       - run:
