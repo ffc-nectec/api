@@ -23,4 +23,8 @@ jobs:
             - ~/.gradle
           key: v1-depen-{{ checksum "build.gradle" }}
       - run: ./gradlew jar
-      - run: cp build/bin/*.jar /cloud/app/
+      - run: cp build/bin/*.jar /tmp/artifacts
+
+      - store_artifacts:
+          path: /tmp/artifacts
+          destination: build
