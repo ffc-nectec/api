@@ -5,7 +5,7 @@ jobs:
       only:
         - circleCi
     docker:
-      - image: java:8
+      - image: circleci/openjdk:8-jdk
       - image: circleci/mongo:4.0
       - image: circleci/node:11
     working_directory: ~/repo
@@ -40,7 +40,7 @@ jobs:
       - run:
           # https://learning.getpostman.com/docs/postman/collection_runs/command_line_integration_with_newman/
           name: Install postman
-          command: npm install -g newman
+          command: 'sudo npm install -g newman'
       - run:
           name: start service
           command: |
