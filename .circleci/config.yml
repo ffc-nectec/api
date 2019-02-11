@@ -14,10 +14,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        key: v1-depen-{{ checksum "build.gradle" }}
+          keys:
+            - v1-depen-{{ checksum "build.gradle" }}
+            - v1-depen-
       - run: ./gradlew dependencies
       - save_cache:
-        paths:
-          - ~/.gradle
-        key: v1-depen-{{ checksum "build.gradle" }}
+          paths:
+            - ~/.gradle
+          key: v1-depen-{{ checksum "build.gradle" }}
       - run: ./gradlew build
