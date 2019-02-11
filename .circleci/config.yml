@@ -72,3 +72,9 @@ workflows:
           filters:
             branches:
               only: circleCi
+      - test-run:
+          requires:
+            - build
+          filters:
+            branches:
+              only: circleCi
