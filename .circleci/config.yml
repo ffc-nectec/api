@@ -68,13 +68,7 @@ workflows:
   version: 2
   build-test:
     jobs:
-      - build:
-          filters:
-            branches:
-              only: circleCi
+      - build
       - test-run:
           requires:
             - build
-          filters:
-            branches:
-              only: circleCi
