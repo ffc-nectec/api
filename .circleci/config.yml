@@ -56,7 +56,7 @@ jobs:
           command: 'java -jar build/bin/ffc-api.jar &'
       - run:
           name: Sleep
-          command: 'sleep 5'
+          command: 'sleep 6'
 
 workflows:
   version: 2.1
