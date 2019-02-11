@@ -5,9 +5,9 @@ jobs:
       only:
         - circleCi
     docker:
+      - image: circleci/node:11
       - image: java:8
       - image: circleci/mongo:4.0
-      - image: circleci/node:11
     working_directory: ~/repo
     environment:
       PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
