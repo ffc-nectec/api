@@ -69,6 +69,4 @@ workflows:
   build-test:
     jobs:
       - build
-      - test-run:
-          requires:
-            - build
+      - test-run
