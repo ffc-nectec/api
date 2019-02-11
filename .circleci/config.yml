@@ -26,6 +26,12 @@ jobs:
       - run:
           name: Create jar
           command: ./gradlew jar
+      - run: mkdir -p workspace
+      - run: cp build/bin/ffc-api.jar workspace/ffc-api.jar
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - ffc-api.jar
       - run: 'ls -al'
       - run: 'pwd'
 
@@ -40,6 +46,8 @@ jobs:
       MONGODB_URI: mongodb://localhost:27017/data
       MONGODB_DBNAME: data
     steps:
+      - attach_workspace:
+          at: ~/repo/workspace
       - run:
           name: Print env
           command: 'printenv'
