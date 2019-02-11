@@ -1,20 +1,16 @@
 version: 2.1
 executors:
-  my-build:
-    docker:
-      - image: java:8
-    working_directory: ~/repo
   my-test:
     docker:
-      - image: java:8
       - image: circleci/mongo:4.0
-    working_directory: ~/repo
 jobs:
   build:
     branches:
       only:
         - circleCi
-    executor: my-build
+    docker:
+      - image: java:8
+    working_directory: ~/repo
     environment:
       PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
       TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
@@ -40,7 +36,10 @@ jobs:
     branches:
       only:
         - circleCi
+    docker:
+      - image: java:8
     executor: my-test
+    working_directory: ~/repo
     environment:
       PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
       TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
