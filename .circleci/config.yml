@@ -45,7 +45,7 @@ jobs:
           command: 'printenv'
       - run:
           name: Print file build.
-          command: 'find build/'
+          command: 'find build/bin/'
       - run:
           name: run ffc
           command: 'java -jar build/bin/ffc-api.jar -port 23453 &'
