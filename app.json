@@ -1,0 +1,37 @@
+{
+  "addons": [
+    "mongolab"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/gradle"
+    }
+  ],
+  "description": "",
+  "env": {
+    "FIREBASE_CONFIG": {
+      "required": true
+    },
+    "MONGODB_DBNAME": {
+      "required": true
+    },
+    "MONGODB_URI": {
+      "required": true
+    },
+    "PRIVACY_URI": {
+      "required": true
+    },
+    "TERMS_URI": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "ffc-api",
+  "scripts": {
+  },
+  "stack": "heroku-16"
+}
