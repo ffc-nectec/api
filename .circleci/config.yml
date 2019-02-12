@@ -51,6 +51,9 @@ jobs:
             java -jar workspace/ffc-api.jar -port 23453 &
             sleep 5
       - run:
+          name: ifconfig
+          command: ifconfig
+      - run:
           name: check
           command: 'curl http://localhost:23453/v0/org'
 
@@ -72,6 +75,9 @@ jobs:
           command: |
             java -jar workspace/ffc-api.jar -port 23453 &
             sleep 5
+      - run:
+          name: ifconfig
+          command: ifconfig
       - run:
           name: check
           command: 'curl http://localhost:23453/v0/org'
