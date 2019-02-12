@@ -154,6 +154,6 @@ workflows:
       - deploy:
           requires:
             - testjava8
-            filters:
-              branches:
-                only: circleCi
+          filters:
+            branches:
+              only: circleCi
