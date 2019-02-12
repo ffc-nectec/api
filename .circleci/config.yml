@@ -116,8 +116,8 @@ jobs:
       - attach_workspace:
           at: ~/repo/workspace
       - run:
-        name: Deploy
-        command: 'echo "script deploy"'
+          name: Deploy
+          command: 'echo "script deploy"'
 
 workflows:
   version: 2
