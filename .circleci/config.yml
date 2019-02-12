@@ -50,6 +50,9 @@ jobs:
           command: |
             java -jar workspace/ffc-api.jar -port 23453 &
             sleep 5
+      - run:
+          name: check
+          command: 'curl http://localhost:23453/v0/org'
 
   testjdk8:
     docker:
@@ -69,44 +72,9 @@ jobs:
           command: |
             java -jar workspace/ffc-api.jar -port 23453 &
             sleep 5
-  testjdk10:
-    docker:
-      - image: circleci/openjdk:11
-      - image: circleci/mongo:4.0
-    working_directory: ~/repo
-    environment:
-      PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
-      TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
-      MONGODB_URI: mongodb://localhost:27017/data
-      MONGODB_DBNAME: data
-    steps:
-      - attach_workspace:
-          at: ~/repo/workspace
       - run:
-          name: run ffc
-          command: |
-            java -jar workspace/ffc-api.jar -port 23453 &
-            sleep 5
-
-  testjdk11:
-    docker:
-      - image: circleci/openjdk:11
-      - image: circleci/mongo:4.0
-    working_directory: ~/repo
-    environment:
-      PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
-      TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
-      MONGODB_URI: mongodb://localhost:27017/data
-      MONGODB_DBNAME: data
-    steps:
-      - attach_workspace:
-          at: ~/repo/workspace
-      - run:
-          name: run ffc
-          command: |
-            java -jar workspace/ffc-api.jar -port 23453 &
-            sleep 5
-
+          name: check
+          command: 'curl http://localhost:23453/v0/org'
   deploy:
     docker:
       - image: java:8
@@ -139,21 +107,10 @@ workflows:
           filters:
             branches:
               only: circleCi
-      - testjdk10:
-          requires:
-            - build
-          filters:
-            branches:
-              only: circleCi
-      - testjdk11:
-          requires:
-            - build
-          filters:
-            branches:
-              only: circleCi
       - deploy:
           requires:
             - testjava8
+            - testjdk8
           filters:
             branches:
               only: circleCi
