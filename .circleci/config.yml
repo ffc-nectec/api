@@ -32,7 +32,7 @@ jobs:
       - run: 'ls -al'
       - run: 'pwd'
 
-  testrun:
+  testjava8:
     docker:
       - image: java:8
       - image: circleci/mongo:4.0
@@ -46,19 +46,47 @@ jobs:
       - attach_workspace:
           at: ~/repo/workspace
       - run:
-          name: Print workspace
-          command: find workspace
+          name: run ffc
+          command: |
+            java -jar workspace/ffc-api.jar -port 23453 &
+            sleep 5
+
+  testjava11:
+    docker:
+      - image: java:11
+      - image: circleci/mongo:4.0
+    working_directory: ~/repo
+    environment:
+      PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
+      TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
+      MONGODB_URI: mongodb://localhost:27017/data
+      MONGODB_DBNAME: data
+    steps:
+      - attach_workspace:
+          at: ~/repo/workspace
       - run:
           name: run ffc
           command: |
             java -jar workspace/ffc-api.jar -port 23453 &
-            sleep 6
+            sleep 5
 
 workflows:
   version: 2
   flow:
     jobs:
-      - build
-      - testrun:
+      - build:
+          filters:
+            branches:
+              only: circleCi
+      - testjava8:
           requires:
             - build
+          filters:
+            branches:
+              only: circleCi
+      - testjava11:
+          requires:
+            - build
+          filters:
+            branches:
+              only: circleCi
