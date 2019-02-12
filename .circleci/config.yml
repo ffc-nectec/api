@@ -110,14 +110,15 @@ jobs:
     deploy:
       docker:
         - image: java:8
-        working_directory: ~/repo
+      working_directory: ~/repo
 
-        steps:
-          - attach_workspace:
-              at: ~/repo/workspace
-          - run:
-              name: Deploy
-              command: 'echo "script deploy"'
+      steps:
+        - attach_workspace:
+            at: ~/repo/workspace
+        - run:
+            name: Deploy
+            command: 'echo "script deploy"'
+
 workflows:
   version: 2
   flow:
