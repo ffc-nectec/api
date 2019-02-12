@@ -107,17 +107,17 @@ jobs:
             java -jar workspace/ffc-api.jar -port 23453 &
             sleep 5
 
-    deploy:
-      docker:
-        - image: java:8
-      working_directory: ~/repo
+  deploy:
+    docker:
+      - image: java:8
+    working_directory: ~/repo
 
-      steps:
-        - attach_workspace:
-            at: ~/repo/workspace
-        - run:
-            name: Deploy
-            command: 'echo "script deploy"'
+    steps:
+      - attach_workspace:
+          at: ~/repo/workspace
+      - run:
+        name: Deploy
+        command: 'echo "script deploy"'
 
 workflows:
   version: 2
