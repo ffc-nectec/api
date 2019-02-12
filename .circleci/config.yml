@@ -1,0 +1,98 @@
+version: 2.1
+executors:
+jobs:
+  build:
+    docker:
+      - image: java:8
+    working_directory: ~/repo
+    environment:
+      PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
+      TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-depen-{{ checksum "build.gradle" }}
+            - v1-depen-
+      - run: ./gradlew dependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-depen-{{ checksum "build.gradle" }}
+      - run:
+          name: Create jar
+          command: ./gradlew jar
+      - run: mkdir -p workspace
+      - run: cp build/bin/ffc-api.jar workspace/ffc-api.jar
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - ffc-api.jar
+      - run: 'ls -al'
+      - run: 'pwd'
+
+  testjava8:
+    docker:
+      - image: java:8
+      - image: circleci/mongo:4.0
+    working_directory: ~/repo
+    environment:
+      PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
+      TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
+      MONGODB_URI: mongodb://localhost:27017/data
+      MONGODB_DBNAME: data
+    steps:
+      - attach_workspace:
+          at: ~/repo/workspace
+      - run:
+          name: run ffc
+          command: |
+            java -jar workspace/ffc-api.jar -host 127.0.0.1 -port 23453 &
+            sleep 5
+      - run:
+          name: check
+          command: echo 'curl http://127.0.0.1:23453/v0/org'
+
+  testjdk8:
+    docker:
+      - image: circleci/openjdk:8
+      - image: circleci/mongo:4.0
+    working_directory: ~/repo
+    environment:
+      PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
+      TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
+      MONGODB_URI: mongodb://localhost:27017/data
+      MONGODB_DBNAME: data
+    steps:
+      - attach_workspace:
+          at: ~/repo/workspace
+      - run:
+          name: run ffc
+          command: |
+            java -jar workspace/ffc-api.jar -host 127.0.0.1 -port 23453 &
+            sleep 5
+      - run:
+          name: check
+          command: echo 'curl http://127.0.0.1:23453/v0/org'
+
+workflows:
+  version: 2
+  flow:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
+      - testjava8:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - testjdk8:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
