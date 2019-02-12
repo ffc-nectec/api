@@ -94,23 +94,23 @@ workflows:
       - build:
           filters:
             branches:
-              only: circleCi
+              only: master
       - testjava8:
           requires:
             - build
           filters:
             branches:
-              only: circleCi
+              only: master
       - testjdk8:
           requires:
             - build
           filters:
             branches:
-              only: circleCi
+              only: master
       - deploy:
           requires:
             - testjava8
             - testjdk8
           filters:
             branches:
-              only: circleCi
+              only: master
