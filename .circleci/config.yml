@@ -48,14 +48,11 @@ jobs:
       - run:
           name: run ffc
           command: |
-            java -jar workspace/ffc-api.jar -port 23453 &
+            java -jar workspace/ffc-api.jar -host 127.0.0.1 -port 23453 &
             sleep 5
       - run:
-          name: ifconfig
-          command: ifconfig
-      - run:
           name: check
-          command: 'curl http://localhost:23453/v0/org'
+          command: 'curl http://127.0.0.1:23453/v0/org'
 
   testjdk8:
     docker:
@@ -73,14 +70,11 @@ jobs:
       - run:
           name: run ffc
           command: |
-            java -jar workspace/ffc-api.jar -port 23453 &
+            java -jar workspace/ffc-api.jar -host 127.0.0.1 -port 23453 &
             sleep 5
       - run:
-          name: ifconfig
-          command: ifconfig
-      - run:
           name: check
-          command: 'curl http://localhost:23453/v0/org'
+          command: 'curl http://127.0.0.1:23453/v0/org'
   deploy:
     docker:
       - image: java:8
