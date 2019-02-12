@@ -51,9 +51,27 @@ jobs:
             java -jar workspace/ffc-api.jar -port 23453 &
             sleep 5
 
-  testjava11:
+  testjdk8:
     docker:
-      - image: java:11
+      - image: circleci/openjdk:8
+      - image: circleci/mongo:4.0
+    working_directory: ~/repo
+    environment:
+      PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
+      TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
+      MONGODB_URI: mongodb://localhost:27017/data
+      MONGODB_DBNAME: data
+    steps:
+      - attach_workspace:
+          at: ~/repo/workspace
+      - run:
+          name: run ffc
+          command: |
+            java -jar workspace/ffc-api.jar -port 23453 &
+            sleep 5
+  testjdk10:
+    docker:
+      - image: circleci/openjdk:11
       - image: circleci/mongo:4.0
     working_directory: ~/repo
     environment:
@@ -70,6 +88,36 @@ jobs:
             java -jar workspace/ffc-api.jar -port 23453 &
             sleep 5
 
+  testjdk11:
+    docker:
+      - image: circleci/openjdk:11
+      - image: circleci/mongo:4.0
+    working_directory: ~/repo
+    environment:
+      PRIVACY_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md
+      TERMS_URI: https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md
+      MONGODB_URI: mongodb://localhost:27017/data
+      MONGODB_DBNAME: data
+    steps:
+      - attach_workspace:
+          at: ~/repo/workspace
+      - run:
+          name: run ffc
+          command: |
+            java -jar workspace/ffc-api.jar -port 23453 &
+            sleep 5
+
+    deploy:
+      docker:
+        - image: java:8
+        working_directory: ~/repo
+
+        steps:
+          - attach_workspace:
+              at: ~/repo/workspace
+          - run:
+              name: Deploy
+              command: 'echo "script deploy"'
 workflows:
   version: 2
   flow:
@@ -84,9 +132,27 @@ workflows:
           filters:
             branches:
               only: circleCi
-      - testjava11:
+      - testjdk8:
           requires:
             - build
           filters:
             branches:
               only: circleCi
+      - testjdk10:
+          requires:
+            - build
+          filters:
+            branches:
+              only: circleCi
+      - testjdk11:
+          requires:
+            - build
+          filters:
+            branches:
+              only: circleCi
+      - deploy:
+          requires:
+            - testjava8
+            filters:
+              branches:
+                only: circleCi
