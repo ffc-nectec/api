@@ -2,6 +2,7 @@ package ffc.airsync.api.services
 
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
+import com.mongodb.client.model.Indexes
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.plus
@@ -68,5 +69,12 @@ abstract class MongoDao(
         output.removeIf { it.isTempId }
 
         return output
+    }
+
+    fun createIndexById() {
+        try {
+            dbCollection.createIndex(Indexes.hashed("_id"))
+        } catch (ignore: Exception) {
+        }
     }
 }

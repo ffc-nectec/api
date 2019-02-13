@@ -36,6 +36,10 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
         val logger = getLogger()
     }
 
+    init {
+        createIndexById()
+    }
+
     override fun insert(organization: Organization): Organization {
         validate(organization)
         checkDuplication(organization)

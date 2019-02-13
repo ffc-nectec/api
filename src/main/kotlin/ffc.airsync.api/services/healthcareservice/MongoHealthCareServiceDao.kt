@@ -16,6 +16,7 @@ class MongoHealthCareServiceDao : HealthCareServiceDao,
     MongoSyncDao<HealthCareService>("ffc", "healthcareservice") {
 
     init {
+        createIndexById()
         try {
             dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
             dbCollection.createIndex(("orgIndex" equal 1) plus ("_id" equal 1), IndexOptions().unique(true))

@@ -23,6 +23,7 @@ import org.bson.types.ObjectId
 internal class MongoPersonDao : PersonDao, MongoSyncDao<Person>("ffc", "person") {
 
     init {
+        createIndexById()
         try {
             dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
             dbCollection.createIndex("houseId" equal 1, IndexOptions().unique(false))
