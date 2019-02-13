@@ -13,7 +13,11 @@ import org.bson.Document
 class MongoSpecialPpType : MongoDao("ffc", "specialpp"), SpecialPpDao {
 
     init {
-        dbCollection.createIndex("id" equal 1, IndexOptions().unique(true))
+        createIndexById()
+        try {
+            dbCollection.createIndex("id" equal 1, IndexOptions().unique(true))
+        } catch (ignore: Exception) {
+        }
     }
 
     override fun insert(ppType: SpecialPP.PPType) {

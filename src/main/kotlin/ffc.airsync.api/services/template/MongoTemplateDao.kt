@@ -13,7 +13,11 @@ import org.bson.types.ObjectId
 class MongoTemplateDao : MongoDao("ffc", "template"), TemplateDao {
 
     init {
-        dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
+        createIndexById()
+        try {
+            dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
+        } catch (ignore: Exception) {
+        }
     }
 
     override fun insert(orgId: String, template: Template) {

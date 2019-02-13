@@ -16,6 +16,7 @@ import org.bson.Document
 internal class MongoDiseaseDao : MongoDao("ffc", "disease"), DiseaseDao {
 
     init {
+        createIndexById()
         val searchIndex = documentOf(
             "icd10" to "text",
             "name" to "text",

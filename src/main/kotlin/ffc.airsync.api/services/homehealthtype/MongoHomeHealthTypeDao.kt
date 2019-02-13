@@ -13,6 +13,7 @@ import org.bson.types.BasicBSONList
 internal class MongoHomeHealthTypeDao : MongoDao("ffc", "homeHealthType"),
     HomeHealthTypeDao {
     init {
+        createIndexById()
         try {
             dbCollection.createIndex("id" equal 1, IndexOptions().unique(false))
         } catch (ignore: Exception) {

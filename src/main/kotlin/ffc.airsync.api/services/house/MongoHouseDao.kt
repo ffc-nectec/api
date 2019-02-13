@@ -37,6 +37,7 @@ import javax.ws.rs.NotFoundException
 internal class MongoHouseDao : HouseDao, MongoSyncDao<House>("ffc", "house") {
 
     init {
+        createIndexById()
         mongoCreateHouseIndex()
     }
 

@@ -99,31 +99,35 @@ internal class FFCApiServer(val args: Array<String>) {
 
     private fun getFirebaseParameter() {
         try {
-            val serviceAccount =
-                FileInputStream("ffc-nectec-firebase-adminsdk-4ogjg-88a2843d02.json")
-            val options = FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .setDatabaseUrl("https://ffc-nectec.firebaseio.com")
-                .build()
-            firebaseApp = FirebaseApp.initializeApp(options)
-            logger.debug("Load firebase config from file.")
-        } catch (e: IOException) {
-            logger.debug("Load firebase config from system env FIREBASE_CONFIG")
-            val firebaseConfigString = System.getenv("FIREBASE_CONFIG")
-            val byteFirebaseConfig = firebaseConfigString.toByteArray()
-            val streamFirebaseConfig = ByteArrayInputStream(byteFirebaseConfig)
-            var options: FirebaseOptions? = null
             try {
-                options = FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(streamFirebaseConfig))
+                val serviceAccount =
+                    FileInputStream("ffc-nectec-firebase-adminsdk-4ogjg-88a2843d02.json")
+                val options = FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .setDatabaseUrl("https://ffc-nectec.firebaseio.com")
                     .build()
-            } catch (e1: IOException) {
-                logger.info("Cannot load filebase config. ${e1.message}", e1)
-            }
+                firebaseApp = FirebaseApp.initializeApp(options)
+                logger.debug("Load firebase config from file.")
+            } catch (e: IOException) {
+                logger.debug("Load firebase config from system env FIREBASE_CONFIG")
+                val firebaseConfigString = System.getenv("FIREBASE_CONFIG")
+                val byteFirebaseConfig = firebaseConfigString.toByteArray()
+                val streamFirebaseConfig = ByteArrayInputStream(byteFirebaseConfig)
+                var options: FirebaseOptions? = null
+                try {
+                    options = FirebaseOptions.Builder()
+                        .setCredentials(GoogleCredentials.fromStream(streamFirebaseConfig))
+                        .setDatabaseUrl("https://ffc-nectec.firebaseio.com")
+                        .build()
+                } catch (e1: IOException) {
+                    logger.info("Cannot load filebase config. ${e1.message}", e1)
+                }
 
-            firebaseApp = FirebaseApp.initializeApp(options!!)
-            // logger.log(Level.FINE, "Load config firebase from system env.");
+                firebaseApp = FirebaseApp.initializeApp(options!!)
+                // logger.log(Level.FINE, "Load config firebase from system env.");
+            }
+        } catch (ex: Exception) {
+            logger.error("Firebase Error", ex)
         }
     }
 
