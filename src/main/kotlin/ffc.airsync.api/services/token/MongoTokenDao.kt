@@ -1,5 +1,6 @@
 package ffc.airsync.api.services.token
 
+import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.Indexes
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.callErrorIgnore
@@ -8,13 +9,19 @@ import ffc.entity.Token
 import ffc.entity.User
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
+import org.bson.BsonDateTime
 import org.bson.Document
 import org.bson.types.ObjectId
+import org.joda.time.DateTime
+import java.util.concurrent.TimeUnit
 
 internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
     init {
         callErrorIgnore {
             dbCollection.createIndex(Indexes.hashed("token"))
+        }
+        callErrorIgnore {
+            dbCollection.createIndex(Indexes.ascending("MongoCreated"), IndexOptions().expireAfter(7L, TimeUnit.DAYS))
         }
     }
 
@@ -24,6 +31,7 @@ internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
         val tokenDoc = Document.parse(tokenMessage.toJson())
         tokenDoc.append("orgIndex", ObjectId(orgId))
         tokenDoc.append("_id", generateId)
+        tokenDoc.append("MongoCreated", BsonDateTime(DateTime.now().millis))
         dbCollection.insertOne(tokenDoc)
         return tokenMessage
     }
