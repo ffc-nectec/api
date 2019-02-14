@@ -85,7 +85,10 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
     override fun remove(orgId: String) {
         val lll = LogManager.getLogger("DDDD")
         lll.info("RemoveByOrgId $orgId")
-        dbCollection.findOneAndDelete("id" equal orgId) ?: throw NoSuchElementException("ไม่พบ Org $orgId ที่ต้องการลบ")
+        val query = "_id" equal ObjectId(orgId)
+        dbCollection.find(query).firstOrNull()
+            ?: throw NoSuchElementException("ไม่พบ Org $orgId ที่ต้องการลบ")
+        dbCollection.deleteMany(query)
     }
 
     override fun findAll(): List<Organization> {

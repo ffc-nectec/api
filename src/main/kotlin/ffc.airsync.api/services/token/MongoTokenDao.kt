@@ -1,6 +1,8 @@
 package ffc.airsync.api.services.token
 
+import com.mongodb.client.model.Indexes
 import ffc.airsync.api.services.MongoDao
+import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.equal
 import ffc.entity.Token
 import ffc.entity.User
@@ -11,7 +13,9 @@ import org.bson.types.ObjectId
 
 internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
     init {
-        createIndexByoId()
+        callErrorIgnore {
+            dbCollection.createIndex(Indexes.hashed("token"))
+        }
     }
 
     override fun create(user: User, orgId: String): Token {
@@ -35,7 +39,10 @@ internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
     }
 
     override fun remove(token: String): Boolean {
-        val tokenDoc = dbCollection.findOneAndDelete("token" equal token)
+        val query = "token" equal token
+        val tokenDoc =
+            dbCollection.find(query).firstOrNull()
+        dbCollection.deleteMany(query)
         return tokenDoc != null
     }
 

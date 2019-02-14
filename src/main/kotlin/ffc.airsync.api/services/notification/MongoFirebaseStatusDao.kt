@@ -33,6 +33,6 @@ class MongoFirebaseStatusDao : FirebaseStatusDao, MongoDao("ffc", "firebasestatu
     }
 
     override fun confirmSuccess(orgId: String, entityId: String) {
-        dbCollection.deleteOne(("_id" equal ObjectId(entityId)).append("orgIndex", ObjectId(orgId)))
+        dbCollection.deleteMany(("_id" equal ObjectId(entityId)).append("orgIndex", ObjectId(orgId)))
     }
 }
