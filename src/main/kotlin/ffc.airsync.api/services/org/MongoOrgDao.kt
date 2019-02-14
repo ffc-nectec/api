@@ -58,6 +58,7 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
         orgDoc["id"] = genId.toHexString()
         orgDoc.append("lastKnownIp", organization.bundle["lastKnownIp"])
         orgDoc.append("token", ObjectId())
+        logger.info("Register organization ${organization.name} Ip:${orgDoc["lastKnownIp"]}")
         dbCollection.insertOne(orgDoc)
         val newOrgDoc = dbCollection.find("_id" equal genId).first()
 
@@ -65,7 +66,9 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
     }
 
     private fun checkDuplication(organization: Organization) {
-        val name = dbCollection.find("name" equal organization.name).first()
+        val name = dbCollection.find("name" equal organization.name).firstOrNull()
+        if (name == null)
+            logger.info("Register duplicate organization.")
         require(name == null) { "ลงทะเบียน Org ซ้ำ" }
     }
 
