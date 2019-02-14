@@ -79,7 +79,7 @@ class HouseResourceNewEndpoint {
 
     @Developer
     @GET
-    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE\\.geojson")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE.geojson")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 5)
@@ -113,7 +113,7 @@ class HouseResourceNewEndpoint {
 
     @Developer
     @GET
-    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE\\.json")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE.json")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 5)
     fun getJsonTypeHouse(
@@ -153,7 +153,7 @@ class HouseResourceNewEndpoint {
     }
 
     @GET
-    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}\\.json")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}.json")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun getSingleJsonType(
@@ -205,7 +205,7 @@ class HouseResourceNewEndpoint {
     }
 
     @GET
-    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}\\.geojson")
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}.geojson")
     @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 2)
