@@ -31,7 +31,7 @@ object ServletContextBuilder {
 
         val jersey = ServletHolder(ServletContainer(ApplicationConfig()))
         jersey.initOrder = 0
-        context.addServlet(jersey, "/v0/*")
+        context.addServlet(jersey, "/v1/*")
 
         // ServletHolder holderEvents = new ServletHolder("ws-socket", SocketServlet.class);
         // holderEvents.setInitOrder(1);
