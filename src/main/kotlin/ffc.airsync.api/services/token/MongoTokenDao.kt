@@ -11,7 +11,7 @@ import org.bson.types.ObjectId
 
 internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
     init {
-        createIndexById()
+        createIndexByoId()
     }
 
     override fun create(user: User, orgId: String): Token {

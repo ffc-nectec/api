@@ -2,8 +2,10 @@ package ffc.airsync.api.services
 
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
+import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.Indexes
 import ffc.airsync.api.getLogger
+import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.plus
 import ffc.entity.Entity
@@ -71,10 +73,18 @@ abstract class MongoDao(
         return output
     }
 
-    fun createIndexById() {
-        try {
+    fun createIndexByOrgIndex() {
+        callErrorIgnore {
+            dbCollection.createIndex(Indexes.hashed("orgIndex"), IndexOptions().unique(false))
+        }
+    }
+
+    fun createIndexByoId() {
+        callErrorIgnore {
             dbCollection.createIndex(Indexes.hashed("_id"))
-        } catch (ignore: Exception) {
+        }
+        callErrorIgnore {
+            dbCollection.dropIndex("_id" equal 1)
         }
     }
 }

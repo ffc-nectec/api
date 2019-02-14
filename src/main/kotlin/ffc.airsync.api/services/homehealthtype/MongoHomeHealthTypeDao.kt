@@ -2,6 +2,7 @@ package ffc.airsync.api.services.homehealthtype
 
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.services.MongoDao
+import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.equal
 import ffc.entity.Lang
 import ffc.entity.gson.parseTo
@@ -13,11 +14,7 @@ import org.bson.types.BasicBSONList
 internal class MongoHomeHealthTypeDao : MongoDao("ffc", "homeHealthType"),
     HomeHealthTypeDao {
     init {
-        createIndexById()
-        try {
-            dbCollection.createIndex("id" equal 1, IndexOptions().unique(false))
-        } catch (ignore: Exception) {
-        }
+        callErrorIgnore { dbCollection.createIndex("id" equal 1, IndexOptions().unique(false)) }
     }
 
     override fun insert(homeHealthTypee: ServiceType): ServiceType {
