@@ -37,7 +37,7 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
     }
 
     init {
-        createIndexById()
+        createIndexByoId()
     }
 
     override fun insert(organization: Organization): Organization {

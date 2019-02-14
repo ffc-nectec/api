@@ -22,6 +22,7 @@ import com.mongodb.client.model.Sorts
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.MongoSyncDao
 import ffc.airsync.api.services.util.buildInsertBson
+import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
 import ffc.airsync.api.services.util.listOf
@@ -37,15 +38,14 @@ import javax.ws.rs.NotFoundException
 internal class MongoHouseDao : HouseDao, MongoSyncDao<House>("ffc", "house") {
 
     init {
-        createIndexById()
+        createIndexByOrgIndex()
         mongoCreateHouseIndex()
     }
 
     private fun mongoCreateHouseIndex() {
-        try {
+        callErrorIgnore {
             dbCollection.createIndex("location" equal "2dsphere", IndexOptions().unique(false))
             dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
-        } catch (ignore: Exception) {
         }
     }
 

@@ -5,6 +5,7 @@ import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.services.MongoSyncDao
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.buildUpdateBson
+import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
 import ffc.airsync.api.services.util.firstAs
@@ -23,14 +24,13 @@ import org.bson.types.ObjectId
 internal class MongoPersonDao : PersonDao, MongoSyncDao<Person>("ffc", "person") {
 
     init {
-        createIndexById()
-        try {
+        createIndexByOrgIndex()
+        callErrorIgnore {
             dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
             dbCollection.createIndex("houseId" equal 1, IndexOptions().unique(false))
             dbCollection.createIndex(("houseId" equal 1) plus ("orgIndex" equal 1), IndexOptions().unique(false))
             dbCollection.createIndex("relationships.block" equal 1, IndexOptions().unique(false))
             dbCollection.createIndex(("orgIndex" equal 1) plus ("_id" equal 1), IndexOptions().unique(true))
-        } catch (ignore: Exception) {
         }
     }
 
