@@ -108,7 +108,8 @@ internal class MongoHouseDao : HouseDao, MongoSyncDao<House>("ffc", "house") {
 
     override fun delete(orgId: String, houseId: String) {
         val query = ("_id" equal ObjectId(houseId)) plus ("orgIndex" equal ObjectId(orgId))
-        dbCollection.findOneAndDelete(query) ?: throw NotFoundException("ไม่พบบ้าน id $houseId ให้ลบ")
+        dbCollection.find(query).firstOrNull() ?: throw NotFoundException("ไม่พบบ้าน id $houseId ให้ลบ")
+        dbCollection.deleteMany(query)
     }
 
     override fun findAll(orgId: String, queryStr: String?, haveLocation: Boolean?, villageName: String?): List<House> {

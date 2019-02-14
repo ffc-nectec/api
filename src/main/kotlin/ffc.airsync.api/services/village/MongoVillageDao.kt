@@ -40,7 +40,7 @@ class MongoVillageDao : VillageDao, MongoDao("ffc", "village") {
         val query = id.buildQueryDoc()
         require((dbCollection.find(query).first()?.get("orgIndex").toString()) == orgId) { "ไม่พบข้อมูลสำหรับการลบ" }
 
-        dbCollection.deleteOne(query)
+        dbCollection.deleteMany(query)
     }
 
     override fun get(orgId: String, id: String): Village {
