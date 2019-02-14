@@ -79,10 +79,24 @@ class HouseResourceNewEndpoint {
 
     @Developer
     @GET
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE\\.geojson")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @Produces(GEOJSONHeader)
+    @Cache(maxAge = 5)
+    fun getGeoJsonTypeHouse(
+        @QueryParam("page") @DefaultValue("1") page: Int,
+        @QueryParam("per_page") @DefaultValue("200") per_page: Int,
+        @PathParam("orgId") orgId: String
+    ): FeatureCollection<House> {
+        return getGeoJsonHouse(page, per_page, orgId)
+    }
+
+    @Developer
+    @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 5)
-    fun newGetJsonHouse(
+    fun getJsonHouse(
         @QueryParam("page") @DefaultValue("1") page: Int,
         @QueryParam("per_page") @DefaultValue("200") per_page: Int,
         @QueryParam("query") query: String?,
@@ -95,6 +109,21 @@ class HouseResourceNewEndpoint {
             else -> null
         }
         return houseService.getHouses(orgId, query, haveLocation).paging(page, per_page)
+    }
+
+    @Developer
+    @GET
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE\\.json")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @Cache(maxAge = 5)
+    fun getJsonTypeHouse(
+        @QueryParam("page") @DefaultValue("1") page: Int,
+        @QueryParam("per_page") @DefaultValue("200") per_page: Int,
+        @QueryParam("query") query: String?,
+        @QueryParam("haveLocation") haveLocationQuery: String?,
+        @PathParam("orgId") orgId: String
+    ): List<House> {
+        return getJsonHouse(page, per_page, query, haveLocationQuery, orgId)
     }
 
     @GET
@@ -121,6 +150,17 @@ class HouseResourceNewEndpoint {
         @PathParam("houseId") houseId: String
     ): House {
         return houseService.getSingle(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
+    }
+
+    @GET
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}\\.json")
+    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @Cache(maxAge = 2)
+    fun getSingleJsonType(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String
+    ): House {
+        return getSingle(orgId, houseId)
     }
 
     @PUT
@@ -162,6 +202,18 @@ class HouseResourceNewEndpoint {
         @PathParam("houseId") houseId: String
     ): FeatureCollection<House> {
         return houseService.getSingleGeo(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
+    }
+
+    @GET
+    @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}\\.geojson")
+    @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
+    @Produces(GEOJSONHeader)
+    @Cache(maxAge = 2)
+    fun getSingleGeoType(
+        @PathParam("orgId") orgId: String,
+        @PathParam("houseId") houseId: String
+    ): FeatureCollection<House> {
+        return getSingleGeo(orgId, houseId)
     }
 
     @DELETE
