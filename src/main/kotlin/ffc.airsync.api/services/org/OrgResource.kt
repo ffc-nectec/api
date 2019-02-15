@@ -21,8 +21,9 @@ import ffc.airsync.api.filter.Cache
 import ffc.airsync.api.filter.Developer
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.ORGIDTYPE
+import ffc.airsync.api.services.util.forwardForIpAddress
 import ffc.airsync.api.services.util.getUserLogin
-import ffc.airsync.api.services.util.ipAddress
+import ffc.airsync.api.services.util.realIpAddress
 import ffc.entity.Organization
 import javax.annotation.security.RolesAllowed
 import javax.servlet.http.HttpServletRequest
@@ -60,7 +61,7 @@ class OrgResource {
         organization.users.forEach {
             it.roles.add(it.role)
         }
-        val org = OrgService.register(organization.apply { bundle["lastKnownIp"] = req.ipAddress() })
+        val org = OrgService.register(organization.apply { bundle["lastKnownIp"] = req.forwardForIpAddress() })
         logger.info("Register organization Name: ${org.name} Id:${org.id}")
         return Response.status(201).entity(org).build()
     }
@@ -73,8 +74,8 @@ class OrgResource {
         @QueryParam("query") query: String?
     ): List<Organization> {
         return if (my) {
-            logger.debug("Find Organization with ip-address = ${req.ipAddress()}")
-            OrgService.getMy(req.ipAddress())
+            logger.debug("Find Organization with ip-address = ${req.forwardForIpAddress()}")
+            OrgService.getMy("Forward ip ${req.forwardForIpAddress()} Real IP ${req.realIpAddress()}")
         } else {
             val queryFind = query ?: ""
             if (queryFind.isNotEmpty()) {
