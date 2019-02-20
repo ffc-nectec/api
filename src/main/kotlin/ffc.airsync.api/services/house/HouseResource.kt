@@ -1,7 +1,6 @@
 package ffc.airsync.api.services.house
 
 import ffc.airsync.api.filter.Cache
-import ffc.airsync.api.filter.Developer
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.GEOJSONHeader
 import ffc.airsync.api.services.util.containsSome
@@ -61,7 +60,6 @@ class HouseResourceNewEndpoint {
         return Response.status(Response.Status.CREATED).entity(houseService.create(orgId, role, houseList)).build()
     }
 
-    @Developer
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
@@ -77,7 +75,6 @@ class HouseResourceNewEndpoint {
         return FeatureCollection(houses.map { Feature(it.location!!, it) })
     }
 
-    @Developer
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE.geojson")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
@@ -91,7 +88,6 @@ class HouseResourceNewEndpoint {
         return getGeoJsonHouse(page, per_page, orgId)
     }
 
-    @Developer
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
@@ -111,7 +107,6 @@ class HouseResourceNewEndpoint {
         return houseService.getHouses(orgId, query, haveLocation).paging(page, per_page)
     }
 
-    @Developer
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE.json")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
