@@ -1,6 +1,5 @@
 package ffc.airsync.api.services.user
 
-import ffc.airsync.api.filter.Developer
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.getHeaderMap
@@ -22,7 +21,6 @@ import javax.xml.bind.DatatypeConverter
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Developer
 class UserResource {
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
@@ -36,7 +34,6 @@ class UserResource {
     }
 
     @GET
-    @Developer
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun get(@PathParam("orgUuid") orgId: String): Response {
@@ -44,7 +41,6 @@ class UserResource {
     }
 
     @POST
-    @Developer
     @Path("/$ORGIDTYPE/authorize")
     fun registerMobile(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String): Response {
         val httpHeader = req.getHeaderMap()

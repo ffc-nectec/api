@@ -18,7 +18,6 @@
 package ffc.airsync.api.services.org
 
 import ffc.airsync.api.filter.Cache
-import ffc.airsync.api.filter.Developer
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.forwardForIpAddress
@@ -68,7 +67,6 @@ class OrgResource {
 
     @GET
     @Cache(maxAge = 5)
-    @Developer
     fun get(
         @QueryParam("my") @DefaultValue("false") my: Boolean,
         @QueryParam("query") query: String?
