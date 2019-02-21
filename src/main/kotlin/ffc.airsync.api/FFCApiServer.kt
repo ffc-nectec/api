@@ -17,9 +17,7 @@
 
 package ffc.airsync.api
 
-import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
 import ffc.airsync.api.services.MongoDbConnector
 import ffc.airsync.api.services.disease.DiseaseService
 import ffc.airsync.api.services.homehealthtype.HomeHealthTypeService
@@ -29,20 +27,15 @@ import org.joda.time.DateTimeZone
 import org.kohsuke.args4j.CmdLineException
 import org.kohsuke.args4j.CmdLineParser
 import org.kohsuke.args4j.Option
-import java.io.ByteArrayInputStream
-import java.io.FileInputStream
-import java.io.IOException
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.TimeZone
 
 internal class FFCApiServer(val args: Array<String>) {
-    @Option(name = "-dev", usage = "mode")
-    protected var dev = false
     @Option(name = "-port", usage = "port destination ownAction start server")
-    protected var port = DEFAULT_PORT
-    @Option(name = "-host", usage = "port destination ownAction start server")
-    protected var host = DEFAULT_HOST
+    private var port = DEFAULT_PORT
+    @Option(name = "-host", usage = "host destination ownAction start server")
+    private var host = DEFAULT_HOST
 
     val logger = getLogger()
 
@@ -60,7 +53,7 @@ internal class FFCApiServer(val args: Array<String>) {
         logger.info("Init MogoDB connection.")
         MongoDbConnector.initialize()
         logger.info("Init firebase config.")
-        getFirebaseParameter()
+        FirebaseAdminSdkInit()
         logger.info("Init lookup.")
         initDiseaseAndHomeHealtyType()
         logger.info("Start main process.")
@@ -95,40 +88,6 @@ internal class FFCApiServer(val args: Array<String>) {
             SpecialPpService.init()
             logger.info("Done lookup init.")
         }.start()
-    }
-
-    private fun getFirebaseParameter() {
-        try {
-            try {
-                val serviceAccount =
-                    FileInputStream("ffc-nectec-firebase-adminsdk-4ogjg-88a2843d02.json")
-                val options = FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .setDatabaseUrl("https://ffc-nectec.firebaseio.com")
-                    .build()
-                firebaseApp = FirebaseApp.initializeApp(options)
-                logger.debug("Load firebase config from file.")
-            } catch (e: IOException) {
-                logger.debug("Load firebase config from system env FIREBASE_CONFIG")
-                val firebaseConfigString = System.getenv("FIREBASE_CONFIG")
-                val byteFirebaseConfig = firebaseConfigString.toByteArray()
-                val streamFirebaseConfig = ByteArrayInputStream(byteFirebaseConfig)
-                var options: FirebaseOptions? = null
-                try {
-                    options = FirebaseOptions.Builder()
-                        .setCredentials(GoogleCredentials.fromStream(streamFirebaseConfig))
-                        .setDatabaseUrl("https://ffc-nectec.firebaseio.com")
-                        .build()
-                } catch (e1: IOException) {
-                    logger.info("Cannot load filebase config. ${e1.message}", e1)
-                }
-
-                firebaseApp = FirebaseApp.initializeApp(options!!)
-                // logger.log(Level.FINE, "Load config firebase from system env.");
-            }
-        } catch (ex: Exception) {
-            logger.error("Firebase Error", ex)
-        }
     }
 
     companion object {
