@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.util
 
-fun callErrorIgnore(call: () -> Unit) {
+fun ignoreException(call: () -> Unit) {
     try {
         call()
     } catch (ignore: Exception) {

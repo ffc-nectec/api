@@ -22,9 +22,9 @@ import com.mongodb.client.model.Sorts
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.MongoSyncDao
 import ffc.airsync.api.services.util.buildInsertBson
-import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
+import ffc.airsync.api.services.util.ignoreException
 import ffc.airsync.api.services.util.listOf
 import ffc.airsync.api.services.util.plus
 import ffc.entity.gson.parseTo
@@ -43,7 +43,7 @@ internal class MongoHouseDao : HouseDao, MongoSyncDao<House>("ffc", "house") {
     }
 
     private fun mongoCreateHouseIndex() {
-        callErrorIgnore {
+        ignoreException {
             dbCollection.createIndex("location" equal "2dsphere", IndexOptions().unique(false))
             dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
         }

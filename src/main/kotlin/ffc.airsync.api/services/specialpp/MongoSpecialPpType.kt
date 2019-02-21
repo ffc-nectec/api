@@ -3,8 +3,8 @@ package ffc.airsync.api.services.specialpp
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.bsonListOf
-import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.equal
+import ffc.airsync.api.services.util.ignoreException
 import ffc.airsync.api.services.util.listOf
 import ffc.airsync.api.services.util.toDocument
 import ffc.entity.gson.parseTo
@@ -14,7 +14,7 @@ import org.bson.Document
 class MongoSpecialPpType : MongoDao("ffc", "specialpp"), SpecialPpDao {
 
     init {
-        callErrorIgnore { dbCollection.createIndex("id" equal 1, IndexOptions().unique(true)) }
+        ignoreException { dbCollection.createIndex("id" equal 1, IndexOptions().unique(true)) }
     }
 
     override fun insert(ppType: SpecialPP.PPType) {

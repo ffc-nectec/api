@@ -7,10 +7,10 @@ import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.buildQueryDoc
 import ffc.airsync.api.services.util.buildTextFindMongo
 import ffc.airsync.api.services.util.buildUpdateBson
-import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
 import ffc.airsync.api.services.util.ffcUpdate
+import ffc.airsync.api.services.util.ignoreException
 import ffc.entity.Village
 import ffc.entity.gson.parseTo
 import org.bson.types.ObjectId
@@ -19,7 +19,7 @@ class MongoVillageDao : VillageDao, MongoDao("ffc", "village") {
 
     init {
         createIndexByOrgIndex()
-        callErrorIgnore { dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false)) }
+        ignoreException { dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false)) }
     }
 
     override fun insert(orgId: String, village: Village): Village {

@@ -3,10 +3,10 @@ package ffc.airsync.api.services.disease
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.bsonListOf
-import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.documentOf
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.firstAs
+import ffc.airsync.api.services.util.ignoreException
 import ffc.airsync.api.services.util.listOf
 import ffc.airsync.api.services.util.toDocument
 import ffc.entity.Lang
@@ -24,8 +24,8 @@ internal class MongoDiseaseDao : MongoDao("ffc", "disease"), DiseaseDao {
         )
         val insertIndex = documentOf("icd10" to 1)
 
-        callErrorIgnore { dbCollection.createIndex(searchIndex, IndexOptions().unique(false)) }
-        callErrorIgnore { dbCollection.createIndex(insertIndex, IndexOptions().unique(true)) }
+        ignoreException { dbCollection.createIndex(searchIndex, IndexOptions().unique(false)) }
+        ignoreException { dbCollection.createIndex(insertIndex, IndexOptions().unique(true)) }
     }
 
     override fun insert(disease: Icd10): Icd10 {

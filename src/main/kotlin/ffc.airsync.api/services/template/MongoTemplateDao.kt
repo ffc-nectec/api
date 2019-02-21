@@ -2,8 +2,8 @@ package ffc.airsync.api.services.template
 
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.services.MongoDao
-import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.equal
+import ffc.airsync.api.services.util.ignoreException
 import ffc.airsync.api.services.util.listOf
 import ffc.airsync.api.services.util.toDocument
 import ffc.entity.Template
@@ -15,7 +15,7 @@ class MongoTemplateDao : MongoDao("ffc", "template"), TemplateDao {
 
     init {
         createIndexByOrgIndex()
-        callErrorIgnore { dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false)) }
+        ignoreException { dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false)) }
     }
 
     override fun insert(orgId: String, template: Template) {
