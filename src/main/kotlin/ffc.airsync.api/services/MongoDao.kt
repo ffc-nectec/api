@@ -80,11 +80,7 @@ abstract class MongoDao(
     }
 
     fun createIndexByoId() {
-        ignoreException {
-            dbCollection.createIndex(Indexes.hashed("_id"))
-        }
-        ignoreException {
-            dbCollection.dropIndex("_id" equal 1)
-        }
+        ignoreException { dbCollection.createIndex(Indexes.hashed("_id")) }
+        ignoreException { dbCollection.dropIndex("_id" equal 1) }
     }
 }
