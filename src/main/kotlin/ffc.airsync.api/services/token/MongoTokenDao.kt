@@ -3,8 +3,8 @@ package ffc.airsync.api.services.token
 import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.Indexes
 import ffc.airsync.api.services.MongoDao
-import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.equal
+import ffc.airsync.api.services.util.ignoreException
 import ffc.entity.Token
 import ffc.entity.User
 import ffc.entity.gson.parseTo
@@ -17,10 +17,10 @@ import java.util.concurrent.TimeUnit
 
 internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
     init {
-        callErrorIgnore {
+        ignoreException {
             dbCollection.createIndex(Indexes.hashed("token"))
         }
-        callErrorIgnore {
+        ignoreException {
             dbCollection.createIndex(Indexes.ascending("MongoCreated"), IndexOptions().expireAfter(7L, TimeUnit.DAYS))
         }
     }

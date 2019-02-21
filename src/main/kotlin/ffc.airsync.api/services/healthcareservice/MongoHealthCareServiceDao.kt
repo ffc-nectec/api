@@ -4,9 +4,9 @@ import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.services.MongoSyncDao
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.buildUpdateBson
-import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
+import ffc.airsync.api.services.util.ignoreException
 import ffc.airsync.api.services.util.plus
 import ffc.entity.gson.parseTo
 import ffc.entity.healthcare.HealthCareService
@@ -18,7 +18,7 @@ class MongoHealthCareServiceDao : HealthCareServiceDao,
 
     init {
         createIndexByOrgIndex()
-        callErrorIgnore {
+        ignoreException {
             dbCollection.createIndex(("orgIndex" equal 1) plus ("_id" equal 1), IndexOptions().unique(true))
             dbCollection.createIndex("patientIdIndex" equal 1, IndexOptions().unique(false))
             dbCollection.createIndex("providerIdIndex" equal 1, IndexOptions().unique(false))

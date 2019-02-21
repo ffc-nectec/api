@@ -5,8 +5,8 @@ import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.Indexes
 import ffc.airsync.api.getLogger
-import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.equal
+import ffc.airsync.api.services.util.ignoreException
 import ffc.airsync.api.services.util.plus
 import ffc.entity.Entity
 import ffc.entity.gson.parseTo
@@ -74,16 +74,16 @@ abstract class MongoDao(
     }
 
     fun createIndexByOrgIndex() {
-        callErrorIgnore {
+        ignoreException {
             dbCollection.createIndex(Indexes.hashed("orgIndex"), IndexOptions().unique(false))
         }
     }
 
     fun createIndexByoId() {
-        callErrorIgnore {
+        ignoreException {
             dbCollection.createIndex(Indexes.hashed("_id"))
         }
-        callErrorIgnore {
+        ignoreException {
             dbCollection.dropIndex("_id" equal 1)
         }
     }

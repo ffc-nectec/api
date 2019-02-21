@@ -5,10 +5,10 @@ import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.services.MongoSyncDao
 import ffc.airsync.api.services.util.buildInsertBson
 import ffc.airsync.api.services.util.buildUpdateBson
-import ffc.airsync.api.services.util.callErrorIgnore
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ffcInsert
 import ffc.airsync.api.services.util.firstAs
+import ffc.airsync.api.services.util.ignoreException
 import ffc.airsync.api.services.util.plus
 import ffc.entity.Entity
 import ffc.entity.Person
@@ -25,7 +25,7 @@ internal class MongoPersonDao : PersonDao, MongoSyncDao<Person>("ffc", "person")
 
     init {
         createIndexByOrgIndex()
-        callErrorIgnore {
+        ignoreException {
             dbCollection.createIndex("orgIndex" equal 1, IndexOptions().unique(false))
             dbCollection.createIndex("houseId" equal 1, IndexOptions().unique(false))
             dbCollection.createIndex(("houseId" equal 1) plus ("orgIndex" equal 1), IndexOptions().unique(false))
