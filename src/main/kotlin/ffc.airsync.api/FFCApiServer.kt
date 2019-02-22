@@ -53,7 +53,7 @@ internal class FFCApiServer(val args: Array<String>) {
         logger.info("Init MogoDB connection.")
         MongoDbConnector.initialize()
         logger.info("Init firebase config.")
-        FirebaseAdminSdkInit()
+        FirebaseAdminSdkInit().initialize()
         logger.info("Init lookup.")
         initDiseaseAndHomeHealtyType()
         logger.info("Start main process.")

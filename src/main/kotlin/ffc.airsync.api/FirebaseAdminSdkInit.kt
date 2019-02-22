@@ -10,11 +10,7 @@ import java.io.IOException
 class FirebaseAdminSdkInit {
     val logger = getLogger()
 
-    init {
-        getFirebaseParameter()
-    }
-
-    private fun getFirebaseParameter() {
+    fun initialize() {
         var res = kotlin.runCatching { firebaseAdminFromjsonFile() }
         if (res.exceptionOrNull() is IOException) {
             res = kotlin.runCatching { firebaseAdminFromSystemEnv() }
