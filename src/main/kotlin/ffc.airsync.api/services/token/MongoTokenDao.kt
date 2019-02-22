@@ -31,7 +31,10 @@ internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
         val tokenDoc = Document.parse(tokenMessage.toJson())
         tokenDoc.append("orgIndex", ObjectId(orgId))
         tokenDoc.append("_id", generateId)
-        tokenDoc.append("MongoCreated", BsonDateTime(DateTime.now().millis))
+        if (user.roles.contains(User.Role.ADMIN) || user.roles.contains(User.Role.ORG))
+            tokenDoc.append("MongoCreated", BsonDateTime(DateTime.now().plusYears(1000).millis))
+        else
+            tokenDoc.append("MongoCreated", BsonDateTime(DateTime.now().millis))
         dbCollection.insertOne(tokenDoc)
         return tokenMessage
     }
