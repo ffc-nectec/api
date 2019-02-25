@@ -50,9 +50,13 @@ dependencies {
     compile "org.glassfish.jersey.containers:jersey-container-servlet-core:$jerseyVersion"
     compile "org.glassfish.jersey.containers:jersey-container-jetty-servlet:$jerseyVersion"
     compile "org.glassfish.jersey.media:jersey-media-json-jackson:$jerseyVersion"
+    compile "org.glassfish.jersey.media:jersey-media-multipart:$jerseyVersion"
+    compile 'org.jvnet.mimepull:mimepull:1.9.11'
+
     compile 'com.google.firebase:firebase-admin:5.11.0'
     compile "args4j:args4j:2.33"
     compile "com.github.ffc-nectec:entities:f14d9cd0aa"
+    compile "com.squareup.okhttp3:okhttp:3.13.1"
 
     compile 'com.github.piruin:jbcrypt:0.4'
     compile "joda-time:joda-time:2.9.9"

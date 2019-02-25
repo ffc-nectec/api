@@ -37,12 +37,16 @@ internal class FFCApiServer(val args: Array<String>) {
     @Option(name = "-host", usage = "host destination ownAction start server")
     private var host = DEFAULT_HOST
 
+    @Option(name = "-thumbor", usage = "url back end thumbor image server....")
+    private var thumborUrlpram = THUMBOR_URL
+
     val logger = getLogger()
 
     init {
         try {
             val parser = CmdLineParser(this)
             parser.parseArgument(*args)
+            THUMBOR_URL = thumborUrlpram
         } catch (cmd: CmdLineException) {
             logger.error(cmd.message)
         }
@@ -92,9 +96,12 @@ internal class FFCApiServer(val args: Array<String>) {
 
     companion object {
         protected val DEFAULT_PORT = 8080
+        protected var THUMBOR_URL = "http://10.111.44.150:8888"
         protected val DEFAULT_HOST = "0.0.0.0"
         var firebaseApp: FirebaseApp? = null
         var instance: FFCApiServer? = null
+
+        val thumborUrl get() = THUMBOR_URL
     }
 }
 

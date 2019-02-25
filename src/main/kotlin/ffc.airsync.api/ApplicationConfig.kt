@@ -17,6 +17,7 @@
 
 package ffc.airsync.api
 
+import org.glassfish.jersey.media.multipart.MultiPartFeature
 import org.glassfish.jersey.server.ResourceConfig
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature
 
@@ -28,6 +29,7 @@ class ApplicationConfig : ResourceConfig() {
         // store(ApiWebSocks.class);
         // store(JacksonFeature.class);
         register(RolesAllowedDynamicFeature::class.java)
+        register(MultiPartFeature::class.java)
         // store(CsrfProtectionFilter.class);
     }
 }
