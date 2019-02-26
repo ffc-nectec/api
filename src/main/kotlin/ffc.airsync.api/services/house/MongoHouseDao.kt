@@ -133,14 +133,17 @@ internal class MongoHouseDao : HouseDao, MongoSyncDao<House>("ffc", "house") {
             query.append("villageName", regexQuery)
         }
 
-        val house = dbCollection.find(query)
-            .sort(Sorts.ascending("villageName", "no"))
-            .limit(100)
-            .listOf<House>()
-        return house.sortedWith(compareBy<House> { it.villageName }
-            .thenBy { it.noWithoutTail?.length }
-            .thenBy { it.no }
-        )
+        if (haveLocation == true && (queryStr == null)) {
+            return dbCollection.find(query).listOf()
+        } else {
+            val house: List<House> = dbCollection.find(query)
+                .sort(Sorts.ascending("villageName", "no"))
+                .limit(100)
+                .listOf()
+            return house.sortedWith(compareBy<House> { it.villageName }
+                .thenBy { it.noWithoutTail?.length }
+                .thenBy { it.no })
+        }
     }
 
     val House.noWithoutTail

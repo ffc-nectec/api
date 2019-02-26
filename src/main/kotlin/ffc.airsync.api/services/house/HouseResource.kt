@@ -66,8 +66,6 @@ class HouseResourceNewEndpoint {
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 5)
     fun getGeoJsonHouse(
-        @QueryParam("page") @DefaultValue("1") page: Int,
-        @QueryParam("per_page") @DefaultValue("200") per_page: Int,
         @PathParam("orgId") orgId: String
     ): FeatureCollection<House> {
         val houses = houseService.getHouses(orgId, haveLocation = true)
@@ -85,7 +83,7 @@ class HouseResourceNewEndpoint {
         @QueryParam("per_page") @DefaultValue("200") per_page: Int,
         @PathParam("orgId") orgId: String
     ): FeatureCollection<House> {
-        return getGeoJsonHouse(page, per_page, orgId)
+        return getGeoJsonHouse(orgId)
     }
 
     @GET

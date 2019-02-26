@@ -140,7 +140,7 @@ class MongoHouseDaoTest {
         dao.insert(ORG_ID, createHouse("11111111112", "81"))
         dao.insert(ORG_ID, createHouse("11111111112", "91"))
 
-        val result = dao.findAll(ORG_ID)
+        val result = dao.findAll(ORG_ID, query = "")
 
         result.map { it.no } `should equal` listOf(
             "81",
