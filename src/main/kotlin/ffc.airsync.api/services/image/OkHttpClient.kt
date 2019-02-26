@@ -9,7 +9,7 @@ import java.io.InputStream
 
 private val MEDIA_TYPE = okhttp3.MediaType.parse("multipart/form-data")
 
-internal fun okRun(url: String, body: RequestBody): Response {
+internal fun postToImageServer(url: String, body: RequestBody): Response {
     val client = OkHttpClient()
     val request = Request.Builder()
         .url(url)

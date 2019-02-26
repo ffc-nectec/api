@@ -58,7 +58,7 @@ class ImageResource {
 
     private fun postImage(file: InputStream, orgId: String): Response {
         val reqBody = createRequestStream(file)
-        val rawResponse = okRun("""${FFCApiServer.thumborUrl}/image""", reqBody)
+        val rawResponse = postToImageServer("""${FFCApiServer.thumborUrl}/image""", reqBody)
         val fileLocation = Template("Location", rawResponse.header("Location") ?: "")
         logger.info("Create image by User:${context.getUserLogin()} Org:$orgId Method:postimage")
         return Response.status(201).entity(fileLocation).build()
