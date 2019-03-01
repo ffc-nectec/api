@@ -37,8 +37,11 @@ internal class FFCApiServer(val args: Array<String>) {
     @Option(name = "-host", usage = "host destination ownAction start server")
     private var host = DEFAULT_HOST
 
-    @Option(name = "-thumbor", usage = "url back end thumbor image server....")
-    private var thumborUrlpram = THUMBOR_URL
+    @Option(name = "-thumborlocal", usage = "url back end thumbor image server....")
+    private var thumborLocalpram = THUMBOR_LOCOLURL
+
+    @Option(name = "-thumborgolbal", usage = "url back end thumbor image server....")
+    private var thumborGlobalpram = THUMBOR_GLOBAL
 
     val logger = getLogger()
 
@@ -46,7 +49,8 @@ internal class FFCApiServer(val args: Array<String>) {
         try {
             val parser = CmdLineParser(this)
             parser.parseArgument(*args)
-            THUMBOR_URL = thumborUrlpram
+            THUMBOR_LOCOLURL = thumborLocalpram
+            THUMBOR_GLOBAL = thumborGlobalpram
         } catch (cmd: CmdLineException) {
             logger.error(cmd.message)
         }
@@ -96,12 +100,14 @@ internal class FFCApiServer(val args: Array<String>) {
 
     companion object {
         protected val DEFAULT_PORT = 8080
-        protected var THUMBOR_URL = "http://10.111.44.150:8888"
+        protected var THUMBOR_LOCOLURL = "http://10.111.44.150:8888"
+        protected var THUMBOR_GLOBAL = "https://image.ffc.in.th"
         protected val DEFAULT_HOST = "0.0.0.0"
         var firebaseApp: FirebaseApp? = null
         var instance: FFCApiServer? = null
 
-        val thumborUrl get() = THUMBOR_URL
+        val thumborLocal get() = THUMBOR_LOCOLURL
+        val thumborGlobal get() = THUMBOR_GLOBAL
     }
 }
 
