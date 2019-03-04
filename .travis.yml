@@ -13,7 +13,7 @@ cache:
     -
 deploy:
   provider: releases
-  api_key: GITHUB_OAUTH_TOKEN
+  api_key: "$GITHUB_OAUTH_TOKEN"
   file: "$HOME/build/bin/ffc-api.jar"
   skip_cleanup: true
   on:
