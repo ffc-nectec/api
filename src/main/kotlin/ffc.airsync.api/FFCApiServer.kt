@@ -29,6 +29,7 @@ import org.kohsuke.args4j.CmdLineParser
 import org.kohsuke.args4j.Option
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.util.Arrays
 import java.util.TimeZone
 
 internal class FFCApiServer(val args: Array<String>) {
@@ -49,7 +50,7 @@ internal class FFCApiServer(val args: Array<String>) {
     }
 
     fun run() {
-        logger.info("Start api parameter $args")
+        logger.info("Start api parameter ${Arrays.toString(args)}")
         logger.info("Init MogoDB connection.")
         MongoDbConnector.initialize()
         logger.info("Init firebase config.")
@@ -78,7 +79,6 @@ internal class FFCApiServer(val args: Array<String>) {
     }
 
     private fun initDiseaseAndHomeHealtyType() {
-
         Thread {
             logger.info("1:1 Disease lookup init.")
             DiseaseService.init()
