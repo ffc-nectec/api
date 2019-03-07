@@ -34,8 +34,9 @@ class TemplateResource {
     fun clearAndInsert(
         @PathParam("orgId") orgId: String,
         template: List<Template>
-    ) {
+    ): List<Template> {
         templates.removeByOrgId(orgId)
         templates.insert(orgId, template)
+        return template
     }
 }
