@@ -2,21 +2,17 @@ package ffc.airsync.api.services.user
 
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.ORGIDTYPE
-import ffc.airsync.api.services.util.getHeaderMap
+import ffc.entity.Token
 import ffc.entity.User
 import javax.annotation.security.RolesAllowed
-import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
-import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
-import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
-import javax.xml.bind.DatatypeConverter
 
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -42,24 +38,13 @@ class UserResource {
 
     @POST
     @Path("/$ORGIDTYPE/authorize")
-    fun registerMobile(@Context req: HttpServletRequest, @PathParam("orgId") orgId: String): Response {
-        val httpHeader = req.getHeaderMap()
-        val token = httpHeader["Authorization"]?.replaceFirst("Basic ", "")
-            ?: throw NotAuthorizedException("Not Authorization")
-        val userpass = DatatypeConverter.parseBase64Binary(token).toString(charset("UTF-8")).split(":")
-        val user = userpass.get(index = 0)
-        val pass = userpass.get(index = 1)
-
-        logger.info("Mobile Login Org: $orgId User = $user")
-        val tokenMessage = UserService.login(orgId, user, pass)
-
-        return Response.status(Response.Status.CREATED)
-            .entity(tokenMessage)
-            .header("Authorization", "Bearer ${tokenMessage.token}")
-            .build()
+    fun createAuthorizeToken(@PathParam("orgId") orgId: String, body: LoginBody): Token {
+        return UserService.login(orgId, body.username, body.password)
     }
 
     companion object {
         val logger = getLogger()
     }
+
+    class LoginBody(val username: String, val password: String)
 }
