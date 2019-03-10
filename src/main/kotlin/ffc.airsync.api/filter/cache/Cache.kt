@@ -1,4 +1,4 @@
-package ffc.airsync.api.filter
+package ffc.airsync.api.filter.cache
 
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy

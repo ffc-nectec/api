@@ -17,7 +17,7 @@
 
 package ffc.airsync.api.services.person
 
-import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.filter.cache.Cache
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE

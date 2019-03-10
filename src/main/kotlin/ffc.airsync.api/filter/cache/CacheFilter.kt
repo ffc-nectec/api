@@ -1,6 +1,5 @@
-package ffc.airsync.api.filter
+package ffc.airsync.api.filter.cache
 
-import java.lang.IllegalArgumentException
 import java.util.ArrayList
 import javax.ws.rs.container.ContainerRequestContext
 import javax.ws.rs.container.ContainerResponseContext
