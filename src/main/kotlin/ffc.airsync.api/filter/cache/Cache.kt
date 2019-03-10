@@ -16,27 +16,41 @@ import javax.ws.rs.core.CacheControl
 )
 annotation class Cache(
     val maxAge: Int = -1,
-    val isPrivate: Boolean = false,
+    val private: Boolean = false,
     val noStore: Boolean = false,
     val noCache: Boolean = false,
     val mustRevalidate: Boolean = false,
     val noTransform: Boolean = false
 )
 
-fun Cache.combineWith(request: CacheControl): CacheControl {
-    val cc = CacheControl().apply {
-        isNoTransform = false //default is true
+fun Cache.toCacheControl(): CacheControl {
+    val age = maxAge
+    return CacheControl().apply {
+        if (noStore) {
+            isNoStore = true
+            return@apply
+        }
+        isPrivate = private
+        isNoCache = noCache
+        isMustRevalidate = mustRevalidate
+        isNoTransform = noTransform
+        this.maxAge = age
     }
+}
 
-    if (noStore || request.isNoStore) {
-        return cc.apply { isNoStore = true }
+fun CacheControl.combineWith(request: CacheControl): CacheControl {
+    if (this.isNoStore || request.isNoStore) {
+        return CacheControl().apply {
+            isNoTransform = false
+            isNoStore = true
+        }
     }
-    if (noCache || request.isNoCache) cc.isNoCache = true
-    if (mustRevalidate || request.isMustRevalidate) cc.isMustRevalidate = true
-    if (noTransform || request.isNoTransform) cc.isNoTransform = true
-    if (isPrivate || request.isPrivate) cc.isPrivate = true
+    if (request.isNoCache) isNoCache = true
+    if (request.isMustRevalidate) isMustRevalidate = true
+    if (request.isNoTransform) isNoTransform = true
+    if (request.isPrivate) isPrivate = true
     if (maxAge > -1) {
-        cc.maxAge = request.maxAge.takeIf { -1 < it && it < maxAge } ?: maxAge
+        maxAge = request.maxAge.takeIf { -1 < it && it < maxAge } ?: maxAge
     }
-    return cc
+    return this
 }

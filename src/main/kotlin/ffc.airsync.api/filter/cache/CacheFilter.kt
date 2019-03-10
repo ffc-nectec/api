@@ -20,15 +20,16 @@ class CacheFilter : ContainerResponseFilter {
         }
         val cache: Cache? = resourceInfo.resourceMethod.getAnnotation(Cache::class.java)
             ?: resourceInfo.resourceClass.getAnnotation(Cache::class.java)
+
         if (cache != null)
-            responseContext.headers.add("Cache-Control", cache.combineWith(requestContext.cacheControl).toString())
+            responseContext.headers.add("Cache-Control",
+                cache.toCacheControl().combineWith(requestContext.cacheControl).toString())
     }
 
     private fun isCacheable(responseContext: ContainerResponseContext): Boolean {
         val status = responseContext.status
         return status in 200..299 || status == 304
     }
-
 }
 
 private val ContainerRequestContext.cacheControl: CacheControl
@@ -40,7 +41,7 @@ private val ContainerRequestContext.cacheControl: CacheControl
             } else {
                 CacheControl().apply { isNoTransform = false }
             }
-        } catch (illegal : IllegalArgumentException) {
+        } catch (illegal: IllegalArgumentException) {
             CacheControl().apply { isNoTransform = false }
         }
     }

@@ -12,9 +12,9 @@ import javax.ws.rs.core.CacheControl
 
 @RunWith(Parameterized::class)
 class CacheCombineWithRequestTest(
-    val setting: Cache,
-    val request: CacheControl,
-    val expectResponse: CacheControl
+    private val setting: Cache,
+    private val request: CacheControl,
+    private val expectResponse: CacheControl
 ) {
 
     companion object {
@@ -27,11 +27,17 @@ class CacheCombineWithRequestTest(
             arrayOf(annotation(maxAge = 3600), cacheControl(maxAge = 100), cacheControl(maxAge = 100)),
             arrayOf(annotation(maxAge = 3600), cacheControl(maxAge = 0), cacheControl(maxAge = 0)),
             arrayOf(annotation(maxAge = 3600), cacheControl(maxAge = 0), cacheControl(maxAge = 0)),
-            arrayOf(annotation(maxAge = 3600), cacheControl(private = true), cacheControl(private = true, maxAge = 3600)),
-            arrayOf(annotation(private = true, maxAge = 3600), cacheControl(), cacheControl(private = true, maxAge = 3600)),
             arrayOf(annotation(noStore = true), cacheControl(maxAge = 300), cacheControl(noStore = true)),
             arrayOf(annotation(maxAge = 3600), cacheControl(noStore = true), cacheControl(noStore = true)),
             arrayOf(annotation(noCache = true), cacheControl(maxAge = 300), cacheControl(noCache = true)),
+            arrayOf(
+                annotation(maxAge = 3600),
+                cacheControl(private = true),
+                cacheControl(private = true, maxAge = 3600)),
+            arrayOf(
+                annotation(private = true, maxAge = 3600),
+                cacheControl(),
+                cacheControl(private = true, maxAge = 3600)),
             arrayOf(
                 annotation(noCache = true, maxAge = 3600),
                 cacheControl(maxAge = 300),
@@ -59,7 +65,7 @@ class CacheCombineWithRequestTest(
         ): Cache {
             return mock {
                 When calling it.maxAge itReturns maxAge
-                When calling it.isPrivate itReturns private
+                When calling it.private itReturns private
                 When calling it.noStore itReturns noStore
                 When calling it.noCache itReturns noCache
                 When calling it.mustRevalidate itReturns mustRevalidate
@@ -87,6 +93,6 @@ class CacheCombineWithRequestTest(
 
     @Test
     fun cache() {
-        setting.combineWith(request) `should equal` expectResponse
+        setting.toCacheControl().combineWith(request) `should equal` expectResponse
     }
 }
