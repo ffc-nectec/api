@@ -17,5 +17,6 @@ annotation class Cache(
     val maxAge: Int = -1,
     val isPrivate: Boolean = false,
     val noStore: Boolean = false,
-    val noCache: Boolean = false
+    val noCache: Boolean = false,
+    val mustRevalidate: Boolean = false
 )
