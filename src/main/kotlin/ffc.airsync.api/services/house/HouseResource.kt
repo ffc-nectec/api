@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.house
 
-import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.filter.cache.Cache
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.GEOJSONHeader
 import ffc.airsync.api.services.util.containsSome

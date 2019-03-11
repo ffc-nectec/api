@@ -18,7 +18,7 @@
 package ffc.airsync.api.services.util
 
 import ffc.airsync.api.DATETIMEBANGKOK
-import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.filter.cache.Cache
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.Path

@@ -1,4 +1,4 @@
-package ffc.airsync.api.filter
+package ffc.airsync.api.filter.cache
 
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -11,7 +11,6 @@ import org.amshove.kluent.itReturns
 import org.amshove.kluent.mock
 import org.junit.Test
 import javax.ws.rs.container.ContainerRequestContext
-
 import javax.ws.rs.container.ContainerResponseContext
 import javax.ws.rs.core.EntityTag
 import javax.ws.rs.core.MultivaluedMap

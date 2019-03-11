@@ -1,4 +1,4 @@
-package ffc.airsync.api.filter
+package ffc.airsync.api.filter.cache
 
 import ffc.airsync.api.services.util.md5
 import ffc.entity.gson.toJson

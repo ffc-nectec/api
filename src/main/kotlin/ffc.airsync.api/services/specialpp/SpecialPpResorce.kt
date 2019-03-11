@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.specialpp
 
-import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.filter.cache.Cache
 import ffc.entity.healthcare.SpecialPP
 import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.GET
