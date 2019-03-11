@@ -12,8 +12,10 @@ class LegalDocuments(
 ) {
     companion object {
 
-        private const val defaultPrivacy = "https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md"
-        private const val defaultTerms = "https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md"
+        private const val DEFAULT_PRIVACY_URI =
+            "https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/PRIVACY.md"
+        private const val DEFAULT_TERMS_URI =
+            "https://raw.githubusercontent.com/ffc-nectec/assets/master/legal/TERMS.md"
 
         var privacy: LegalDocument = readPrivacy()
             internal set
@@ -22,12 +24,12 @@ class LegalDocuments(
 
         private fun readPrivacy() = LegalDocument(
             LegalDocument.Type.privacy,
-            UriReader(URI(System.getenv("PRIVACY_URI") ?: defaultPrivacy)).readAsString().trim()
+            UriReader(URI(System.getenv("PRIVACY_URI") ?: DEFAULT_PRIVACY_URI)).readAsString().trim()
         )
 
         private fun readTerms() = LegalDocument(
             LegalDocument.Type.terms,
-            UriReader(URI(System.getenv("TERMS_URI") ?: defaultTerms)).readAsString().trim()
+            UriReader(URI(System.getenv("TERMS_URI") ?: DEFAULT_TERMS_URI)).readAsString().trim()
         )
 
         fun refresh() {

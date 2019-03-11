@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.healthcareservice
 
-import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.filter.cache.Cache
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.PERSONIDTYPE
 import ffc.airsync.api.services.VISITIDTYPE

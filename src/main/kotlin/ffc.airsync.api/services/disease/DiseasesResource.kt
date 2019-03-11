@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.disease
 
-import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.filter.cache.Cache
 import ffc.airsync.api.toLang
 import ffc.entity.healthcare.Disease
 import ffc.entity.healthcare.Icd10

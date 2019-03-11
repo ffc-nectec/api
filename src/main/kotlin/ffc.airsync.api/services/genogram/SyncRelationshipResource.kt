@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.genogram
 
-import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.filter.cache.Cache
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.BLOCKTYPE
 import ffc.airsync.api.services.ORGIDTYPE

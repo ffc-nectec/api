@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.homehealthtype
 
-import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.filter.cache.Cache
 import ffc.entity.healthcare.CommunityService.ServiceType
 import javax.ws.rs.GET
 import javax.ws.rs.NotFoundException
