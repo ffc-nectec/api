@@ -18,38 +18,37 @@
 package ffc.airsync.api.services.util
 
 import ffc.airsync.api.DATETIMEBANGKOK
-import ffc.airsync.api.filter.Cache
-import org.joda.time.DateTime
+import ffc.airsync.api.filter.cache.Cache
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
 
-@Path("/")
+private val MB = 1024L * 1024L
+
+@Path("/system")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-class TimeResource {
+class SystemResource {
+
     @GET
-    @Cache(maxAge = 2)
-    fun getRootPart(): Response {
-        return Response.status(200).entity(Runtime.getRuntime().freeMemory()).build()
+    @Path("/memory")
+    @Cache(maxAge = 3)
+    fun getFreeMemory(): Map<String, Number> {
+        val rt = Runtime.getRuntime()
+        return mapOf(
+            "usage" to (rt.totalMemory() - rt.freeMemory()) / MB,
+            "free" to rt.freeMemory() / MB,
+            "total" to rt.totalMemory() / MB,
+            "max" to rt.maxMemory() / MB
+        )
     }
 
     @GET
-    @Path("/freememory")
-    @Cache(maxAge = 2)
-    fun getFreeMemory(): Response {
-        return Response.status(200).entity(Runtime.getRuntime().freeMemory()).build()
-    }
-
-    @GET
-    @Path("/servertime")
+    @Path("/time")
     @Cache(maxAge = 1)
-    fun time(): TimeData {
-        return TimeData(DATETIMEBANGKOK)
+    fun time(): Map<String, Any> {
+        return mapOf("datetime" to DATETIMEBANGKOK)
     }
 }
-
-data class TimeData(val dateTime: DateTime)

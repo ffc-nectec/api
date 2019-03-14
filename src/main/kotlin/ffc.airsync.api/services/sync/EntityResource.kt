@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.sync
 
-import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.filter.cache.Cache
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.entity.Entity
 import javax.annotation.security.RolesAllowed

@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.house
 
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockitokotlin2.verify
 import org.amshove.kluent.mock
 import org.junit.Test
 

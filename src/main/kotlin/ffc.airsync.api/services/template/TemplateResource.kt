@@ -1,6 +1,6 @@
 package ffc.airsync.api.services.template
 
-import ffc.airsync.api.filter.Cache
+import ffc.airsync.api.filter.cache.Cache
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.entity.Template
 import javax.annotation.security.RolesAllowed
@@ -34,8 +34,9 @@ class TemplateResource {
     fun clearAndInsert(
         @PathParam("orgId") orgId: String,
         template: List<Template>
-    ) {
+    ): List<Template> {
         templates.removeByOrgId(orgId)
         templates.insert(orgId, template)
+        return template
     }
 }

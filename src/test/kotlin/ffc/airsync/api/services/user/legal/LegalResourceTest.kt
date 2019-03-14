@@ -1,13 +1,15 @@
 package ffc.airsync.api.services.user.legal
 
-import com.nhaarman.mockito_kotlin.doAnswer
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
 import ffc.airsync.api.filter.RequireError
 import ffc.airsync.api.services.user.UserDao
 import ffc.entity.User
+import org.amshove.kluent.When
+import org.amshove.kluent.`it answers`
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain`
+import org.amshove.kluent.calling
+import org.amshove.kluent.itReturns
+import org.amshove.kluent.mock
 import org.glassfish.jersey.server.ResourceConfig
 import org.glassfish.jersey.test.JerseyTest
 import org.junit.Test
@@ -34,10 +36,10 @@ class LegalResourceTest : JerseyTest() {
             orgId = "5c21d3b76d5a5600047f7334"
         }
 
-        mockUsers = mock {
-            on { it.getUserById(dummyUser.orgId!!, dummyUser.id) }.doAnswer { dummyUser }
-        }
-        mockAgreementDao = mock {}
+        mockUsers = mock()
+        When calling mockUsers.getUserById(dummyUser.orgId!!, dummyUser.id) itReturns (dummyUser)
+
+        mockAgreementDao = mock()
 
         return ResourceConfig()
             .registerClasses(RequireError::class.java)
@@ -68,8 +70,8 @@ class LegalResourceTest : JerseyTest() {
 
     @Test
     fun checkAgreement() {
-        whenever(mockAgreementDao.lastAgreementOf(dummyUser, LegalDocument.Type.privacy))
-            .thenAnswer { Agreement(dummyPrivacy.latest.version) }
+        When calling mockAgreementDao.lastAgreementOf(dummyUser, LegalDocument.Type.privacy) `it answers`
+            { Agreement(dummyPrivacy.latest.version) }
 
         val res = target("legal/privacy/latest/agreement/${dummyUser.orgId}/${dummyUser.id}").request().get()
 
