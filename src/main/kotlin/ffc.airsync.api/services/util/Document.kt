@@ -136,7 +136,8 @@ internal inline fun <reified T> MongoCollection<Document>.ffcInsert(doc: List<Do
         //query.add("_id" equal it["_id"])
     }
 
-    smartInsert(doc, 0)
+    // smartInsert(doc, 0)
+    insertMany(doc, InsertManyOptions())
 
     return doc.mapKt {
         val result = find("_id" equal ObjectId(it["_id"].toString())).first()!!

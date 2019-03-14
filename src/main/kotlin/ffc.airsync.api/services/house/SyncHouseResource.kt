@@ -35,7 +35,7 @@ class SyncHouseResource : Sync<House> {
         @PathParam("block") block: Int,
         item: List<House>
     ): List<House> {
-        return resorceCall { houseService.create(orgId, context.getLoginRole(), item) }
+        return resorceCall { houseService.create(orgId, context.getLoginRole(), item, block) }
     }
 
     @GET
