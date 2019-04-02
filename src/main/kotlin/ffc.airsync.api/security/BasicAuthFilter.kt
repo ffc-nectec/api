@@ -1,6 +1,6 @@
 package ffc.airsync.api.security
 
-import ffc.airsync.api.getLogger
+import ffc.airsync.api.getLoggerC
 import ffc.airsync.api.services.util.getLoginRole
 import java.util.regex.Pattern
 import javax.annotation.Priority
@@ -10,12 +10,11 @@ import javax.ws.rs.container.ContainerRequestContext
 import javax.ws.rs.container.ContainerRequestFilter
 import javax.ws.rs.ext.Provider
 
-private val logger = BasicAuthFilter().getLogger()
-
 @Priority(Priorities.AUTHENTICATION)
 @Provider
 class BasicAuthFilter : ContainerRequestFilter {
     private val pattern = Pattern.compile("""^org/(?<orgId>[\w\d]+)/.*$""")
+    private val logger by lazy { getLoggerC(this) }
     override fun filter(requestContext: ContainerRequestContext) {
         val urlScheme = requestContext.uriInfo.baseUri.scheme
         val baseUrl = requestContext.uriInfo.path.toString()
@@ -28,7 +27,7 @@ class BasicAuthFilter : ContainerRequestFilter {
         val authenInfo: BasicTokenInfo
 
         try {
-            authenInfo = BasicTokenInfo(requestContext)
+            authenInfo = BasicTokenInfo(requestContext, orgId)
         } catch (ex: NotAuthorizedException) {
             return
         }

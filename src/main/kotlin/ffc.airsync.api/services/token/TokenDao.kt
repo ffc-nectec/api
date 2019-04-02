@@ -23,7 +23,7 @@ import ffc.entity.User
 
 interface TokenDao : Dao {
     fun create(user: User, orgId: String): Token
-    fun find(token: String): Token?
+    fun login(token: String, orgId: String): Token?
     fun findByOrgId(orgId: String): List<Token>
     fun remove(token: String): Boolean
     fun removeByOrgId(orgId: String)
