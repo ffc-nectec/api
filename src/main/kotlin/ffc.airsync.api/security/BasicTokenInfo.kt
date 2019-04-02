@@ -14,12 +14,8 @@ class BasicTokenInfo(requestContext: ContainerRequestContext, orgId: String) {
         val authorization = requestContext.headers[AUTHORIZATION_PROPERTY]
 
         if (authorization != null) {
-            try {
-                token = findToken(getBasicToken(authorization), orgId)
-                checkTokenExpire()
-            } catch (e: Exception) {
-                throw e
-            }
+            token = findToken(getBasicToken(authorization), orgId)
+            checkTokenExpire()
         } else {
             throw NotAuthorizedException("โปรด Login เพื่อขอ Token")
         }

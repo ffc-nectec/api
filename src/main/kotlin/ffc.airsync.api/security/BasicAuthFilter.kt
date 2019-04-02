@@ -29,6 +29,7 @@ class BasicAuthFilter : ContainerRequestFilter {
         try {
             authenInfo = BasicTokenInfo(requestContext, orgId)
         } catch (ex: NotAuthorizedException) {
+            logger.warn("Token fail", ex)
             return
         }
         val token = authenInfo.token
