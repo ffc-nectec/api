@@ -71,7 +71,7 @@ class MongoTokenDaoTest {
     fun removeToken() {
         dao.remove(tokenMax.token) `should be equal to` true
         dao.login(tokenBee.token, ORG_ID) `should not be` null
-        dao.login(tokenMax.token, ORG_ID)
+        dao.login(tokenMax.token, ORG_ID) `should equal` null
     }
 
     @Test
@@ -81,8 +81,13 @@ class MongoTokenDaoTest {
         dao.findByOrgId(ORG_ID).size `should be equal to` 0
     }
 
-    @Test(expected = java.lang.IllegalStateException::class)
+    @Test()
     fun loginFail() {
-        dao.login(tokenMax.token, "5bbd7f5ebc920637b04c7799")
+        dao.login(tokenMax.token, "5bbd7f5ebc920637b04c7799") `should equal` null
+    }
+
+    @Test
+    fun loginFail2() {
+        dao.login("jhjhdsjhdfieisfdsdfa", ORG_ID) `should equal` null
     }
 }
