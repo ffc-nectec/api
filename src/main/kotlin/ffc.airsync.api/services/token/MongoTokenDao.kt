@@ -39,8 +39,9 @@ internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
         return tokenMessage
     }
 
-    override fun find(token: String): Token? {
+    override fun login(token: String, orgId: String): Token? {
         val tokenDoc = dbCollection.find("token" equal token.trim()).first() ?: return null
+        check(tokenDoc["orgIndex"] == ObjectId(orgId)) { "User cannot login." }
         return tokenDoc.toJson().parseTo()
     }
 

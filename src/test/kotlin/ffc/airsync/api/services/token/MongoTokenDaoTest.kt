@@ -41,7 +41,7 @@ class MongoTokenDaoTest {
 
     @Test
     fun createAndFindToken() {
-        val token = dao.find(tokenMax.token)
+        val token = dao.login(tokenMax.token, ORG_ID)
 
         token `should not be` null
         token!!.token `should be equal to` tokenMax.token
@@ -49,7 +49,7 @@ class MongoTokenDaoTest {
 
     @Test
     fun createAndCheckProperty() {
-        val token = dao.find(tokenMax.token)
+        val token = dao.login(tokenMax.token, ORG_ID)
 
         token `should not be` null
         token!!.user.name `should be equal to` "Thanachai"
@@ -70,8 +70,8 @@ class MongoTokenDaoTest {
     @Test
     fun removeToken() {
         dao.remove(tokenMax.token) `should be equal to` true
-        dao.find(tokenBee.token) `should not be` null
-        dao.find(tokenMax.token)
+        dao.login(tokenBee.token, ORG_ID) `should not be` null
+        dao.login(tokenMax.token, ORG_ID)
     }
 
     @Test
@@ -79,5 +79,10 @@ class MongoTokenDaoTest {
         dao.removeByOrgId(ORG_ID)
 
         dao.findByOrgId(ORG_ID).size `should be equal to` 0
+    }
+
+    @Test(expected = java.lang.IllegalStateException::class)
+    fun loginFail() {
+        dao.login(tokenMax.token, "5bbd7f5ebc920637b04c7799")
     }
 }

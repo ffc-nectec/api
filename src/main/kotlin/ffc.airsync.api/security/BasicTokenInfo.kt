@@ -5,7 +5,7 @@ import ffc.entity.Token
 import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.container.ContainerRequestContext
 
-class BasicTokenInfo(requestContext: ContainerRequestContext) {
+class BasicTokenInfo(requestContext: ContainerRequestContext, orgId: String) {
     val AUTHORIZATION_PROPERTY = "Authorization"
     val AUTHENTICATION_SCHEME = "Bearer "
     val token: Token
@@ -15,7 +15,7 @@ class BasicTokenInfo(requestContext: ContainerRequestContext) {
 
         if (authorization != null) {
             try {
-                token = findToken(getBasicToken(authorization))
+                token = findToken(getBasicToken(authorization), orgId)
                 checkTokenExpire()
             } catch (e: Exception) {
                 throw e
@@ -29,8 +29,8 @@ class BasicTokenInfo(requestContext: ContainerRequestContext) {
         if (token.isExpire) throw NotAuthorizedException("Token expire ${token.expireDate}")
     }
 
-    private fun findToken(tokenStr: String) =
-        tokens.find(token = tokenStr) ?: throw NotAuthorizedException("โปรด Login เพื่อขอ Token")
+    private fun findToken(tokenStr: String, orgId: String) =
+        tokens.login(token = tokenStr, orgId = orgId) ?: throw NotAuthorizedException("โปรด Login เพื่อขอ Token")
 
     private fun getBasicToken(authorization: List<String>): String {
         if (authorization[0].startsWith("Basic ")) {
