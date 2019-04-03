@@ -17,7 +17,7 @@
 
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.10'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
     id "org.jlleitschuh.gradle.ktlint" version "4.1.0"
 }
 
@@ -58,6 +58,7 @@ dependencies {
     compile 'com.github.ffc-nectec.genogram:genogram:1.0.0-alpha4'
     compile 'com.github.piruin:jbcrypt:0.4'
     compile "joda-time:joda-time:2.9.9"
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
    
     testImplementation "com.github.kstyrc:embedded-redis:0.6"
     testImplementation "de.bwaldvogel:mongo-java-server:1.9.8"
