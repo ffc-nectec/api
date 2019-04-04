@@ -59,7 +59,8 @@ dependencies {
     compile 'com.github.piruin:jbcrypt:0.4'
     compile "joda-time:joda-time:2.9.9"
     compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
-   
+    compile 'com.marcelkliemannel:kotlin-onetimepassword:1.0.0'
+
     testImplementation "com.github.kstyrc:embedded-redis:0.6"
     testImplementation "de.bwaldvogel:mongo-java-server:1.9.8"
     testImplementation "junit:junit:4.12"
