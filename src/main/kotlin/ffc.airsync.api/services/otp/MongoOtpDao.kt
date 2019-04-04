@@ -55,9 +55,12 @@ class MongoOtpDao(private val expireMilli: Int = 30000) : OtpDao, MongoDao("ffc"
         } catch (ex: com.mongodb.MongoWriteException) {
             dbCollection.deleteOne("orgIndex" equal ObjectId(orgId))
             dbCollection.insertOne(otpDoc)
-            Thread.sleep(1000)
         }
         return findOtp(orgId)!!
+    }
+
+    override fun forceNextOpt(orgId: String): String {
+        return createOtp(orgId)["otp"] as String
     }
 
     override fun validateOk(orgId: String, otp: String): Boolean {
