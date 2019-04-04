@@ -1,18 +1,23 @@
 package ffc.airsync.api.services.otp
 
 import java.security.SecureRandom
+import java.util.Locale
 import java.util.Objects
 import java.util.Random
 
-internal class RandomOtp constructor(length: Int = 6, random: Random = SecureRandom(), symbols: String = alphanum) {
+internal class RandomSecretString constructor(
+    length: Int = 64,
+    random: Random = SecureRandom(),
+    symbols: String = alphanum
+) {
     private val random: Random
     private val symbols: CharArray
     private val buf: CharArray
 
     /**
-     * Generate otp string
+     * Generate secret string
      */
-    fun nextOtp(): String {
+    fun getSecret(): String {
         for (idx in buf.indices)
             buf[idx] = symbols[random.nextInt(symbols.size)]
         return String(buf)
@@ -27,8 +32,11 @@ internal class RandomOtp constructor(length: Int = 6, random: Random = SecureRan
     }
 
     companion object {
-        private val alphanum = "0123456789"
+        private const val upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        private val lower = upper.toLowerCase(Locale.ROOT)
+        private const val digits = "0123456789"
+        private val alphanum = upper + lower + digits
     }
 }
 
-internal val randomOtp = RandomOtp()
+internal val secretString by lazy { RandomSecretString() }
