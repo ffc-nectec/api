@@ -30,8 +30,10 @@ class MongoOtpDao(
         var result = getSecretKey(orgId)
 
         if (result == null) {
+            println("result = null")
             result = createNewSecretKey(orgId)
-        }
+        } else
+            println("have result")
 
         val secretKey = result!!["secretKey"] as String
         return otpGenerater.getOtp(secretKey)
@@ -51,7 +53,7 @@ class MongoOtpDao(
         dbCollection.find("orgIndex" equal ObjectId(orgId)).firstOrNull()
 
     override fun isValid(orgId: String, otp: String): Boolean {
-        val secretKey = getSecretKey(orgId) ?: return false
-        return otpGenerater.isValid(secretKey["secretKey"] as String, otp)
+        return otp == (get(orgId))
+        // return otpGenerater.isValid(secretKey["secretKey"] as String, otp)
     }
 }
