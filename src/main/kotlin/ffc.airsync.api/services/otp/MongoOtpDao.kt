@@ -6,6 +6,7 @@ import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ignoreException
 import org.bson.Document
 import org.bson.types.ObjectId
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 class MongoOtpDao(
@@ -26,34 +27,33 @@ class MongoOtpDao(
         }
     }
 
-    override fun get(orgId: String): String {
-        var result = getSecretKey(orgId)
+    override fun get(orgId: String, timestamp: Date): String {
+        var secretKey = secretKeyOrg(orgId)
 
-        if (result == null) {
-            println("result = null")
-            result = createNewSecretKey(orgId)
-        } else
-            println("have result")
+        if (secretKey == null) {
+            secretKey = createNewSecretKey(orgId)
+        }
 
-        val secretKey = result!!["secretKey"] as String
-        return otpGenerater.getOtp(secretKey)
+        return otpGenerater.getOtp(secretKey!!, timestamp)
     }
 
-    private fun createNewSecretKey(orgId: String): Document? {
+    private fun createNewSecretKey(orgId: String): String? {
         val secretKey = secretString.getSecret()
         val doc = Document().apply {
             append("orgIndex", ObjectId(orgId))
             append("secretKey", secretKey)
         }
         dbCollection.insertOne(doc)
-        return getSecretKey(orgId)
+        return secretKeyOrg(orgId)
     }
 
-    private fun getSecretKey(orgId: String) =
-        dbCollection.find("orgIndex" equal ObjectId(orgId)).firstOrNull()
+    private fun secretKeyOrg(orgId: String) =
+        dbCollection.find("orgIndex" equal ObjectId(orgId))
+            .projection("secretKey" equal 1)
+            .firstOrNull()
+            ?.get("secretKey") as String?
 
-    override fun isValid(orgId: String, otp: String): Boolean {
-        return otp == (get(orgId))
-        // return otpGenerater.isValid(secretKey["secretKey"] as String, otp)
+    override fun isValid(orgId: String, otp: String, timestamp: Date): Boolean {
+        return otp == (get(orgId, timestamp))
     }
 }
