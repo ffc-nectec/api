@@ -1,5 +1,6 @@
 package ffc.airsync.api.security
 
+import ffc.airsync.api.getLoggerC
 import ffc.airsync.api.services.token.tokens
 import ffc.entity.Token
 import javax.ws.rs.NotAuthorizedException
@@ -9,10 +10,14 @@ class BasicTokenInfo(requestContext: ContainerRequestContext, orgId: String) {
     val AUTHORIZATION_PROPERTY = "Authorization"
     val AUTHENTICATION_SCHEME = "Bearer "
     val token: Token
+    private val logger by lazy { getLoggerC(this) }
 
     init {
         val authorization = requestContext.headers[AUTHORIZATION_PROPERTY]
-
+        logger.debug(
+            "OrgId=$orgId " +
+                "Header=${requestContext.headers}"
+        )
         if (authorization != null) {
             token = findToken(getBasicToken(authorization), orgId)
             checkTokenExpire()
