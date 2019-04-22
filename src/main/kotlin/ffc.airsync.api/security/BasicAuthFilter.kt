@@ -13,7 +13,7 @@ import javax.ws.rs.ext.Provider
 @Priority(Priorities.AUTHENTICATION)
 @Provider
 class BasicAuthFilter : ContainerRequestFilter {
-    private val pattern = Pattern.compile("""^org/(?<orgId>[\w\d]+)/.*$""")
+    private val pattern = Pattern.compile("""^org/(?<orgId>[\w\d]+)/?.*$""")
     private val logger by lazy { getLoggerC(this) }
     override fun filter(requestContext: ContainerRequestContext) {
         val urlScheme = requestContext.uriInfo.baseUri.scheme
