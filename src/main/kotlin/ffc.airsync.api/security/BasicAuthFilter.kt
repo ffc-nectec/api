@@ -26,6 +26,12 @@ class BasicAuthFilter : ContainerRequestFilter {
         }
         val authenInfo: BasicTokenInfo
 
+        logger.debug(
+            "Create BasicAuthFilter " +
+                "orgId=$orgId " +
+                "matchOrgIdCount=${matcherOrgId.groupCount()} " +
+                "baseUrl=$baseUrl"
+        )
         try {
             authenInfo = BasicTokenInfo(requestContext, orgId)
         } catch (ex: NotAuthorizedException) {
