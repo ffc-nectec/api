@@ -10,6 +10,11 @@
             <AppenderRef ref="STDOUT"/>
         </Root>
     </Loggers>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+    </Loggers>
 
 </Configuration>
 
