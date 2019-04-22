@@ -41,11 +41,10 @@ internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
     }
 
     override fun login(token: String, orgId: String): Token? {
+        getLogger().debug("Object login $orgId")
         val tokenDoc =
             dbCollection.find("token" equal token.trim()).first() ?: return null
-        val objectId = ObjectId(orgId.trim())
-        getLogger().debug("Object login $objectId")
-        if (tokenDoc["orgIndex"] != objectId) return null
+        if (tokenDoc["orgIndex"].toString() != orgId.trim()) return null
         return tokenDoc.toJson().parseTo()
     }
 
