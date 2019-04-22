@@ -2,6 +2,7 @@ package ffc.airsync.api.services.token
 
 import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.Indexes
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ignoreException
@@ -42,7 +43,9 @@ internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
     override fun login(token: String, orgId: String): Token? {
         val tokenDoc =
             dbCollection.find("token" equal token.trim()).first() ?: return null
-        if (tokenDoc["orgIndex"] != ObjectId(orgId)) return null
+        val objectId = ObjectId(orgId.trim())
+        getLogger().debug("Object login $objectId")
+        if (tokenDoc["orgIndex"] != objectId) return null
         return tokenDoc.toJson().parseTo()
     }
 
