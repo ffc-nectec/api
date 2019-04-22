@@ -6,3 +6,5 @@ interface OtpDao {
     fun get(orgId: String, timestamp: Date = Date(System.currentTimeMillis())): String
     fun isValid(orgId: String, otp: String, timestamp: Date = Date(System.currentTimeMillis())): Boolean
 }
+
+internal val otp: OtpDao by lazy { MongoOtpDao() }
