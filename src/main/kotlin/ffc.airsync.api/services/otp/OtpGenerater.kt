@@ -3,6 +3,7 @@ package ffc.airsync.api.services.otp
 import com.marcelkliemannel.kotlinonetimepassword.HmacAlgorithm
 import com.marcelkliemannel.kotlinonetimepassword.TimeBasedOneTimePasswordConfig
 import com.marcelkliemannel.kotlinonetimepassword.TimeBasedOneTimePasswordGenerator
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 internal class OtpGenerater(
@@ -17,13 +18,8 @@ internal class OtpGenerater(
         hmacAlgorithm = HmacAlgorithm.SHA512
     )
 
-    fun getOtp(secretKey: String): String {
+    fun getOtp(secretKey: String, timestamp: Date = Date(System.currentTimeMillis())): String {
         val otpGenerator = TimeBasedOneTimePasswordGenerator(secretKey.toByteArray(), config)
-        return otpGenerator.generate()
-    }
-
-    fun isValid(secretKey: String, otp: String): Boolean {
-        val otpGenerator = TimeBasedOneTimePasswordGenerator(secretKey.toByteArray(), config)
-        return otpGenerator.isValid(otp)
+        return otpGenerator.generate(timestamp)
     }
 }
