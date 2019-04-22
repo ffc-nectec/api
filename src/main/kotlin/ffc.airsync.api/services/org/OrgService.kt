@@ -18,13 +18,20 @@ internal object OrgService {
     }
 
     fun remove(orgId: String) {
+        logger.debug("Remove org 1/7")
         orgs.remove(orgId)
+        logger.debug("Remove analyzers 1/2")
         analyzers.removeByOrgId(orgId)
+        logger.debug("Remove healthCare 1/3")
         healthCareServices.removeByOrgId(orgId)
+        logger.debug("Remove house 1/4")
         houses.removeByOrgId(orgId)
+        logger.debug("Remove persons 1/5")
         persons.remove(orgId)
-        tokens.removeByOrgId(orgId)
+        logger.debug("Remove villages 1/6")
         villages.removeByOrgId(orgId)
+        logger.debug("Remove token 1/7")
+        tokens.removeByOrgId(orgId)
     }
 
     fun getMy(ipAddress: String): List<Organization> {
