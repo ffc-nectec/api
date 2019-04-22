@@ -88,8 +88,13 @@ class OrgResource {
     @Path("/$ORGIDTYPE")
     @RolesAllowed("ORG", "ADMIN")
     fun remove(@PathParam("orgId") orgId: String): Response {
-        logger.info("Remove organization by user ${context!!.getUserLogin()} Organization id: $orgId")
-        OrgService.remove(orgId)
+        try {
+            logger.info("Remove organization by user ${context!!.getUserLogin()} Organization id: $orgId")
+            OrgService.remove(orgId)
+        } catch (ex: Exception) {
+            logger.error(ex.message, ex)
+            throw ex
+        }
         return Response.status(200).build()
     }
 }
