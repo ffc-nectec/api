@@ -25,7 +25,7 @@ class LegalResourceNewEndPoint(
     val logger by lazy { getLogger() }
 
     @GET
-    @Path("/$ORGIDTYPE/user/{userId}/agreement/privacy")
+    @Path("/$ORGIDTYPE/user/{userId}/agreement/privacy/latest")
     @Cache(maxAge = 3600)
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun checkPrivacyAgreementOf(
@@ -38,7 +38,7 @@ class LegalResourceNewEndPoint(
     }
 
     @GET
-    @Path("/$ORGIDTYPE/user/{userId}/agreement/terms")
+    @Path("/$ORGIDTYPE/user/{userId}/agreement/terms/latest")
     @Cache(maxAge = 3600)
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun checkTermsAgreementOf(
