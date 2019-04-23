@@ -2,11 +2,14 @@ package ffc.airsync.api.services.user
 
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.services.ORGIDTYPE
+import ffc.airsync.api.services.token.tokens
 import ffc.entity.Token
 import ffc.entity.User
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.Consumes
+import javax.ws.rs.ForbiddenException
 import javax.ws.rs.GET
+import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.PathParam
@@ -21,11 +24,11 @@ class UserResource {
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     @RolesAllowed("ORG", "ADMIN")
-    fun create(@PathParam("orgUuid") orgId: String, users: List<User>): Response {
-        users.forEach {
+    fun create(@PathParam("orgUuid") orgId: String, user: List<User>): Response {
+        user.forEach {
             it.roles.add(it.role)
         }
-        val usersUpdate = UserService.create(orgId, users)
+        val usersUpdate = user.map { users.insertUser(it, orgId) }
         return Response.status(Response.Status.CREATED).entity(usersUpdate).build()
     }
 
@@ -39,12 +42,29 @@ class UserResource {
     @POST
     @Path("/$ORGIDTYPE/authorize")
     fun createAuthorizeToken(@PathParam("orgId") orgId: String, body: LoginBody): Token {
-        return UserService.login(orgId, body.username, body.password)
+        return login(orgId, body.username, body.password)
+    }
+
+    @POST
+    @Path("/$ORGIDTYPE/authorize/activate")
+    fun createAuthorizeActivate(@PathParam("orgId") orgId: String, body: LoginBody): Token {
+        return login(orgId, body.username, body.password)
     }
 
     companion object {
         val logger = getLogger()
     }
 
+    fun login(orgId: String, username: String, pass: String): Token {
+        if (UserDao.isBlockUser(username)) throw ForbiddenException("User ไม่มีสิทธิ์ในการใช้งาน")
+        val user = users.findThat(orgId, username, pass)
+        if (user != null) {
+            user.orgId = orgId
+            return tokens.create(user, orgId)
+        }
+        throw NotAuthorizedException("Not Auth")
+    }
+
     class LoginBody(val username: String, val password: String)
+    class LoginBodyWithOtp(val username: String, val password: String, val otp: String)
 }
