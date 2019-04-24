@@ -42,24 +42,25 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
     override fun insert(organization: Organization): Organization {
         validate(organization)
         checkDuplication(organization)
+        val genOrgId = ObjectId()
         val userListDoc = arrayListOf<Document>()
         organization.users.forEach {
             require(it.name.isNotEmpty()) { "พบค่าว่างในตัวแปร user.name" }
             require(it.password.isNotEmpty()) { "พบค่าว่างในตัวแปร user.password" }
             require(it.isTempId) { "ข้อมูลที่จะสร้างใหม่จำเป็นต้องใช้ TempId" }
+            it.orgId = genOrgId.toHexString()
 
             userListDoc.add(it.toDocument())
         }
-        val genId = ObjectId()
         val orgDoc = Document.parse(organization.toJson())
         orgDoc.append("users", userListDoc)
-        orgDoc.append("_id", genId)
-        orgDoc["id"] = genId.toHexString()
+        orgDoc.append("_id", genOrgId)
+        orgDoc["id"] = genOrgId.toHexString()
         orgDoc.append("lastKnownIp", organization.bundle["lastKnownIp"])
         orgDoc.append("token", ObjectId())
         logger.info("Register organization ${organization.name} Ip:${orgDoc["lastKnownIp"]}")
         dbCollection.insertOne(orgDoc)
-        val newOrgDoc = dbCollection.find("_id" equal genId).first()
+        val newOrgDoc = dbCollection.find("_id" equal genOrgId).first()
 
         return newOrgDoc.toJson().parseTo()
     }
