@@ -23,23 +23,22 @@ class RealTest {
     }
 
     fun Org(name: String = "NECTEC", ip: String = "127.0.01"): Organization =
-            Organization().apply {
-                this.name = name
-                users.add(User("maxkung", User.Role.ORG))
-                users.add(User("somYing"))
-                users.add(User("somChai"))
-                users.add(User("adm"))
-                users.add(User("ADM"))
-                users.add(User("newuser"))
-                users.add(User("usr_db"))
-                users.add(User("Drug_Store_Admin"))
-                bundle["lastKnownIp"] = ip // "203.111.222.123"
-            }
+        Organization().apply {
+            this.name = name
+            users.add(User("somYing"))
+            users.add(User("somChai"))
+            users.add(User("adm"))
+            users.add(User("ADM"))
+            users.add(User("newuser"))
+            users.add(User("usr_db"))
+            users.add(User("Drug_Store_Admin"))
+            bundle["lastKnownIp"] = ip // "203.111.222.123"
+        }
 
-    fun User(name: String, role: User.Role = User.Role.USER): User =
-            User().apply {
-                this.name = name
-                password = "catbite"
-                this.role = role
-            }
+    fun User(name: String, role: User.Role = User.Role.PROVIDER): User =
+        User().apply {
+            this.name = name
+            password = "catbite"
+            roles.add(role)
+        }
 }

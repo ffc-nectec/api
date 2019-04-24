@@ -79,7 +79,7 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
             require(name.isNotEmpty()) { "โปรระบุชื่อ หน่วยงานที่ต้องการลงทะเบียนลงในตัวแปร name" }
             require(users.isNotEmpty()) { "โปรดลงทะเบียน user ในตัวแปร user ในหน่วยงานที่ต้องการลงทะเบียน" }
             require(users.find {
-                it.roles.contains(User.Role.ADMIN) || it.roles.contains(User.Role.ORG)
+                it.roles.contains(User.Role.ADMIN)
             } != null) { "ไม่มี User ที่เป็น Role ADMIN" }
             link?.keys?.get("pcucode")?.let { require(it is String) { "pcucode ใน bunndel ต้องเป็น String" } }
         }

@@ -222,5 +222,6 @@ class MongoOrgTest {
             address = "161 ม.29 ต.สง่างาม อ.สดใส จ.ผิวผ่อง"
             link!!.keys["pcucode"] = "203"
         })
+        maeOrg.name `should be equal to` "โรงพยาบาลส่งเสริมสุขภาพตำบลแม่ข้าวต้ม"
     }
 }

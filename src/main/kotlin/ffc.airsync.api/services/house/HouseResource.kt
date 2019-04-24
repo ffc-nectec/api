@@ -166,7 +166,7 @@ class HouseResourceNewEndpoint {
     ): Response {
         val role = context.getLoginRole()
         when {
-            role.containsSome(User.Role.ORG, User.Role.ADMIN) -> house.link?.isSynced = true
+            role.containsSome(User.Role.ADMIN) -> house.link?.isSynced = true
             else -> house.link?.isSynced = false
         }
 
