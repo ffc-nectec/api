@@ -40,8 +40,8 @@ class HouseService(val housesDao: HouseDao = houses) {
         block: Int = -1
     ): List<House> {
         return when {
-            role.containsSome(User.Role.ORG, User.Role.ADMIN) -> createByOrg(orgId, houseList, block)
-            role.containsSome(User.Role.USER, User.Role.SURVEYOR) -> createByUser(orgId, houseList, block)
+            role.containsSome(User.Role.ADMIN) -> createByOrg(orgId, houseList, block)
+            role.containsSome(User.Role.SURVEYOR) -> createByUser(orgId, houseList, block)
             else -> throw ForbiddenException("ไม่มีสิทธ์ ในการสร้างบ้าน")
         }
     }
@@ -76,9 +76,9 @@ class HouseService(val housesDao: HouseDao = houses) {
         house: House
     ): House {
         return when {
-            role.containsSome(User.Role.ORG, User.Role.ADMIN) ->
+            role.containsSome(User.Role.ADMIN) ->
                 houseService.createByOrg(orgId, house)
-            role.containsSome(User.Role.USER, User.Role.SURVEYOR) ->
+            role.containsSome(User.Role.SURVEYOR) ->
                 houseService.createByUser(orgId, house)
             else -> throw ForbiddenException("ไม่มีสิทธ์ ในการสร้างบ้าน")
         }

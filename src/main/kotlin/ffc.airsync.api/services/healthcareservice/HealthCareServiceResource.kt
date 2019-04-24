@@ -41,7 +41,7 @@ class HealthCareServiceResource {
         healthCareService: HealthCareService
     ): HealthCareService {
         val loginRole = context.getLoginRole()
-        if (!(User.Role.ADMIN inRole loginRole || User.Role.ORG inRole loginRole)) {
+        if (!(User.Role.ADMIN inRole loginRole)) {
             require(healthCareService.link == null) { "สร้าง healthCareService จาก User ต้องไม่มี link" }
         } else {
             require(healthCareService.link != null) { "ORG, ADMIN จำเป็นต้องมีข้อมูล link " }
@@ -113,9 +113,6 @@ class HealthCareServiceResource {
     private fun roleMapIsSync(healthCareService: HealthCareService) {
         val role = context.getLoginRole()
         when {
-            User.Role.ORG inRole role -> {
-                healthCareService.link!!.isSynced = true
-            }
             User.Role.ADMIN inRole role -> {
                 healthCareService.link!!.isSynced = true
             }

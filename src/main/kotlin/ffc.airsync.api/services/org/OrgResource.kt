@@ -57,9 +57,6 @@ class OrgResource {
 
     @POST
     fun create(organization: Organization): Response {
-        organization.users.forEach {
-            it.roles.add(it.role)
-        }
         val org = OrgService.register(organization.apply { bundle["lastKnownIp"] = req.forwardForIpAddress() })
         logger.info("Register organization Name: ${org.name} Id:${org.id}")
         return Response.status(201).entity(org).build()
