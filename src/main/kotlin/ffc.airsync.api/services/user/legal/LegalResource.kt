@@ -31,6 +31,7 @@ import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -46,18 +47,24 @@ class LegalResource(
     @Path("/legal/privacy/latest")
     @Cache(maxAge = 3600 * 24)
     @Produces("text/markdown; charset=utf-8")
-    fun getPrivacy(): String {
+    fun getPrivacy(): Response {
         logger.debug("latest privacy[${privacy.latest.version}]")
-        return privacy.latest.content
+        return Response
+            .ok(privacy.latest.content)
+            .header("Content-Version", privacy.latest.version)
+            .build()
     }
 
     @GET
     @Path("/legal/terms/latest")
     @Cache(maxAge = 3600 * 24)
     @Produces("text/markdown; charset=utf-8")
-    fun getTerms(): String {
+    fun getTerms(): Response {
         logger.debug("latest terms[${terms.latest.version}]")
-        return terms.latest.content
+        return Response
+            .ok(terms.latest.content)
+            .header("Content-Version", terms.latest.version)
+            .build()
     }
 
     @GET
