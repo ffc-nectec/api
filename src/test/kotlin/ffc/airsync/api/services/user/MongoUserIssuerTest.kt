@@ -39,7 +39,7 @@ class MongoUserIssuerTest {
             users = listOf(User("maxkung", User.Role.ADMIN)).toMutableList()
         }
 
-    fun User(name: String, role: User.Role = User.Role.USER): User =
+    fun User(name: String, role: User.Role = User.Role.PROVIDER): User =
         User().apply {
             this.name = name
             password = "catbite"

@@ -25,9 +25,6 @@ class UserResource {
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     @RolesAllowed("ORG", "ADMIN")
     fun create(@PathParam("orgUuid") orgId: String, user: List<User>): Response {
-        user.forEach {
-            it.roles.add(it.role)
-        }
         val usersUpdate = user.map { users.insertUser(it, orgId) }
         return Response.status(Response.Status.CREATED).entity(usersUpdate).build()
     }

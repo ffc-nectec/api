@@ -99,7 +99,6 @@ class PersonResource {
         val role = context?.getLoginRole()
         when {
             User.Role.ADMIN inRole role -> person.link?.isSynced = true
-            User.Role.ORG inRole role -> person.link?.isSynced = true
             else -> person.link?.isSynced = false
         }
         return persons.update(orgId, person)

@@ -43,17 +43,17 @@ class MongoTokenDaoTest {
 
         dao = MongoTokenDao()
 
-        tokenMax = dao.create(User("Thanachai", User.Role.ORG), ORG_ID)
-        tokenBee = dao.create(User("Morakot", User.Role.USER), ORG_ID)
-        dao.create(User("Cat", User.Role.USER), "5bbd7f5ebc920637b04c7797")
-        dao.create(User("Dog", User.Role.USER), "5bbd7f5ebc920637b04c7797")
+        tokenMax = dao.create(User("Thanachai", User.Role.ADMIN), ORG_ID)
+        tokenBee = dao.create(User("Morakot", User.Role.PROVIDER), ORG_ID)
+        dao.create(User("Cat", User.Role.PROVIDER), "5bbd7f5ebc920637b04c7797")
+        dao.create(User("Dog", User.Role.PROVIDER), "5bbd7f5ebc920637b04c7797")
     }
 
-    fun User(name: String, role: User.Role = User.Role.USER): User =
+    fun User(name: String, role: User.Role = User.Role.PROVIDER): User =
         User().apply {
             this.name = name
             password = "catbite"
-            this.role = role
+            this.roles.add(role)
         }
 
     @Test
