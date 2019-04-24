@@ -210,4 +210,21 @@ class MongoOrgDaoTest {
         })
         maeOrg.name `should be equal to` "โรงพยาบาลส่งเสริมสุขภาพตำบลแม่ข้าวต้ม"
     }
+
+    @Test
+    fun activateUser() {
+        val maeOrg = dao.insert(Org("โรงพยาบาลส่งเสริมสุขภาพตำบลแม่ข้าวต้ม", "192.168.99.3").apply {
+            displayName = "รพ.สต.โรงพยาบาลส่งเสริมสุขภาพตำบลแม่ข้าวต้ม"
+            tel = "037-261-044"
+            address = "161 ม.29 ต.สง่างาม อ.สดใส จ.ผิวผ่อง"
+            link!!.keys["pcucode"] = "203"
+        })
+
+        maeOrg.users.forEach {
+            if (it.roles.contains(User.Role.ADMIN))
+                it.isActivated `should be equal to` true
+            else
+                it.isActivated `should be equal to` false
+        }
+    }
 }
