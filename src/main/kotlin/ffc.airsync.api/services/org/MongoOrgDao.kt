@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 NECTEC
+ * Copyright (c) 2562 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.services.org
@@ -49,7 +50,7 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
             require(it.name.isNotEmpty()) { "พบค่าว่างในตัวแปร user.name" }
             require(it.password.isNotEmpty()) { "พบค่าว่างในตัวแปร user.password" }
             require(it.isTempId) { "ข้อมูลที่จะสร้างใหม่จำเป็นต้องใช้ TempId" }
-            require(!it.isActivated) { "User ที่ใส่เข้ามา มีการ Activate ต้อง isActivated == false เท่านั้น" }
+            require(!it.isActivated) { "User มีการ Activate:${it.isActivated} ต้อง isActivated = false เท่านั้น" }
             it.orgId = genOrgId.toHexString()
             if (it.roles.contains(User.Role.ADMIN)) if (!it.isActivated) it.activate()
             userListDoc.add(it.toDocument())
