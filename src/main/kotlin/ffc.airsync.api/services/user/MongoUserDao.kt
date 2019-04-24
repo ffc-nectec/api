@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 NECTEC
+ * Copyright (c) 2562 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.services.user
@@ -33,16 +34,17 @@ import org.bson.types.ObjectId
 internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
 
     override fun insertUser(user: User, orgId: String): User {
+        require(!user.isActivated) { "User ที่จะเพิ่มเข้ามาใหม่ ต้อง isActivated=false" }
         if (!haveUserInDb(orgId, user)) {
             user.orgId = orgId
-            if (!user.isTempId) throw IllegalArgumentException("รุปแบบ id ต้องใช้ TempId ในการสร้าง User")
+            require(user.isTempId) { "รุปแบบ id ต้องใช้ TempId ในการสร้าง User" }
             val userStruct = "users" equal user.toDocument()
             val userPush = "\$push" equal userStruct
 
             dbCollection.updateOne("_id" equal ObjectId(orgId), userPush)
         }
         return findUser(orgId).find { it.name == user.name }
-            ?: throw IllegalStateException("Server Error in call dev")
+            ?: throw IllegalStateException("Server Error in call dev 999148")
     }
 
     private fun haveUserInDb(orgId: String, user: User): Boolean {

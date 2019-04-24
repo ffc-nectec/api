@@ -1,9 +1,27 @@
+/*
+ * Copyright (c) 2562 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package ffc.airsync.api.services.user.legal
 
 import ffc.airsync.api.MongoDbTestRule
 import ffc.airsync.api.resourceFile
 import ffc.airsync.api.services.org.MongoOrgDao
-import ffc.airsync.api.services.user.MongoUserTest
+import ffc.airsync.api.services.user.activate.Org
 import ffc.entity.User
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should equal`
@@ -28,8 +46,8 @@ class MongoUserLegalAgreementDaoTest {
     @Before
     fun setUp() {
         val orgDao = MongoOrgDao()
-        orgDao.insert(MongoUserTest.Org("Dummy"))
-        val org = orgDao.insert(MongoUserTest.Org("รพสตNectec"))
+        orgDao.insert(Org("Dummy"))
+        val org = orgDao.insert(Org("รพสตNectec"))
         maxKung = org.users.first { it.name == "maxkung" }
         somying = org.users.first { it.name == "somYing" }
 
