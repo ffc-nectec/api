@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package ffc.airsync.api.services.user.legal
 
 import ffc.airsync.api.filter.cache.Cache
@@ -56,6 +73,7 @@ class LegalResource(
         )
     }
 
+    @Deprecated("use new endpoint at AgreementResource")
     @GET
     @Path("/legal/privacy/latest/agreement/$ORGIDTYPE/{userId}")
     @Cache(maxAge = 3600)
@@ -69,6 +87,7 @@ class LegalResource(
             ?: throw NotFoundException("ไม่พบการยอมรับนโยบายความเป็นส่วนตัวฉบับล่าสุด")
     }
 
+    @Deprecated("use new endpoint at AgreementResource")
     @GET
     @Path("/legal/terms/latest/agreement/$ORGIDTYPE/{userId}/")
     @Cache(maxAge = 3600)
@@ -82,6 +101,7 @@ class LegalResource(
             ?: throw NotFoundException("ไม่พบการยอมรับเงื่อนไขการใช้งานฉบับล่าสุด")
     }
 
+    @Deprecated("use new endpoint at AgreementResource")
     @POST
     @Path("/legal/privacy/{version}/agreement/$ORGIDTYPE/{userId}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
@@ -95,6 +115,7 @@ class LegalResource(
         logger.info("user[$userId] accept privacy[$version]")
     }
 
+    @Deprecated("use new endpoint at AgreementResource")
     @POST
     @Path("/legal/terms/{version}/agreement/$ORGIDTYPE/{userId}")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
