@@ -83,6 +83,9 @@ class MongoOrgTest {
             name `should be equal to` "รพสตAAA"
             isTempId `should be` false
             bundle["lastKnownIp"] = "192.168.99.3"
+            users.forEach {
+                it.orgId `should equal` this.id
+            }
         }
     }
 
