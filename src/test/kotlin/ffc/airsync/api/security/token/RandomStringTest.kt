@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2561 NECTEC
+ * Copyright (c) 2019 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,18 +15,21 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.services.token
+package ffc.airsync.api.security.token
 
-import ffc.airsync.api.services.Dao
-import ffc.entity.Token
-import ffc.entity.User
+import org.amshove.kluent.`should not be equal to`
+import org.amshove.kluent.`should not be less than`
+import org.junit.Test
 
-interface TokenDao : Dao {
-    fun create(user: User, orgId: String): Token
-    fun login(token: String, orgId: String): Token?
-    fun findByOrgId(orgId: String): List<Token>
-    fun remove(token: String): Boolean
-    fun removeByOrgId(orgId: String)
+class RandomStringTest {
+    @Test
+    fun randomString() {
+        val ranToken = RandomString()
+        val rand1 = ranToken.nextString()
+        val rand2 = ranToken.nextString()
+
+        rand1 `should not be equal to` rand2
+        rand1.length `should not be less than` 20
+        rand2.length `should not be less than` 20
+    }
 }
-
-val tokens: TokenDao by lazy { MongoTokenDao() }

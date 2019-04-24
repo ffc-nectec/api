@@ -1,4 +1,21 @@
-package ffc.airsync.api.services.token
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package ffc.airsync.api.security.token
 
 import ffc.airsync.api.MongoDbTestRule
 import ffc.entity.Token
@@ -41,7 +58,7 @@ class MongoTokenDaoTest {
 
     @Test
     fun createAndFindToken() {
-        val token = dao.login(tokenMax.token, ORG_ID)
+        val token = dao.token(tokenMax.token, ORG_ID)
 
         token `should not be` null
         token!!.token `should be equal to` tokenMax.token
@@ -49,7 +66,7 @@ class MongoTokenDaoTest {
 
     @Test
     fun createAndCheckProperty() {
-        val token = dao.login(tokenMax.token, ORG_ID)
+        val token = dao.token(tokenMax.token, ORG_ID)
 
         token `should not be` null
         token!!.user.name `should be equal to` "Thanachai"
@@ -70,8 +87,8 @@ class MongoTokenDaoTest {
     @Test
     fun removeToken() {
         dao.remove(tokenMax.token) `should be equal to` true
-        dao.login(tokenBee.token, ORG_ID) `should not be` null
-        dao.login(tokenMax.token, ORG_ID) `should equal` null
+        dao.token(tokenBee.token, ORG_ID) `should not be` null
+        dao.token(tokenMax.token, ORG_ID) `should equal` null
     }
 
     @Test
@@ -83,11 +100,11 @@ class MongoTokenDaoTest {
 
     @Test()
     fun loginFail() {
-        dao.login(tokenMax.token, "5bbd7f5ebc920637b04c7799") `should equal` null
+        dao.token(tokenMax.token, "5bbd7f5ebc920637b04c7799") `should equal` null
     }
 
     @Test
     fun loginFail2() {
-        dao.login("jhjhdsjhdfieisfdsdfa", ORG_ID) `should equal` null
+        dao.token("jhjhdsjhdfieisfdsdfa", ORG_ID) `should equal` null
     }
 }
