@@ -13,6 +13,7 @@ import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
+import javax.ws.rs.core.Response
 
 @Path("/org")
 @Produces(MediaType.APPLICATION_JSON)
@@ -57,10 +58,11 @@ class LegalResourceNewEndPoint(
         @PathParam("orgId") orgId: String,
         @PathParam("userId") userId: String,
         @PathParam("version") version: String
-    ) {
+    ): Response {
         require(version == privacy.latest.version) { "Not acceptable Privacy Policy's version [$version]" }
         usersDao!!.getUserById(orgId, userId).agreeWith(privacy.latest, legalDao!!)
         logger.info("user[$userId] accept privacy[$version]")
+        return Response.status(201).build()
     }
 
     @POST
@@ -70,9 +72,10 @@ class LegalResourceNewEndPoint(
         @PathParam("orgId") orgId: String,
         @PathParam("userId") userId: String,
         @PathParam("version") version: String
-    ) {
+    ): Response {
         require(version == terms.latest.version) { "Not acceptable Terms of Uses's version [$version]" }
         usersDao!!.getUserById(orgId, userId).agreeWith(terms.latest, legalDao!!)
         logger.info("user[$userId] accept terms[$version]")
+        return Response.status(201).build()
     }
 }

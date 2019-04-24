@@ -28,10 +28,12 @@ class LegalResourceTest : JerseyTest() {
     override fun configure(): Application {
         dummyPrivacy = LegalDocuments(
             LegalDocument.Type.privacy,
-            LegalDocument(LegalDocument.Type.privacy, "# Privacy Policy - version 1"))
+            LegalDocument(LegalDocument.Type.privacy, "# Privacy Policy - version 1")
+        )
         dummyTerms = LegalDocuments(
             LegalDocument.Type.terms,
-            LegalDocument(LegalDocument.Type.terms, "# Terms of user - version 1"))
+            LegalDocument(LegalDocument.Type.terms, "# Terms of user - version 1")
+        )
         dummyUser = User("5c21d3c66d5a5600047f7345").apply {
             orgId = "5c21d3b76d5a5600047f7334"
         }
@@ -43,11 +45,14 @@ class LegalResourceTest : JerseyTest() {
 
         return ResourceConfig()
             .registerClasses(RequireError::class.java)
-            .register(LegalResource(
-                privacy = dummyPrivacy,
-                terms = dummyTerms,
-                usersDao = mockUsers,
-                legalDao = mockAgreementDao))
+            .register(
+                LegalResource(
+                    privacy = dummyPrivacy,
+                    terms = dummyTerms,
+                    usersDao = mockUsers,
+                    legalDao = mockAgreementDao
+                )
+            )
     }
 
     @Test
@@ -91,6 +96,7 @@ class LegalResourceTest : JerseyTest() {
         val res = target("legal/terms/${dummyTerms.latest.version}/agreement/${dummyUser.orgId}/${dummyUser.id}")
             .request().post(null)
 
+        // TODO change to 201
         res.status `should be equal to` 204
     }
 
