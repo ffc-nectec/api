@@ -17,18 +17,23 @@
 
 package ffc.airsync.api.security
 
-import org.mindrot.jbcrypt.BCrypt
+import ffc.entity.Token
+import ffc.entity.User
+import javax.ws.rs.core.SecurityContext
 
-class BcryptPassword : Password {
+class ApiSecurityContext(token: Token, val scheme: String?) : SecurityContext {
 
-    override fun hash(plain: String): String {
-        val salt = BCrypt.gensalt(10)
-        return BCrypt.hashpw(plain, salt)
+    private var userPrincipal = UserPrincipal(token.user)
+
+    override fun isUserInRole(role: String?): Boolean {
+        if (role == null)
+            return false
+        return userPrincipal.user.roles.contains(User.Role.valueOf(role))
     }
 
-    override fun check(plain: String, hash: String): Boolean {
-        return BCrypt.checkpw(plain, hash)
-    }
+    override fun getAuthenticationScheme() = "Bearer"
+
+    override fun getUserPrincipal() = userPrincipal
+
+    override fun isSecure() = "https" == scheme
 }
-
-fun password(): Password = BcryptPassword()

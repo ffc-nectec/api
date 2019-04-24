@@ -15,20 +15,18 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.security
+package ffc.airsync.api.security.token
 
-import org.mindrot.jbcrypt.BCrypt
+import ffc.airsync.api.services.Dao
+import ffc.entity.Token
+import ffc.entity.User
 
-class BcryptPassword : Password {
-
-    override fun hash(plain: String): String {
-        val salt = BCrypt.gensalt(10)
-        return BCrypt.hashpw(plain, salt)
-    }
-
-    override fun check(plain: String, hash: String): Boolean {
-        return BCrypt.checkpw(plain, hash)
-    }
+interface TokenDao : Dao {
+    fun create(user: User, orgId: String): Token
+    fun token(token: String, orgId: String): Token?
+    fun findByOrgId(orgId: String): List<Token>
+    fun remove(token: String): Boolean
+    fun removeByOrgId(orgId: String)
 }
 
-fun password(): Password = BcryptPassword()
+val tokens: TokenDao by lazy { MongoTokenDao() }
