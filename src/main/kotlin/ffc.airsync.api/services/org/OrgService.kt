@@ -1,11 +1,28 @@
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package ffc.airsync.api.services.org
 
 import ffc.airsync.api.getLogger
+import ffc.airsync.api.security.token.tokens
 import ffc.airsync.api.services.analytic.analyzers
 import ffc.airsync.api.services.healthcareservice.healthCareServices
 import ffc.airsync.api.services.house.houses
 import ffc.airsync.api.services.person.persons
-import ffc.airsync.api.services.token.tokens
 import ffc.airsync.api.services.village.villages
 import ffc.entity.Organization
 import ffc.entity.gson.toJson
