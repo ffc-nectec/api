@@ -21,6 +21,10 @@ package ffc.airsync.api.services.user
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.security.token.tokens
 import ffc.airsync.api.services.ORGIDTYPE
+import ffc.airsync.api.services.otp.OtpDao
+import ffc.airsync.api.services.otp.otp
+import ffc.airsync.api.services.user.activate.ActivateDao
+import ffc.airsync.api.services.user.activate.activateUser
 import ffc.entity.Token
 import ffc.entity.User
 import javax.annotation.security.RolesAllowed
@@ -29,6 +33,7 @@ import javax.ws.rs.ForbiddenException
 import javax.ws.rs.GET
 import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.POST
+import javax.ws.rs.PUT
 import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
@@ -38,12 +43,16 @@ import javax.ws.rs.core.Response
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-class UserResource {
+class UserResource(
+    val usersDao: UserDao = users,
+    val otpDao: OtpDao = otp,
+    val activateDao: ActivateDao = activateUser
+) {
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     @RolesAllowed("ORG", "ADMIN")
     fun create(@PathParam("orgUuid") orgId: String, user: List<User>): Response {
-        val usersUpdate = user.map { users.insertUser(it, orgId) }
+        val usersUpdate = user.map { usersDao.insertUser(it, orgId) }
         return Response.status(Response.Status.CREATED).entity(usersUpdate).build()
     }
 
@@ -51,33 +60,43 @@ class UserResource {
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun get(@PathParam("orgUuid") orgId: String): Response {
-        return Response.status(Response.Status.OK).entity(users.findUser(orgId)).build()
+        return Response.status(Response.Status.OK).entity(usersDao.findUser(orgId)).build()
     }
 
     @POST
     @Path("/$ORGIDTYPE/authorize")
     fun createAuthorizeToken(@PathParam("orgId") orgId: String, body: LoginBody): Token {
-        return login(orgId, body.username, body.password)
+        val user = getUser(body.username, orgId, body.password)
+        if (user != null) {
+            check(activateDao.checkActivate(orgId, user.id)) { "${user.name} ยังไม่ได้ activate" }
+            user.orgId = orgId
+            return tokens.create(user, orgId)
+        }
+        throw NotAuthorizedException("Not Auth")
     }
 
-    @POST
-    @Path("/$ORGIDTYPE/authorize/activate")
-    fun createAuthorizeActivate(@PathParam("orgId") orgId: String, body: LoginBody): Token {
-        return login(orgId, body.username, body.password)
+    @PUT
+    @Path("/$ORGIDTYPE/user/activate")
+    fun createAuthorizeActivate(@PathParam("orgId") orgId: String, body: LoginBodyWithOtp): Token {
+        val user = getUser(body.username, orgId, body.password)
+        if (user != null) {
+            check(!activateDao.checkActivate(orgId, user.id)) { "${user.name} ได้รับการ Activate แล้ว" }
+            check(otpDao.isValid(orgId, body.otp)) { "รหัส otp ไม่ถูกต้อง โปรดกรอกใหม่" }
+            activateDao.setActivate(orgId, user.id)
+            user.orgId = orgId
+            return tokens.create(user, orgId)
+        }
+        throw NotAuthorizedException("Not Auth")
     }
 
     companion object {
         val logger = getLogger()
     }
 
-    fun login(orgId: String, username: String, pass: String): Token {
+    private fun getUser(username: String, orgId: String, pass: String): User? {
         if (UserDao.isBlockUser(username)) throw ForbiddenException("User ไม่มีสิทธิ์ในการใช้งาน")
-        val user = users.findThat(orgId, username, pass)
-        if (user != null) {
-            user.orgId = orgId
-            return tokens.create(user, orgId)
-        }
-        throw NotAuthorizedException("Not Auth")
+        val user = usersDao.findThat(orgId, username, pass)
+        return user
     }
 
     class LoginBody(val username: String, val password: String)
