@@ -24,3 +24,5 @@ interface ActivateDao {
     fun checkActivate(orgId: String, userId: String): Boolean
     fun setActivate(orgId: String, userId: String): User
 }
+
+val activateUser: ActivateDao by lazy { MongoActivateDao() }
