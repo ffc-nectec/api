@@ -19,6 +19,7 @@
 package ffc.airsync.api.services.user
 
 import ffc.airsync.api.getLogger
+import ffc.airsync.api.security.token.TokenDao
 import ffc.airsync.api.security.token.tokens
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.otp.OtpDao
@@ -46,7 +47,8 @@ import javax.ws.rs.core.Response
 class UserResource(
     val usersDao: UserDao = users,
     val otpDao: OtpDao = otp,
-    val activateDao: ActivateDao = activateUser
+    val activateDao: ActivateDao = activateUser,
+    val tokenDao: TokenDao = tokens
 ) {
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
@@ -68,9 +70,13 @@ class UserResource(
     fun createAuthorizeToken(@PathParam("orgId") orgId: String, body: LoginBody): Token {
         val user = getUser(body.username, orgId, body.password)
         if (user != null) {
-            check(activateDao.checkActivate(orgId, user.id)) { "${user.name} ยังไม่ได้ activate" }
+            if (!activateDao.checkActivate(
+                    orgId,
+                    user.id
+                )
+            ) throw NotAuthorizedException("${user.name} ยังไม่ได้ activate")
             user.orgId = orgId
-            return tokens.create(user, orgId)
+            return tokenDao.create(user, orgId)
         }
         throw NotAuthorizedException("Not Auth")
     }
@@ -80,11 +86,15 @@ class UserResource(
     fun createAuthorizeActivate(@PathParam("orgId") orgId: String, body: LoginBodyWithOtp): Token {
         val user = getUser(body.username, orgId, body.password)
         if (user != null) {
-            check(!activateDao.checkActivate(orgId, user.id)) { "${user.name} ได้รับการ Activate แล้ว" }
-            check(otpDao.isValid(orgId, body.otp)) { "รหัส otp ไม่ถูกต้อง โปรดกรอกใหม่" }
+            if (activateDao.checkActivate(
+                    orgId,
+                    user.id
+                )
+            ) throw NotAuthorizedException("${user.name} ได้รับการ Activate แล้ว")
+            if (!otpDao.isValid(orgId, body.otp)) throw NotAuthorizedException("รหัส otp ไม่ถูกต้อง โปรดกรอกใหม่")
             activateDao.setActivate(orgId, user.id)
             user.orgId = orgId
-            return tokens.create(user, orgId)
+            return tokenDao.create(user, orgId)
         }
         throw NotAuthorizedException("Not Auth")
     }
