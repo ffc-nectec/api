@@ -20,6 +20,7 @@ package ffc.airsync.api.security.token
 import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.Indexes
 import ffc.airsync.api.getLogger
+import ffc.airsync.api.security.SecretRandom
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ignoreException
@@ -45,7 +46,7 @@ internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
 
     override fun create(user: User, orgId: String): Token {
         val generateId = ObjectId()
-        val tokenMessage = Token(token = randomString.nextString(), user = user)
+        val tokenMessage = Token(token = SecretRandom().nextSecret(), user = user)
         val tokenDoc = Document.parse(tokenMessage.toJson())
         tokenDoc.append("orgIndex", ObjectId(orgId))
         tokenDoc.append("_id", generateId)

@@ -15,34 +15,33 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.security.token
+package ffc.airsync.api.security
 
 import java.security.SecureRandom
 import java.util.Locale
-import java.util.Objects
 import java.util.Random
 
-internal class RandomString constructor(length: Int = 21, random: Random = SecureRandom(), symbols: String = alphanum) {
-    private val random: Random
-    private val symbols: CharArray
-    private val buf: CharArray
-
-    /**
-     * Generate a random string.
-     */
-    fun nextString(): String {
-        for (idx in buf.indices)
-            buf[idx] = symbols[random.nextInt(symbols.size)]
-        return String(buf)
-    }
+class SecretRandom constructor(
+    length: Int = 64,
+    val random: Random = SecureRandom(),
+    val symbols: String = alphanum
+) {
+    private val buff: CharArray = CharArray(length)
 
     init {
-        if (length < 1) throw IllegalArgumentException()
-        if (symbols.length < 2) throw IllegalArgumentException()
-        this.random = Objects.requireNonNull(random)
-        this.symbols = symbols.toCharArray()
-        this.buf = CharArray(length)
+        require(length > 0) { "secret's length must more than 0" }
+        require(symbols.length > 1) { "require at least 2 symbols for generate secret" }
     }
+
+    /**
+     * Generate secret string
+     */
+    fun nextSecret(): String {
+        for (i in buff.indices)
+            buff[i] = symbols[random.nextInt(symbols.length)]
+        return String(buff)
+    }
+
 
     companion object {
         private const val upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -51,5 +50,3 @@ internal class RandomString constructor(length: Int = 21, random: Random = Secur
         private val alphanum = upper + lower + digits
     }
 }
-
-internal val randomString = RandomString()

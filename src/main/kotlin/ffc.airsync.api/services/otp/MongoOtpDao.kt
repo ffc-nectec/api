@@ -13,12 +13,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package ffc.airsync.api.services.otp
 
 import com.mongodb.client.model.IndexOptions
+import ffc.airsync.api.security.SecretRandom
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.ignoreException
@@ -57,7 +57,7 @@ class MongoOtpDao(
     }
 
     private fun createNewSecretKey(orgId: String): String? {
-        val secretKey = secretString.getSecret()
+        val secretKey = SecretRandom().nextSecret()
         val doc = Document().apply {
             append("orgIndex", ObjectId(orgId))
             append("secretKey", secretKey)
