@@ -13,10 +13,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-package ffc.airsync.api.services.otp
+package ffc.airsync.api.security.otp
 
 import com.nhaarman.mockitokotlin2.eq
 import ffc.airsync.api.GsonJerseyProvider
@@ -55,8 +54,8 @@ class OtpResourceTest : JerseyTest() {
 
     @Test
     fun validateIsNotValid() {
-        val otp = mapOf("otp" to "654321")
-        val res = target("org/$ORG_ID/otp").request().post(
+        val otp = mapOf("Otp" to "654321")
+        val res = target("org/$ORG_ID/Otp").request().post(
             javax.ws.rs.client.Entity.entity(otp, MediaType.APPLICATION_JSON_TYPE)
         )
 
@@ -65,8 +64,8 @@ class OtpResourceTest : JerseyTest() {
 
     @Test
     fun validateIsValid() {
-        val otp = mapOf("otp" to "123456")
-        val res = target("org/$ORG_ID/otp").request().post(
+        val otp = mapOf("Otp" to "123456")
+        val res = target("org/$ORG_ID/Otp").request().post(
             javax.ws.rs.client.Entity.entity(otp, MediaType.APPLICATION_JSON_TYPE)
         )
 

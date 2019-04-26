@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package ffc.airsync.api.services.otp
+package ffc.airsync.api.security.otp
 
 import com.mongodb.client.model.IndexOptions
 import ffc.airsync.api.security.SecretRandom
@@ -33,12 +33,7 @@ class MongoOtpDao(
     timeUnit: TimeUnit = TimeUnit.SECONDS
 ) : OtpDao, MongoDao("ffc", "otp") {
 
-    private val otpGenerater by lazy {
-        OtpGenerater(
-            timeStep = timeStep,
-            timeUnit = timeUnit
-        )
-    }
+    private val otpGenerater by lazy { OtpGenerater(timeStep, timeUnit) }
 
     init {
         ignoreException {

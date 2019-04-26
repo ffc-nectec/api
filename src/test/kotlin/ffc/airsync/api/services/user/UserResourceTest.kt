@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package ffc.airsync.api.services.user
@@ -22,8 +21,8 @@ import com.nhaarman.mockitokotlin2.eq
 import ffc.airsync.api.GsonJerseyProvider
 import ffc.airsync.api.filter.RequireError
 import ffc.airsync.api.filter.SuccessToCreatedResponse
+import ffc.airsync.api.security.otp.OtpDao
 import ffc.airsync.api.security.token.TokenDao
-import ffc.airsync.api.services.otp.OtpDao
 import ffc.airsync.api.services.user.activate.ActivateDao
 import ffc.entity.Link
 import ffc.entity.System

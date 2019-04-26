@@ -13,17 +13,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package ffc.airsync.api.services.user
 
 import ffc.airsync.api.getLogger
+import ffc.airsync.api.security.otp.OtpDao
+import ffc.airsync.api.security.otp.otp
 import ffc.airsync.api.security.token.TokenDao
 import ffc.airsync.api.security.token.tokens
 import ffc.airsync.api.services.ORGIDTYPE
-import ffc.airsync.api.services.otp.OtpDao
-import ffc.airsync.api.services.otp.otp
 import ffc.airsync.api.services.user.activate.ActivateDao
 import ffc.airsync.api.services.user.activate.activateUser
 import ffc.entity.Token
@@ -70,11 +69,8 @@ class UserResource(
     fun createAuthorizeToken(@PathParam("orgId") orgId: String, body: LoginBody): Token {
         val user = getUser(body.username, orgId, body.password)
         if (user != null) {
-            if (!activateDao.checkActivate(
-                    orgId,
-                    user.id
-                )
-            ) throw NotAuthorizedException("${user.name} ยังไม่ได้ activate")
+            if (!activateDao.checkActivate(orgId, user.id))
+                throw NotAuthorizedException("${user.name} ยังไม่ได้ activate")
             user.orgId = orgId
             return tokenDao.create(user, orgId)
         }
@@ -85,18 +81,16 @@ class UserResource(
     @Path("/$ORGIDTYPE/user/activate")
     fun createAuthorizeActivate(@PathParam("orgId") orgId: String, body: LoginBodyWithOtp): Token {
         val user = getUser(body.username, orgId, body.password)
-        if (user != null) {
-            if (activateDao.checkActivate(
-                    orgId,
-                    user.id
-                )
-            ) throw NotAuthorizedException("${user.name} ได้รับการ Activate แล้ว")
-            if (!otpDao.isValid(orgId, body.otp)) throw NotAuthorizedException("รหัส otp ไม่ถูกต้อง โปรดกรอกใหม่")
-            activateDao.setActivate(orgId, user.id)
-            user.orgId = orgId
-            return tokenDao.create(user, orgId)
-        }
-        throw NotAuthorizedException("Not Auth")
+        if (user == null)
+            throw NotAuthorizedException("Not Auth")
+        if (activateDao.checkActivate(orgId, user.id))
+            throw NotAuthorizedException("${user.name} ได้รับการ Activate แล้ว")
+        if (!otpDao.isValid(orgId, body.otp))
+            throw NotAuthorizedException("รหัส OTP ไม่ถูกต้อง โปรดกรอกใหม่")
+
+        activateDao.setActivate(orgId, user.id)
+        user.orgId = orgId
+        return tokenDao.create(user, orgId)
     }
 
     companion object {
