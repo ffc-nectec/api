@@ -13,10 +13,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.security.token
 
+import ffc.airsync.api.security.SecretRandom
 import org.amshove.kluent.`should not be equal to`
 import org.amshove.kluent.`should not be less than`
 import org.junit.Test
@@ -24,9 +26,9 @@ import org.junit.Test
 class RandomStringTest {
     @Test
     fun randomString() {
-        val ranToken = RandomString()
-        val rand1 = ranToken.nextString()
-        val rand2 = ranToken.nextString()
+        val ranToken = SecretRandom()
+        val rand1 = ranToken.nextSecret()
+        val rand2 = ranToken.nextSecret()
 
         rand1 `should not be equal to` rand2
         rand1.length `should not be less than` 20
