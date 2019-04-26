@@ -18,17 +18,18 @@
 
 package ffc.airsync.api.services.user
 
+import com.nhaarman.mockitokotlin2.eq
 import ffc.airsync.api.GsonJerseyProvider
 import ffc.airsync.api.filter.RequireError
 import ffc.airsync.api.filter.SuccessToCreatedResponse
 import ffc.airsync.api.security.token.TokenDao
-import ffc.airsync.api.services.user.activate.ActivateDao
 import ffc.entity.Link
 import ffc.entity.System
 import ffc.entity.Token
 import ffc.entity.User
 import org.amshove.kluent.When
 import org.amshove.kluent.`should equal`
+import org.amshove.kluent.any
 import org.amshove.kluent.calling
 import org.amshove.kluent.itReturns
 import org.amshove.kluent.mock
@@ -43,25 +44,24 @@ private const val ORG_ID1 = "5bbd7f5ebc920637b04c7796"
 
 class UserResourceTest : JerseyTest() {
     private lateinit var mouckUserDao: UserDao
-    private lateinit var mouckActivateDao: ActivateDao
     private lateinit var mouckTokenDao: TokenDao
 
-    private lateinit var maxUser: User
+    private lateinit var userNoActivate: User
+    private lateinit var userActivate: User
 
     override fun configure(): Application {
         mouckUserDao = mock()
-        maxUser = createUser("max", "191", ORG_ID1)
-        When calling mouckUserDao.findThat(ORG_ID1, "max", "191") itReturns
-            maxUser
-
-        mouckActivateDao = mock()
-        When calling mouckActivateDao.checkActivate(ORG_ID1, maxUser.id) itReturns
-            true
+        userNoActivate = createUser("max", "191", ORG_ID1)
+        userActivate = createUser("max", "191", ORG_ID1).apply {
+            activate()
+        }
+        When calling mouckUserDao.findThat("5bbd7f5ebc920637b04c7796", "max", "191") itReturns
+            userNoActivate
 
         mouckTokenDao = mock()
-        When calling mouckTokenDao.create(maxUser, ORG_ID1) itReturns Token(maxUser, "abcdefghijk")
+        When calling mouckTokenDao.create(any(), eq(ORG_ID1)) itReturns Token(userNoActivate, "abcdefghijk")
 
-        val userResource = UserResource(mouckUserDao, mouckActivateDao, mouckTokenDao)
+        val userResource = UserResource(mouckUserDao, mouckTokenDao)
         userResource.otpVerify = { _, otp -> otp == "123456" }
 
         return ResourceConfig()
@@ -83,6 +83,9 @@ class UserResourceTest : JerseyTest() {
 
     @Test
     fun userLoginPass() {
+        When calling mouckUserDao.findThat(ORG_ID1, "max", "191") itReturns
+            userActivate
+
         val loginBody = UserResource.LoginBody("max", "191")
         val res = target("org/$ORG_ID1/authorize").request().post(
             javax.ws.rs.client.Entity.entity(loginBody, MediaType.APPLICATION_JSON_TYPE)
@@ -94,20 +97,15 @@ class UserResourceTest : JerseyTest() {
 
     @Test
     fun userLoginNoActivate() {
-        When calling mouckActivateDao.checkActivate(ORG_ID1, maxUser.id) itReturns
-            false
-
         val loginBody = UserResource.LoginBody("max", "191")
         val res = target("org/$ORG_ID1/authorize").request().post(
             javax.ws.rs.client.Entity.entity(loginBody, MediaType.APPLICATION_JSON_TYPE)
         )
-        res.status `should equal` 401
+        res.status `should equal` 403
     }
 
     @Test
     fun activateUser() {
-        When calling mouckActivateDao.checkActivate(ORG_ID1, maxUser.id) itReturns
-            false
         val loginBodyWithOtp = UserResource.LoginBodyWithOtp("max", "191", "123456")
 
         val res = target("org/$ORG_ID1/user/activate").request().put(
@@ -121,8 +119,6 @@ class UserResourceTest : JerseyTest() {
 
     @Test
     fun activateFailOtp() {
-        When calling mouckActivateDao.checkActivate(ORG_ID1, maxUser.id) itReturns
-            false
         val loginBodyWithOtp = UserResource.LoginBodyWithOtp("max", "191", "654321")
 
         val res = target("org/$ORG_ID1/user/activate").request().put(
