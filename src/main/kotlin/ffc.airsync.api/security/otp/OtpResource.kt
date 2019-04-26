@@ -29,14 +29,16 @@ import javax.ws.rs.core.MediaType
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-class OtpResource(
-    val otpDao: OtpDao = otp
-) {
+class OtpResource {
+
     @GET
     @Path("/$ORGIDTYPE/otp")
     @RolesAllowed("ORG", "ADMIN")
     fun get(@PathParam("orgId") orgId: String): Map<String, String> {
-        return mapOf("otp" to otpDao.get(orgId))
+        val otp: Otp = OrgTimebaseOtp(orgId)
+        return mapOf("otp" to otp.generate())
     }
+
+    fun getOtpGenerator(orgId: String): Otp = OrgTimebaseOtp(orgId)
 
 }

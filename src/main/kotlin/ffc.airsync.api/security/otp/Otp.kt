@@ -21,6 +21,7 @@ import com.marcelkliemannel.kotlinonetimepassword.HmacAlgorithm
 import com.marcelkliemannel.kotlinonetimepassword.TimeBasedOneTimePasswordConfig
 import com.marcelkliemannel.kotlinonetimepassword.TimeBasedOneTimePasswordGenerator
 import ffc.airsync.api.services.MongoDao
+import org.joda.time.DateTime
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -31,33 +32,34 @@ interface Otp {
     fun verify(otp: String): Boolean
 }
 
-class OrgTimebaseOtp(val orgId: String) : Otp {
+class OrgTimebaseOtp(
+    val orgId: String,
+    private val secretStore: SecretStore = MongoSecretStore(),
+    private val clock: Clock = JodaClock()
+) : Otp {
 
-    private val config = TimeBasedOneTimePasswordConfig(
-        timeStep = 60,
-        timeStepUnit = TimeUnit.SECONDS,
-        codeDigits = 6,
-        hmacAlgorithm = HmacAlgorithm.SHA512
-    )
+    private val config = TimeBasedOneTimePasswordConfig(60, TimeUnit.SECONDS, 6, HmacAlgorithm.SHA512)
 
-    val secretStore: SecretStore = MongoSecretStore()//TODO init
+    private val secret: String by lazy { secretStore.secretOf(orgId) }
+    private val generator by lazy { TimeBasedOneTimePasswordGenerator(secret.toByteArray(), config) }
 
     override fun generate(): String {
-        val secret = secretStore.secretOf(orgId)
-        val otpGenerator = TimeBasedOneTimePasswordGenerator(secret.toByteArray(), config)
-        return otpGenerator.generate()
+        return generator.generate(clock.now())
     }
 
-    internal fun generateLeeway(timestamp: Date): String {
-        //implement
-        return "leeway otp"
+    internal fun generateLeeway(): String {
+        return generator.generate(clock.now().minusMillis(60000))
+    }
+
+    private fun Date.minusMillis(millis: Int): Date {
+        val joda = DateTime(time)
+        return Date(joda.minusMillis(millis).millis)
     }
 
     override fun verify(otp: String): Boolean {
         if (otp == generate())
             return true
-        //TODO check last
-        return otp == generateLeeway(Date(System.currentTimeMillis()))
+        return otp == generateLeeway()
     }
 }
 
@@ -71,6 +73,18 @@ class MongoSecretStore : SecretStore, MongoDao("ffc", "secret") {
     override fun secretOf(orgId: String): String {
         TODO(" implemented")
         return "secret"
+    }
+}
+
+interface Clock {
+
+    fun now(): Date
+}
+
+class JodaClock : Clock {
+
+    override fun now(): Date {
+        return DateTime.now().toDate()
     }
 }
 
