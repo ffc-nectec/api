@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.security.otp
@@ -29,14 +30,11 @@ import javax.ws.rs.core.MediaType
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-class OtpResource(
-    val otpDao: OtpDao = otp
-) {
+class OtpResource {
     @GET
     @Path("/$ORGIDTYPE/otp")
     @RolesAllowed("ORG", "ADMIN")
     fun get(@PathParam("orgId") orgId: String): Map<String, String> {
-        return mapOf("otp" to otpDao.get(orgId))
+        return mapOf("otp" to OrgTimebaseOtp(orgId).generate())
     }
-
 }
