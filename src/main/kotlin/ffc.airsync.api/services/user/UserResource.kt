@@ -13,13 +13,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.services.user
 
 import ffc.airsync.api.getLogger
-import ffc.airsync.api.security.otp.OtpDao
-import ffc.airsync.api.security.otp.otp
+import ffc.airsync.api.security.otp.OrgTimebaseOtp
 import ffc.airsync.api.security.token.TokenDao
 import ffc.airsync.api.security.token.tokens
 import ffc.airsync.api.services.ORGIDTYPE
@@ -45,7 +45,6 @@ import javax.ws.rs.core.Response
 @Produces(MediaType.APPLICATION_JSON)
 class UserResource(
     val usersDao: UserDao = users,
-    val otpDao: OtpDao = otp,
     val activateDao: ActivateDao = activateUser,
     val tokenDao: TokenDao = tokens
 ) {
@@ -80,12 +79,10 @@ class UserResource(
     @PUT
     @Path("/$ORGIDTYPE/user/activate")
     fun createAuthorizeActivate(@PathParam("orgId") orgId: String, body: LoginBodyWithOtp): Token {
-        val user = getUser(body.username, orgId, body.password)
-        if (user == null)
-            throw NotAuthorizedException("Not Auth")
+        val user = getUser(body.username, orgId, body.password) ?: throw NotAuthorizedException("Not Auth")
         if (activateDao.checkActivate(orgId, user.id))
             throw NotAuthorizedException("${user.name} ได้รับการ Activate แล้ว")
-        if (!otpDao.isValid(orgId, body.otp))
+        if (!otpVerify(orgId, body.otp))
             throw NotAuthorizedException("รหัส OTP ไม่ถูกต้อง โปรดกรอกใหม่")
 
         activateDao.setActivate(orgId, user.id)
@@ -99,9 +96,11 @@ class UserResource(
 
     private fun getUser(username: String, orgId: String, pass: String): User? {
         if (UserDao.isBlockUser(username)) throw ForbiddenException("User ไม่มีสิทธิ์ในการใช้งาน")
-        val user = usersDao.findThat(orgId, username, pass)
-        return user
+        return usersDao.findThat(orgId, username, pass)
     }
+
+    internal var otpVerify: (orgId: String, otp: String) -> Boolean =
+        { otp, orgId -> OrgTimebaseOtp(orgId).verify(otp) }
 
     class LoginBody(val username: String, val password: String)
     class LoginBodyWithOtp(val username: String, val password: String, val otp: String)
