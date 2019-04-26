@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.filter
@@ -36,7 +37,7 @@ data class ErrorDetail(
     val message: String?,
     val t: Throwable
 ) {
-    val tType = t::class.java.toString()
+    val tType = t::class.java.simpleName
 
     init {
         getLogger().debug("${t.message}", t)
