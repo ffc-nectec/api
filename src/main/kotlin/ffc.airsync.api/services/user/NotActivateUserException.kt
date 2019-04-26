@@ -13,16 +13,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-package ffc.airsync.api.services.user.activate
+package ffc.airsync.api.services.user
 
-import ffc.entity.User
+import javax.ws.rs.ForbiddenException
 
-interface ActivateDao {
-    fun checkActivate(orgId: String, userId: String): Boolean
-    fun setActivate(orgId: String, userId: String): User
-}
-
-val activateUser: ActivateDao by lazy { MongoActivateDao() }
+class NotActivateUserException(message: String = "บัญชีผู้ใช้ยังไม่ได้ activate") : ForbiddenException(message)

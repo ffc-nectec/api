@@ -13,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package ffc.airsync.api.services.user
@@ -23,13 +22,11 @@ import ffc.airsync.api.security.otp.OrgTimebaseOtp
 import ffc.airsync.api.security.token.TokenDao
 import ffc.airsync.api.security.token.tokens
 import ffc.airsync.api.services.ORGIDTYPE
-import ffc.airsync.api.services.user.activate.ActivateDao
-import ffc.airsync.api.services.user.activate.activateUser
 import ffc.entity.Token
 import ffc.entity.User
 import javax.annotation.security.RolesAllowed
+import javax.ws.rs.BadRequestException
 import javax.ws.rs.Consumes
-import javax.ws.rs.ForbiddenException
 import javax.ws.rs.GET
 import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.POST
@@ -45,9 +42,11 @@ import javax.ws.rs.core.Response
 @Produces(MediaType.APPLICATION_JSON)
 class UserResource(
     val usersDao: UserDao = users,
-    val activateDao: ActivateDao = activateUser,
     val tokenDao: TokenDao = tokens
 ) {
+    internal var otpVerify: (orgId: String, otp: String) -> Boolean =
+        { otp, orgId -> OrgTimebaseOtp(orgId).verify(otp) }
+
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     @RolesAllowed("ORG", "ADMIN")
@@ -59,7 +58,7 @@ class UserResource(
     @GET
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
-    fun get(@PathParam("orgUuid") orgId: String): Response {
+    fun getUsersIn(@PathParam("orgUuid") orgId: String): Response {
         return Response.status(Response.Status.OK).entity(usersDao.findUser(orgId)).build()
     }
 
@@ -67,26 +66,27 @@ class UserResource(
     @Path("/$ORGIDTYPE/authorize")
     fun createAuthorizeToken(@PathParam("orgId") orgId: String, body: LoginBody): Token {
         val user = getUser(body.username, orgId, body.password)
-        if (user != null) {
-            if (!activateDao.checkActivate(orgId, user.id))
-                throw NotAuthorizedException("${user.name} ยังไม่ได้ activate")
-            user.orgId = orgId
-            return tokenDao.create(user, orgId)
-        }
-        throw NotAuthorizedException("Not Auth")
+            ?: throw NotAuthorizedException("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")
+
+        if (!user.isActivated) throw NotActivateUserException()
+
+        return tokenDao.create(user, orgId)
     }
 
     @PUT
     @Path("/$ORGIDTYPE/user/activate")
-    fun createAuthorizeActivate(@PathParam("orgId") orgId: String, body: LoginBodyWithOtp): Token {
-        val user = getUser(body.username, orgId, body.password) ?: throw NotAuthorizedException("Not Auth")
-        if (activateDao.checkActivate(orgId, user.id))
-            throw NotAuthorizedException("${user.name} ได้รับการ Activate แล้ว")
+    fun activateUser(@PathParam("orgId") orgId: String, body: LoginBodyWithOtp): Token {
         if (!otpVerify(orgId, body.otp))
             throw NotAuthorizedException("รหัส OTP ไม่ถูกต้อง โปรดกรอกใหม่")
+        val user = getUser(body.username, orgId, body.password)
+            ?: throw NotAuthorizedException("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")
 
-        activateDao.setActivate(orgId, user.id)
-        user.orgId = orgId
+        try {
+            user.activate()
+            usersDao.updateUser(user, orgId)
+        } catch (ex: IllegalStateException) {
+            throw BadRequestException("${user.name} ได้รับการ Activate แล้ว")
+        }
         return tokenDao.create(user, orgId)
     }
 
@@ -95,12 +95,11 @@ class UserResource(
     }
 
     private fun getUser(username: String, orgId: String, pass: String): User? {
-        if (UserDao.isBlockUser(username)) throw ForbiddenException("User ไม่มีสิทธิ์ในการใช้งาน")
+        if (UserDao.isBlockUser(username))
+            throw BlacklistUserException()
+
         return usersDao.findThat(orgId, username, pass)
     }
-
-    internal var otpVerify: (orgId: String, otp: String) -> Boolean =
-        { otp, orgId -> OrgTimebaseOtp(orgId).verify(otp) }
 
     class LoginBody(val username: String, val password: String)
     class LoginBodyWithOtp(val username: String, val password: String, val otp: String)
