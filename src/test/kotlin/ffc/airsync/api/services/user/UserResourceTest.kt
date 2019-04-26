@@ -13,15 +13,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.services.user
 
-import com.nhaarman.mockitokotlin2.eq
 import ffc.airsync.api.GsonJerseyProvider
 import ffc.airsync.api.filter.RequireError
 import ffc.airsync.api.filter.SuccessToCreatedResponse
-import ffc.airsync.api.security.otp.OtpDao
 import ffc.airsync.api.security.token.TokenDao
 import ffc.airsync.api.services.user.activate.ActivateDao
 import ffc.entity.Link
@@ -30,7 +29,6 @@ import ffc.entity.Token
 import ffc.entity.User
 import org.amshove.kluent.When
 import org.amshove.kluent.`should equal`
-import org.amshove.kluent.any
 import org.amshove.kluent.calling
 import org.amshove.kluent.itReturns
 import org.amshove.kluent.mock
@@ -44,7 +42,6 @@ import javax.ws.rs.core.MediaType
 private const val ORG_ID1 = "5bbd7f5ebc920637b04c7796"
 
 class UserResourceTest : JerseyTest() {
-    private lateinit var mouckOtpDao: OtpDao
     private lateinit var mouckUserDao: UserDao
     private lateinit var mouckActivateDao: ActivateDao
     private lateinit var mouckTokenDao: TokenDao
@@ -61,19 +58,18 @@ class UserResourceTest : JerseyTest() {
         When calling mouckActivateDao.checkActivate(ORG_ID1, maxUser.id) itReturns
             true
 
-        mouckOtpDao = mock()
-        When calling mouckOtpDao.isValid(eq(ORG_ID1), eq("123456"), any()) itReturns true
-        When calling mouckOtpDao.isValid(eq(ORG_ID1), eq("654321"), any()) itReturns false
-
         mouckTokenDao = mock()
         When calling mouckTokenDao.create(maxUser, ORG_ID1) itReturns Token(maxUser, "abcdefghijk")
+
+        val userResource = UserResource(mouckUserDao, mouckActivateDao, mouckTokenDao)
+        userResource.otpVerify = { _, otp -> otp == "123456" }
 
         return ResourceConfig()
             .registerClasses(RequireError::class.java)
             .register(RolesAllowedDynamicFeature::class.java)
             .register(GsonJerseyProvider::class.java)
             .register(SuccessToCreatedResponse::class.java)
-            .register(UserResource(mouckUserDao, mouckOtpDao, mouckActivateDao, mouckTokenDao))
+            .register(userResource)
     }
 
     @Test
