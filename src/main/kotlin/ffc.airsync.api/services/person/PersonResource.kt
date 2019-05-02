@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2561 NECTEC
+ * Copyright (c) 2019 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.services.person
@@ -54,7 +55,7 @@ class PersonResource {
 
     @POST
     @Path("/$ORGIDTYPE/persons")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun creates(@PathParam("orgId") orgId: String, personList: List<Person>): Response {
         personList.forEach { person ->
             mapDeadIcd10(person)
@@ -71,7 +72,7 @@ class PersonResource {
 
     @DELETE
     @Path("/$ORGIDTYPE/persons")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun delete(@PathParam("orgId") orgId: String): Response {
         persons.remove(orgId)
         return Response.status(Response.Status.OK).build()
@@ -79,7 +80,7 @@ class PersonResource {
 
     @POST
     @Path("/$ORGIDTYPE/person")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun create(@PathParam("orgId") orgId: String, person: Person): Response {
         mapDeadIcd10(person)
         val persons = persons.insert(orgId, person)
@@ -88,7 +89,7 @@ class PersonResource {
 
     @PUT
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun updatePerson(
         @PathParam("orgId") orgId: String,
@@ -106,7 +107,7 @@ class PersonResource {
 
     @GET
     @Path("/$ORGIDTYPE/person")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun get(
         @QueryParam("page") @DefaultValue("1") page: Int,
@@ -136,7 +137,7 @@ class PersonResource {
 
     @GET
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun getByPersonId(
         @PathParam("orgId") orgId: String,

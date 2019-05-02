@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package ffc.airsync.api.services.genogram
 
 import ffc.airsync.api.filter.cache.Cache
@@ -28,7 +46,7 @@ class RelationshipResource {
 
     @GET
     @Path("/$ORGIDTYPE/person/{personId:([\\dabcdefABCDEF]+)}/relationship")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun get(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<Person.Relationship> {
         return personRelationsShip.get(orgId, personId)
@@ -36,7 +54,7 @@ class RelationshipResource {
 
     @PUT
     @Path("/$ORGIDTYPE/person/{personId:([\\dabcdefABCDEF]+)}/relationship")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun update(
         @PathParam("orgId") orgId: String,
@@ -48,7 +66,7 @@ class RelationshipResource {
 
     @GET
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/genogram/collect")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun getGenogramCollect(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<Person> {
         return personRelationsShip.collectGenogram(orgId, personId)
@@ -56,7 +74,7 @@ class RelationshipResource {
 
     @GET
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/genogram")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun getGenogramFamily(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): Family {
 

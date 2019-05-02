@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package ffc.airsync.api.services.healthcareservice
 
 import ffc.airsync.api.filter.cache.Cache
@@ -35,7 +53,7 @@ class HealthCareServiceResource {
 
     @POST
     @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
     fun create(
         @PathParam("orgId") orgId: String,
         healthCareService: HealthCareService
@@ -60,7 +78,7 @@ class HealthCareServiceResource {
 
     @PUT
     @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE/$VISITIDTYPE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    @RolesAllowed("ADMIN", "PROVIDER")
     fun update(
         @PathParam("orgId") orgId: String,
         @PathParam("visitId") visitId: String,
@@ -83,7 +101,7 @@ class HealthCareServiceResource {
 
     @DELETE
     @Path("/$ORGIDTYPE/${PART_HEALTHCARESERVICE}s")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun delete(
         @PathParam("orgId") orgId: String
     ): Response {
@@ -93,7 +111,7 @@ class HealthCareServiceResource {
 
     @POST
     @Path("/$ORGIDTYPE/${PART_HEALTHCARESERVICE}s")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun createList(
         @PathParam("orgId") orgId: String,
         healthCareService: List<HealthCareService>
@@ -104,7 +122,7 @@ class HealthCareServiceResource {
 
     @GET
     @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE/$VISITIDTYPE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun find(@PathParam("orgId") orgId: String, @PathParam("visitId") visitId: String): HealthCareService {
         return healthCareServices.get(visitId, orgId) ?: throw NullPointerException("ไม่พบ ข้อมูลที่ค้นหา")
@@ -126,7 +144,7 @@ class HealthCareServiceResource {
 
     @GET
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/$PART_HEALTHCARESERVICE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     @Cache(maxAge = 5)
     fun getPerson(
         @PathParam("orgId") orgId: String,

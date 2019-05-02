@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 NECTEC
+ * Copyright (c) 2019 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.services.org
@@ -86,7 +87,7 @@ class OrgResource {
 
     @DELETE
     @Path("/$ORGIDTYPE")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun remove(@PathParam("orgId") orgId: String): Response {
         try {
             logger.info("Remove organization by user ${context!!.getUserLogin()} Organization id: $orgId")

@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package ffc.airsync.api.services.house
 
 import ffc.airsync.api.filter.cache.Cache
@@ -42,7 +60,7 @@ class HouseResourceNewEndpoint {
 
     @POST
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    @RolesAllowed("ADMIN", "PROVIDER")
     fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
         if (house == null) throw BadRequestException()
 
@@ -52,7 +70,7 @@ class HouseResourceNewEndpoint {
 
     @POST
     @Path("/$ORGIDTYPE/houses")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    @RolesAllowed("ADMIN", "PROVIDER")
     fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
         if (houseList == null) throw BadRequestException()
 
@@ -62,7 +80,7 @@ class HouseResourceNewEndpoint {
 
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 5)
     fun getGeoJsonHouse(
@@ -75,7 +93,7 @@ class HouseResourceNewEndpoint {
 
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE.geojson")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 5)
     fun getGeoJsonTypeHouse(
@@ -88,7 +106,7 @@ class HouseResourceNewEndpoint {
 
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 5)
     fun getJsonHouse(
         @QueryParam("page") @DefaultValue("1") page: Int,
@@ -107,7 +125,7 @@ class HouseResourceNewEndpoint {
 
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE.json")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 5)
     fun getJsonTypeHouse(
         @QueryParam("page") @DefaultValue("1") page: Int,
@@ -121,7 +139,7 @@ class HouseResourceNewEndpoint {
 
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
-    @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun getPersonInHouse(
         @PathParam("orgId") orgId: String,
@@ -136,7 +154,7 @@ class HouseResourceNewEndpoint {
 
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun getSingle(
         @PathParam("orgId") orgId: String,
@@ -147,7 +165,7 @@ class HouseResourceNewEndpoint {
 
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}.json")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
     @Cache(maxAge = 2)
     fun getSingleJsonType(
         @PathParam("orgId") orgId: String,
@@ -158,7 +176,7 @@ class HouseResourceNewEndpoint {
 
     @PUT
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    @RolesAllowed("ADMIN", "PROVIDER")
     fun update(
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String,
@@ -176,7 +194,7 @@ class HouseResourceNewEndpoint {
 
     @PUT
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER")
+    @RolesAllowed("ADMIN", "PROVIDER")
     fun updateFail(
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String,
@@ -187,7 +205,7 @@ class HouseResourceNewEndpoint {
 
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
-    @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 2)
     fun getSingleGeo(
@@ -199,7 +217,7 @@ class HouseResourceNewEndpoint {
 
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}.geojson")
-    @RolesAllowed("USER", "ORG", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("PROVIDER", "SURVEYOR")
     @Produces(GEOJSONHeader)
     @Cache(maxAge = 2)
     fun getSingleGeoType(
@@ -211,7 +229,7 @@ class HouseResourceNewEndpoint {
 
     @DELETE
     @Path("/$ORGIDTYPE/${NEWPART_HOUSESERVICE}s")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun delete(@PathParam("orgId") orgId: String): Response {
         houses.removeByOrgId(orgId)
         return Response.status(Response.Status.OK).build()

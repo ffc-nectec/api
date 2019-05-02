@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.services.user.legal
@@ -84,7 +85,7 @@ class LegalResource(
     @GET
     @Path("/legal/privacy/latest/agreement/$ORGIDTYPE/{userId}")
     @Cache(maxAge = 3600)
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun checkPrivacyAgreementOf(
         @PathParam("orgId") orgId: String,
         @PathParam("userId") userId: String
@@ -98,7 +99,7 @@ class LegalResource(
     @GET
     @Path("/legal/terms/latest/agreement/$ORGIDTYPE/{userId}/")
     @Cache(maxAge = 3600)
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun checkTermsAgreementOf(
         @PathParam("orgId") orgId: String,
         @PathParam("userId") userId: String
@@ -111,7 +112,7 @@ class LegalResource(
     @Deprecated("use new endpoint at AgreementResource")
     @POST
     @Path("/legal/privacy/{version}/agreement/$ORGIDTYPE/{userId}")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun agreePrivacy(
         @PathParam("orgId") orgId: String,
         @PathParam("userId") userId: String,
@@ -125,7 +126,7 @@ class LegalResource(
     @Deprecated("use new endpoint at AgreementResource")
     @POST
     @Path("/legal/terms/{version}/agreement/$ORGIDTYPE/{userId}")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun agreeTerms(
         @PathParam("orgId") orgId: String,
         @PathParam("userId") userId: String,
