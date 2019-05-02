@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package ffc.airsync.api.services.village
 
 import ffc.airsync.api.resorceCall
@@ -23,7 +41,7 @@ import javax.ws.rs.core.Response
 class VillageResource {
     @POST
     @Path("/$ORGIDTYPE/village")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun create(@PathParam("orgId") orgId: String, village: Village): Village {
         return resorceCall {
             villages.insert(orgId, village)
@@ -32,7 +50,7 @@ class VillageResource {
 
     @POST
     @Path("/$ORGIDTYPE/villages")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun create(@PathParam("orgId") orgId: String, village: List<Village>): List<Village> {
         val output = resorceCall { villages.insert(orgId, village) }
         return output
@@ -40,7 +58,7 @@ class VillageResource {
 
     @PUT
     @Path("/$ORGIDTYPE/village/$VILLAGETYPE")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun update(
         @PathParam("orgId") orgId: String,
         @PathParam("villageId") villageId: String,
@@ -52,7 +70,7 @@ class VillageResource {
 
     @DELETE
     @Path("/$ORGIDTYPE/village/$VILLAGETYPE")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun delete(
         @PathParam("orgId") orgId: String,
         @PathParam("villageId") villageId: String
@@ -63,7 +81,7 @@ class VillageResource {
 
     @DELETE
     @Path("/$ORGIDTYPE/villages")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun deleteOrg(
         @PathParam("orgId") orgId: String
     ): Response {
@@ -73,7 +91,7 @@ class VillageResource {
 
     @GET
     @Path("/$ORGIDTYPE/village/$VILLAGETYPE")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun get(
         @PathParam("orgId") orgId: String,
         @PathParam("villageId") villageId: String
@@ -83,7 +101,7 @@ class VillageResource {
 
     @GET
     @Path("/$ORGIDTYPE/village")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun find(
         @PathParam("orgId") orgId: String,
         @QueryParam("query") query: String?

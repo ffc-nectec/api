@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.services.user
@@ -49,7 +50,7 @@ class UserResource(
 
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun create(@PathParam("orgUuid") orgId: String, user: List<User>): Response {
         val usersUpdate = user.map { usersDao.insertUser(it, orgId) }
         return Response.status(Response.Status.CREATED).entity(usersUpdate).build()
@@ -57,7 +58,7 @@ class UserResource(
 
     @GET
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun getUsersIn(@PathParam("orgUuid") orgId: String): Response {
         return Response.status(Response.Status.OK).entity(usersDao.findUser(orgId)).build()
     }

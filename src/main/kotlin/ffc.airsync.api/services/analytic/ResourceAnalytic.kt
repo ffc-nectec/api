@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package ffc.airsync.api.services.analytic
 
 import ffc.airsync.api.services.ORGIDTYPE
@@ -21,7 +39,7 @@ class ResourceAnalytic {
 
     @POST
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/healthanalyze")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun insert(
         @PathParam("orgId") orgId: String,
         @PathParam("personId") personId: String,
@@ -36,7 +54,7 @@ class ResourceAnalytic {
 
     @GET
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/healthanalyze")
-    @RolesAllowed("USER", "ORG", "ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun getByPersonId(
         @PathParam("orgId") orgId: String,
         @PathParam("personId") personId: String
@@ -46,7 +64,7 @@ class ResourceAnalytic {
 
     @DELETE
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/healthanalyze")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun delete(
         @PathParam("orgId") orgId: String,
         @PathParam("personId") personId: String
@@ -57,7 +75,7 @@ class ResourceAnalytic {
 
     @DELETE
     @Path("/$ORGIDTYPE/healthanalyze")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun deleteOrg(
         @PathParam("orgId") orgId: String
     ): Response {

@@ -33,7 +33,7 @@ import javax.ws.rs.core.MediaType
 class OtpResource {
     @GET
     @Path("/$ORGIDTYPE/otp")
-    @RolesAllowed("ORG", "ADMIN")
+    @RolesAllowed("ADMIN")
     fun get(@PathParam("orgId") orgId: String): Map<String, String> {
         return mapOf("otp" to OrgTimebaseOtp(orgId).generate())
     }
