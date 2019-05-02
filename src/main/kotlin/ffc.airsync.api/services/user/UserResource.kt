@@ -46,7 +46,7 @@ class UserResource(
     val tokenDao: TokenDao = tokens
 ) {
     internal var otpVerify: (orgId: String, otp: String) -> Boolean =
-        { otp, orgId -> OrgTimebaseOtp(orgId).verify(otp) }
+        { orgId, otp -> OrgTimebaseOtp(orgId).verify(otp) }
 
     @POST
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
