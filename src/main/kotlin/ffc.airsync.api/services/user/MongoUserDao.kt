@@ -62,23 +62,31 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
     }
 
     override fun getUserById(orgId: String, userId: String): User {
-        val userInDb = dbCollection.find("_id" equal ObjectId(orgId)).projection("users" equal 1).first()
-        val userList: Array<User>? = userInDb?.get("users")?.toJson()?.parseTo()
-        return userList?.find {
-            it.id == userId
-        } ?: throw NoSuchElementException("ไม่พบ user Id $userId")
+        return getUserDocument(orgId, userId).toJson().parseTo()
     }
 
     override fun updateUser(user: User, orgId: String): User {
+        val userInDb = getUserDocument(orgId, user.id)
         getUserById(orgId, user.id)
         user.orgId = orgId
 
+        val userDocument = Document.parse(user.toJson())
+        userDocument.append("password", userInDb["password"])
+
         val query = ("_id" equal ObjectId(orgId)) plus ("users.id" equal user.id)
-        val set = "\$set" equal ("users.$" equal Document.parse(user.toJson()))
+        val set = "\$set" equal ("users.$" equal userDocument)
 
         dbCollection.updateOne(query, set)
 
         return getUserById(orgId, user.id)
+    }
+
+    private fun getUserDocument(orgId: String, userId: String): Document {
+        val query = "_id" equal ObjectId(orgId)
+        val userList =
+            dbCollection.find(query).projection("users" equal 1).firstOrNull()?.get("users") as List<Document>
+        return userList.find { it["id"] == userId }
+            ?: throw NoSuchElementException("ไม่พบ user Id $userId")
     }
 
     override fun findUser(orgId: String): List<User> {
