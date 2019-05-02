@@ -96,6 +96,20 @@ class MongoUserDaoTest {
         user.isActivated `should be equal to` false
     }
 
+    @Test
+    fun updateUser() {
+        val user = dao.insertUser(createUser("Sommai"), nectecOrg.id)
+        val user2 = dao.insertUser(createUser("somTum"), nectecOrg.id)
+
+        user.isActivated `should be equal to` false
+        user.activate()
+        user.isActivated `should be equal to` true
+        val userUpdate = dao.updateUser(user, nectecOrg.id)
+
+        userUpdate.isActivated `should be equal to` true
+        dao.getUserById(nectecOrg.id, user2.id).isActivated `should be equal to` false
+    }
+
     @Test(expected = java.lang.IllegalArgumentException::class)
     fun insertUserActivateCheckFail() {
         dao.insertUser(createUser("Sommai").apply {

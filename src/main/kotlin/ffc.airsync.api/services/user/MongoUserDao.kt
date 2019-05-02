@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2562 NECTEC
+ * Copyright (c) 2019 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,7 @@ import com.google.gson.Gson
 import ffc.airsync.api.security.password
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
+import ffc.airsync.api.services.util.plus
 import ffc.airsync.api.services.util.toDocument
 import ffc.entity.Organization
 import ffc.entity.User
@@ -69,13 +70,15 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
     }
 
     override fun updateUser(user: User, orgId: String): User {
-        if (!haveUserInDb(orgId, user)) throw NullPointerException("ไม่พบผู้ใช้ ${user.name} ในระบบ")
-        // TODO("รอพัฒนาระบบ Update User")
-        // val query = Document("_id", ObjectId(orgId)).append("users", Document("name", user.name))
-        return User().apply {
-            name = "Dymmy"
-            password = "Dymmy"
-        }
+        getUserById(orgId, user.id)
+        user.orgId = orgId
+
+        val query = ("_id" equal ObjectId(orgId)) plus ("users.id" equal user.id)
+        val set = "\$set" equal ("users.$" equal Document.parse(user.toJson()))
+
+        dbCollection.updateOne(query, set)
+
+        return getUserById(orgId, user.id)
     }
 
     override fun findUser(orgId: String): List<User> {
