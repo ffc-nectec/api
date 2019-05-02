@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2562 NECTEC
+ * Copyright (c) 2019 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class MongoUserTest {
+class MongoUserDaoTest {
 
     @JvmField
     @Rule
