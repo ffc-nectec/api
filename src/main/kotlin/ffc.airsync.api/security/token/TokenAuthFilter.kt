@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.security.token
@@ -47,8 +48,10 @@ class TokenAuthFilter : ContainerRequestFilter {
         requestContext.securityContext = ApiSecurityContext(token, requestContext.uriInfo.baseUri.scheme)
         requestContext.securityContext.let {
             val user = (it.userPrincipal as UserPrincipal).user
-            logger.info("${user.orgId}.${user.id} use token ${requestToken.substring(0, 7)} at " +
-                "${requestContext.method} ${requestContext.uriInfo.path}  ")
+            logger.info(
+                "${user.orgId}.${user.id} use token ${requestToken.substring(0, 7)} at " +
+                    "${requestContext.method} ${requestContext.uriInfo.path}  "
+            )
         }
     }
 
@@ -66,7 +69,7 @@ class TokenAuthFilter : ContainerRequestFilter {
             if (authHeaders.isNullOrEmpty())
                 return null
             val bearer = authHeaders.find { it.startsWith(BEARER_SCHEME) }
-            return bearer?.replaceFirst(BEARER_SCHEME, "")?.trim()
+            return bearer?.replaceFirst(BEARER_SCHEME, "")?.trim()?.takeIf { it.isNotBlank() }
         }
 
     companion object {
