@@ -194,7 +194,7 @@ class HouseResourceNewEndpoint {
 
     @PUT
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
-    @RolesAllowed("ADMIN", "PROVIDER")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
     fun updateFail(
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String,
