@@ -39,6 +39,8 @@ class TokenAuthFilter : ContainerRequestFilter {
         val requestToken = requestContext.token ?: return
         val requestOrg = requestContext.orgId ?: return
 
+        logger.debug("requestToken:$requestToken requestOrg:$requestOrg")
+
         val token = tokens.token(requestToken, orgId = requestOrg)
             ?: throw NotAuthorizedException("ข้อมูลการยืนยันตัวตนไม่ถูกต้อง")
 
