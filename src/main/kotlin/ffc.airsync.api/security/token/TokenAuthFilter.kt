@@ -25,19 +25,32 @@ import ffc.airsync.api.security.UserPrincipal
 import ffc.entity.User.Role.SYNC_AGENT
 import java.util.regex.Pattern
 import javax.annotation.Priority
+import javax.annotation.security.RolesAllowed
 import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.Priorities
 import javax.ws.rs.container.ContainerRequestContext
 import javax.ws.rs.container.ContainerRequestFilter
+import javax.ws.rs.container.ResourceInfo
+import javax.ws.rs.core.Context
 import javax.ws.rs.ext.Provider
 
 @Priority(Priorities.AUTHENTICATION)
 @Provider
 class TokenAuthFilter : ContainerRequestFilter {
 
+    @Context
+    private lateinit var resourceInfo: ResourceInfo
+
     private val logger by lazy { getLogger() }
     override fun filter(requestContext: ContainerRequestContext) {
-        val requestToken = requestContext.token ?: return
+        val rolesAllowed: RolesAllowed? = resourceInfo.resourceMethod.getAnnotation(RolesAllowed::class.java)
+            ?: resourceInfo.resourceClass.getAnnotation(RolesAllowed::class.java)
+
+        val requestToken = requestContext.token ?: if (rolesAllowed == null)
+            throw NotAuthorizedException("ไม่มีข้อมูลการยืนยันตัวตน", DummyChallenge())
+        else
+            return
+
         val requestOrg = requestContext.orgId ?: return
 
         logger.debug("requestToken:$requestToken requestOrg:$requestOrg")
