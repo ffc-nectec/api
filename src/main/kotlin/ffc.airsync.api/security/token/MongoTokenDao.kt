@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.security.token
@@ -50,7 +51,7 @@ internal class MongoTokenDao : TokenDao, MongoDao("ffc", "token") {
         val tokenDoc = Document.parse(tokenMessage.toJson())
         tokenDoc.append("orgIndex", ObjectId(orgId))
         tokenDoc.append("_id", generateId)
-        if (user.roles.contains(User.Role.ADMIN))
+        if (user.roles.contains(User.Role.SYNC_AGENT))
             tokenDoc.append("MongoCreated", BsonDateTime(DateTime.now().plusYears(1000).millis))
         else
             tokenDoc.append("MongoCreated", BsonDateTime(DateTime.now().millis))

@@ -21,6 +21,7 @@ package ffc.airsync.api.security.token
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.security.ApiSecurityContext
 import ffc.airsync.api.security.UserPrincipal
+import ffc.entity.User.Role.SYNC_AGENT
 import java.util.regex.Pattern
 import javax.annotation.Priority
 import javax.ws.rs.NotAuthorizedException
@@ -41,7 +42,7 @@ class TokenAuthFilter : ContainerRequestFilter {
         val token = tokens.token(requestToken, orgId = requestOrg)
             ?: throw NotAuthorizedException("ข้อมูลการยืนยันตัวตนไม่ถูกต้อง")
 
-        if (token.isExpire) {
+        if (token.isExpire && !token.user.roles.contains(SYNC_AGENT)) {
             throw NotAuthorizedException("กรุณาทำการยืนยันตัวตนใหม่")
         }
 
