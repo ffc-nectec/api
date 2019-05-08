@@ -18,6 +18,7 @@
 
 package ffc.airsync.api.security.token
 
+import ffc.airsync.api.DummyChallenge
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.security.ApiSecurityContext
 import ffc.airsync.api.security.UserPrincipal
@@ -42,10 +43,10 @@ class TokenAuthFilter : ContainerRequestFilter {
         logger.debug("requestToken:$requestToken requestOrg:$requestOrg")
 
         val token = tokens.token(requestToken, orgId = requestOrg)
-            ?: throw NotAuthorizedException("ข้อมูลการยืนยันตัวตนไม่ถูกต้อง")
+            ?: throw NotAuthorizedException("ข้อมูลการยืนยันตัวตนไม่ถูกต้อง", DummyChallenge())
 
         if (token.isExpire && !token.user.roles.contains(SYNC_AGENT)) {
-            throw NotAuthorizedException("กรุณาทำการยืนยันตัวตนใหม่")
+            throw NotAuthorizedException("กรุณาทำการยืนยันตัวตนใหม่", DummyChallenge())
         }
 
         requestContext.securityContext = ApiSecurityContext(token, requestContext.uriInfo.baseUri.scheme)

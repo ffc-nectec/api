@@ -19,6 +19,7 @@
 package ffc.airsync.api.filter
 
 import com.mongodb.MongoException
+import ffc.airsync.api.DummyChallenge
 import ffc.airsync.api.getLogger
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.ForbiddenException
@@ -71,7 +72,7 @@ class ErrorUserFilter : ExceptionMapper<ForbiddenException> {
     override fun toResponse(exception: ForbiddenException): Response {
         var err = ErrorDetail(exception.response.status, exception.message, exception)
         return if (exception.message == "User not authorized.") {
-            val except = NotAuthorizedException("token not found")
+            val except = NotAuthorizedException("token not found", DummyChallenge())
             err = ErrorDetail(401, except.message, except)
             Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
         } else {
