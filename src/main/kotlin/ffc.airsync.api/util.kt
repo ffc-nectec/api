@@ -65,4 +65,6 @@ fun <T> resorceCall(call: () -> T): T {
     }
 }
 
+val logLevel get() = Any().getLogger().level
+
 class DummyChallenge
