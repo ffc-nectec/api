@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package ffc.airsync.api.services.org
 
 import ffc.airsync.api.MongoDbTestRule
@@ -181,6 +199,7 @@ class MongoOrgDaoTest {
             name = "รพสต-พรทิพา1"
             displayName = "รพ.สต.พรทิพา สาขา 1"
             users.add(User("maxkung", User.Role.ADMIN))
+            users.add(User("maxkung2", User.Role.SYNC_AGENT))
             users.add(User("somYing"))
         })
 
@@ -193,6 +212,7 @@ class MongoOrgDaoTest {
             name = "รพสต-พรทิพา1"
             displayName = "รพ.สต. พรทิพา 1"
             users.add(User("maxkung", User.Role.ADMIN))
+            users.add(User("maxkung3", User.Role.SYNC_AGENT))
             users.add(User("somYing"))
         })
 
@@ -222,6 +242,8 @@ class MongoOrgDaoTest {
 
         maeOrg.users.forEach {
             if (it.roles.contains(User.Role.ADMIN))
+                it.isActivated `should be equal to` true
+            else if (it.roles.contains(User.Role.SYNC_AGENT))
                 it.isActivated `should be equal to` true
             else
                 it.isActivated `should be equal to` false
