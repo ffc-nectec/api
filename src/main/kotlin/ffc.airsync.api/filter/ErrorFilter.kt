@@ -19,13 +19,12 @@
 package ffc.airsync.api.filter
 
 import com.mongodb.MongoException
-import ffc.airsync.api.DummyChallenge
 import ffc.airsync.api.getLogger
+import ffc.airsync.api.logLevel
+import org.apache.logging.log4j.Level
 import javax.ws.rs.BadRequestException
-import javax.ws.rs.ForbiddenException
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotAllowedException
-import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.NotFoundException
 import javax.ws.rs.WebApplicationException
 import javax.ws.rs.core.MediaType
@@ -33,14 +32,18 @@ import javax.ws.rs.core.Response
 import javax.ws.rs.ext.ExceptionMapper
 import javax.ws.rs.ext.Provider
 
-data class ErrorDetail(
+class ErrorDetail(
     val code: Int,
     val message: String?,
-    val t: Throwable
+    t: Throwable
 ) {
     val tType = t::class.java.simpleName
+    private var t: Throwable? = null
 
     init {
+        if (logLevel != Level.INFO) {
+            this.t = t
+        }
         getLogger().debug("${t.message}", t)
     }
 }
@@ -68,22 +71,8 @@ class MongoExceptionFilter : ExceptionMapper<MongoException> {
 }
 
 @Provider
-class ErrorUserFilter : ExceptionMapper<ForbiddenException> {
-    override fun toResponse(exception: ForbiddenException): Response {
-        var err = ErrorDetail(exception.response.status, exception.message, exception)
-        return if (exception.message == "User not authorized.") {
-            val except = NotAuthorizedException("token not found", DummyChallenge())
-            err = ErrorDetail(401, except.message, except)
-            Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
-        } else {
-            Response.status(exception.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
-        }
-    }
-}
-
-@Provider
-class ErrorMethodNotAllow : ExceptionMapper<javax.ws.rs.NotAllowedException> {
-    override fun toResponse(exception: javax.ws.rs.NotAllowedException): Response {
+class ErrorMethodNotAllow : ExceptionMapper<NotAllowedException> {
+    override fun toResponse(exception: NotAllowedException): Response {
         val except = BadRequestException(exception.message)
         val err = ErrorDetail(except.response.status, exception.message, exception)
         return Response.status(except.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
