@@ -60,7 +60,7 @@ class HouseResourceNewEndpoint {
 
     @POST
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
-    @RolesAllowed("ADMIN", "PROVIDER")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
     fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
         if (house == null) throw BadRequestException()
 
@@ -70,7 +70,7 @@ class HouseResourceNewEndpoint {
 
     @POST
     @Path("/$ORGIDTYPE/houses")
-    @RolesAllowed("ADMIN", "PROVIDER")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
     fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
         if (houseList == null) throw BadRequestException()
 
@@ -176,7 +176,7 @@ class HouseResourceNewEndpoint {
 
     @PUT
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
-    @RolesAllowed("ADMIN", "PROVIDER")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
     fun update(
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String,
