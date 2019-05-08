@@ -18,6 +18,7 @@
 
 package ffc.airsync.api.services.user
 
+import ffc.airsync.api.DummyChallenge
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.security.otp.OrgTimebaseOtp
 import ffc.airsync.api.security.token.TokenDao
@@ -67,7 +68,7 @@ class UserResource(
     @Path("/$ORGIDTYPE/authorize")
     fun createAuthorizeToken(@PathParam("orgId") orgId: String, body: LoginBody): Token {
         val user = getUser(body.username, orgId, body.password)
-            ?: throw NotAuthorizedException("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")
+            ?: throw NotAuthorizedException("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", DummyChallenge())
 
         if (!user.isActivated) throw NotActivateUserException()
 
@@ -78,9 +79,9 @@ class UserResource(
     @Path("/$ORGIDTYPE/user/activate")
     fun activateUser(@PathParam("orgId") orgId: String, body: LoginBodyWithOtp): Token {
         if (!otpVerify(orgId, body.otp))
-            throw NotAuthorizedException("รหัส OTP ไม่ถูกต้อง โปรดกรอกใหม่")
+            throw NotAuthorizedException("รหัส OTP ไม่ถูกต้อง โปรดกรอกใหม่", DummyChallenge())
         val user = getUser(body.username, orgId, body.password)
-            ?: throw NotAuthorizedException("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")
+            ?: throw NotAuthorizedException("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", DummyChallenge())
 
         try {
             user.activate()
