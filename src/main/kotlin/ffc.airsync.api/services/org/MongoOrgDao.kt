@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2562 NECTEC
+ * Copyright (c) 2019 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,8 @@ import ffc.airsync.api.services.util.equal
 import ffc.airsync.api.services.util.toDocument
 import ffc.entity.Organization
 import ffc.entity.User
+import ffc.entity.User.Role.ADMIN
+import ffc.entity.User.Role.SYNC_AGENT
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
@@ -51,7 +53,7 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
             require(it.isTempId) { "ข้อมูลที่จะสร้างใหม่จำเป็นต้องใช้ TempId" }
             require(!it.isActivated) { "User มีการ Activate:${it.isActivated} ต้อง isActivated = false เท่านั้น" }
             it.orgId = genOrgId.toHexString()
-            if (it.roles.contains(User.Role.ADMIN)) if (!it.isActivated) it.activate()
+            if (it.roles.contains(ADMIN) || it.roles.contains(SYNC_AGENT)) if (!it.isActivated) it.activate()
             userListDoc.add(it.toDocument())
         }
         val orgDoc = Document.parse(organization.toJson())
