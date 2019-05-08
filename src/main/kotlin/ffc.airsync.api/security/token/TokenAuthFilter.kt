@@ -46,7 +46,7 @@ class TokenAuthFilter : ContainerRequestFilter {
         val rolesAllowed: RolesAllowed? = resourceInfo.resourceMethod.getAnnotation(RolesAllowed::class.java)
             ?: resourceInfo.resourceClass.getAnnotation(RolesAllowed::class.java)
 
-        val requestToken = requestContext.token ?: if (rolesAllowed == null)
+        val requestToken = requestContext.token ?: if (rolesAllowed != null)
             throw NotAuthorizedException("ไม่มีข้อมูลการยืนยันตัวตน", DummyChallenge())
         else
             return
