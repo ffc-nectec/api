@@ -40,7 +40,7 @@ compileTestKotlin { kotlinOptions.jvmTarget = "1.8" }
 dependencies {
     def jettyVersion = "9.4.14.v20181114"
     def jerseyVersion = "2.25.1"
-    def entitiesVersion = "e0bea703a1"
+    def entitiesVersion = "1.1.0"
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
