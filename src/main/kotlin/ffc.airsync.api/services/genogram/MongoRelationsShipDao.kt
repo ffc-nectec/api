@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package ffc.airsync.api.services.genogram
 
 import com.mongodb.BasicDBObject
@@ -59,13 +77,21 @@ class MongoRelationsShipDao : MongoDao("ffc", "person"), GenoGramDao {
             collect[personId] = persons.getPerson(orgId, personId)
 
         relation.forEach { personRelation ->
-            if (personRelation.id.isNotBlank() && collect[personRelation.id] == null) {
-                val person = persons.getPerson(orgId, personRelation.id)
-                collect[personRelation.id] = person
-                collectPerson(orgId, personRelation.id, collect)
+            if (fixCheckPersonIdIsNotBank(personRelation)) {
+                if (collect[personRelation.id] == null) {
+                    val person = persons.getPerson(orgId, personRelation.id)
+                    collect[personRelation.id] = person
+                    collectPerson(orgId, personRelation.id, collect)
+                }
             }
         }
         return collect
+    }
+
+    private fun fixCheckPersonIdIsNotBank(personRelation: Person.Relationship): Boolean {
+        val run = runCatching { personRelation.id.isNotBlank() }
+        return if (run.isSuccess) run.getOrThrow()
+        else false
     }
 
     override fun removeByOrgId(orgId: String) {
