@@ -232,6 +232,30 @@ class MongoOrgDaoTest {
     }
 
     @Test
+    fun testBug2() {
+
+        val maeOrg = dao.insert(Org("โรงพยาบาลส่งเสริมสุขภาพตำบลแม่ข้าวต้มฯ", "192.168.99.3").apply {
+            displayName = "รพ.สต.โรงพยาบาลส่งเสริมสุขภาพตำบลแม่ข้าวต้ม"
+            tel = "037-261-044"
+            address = "161 ม.29 ต.สง่างาม อ.สดใส จ.ผิวผ่อง"
+            link!!.keys["pcucode"] = "203"
+        })
+        maeOrg.isAcceptName() `should be equal to` true
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun testBug3() {
+
+        val maeOrg = dao.insert(Org("โรงพยาบาลส่งเสริมสุข, ภาพตำบลแม่ข้าว-ต้ม", "192.168.99.3").apply {
+            displayName = "รพ.สต.โรงพยาบาลส่งเสริมสุขภาพตำบลแม่ข้าวต้ม"
+            tel = "037-261-044"
+            address = "161 ม.29 ต.สง่างาม อ.สดใส จ.ผิวผ่อง"
+            link!!.keys["pcucode"] = "203"
+        })
+        maeOrg.isAcceptName() `should be equal to` false
+    }
+
+    @Test
     fun activateUser() {
         val maeOrg = dao.insert(Org("โรงพยาบาลส่งเสริมสุขภาพตำบลแม่ข้าวต้ม", "192.168.99.3").apply {
             displayName = "รพ.สต.โรงพยาบาลส่งเสริมสุขภาพตำบลแม่ข้าวต้ม"
