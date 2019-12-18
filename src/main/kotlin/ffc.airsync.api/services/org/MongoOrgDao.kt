@@ -78,7 +78,7 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
 
     private fun validate(organization: Organization) {
         with(organization) {
-            require(organization.isAcceptName()) { "name ห้ามมีอักขระพิเศษ ${organization.name}" }
+            require(organization.isAcceptOrganizationName()) { "name ห้ามมีอักขระพิเศษ ${organization.name}" }
             require(isTempId) { "ไม่สามารถ Register ได้ โปรดตรวจสอบ id" }
             require(name.isNotEmpty()) { "โปรระบุชื่อ หน่วยงานที่ต้องการลงทะเบียนลงในตัวแปร name" }
             require(users.isNotEmpty()) { "โปรดลงทะเบียน user ในตัวแปร user ในหน่วยงานที่ต้องการลงทะเบียน" }
