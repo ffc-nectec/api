@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 NECTEC
+ * Copyright (c) 2019 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.services.org
@@ -32,11 +33,10 @@ interface OrgDao : Dao {
 }
 
 val orgs: OrgDao by lazy { MongoOrgDao() }
-private const val thaiCharacters = """เแโไใกขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮa-zA-Z"""
-private const val thaiVowels = """ะาิีึืุูัํำ่้๊๋็์ฤฦ0-9\-"""
-private val thaiRegx = Regex("^[$thaiCharacters][$thaiCharacters$thaiVowels]+\$")
+
+private val dontRecive = Regex(""".*[\.\,\|\(\)\ ].*""")
 
 /**
  * ตรวจสอบ Organization name ว่าอยู่ในเงื่อนไขในการตั้งชื่อหรือไม่
  */
-fun Organization.isAcceptName(): Boolean = thaiRegx.matches(this.name)
+fun Organization.isAcceptName(): Boolean = !dontRecive.matches(this.name)
