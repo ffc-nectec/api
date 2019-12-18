@@ -231,21 +231,41 @@ class MongoOrgDaoTest {
         maeOrg.name `should be equal to` "โรงพยาบาลส่งเสริมสุขภาพตำบลแม่ข้าวต้ม"
     }
 
+    /**
+     * Ref: https://www.urlencoder.io/
+     */
     @Test
     fun testIsAcceptOrganizationName() {
         "ข้าวต้มฯ".isAcceptOrganizationName() `should be equal to` true
         "ข้าวต้ม๑๒๓๔".isAcceptOrganizationName() `should be equal to` true
-        "ข้าวต้ม;มัด".isAcceptOrganizationName() `should be equal to` false
-        "ข้าวต้ม?มัด".isAcceptOrganizationName() `should be equal to` false
-        "ข้าวต้ม:มัด".isAcceptOrganizationName() `should be equal to` false
-        "ข้าวต้ม@มัด".isAcceptOrganizationName() `should be equal to` false
-        "ข้าวต้ม&มัด".isAcceptOrganizationName() `should be equal to` false
-        "ข้าวต้ม=มัด".isAcceptOrganizationName() `should be equal to` false
-        "ข้าวต้ม+มัด".isAcceptOrganizationName() `should be equal to` false
-        "ข้าวต้ม\$มัด".isAcceptOrganizationName() `should be equal to` false
-        "ข้าวต้ม,มัด".isAcceptOrganizationName() `should be equal to` false
-        "ข้าวต้ม/มัด".isAcceptOrganizationName() `should be equal to` false
-        "ข้าวต้ม(มัด)".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม:มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม/มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม?มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม#มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม[มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม]มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม@มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม!มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม\$มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม&มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม'มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม(มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม)มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม*มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม+มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม,มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม;มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม=มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม<มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม>มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม{มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม}มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม|มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม`มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม^มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม\\มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม\"มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม%มัด".isAcceptOrganizationName() `should be equal to` false
     }
 
     @Test
