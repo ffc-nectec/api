@@ -34,9 +34,11 @@ interface OrgDao : Dao {
 
 val orgs: OrgDao by lazy { MongoOrgDao() }
 
-private val dontRecive = Regex(""".*[\.\,\|\(\)\ ].*""")
+private val dontRecive = Regex(""".*[\;\?\:\@\&\=\+\$\,\/ \(\)].*""")
 
 /**
  * ตรวจสอบ Organization name ว่าอยู่ในเงื่อนไขในการตั้งชื่อหรือไม่
  */
-fun Organization.isAcceptName(): Boolean = !dontRecive.matches(this.name)
+fun Organization.isAcceptOrganizationName(): Boolean = this.name.isAcceptOrganizationName()
+
+internal fun String.isAcceptOrganizationName() = !dontRecive.matches(this)
