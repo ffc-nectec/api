@@ -65,13 +65,15 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
         return getUserDocument(orgId, userId).toJson().parseTo()
     }
 
-    override fun updateUser(user: User, orgId: String): User {
-        val userInDb = getUserDocument(orgId, user.id)
+    override fun updateUser(user: User, orgId: String, updatePassword: Boolean): User {
         getUserById(orgId, user.id)
         user.orgId = orgId
 
         val userDocument = Document.parse(user.toJson())
-        userDocument.append("password", userInDb["password"])
+        if (!updatePassword) {
+            val userInDb = getUserDocument(orgId, user.id)
+            userDocument.append("password", userInDb["password"])
+        } else userDocument.append("password", password().hash(user.password))
 
         val query = ("_id" equal ObjectId(orgId)) plus ("users.id" equal user.id)
         val set = "\$set" equal ("users.$" equal userDocument)
@@ -105,5 +107,13 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
         val user = org.users.find { it.name == name }
 
         return if (user != null && password().check(password, user.password)) user else null
+    }
+
+    override fun updatePassword(orgId: String, username: String, password: String): User {
+        val oldUserData = getUserByName(orgId, username)
+        require(oldUserData != null) { "ไม่พบผู้ใช้ในระบบ" }
+        oldUserData.password = password
+        updateUser(oldUserData, orgId, true)
+        return getUserById(orgId, oldUserData.id)
     }
 }

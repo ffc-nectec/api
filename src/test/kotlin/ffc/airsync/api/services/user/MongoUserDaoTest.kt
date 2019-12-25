@@ -38,6 +38,7 @@ class MongoUserDaoTest {
     val mongo = MongoDbTestRule()
 
     private lateinit var nectecOrg: Organization
+    private lateinit var mameOrg: Organization
     private lateinit var dao: MongoUserDao
     private lateinit var orgDao: OrgDao
 
@@ -45,9 +46,9 @@ class MongoUserDaoTest {
     fun initDb() {
         println("Setup db")
         dao = MongoUserDao()
-        val org = Org("รพสตNectec", "192.168.99.3")
         orgDao = MongoOrgDao()
-        nectecOrg = orgDao.insert(org)
+        nectecOrg = orgDao.insert(Org("รพสตNectec", "192.168.99.3"))
+        mameOrg = orgDao.insert(Org("รพสตบางระจัน", "192.192.99.99"))
     }
 
     @After
@@ -62,16 +63,18 @@ class MongoUserDaoTest {
             this.users = userList.toMutableList()
         }
 
-    val userList = listOf(
-        createUser("maxkung", User.Role.ADMIN),
-        createUser("somYing"),
-        createUser("somChai"),
-        createUser("adm"),
-        createUser("ADM"),
-        createUser("newuser"),
-        createUser("usr_db"),
-        createUser("Drug_Store_Admin")
-    )
+    val userList
+        get() = listOf(
+            createUser("maxkung", User.Role.ADMIN),
+            createUser("somYing"),
+            createUser("somChai"),
+            createUser("Thanachai"),
+            createUser("adm"),
+            createUser("ADM"),
+            createUser("newuser"),
+            createUser("usr_db"),
+            createUser("Drug_Store_Admin")
+        )
 
     fun createUser(name: String, role: User.Role = User.Role.PROVIDER): User =
         User().apply {
@@ -108,6 +111,69 @@ class MongoUserDaoTest {
 
         userUpdate.isActivated `should be equal to` true
         dao.getUserById(nectecOrg.id, user2.id).isActivated `should be equal to` false
+    }
+
+    @Test
+    fun updatePassword() {
+        val name = "Sommai"
+        val password = "7499"
+
+        dao.insertUser(createUser(name), nectecOrg.id)
+        val user = dao.updatePassword(nectecOrg.id, name, password)
+
+        dao.findThat(nectecOrg.id, name, "catbite") `should equal` null // Login old password
+        dao.findThat(nectecOrg.id, name, password) `should not equal` null // Login new password
+        user `should not equal` null
+        user.name `should be equal to` name
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun updateNotHaveUser() {
+        val name = "Demo99x"
+        val password = "7499"
+        dao.updatePassword(nectecOrg.id, name, password)
+    }
+
+    @Test
+    fun updatePasswordMultiOrganization() {
+        val name = "Sommai"
+        val password = "7499"
+        val name2 = "Thanachai"
+        val password2 = "1234"
+
+        dao.insertUser(createUser(name), nectecOrg.id)
+        dao.insertUser(createUser(name2), mameOrg.id)
+        val nectecUser = dao.updatePassword(nectecOrg.id, name, password)
+        val mameUser = dao.updatePassword(mameOrg.id, name2, password2)
+
+        dao.findThat(nectecOrg.id, name, "catbite") `should equal` null // Login old password
+        dao.findThat(nectecOrg.id, name, password) `should not equal` null // Login new password
+
+        dao.findThat(mameOrg.id, name2, "catbite") `should equal` null // Login old password
+        dao.findThat(mameOrg.id, name2, password2) `should not equal` null // Login new password
+
+        nectecUser `should not equal` null
+        mameUser `should not equal` null
+    }
+
+    @Test
+    fun setActivateUser() {
+        val name = "somChai"
+        val name2 = "Thanachai"
+
+        val nectecUser = dao.findThat(nectecOrg.id, name, "catbite")!!
+        val mameUser = dao.findThat(mameOrg.id, name2, "catbite")!!
+
+        nectecUser.isActivated `should be equal to` false
+        mameUser.isActivated `should be equal to` false
+        nectecUser.activate()
+        mameUser.activate()
+
+        dao.updateUser(nectecUser, nectecOrg.id).isActivated `should be equal to` true
+        dao.updateUser(mameUser, mameOrg.id).isActivated `should be equal to` true
+
+        dao.findThat(nectecOrg.id, name, "catbite")!!.isActivated `should be equal to` true
+        dao.findThat(mameOrg.id, name2, "catbite")!!.isActivated `should be equal to` true
     }
 
     @Test(expected = java.lang.IllegalArgumentException::class)
