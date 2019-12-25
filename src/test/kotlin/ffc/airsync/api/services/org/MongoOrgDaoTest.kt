@@ -266,6 +266,7 @@ class MongoOrgDaoTest {
         "ต้ม\\มัด".isAcceptOrganizationName() `should be equal to` false
         "ต้ม\"มัด".isAcceptOrganizationName() `should be equal to` false
         "ต้ม%มัด".isAcceptOrganizationName() `should be equal to` false
+        "ต้ม.มัด".isAcceptOrganizationName() `should be equal to` false
     }
 
     @Test
