@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2561 NECTEC
+ * Copyright (c) 2019 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.services.user
@@ -28,12 +29,13 @@ interface UserDao : Dao {
     }
 
     fun insertUser(user: User, orgId: String): User
-    fun updateUser(user: User, orgId: String): User
+    fun updateUser(user: User, orgId: String, updatePassword: Boolean = false): User
 
     fun getUserByName(orgId: String, name: String): User?
     fun getUserById(orgId: String, userId: String): User
     fun findUser(orgId: String): List<User>
     fun findThat(orgId: String, name: String, password: String): User?
+    fun updatePassword(orgId: String, username: String, password: String): User
 }
 
 val users: UserDao by lazy { MongoUserDao() }
