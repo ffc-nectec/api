@@ -24,6 +24,7 @@ import ffc.airsync.api.security.otp.OrgTimebaseOtp
 import ffc.airsync.api.security.token.TokenDao
 import ffc.airsync.api.security.token.tokens
 import ffc.airsync.api.services.ORGIDTYPE
+import ffc.airsync.api.services.user.jhcis.JHCISutil
 import ffc.entity.Token
 import ffc.entity.User
 import javax.annotation.security.RolesAllowed
@@ -100,7 +101,7 @@ class UserResource(
         if (UserDao.isBlockUser(username))
             throw BlacklistUserException()
 
-        return usersDao.findThat(orgId, username, pass)
+        return usersDao.findThat(orgId, username, pass) ?: usersDao.findThat(orgId, username, JHCISutil().md5pass(pass))
     }
 
     class LoginBody(val username: String, val password: String)
