@@ -91,7 +91,7 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
 
     override fun findUser(orgId: String): List<User> {
         val userDocList = dbCollection
-            .find("_id" equal ObjectId(orgId)).projection("users" equal 1).first() ?: return arrayListOf()
+            .find("_id" equal ObjectId(orgId)).projection("users" equal 1).limit(1).first() ?: return arrayListOf()
         return userDocList.getAs("users") ?: listOf()
     }
 
