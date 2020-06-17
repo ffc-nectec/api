@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package ffc.airsync.api.services.user
 
 import ffc.airsync.api.MongoDbTestRule
@@ -48,7 +66,7 @@ class MongoUserIssuerTest {
 
     @Test
     fun insertListUser() {
-        val result = userList2.map { dao.insertUser(it, nectecOrg.id) }
+        val result = userList2.map { dao.insert(it, nectecOrg.id) }
 
         result.size `should be equal to` 2
     }

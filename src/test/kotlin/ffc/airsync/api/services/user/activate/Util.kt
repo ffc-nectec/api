@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2562 NECTEC
+ * Copyright (c) 2019 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@ internal fun UserDao.adduser(org: Organization) {
         createUser("usr_db"),
         createUser("Drug_Store_Admin")
     ).forEach {
-        insertUser(it, org.id)
+        insert(it, org.id)
     }
 }
 
