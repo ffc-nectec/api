@@ -103,15 +103,21 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
         return getUserById(orgId, user.id)
     }
 
-    override fun delete(orgId: String, userId: List<String>): Boolean {
-        val syncUserId = findUser(orgId).filter { it.roles.contains(User.Role.SYNC_AGENT) }.map { it.id }
+    override fun delete(orgId: String, userId: List<String>): HashMap<String, Boolean> {
+        val userFirstState = findUser(orgId)
+        val syncUserId = userFirstState.filter { it.roles.contains(User.Role.SYNC_AGENT) }.map { it.id }
 
         val query = "_id" equal ObjectId(orgId)
         val userIdDocArray =
             BsonArray(userId.mapNotNull { if (it.isNullOrEmpty() || syncUserId.contains(it)) null else BsonString(it) })
         val pullUpdate = "\$pull" equal BsonDocument("users", BsonDocument("id", BsonDocument("\$in", userIdDocArray)))
         dbCollection.updateMany(query, pullUpdate)
-        return true
+
+        val checkFirstState = userFirstState.map { it.id }
+        val check = findUser(orgId).map { it.id }
+        val output = hashMapOf<String, Boolean>()
+        userId.forEach { output[it] = if (!checkFirstState.contains(it)) false else !check.contains(it) }
+        return output
     }
 
     private fun getUserDocument(orgId: String, userId: String): Document {
