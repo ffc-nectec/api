@@ -103,7 +103,7 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
         return getUserById(orgId, user.id)
     }
 
-    override fun delete(orgId: String, userId: List<String>): HashMap<String, Boolean> {
+    override fun delete(orgId: String, userId: List<String>): Map<String, Boolean> {
         val userFirstState = findUser(orgId)
         val syncUserId = userFirstState.filter { it.roles.contains(User.Role.SYNC_AGENT) }.map { it.id }
 
@@ -117,7 +117,7 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
         val check = findUser(orgId).map { it.id }
         val output = hashMapOf<String, Boolean>()
         userId.forEach { output[it] = if (!checkFirstState.contains(it)) false else !check.contains(it) }
-        return output
+        return output.toMap()
     }
 
     private fun getUserDocument(orgId: String, userId: String): Document {

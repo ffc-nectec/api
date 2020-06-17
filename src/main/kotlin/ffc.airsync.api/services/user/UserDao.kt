@@ -30,7 +30,7 @@ interface UserDao : Dao {
 
     fun insert(user: User, orgId: String): User
     fun update(user: User, orgId: String, updatePassword: Boolean = false): User
-    fun delete(orgId: String, userId: List<String>): HashMap<String, Boolean>
+    fun delete(orgId: String, userId: List<String>): Map<String, Boolean>
 
     fun getUserByName(orgId: String, name: String): User?
     fun getUserById(orgId: String, userId: String): User
