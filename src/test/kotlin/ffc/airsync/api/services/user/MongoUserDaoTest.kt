@@ -23,6 +23,7 @@ import ffc.airsync.api.services.org.MongoOrgDao
 import ffc.airsync.api.services.org.OrgDao
 import ffc.entity.Organization
 import ffc.entity.User
+import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.amshove.kluent.`should not equal`
@@ -92,7 +93,7 @@ class MongoUserDaoTest {
 
     @Test
     fun insertUser() {
-        val user = dao.insertUser(createUser("Sommai"), nectecOrg.id)
+        val user = dao.insert(createUser("Sommai"), nectecOrg.id)
 
         user.name `should be equal to` "Sommai"
         user.password `should not equal` null
@@ -101,13 +102,13 @@ class MongoUserDaoTest {
 
     @Test
     fun updateUser() {
-        val user = dao.insertUser(createUser("Sommai"), nectecOrg.id)
-        val user2 = dao.insertUser(createUser("somTum"), nectecOrg.id)
+        val user = dao.insert(createUser("Sommai"), nectecOrg.id)
+        val user2 = dao.insert(createUser("somTum"), nectecOrg.id)
 
         user.isActivated `should be equal to` false
         user.activate()
         user.isActivated `should be equal to` true
-        val userUpdate = dao.updateUser(user, nectecOrg.id)
+        val userUpdate = dao.update(user, nectecOrg.id)
 
         userUpdate.isActivated `should be equal to` true
         dao.getUserById(nectecOrg.id, user2.id).isActivated `should be equal to` false
@@ -118,7 +119,7 @@ class MongoUserDaoTest {
         val name = "Sommai"
         val password = "7499"
 
-        dao.insertUser(createUser(name), nectecOrg.id)
+        dao.insert(createUser(name), nectecOrg.id)
         val user = dao.updatePassword(nectecOrg.id, name, password)
 
         dao.findThat(nectecOrg.id, name, "catbite") `should equal` null // Login old password
@@ -141,8 +142,8 @@ class MongoUserDaoTest {
         val name2 = "Thanachai"
         val password2 = "1234"
 
-        dao.insertUser(createUser(name), nectecOrg.id)
-        dao.insertUser(createUser(name2), mameOrg.id)
+        dao.insert(createUser(name), nectecOrg.id)
+        dao.insert(createUser(name2), mameOrg.id)
         val nectecUser = dao.updatePassword(nectecOrg.id, name, password)
         val mameUser = dao.updatePassword(mameOrg.id, name2, password2)
 
@@ -169,8 +170,8 @@ class MongoUserDaoTest {
         nectecUser.activate()
         mameUser.activate()
 
-        dao.updateUser(nectecUser, nectecOrg.id).isActivated `should be equal to` true
-        dao.updateUser(mameUser, mameOrg.id).isActivated `should be equal to` true
+        dao.update(nectecUser, nectecOrg.id).isActivated `should be equal to` true
+        dao.update(mameUser, mameOrg.id).isActivated `should be equal to` true
 
         dao.findThat(nectecOrg.id, name, "catbite")!!.isActivated `should be equal to` true
         dao.findThat(mameOrg.id, name2, "catbite")!!.isActivated `should be equal to` true
@@ -178,21 +179,21 @@ class MongoUserDaoTest {
 
     @Test(expected = java.lang.IllegalArgumentException::class)
     fun insertUserActivateCheckFail() {
-        dao.insertUser(createUser("Sommai").apply {
+        dao.insert(createUser("Sommai").apply {
             activate()
         }, nectecOrg.id)
     }
 
     @Test
     fun getUserById() {
-        val user = dao.insertUser(createUser("Sommai"), nectecOrg.id)
+        val user = dao.insert(createUser("Sommai"), nectecOrg.id)
 
         dao.getUserById(nectecOrg.id, user.id).name `should be equal to` user.name
     }
 
     @Test
     fun getUserByName() {
-        dao.insertUser(createUser("Sommai"), nectecOrg.id)
+        dao.insert(createUser("Sommai"), nectecOrg.id)
 
         dao.getUserByName(nectecOrg.id, "Sommai")!!.name `should be equal to` "Sommai"
     }
@@ -214,5 +215,98 @@ class MongoUserDaoTest {
         UserDao.isBlockUser("newuser") `should be equal to` true
         UserDao.isBlockUser("usr_db") `should be equal to` true
         UserDao.isBlockUser("Drug_Store_Admin") `should be equal to` true
+    }
+
+    @Test
+    fun deleteHeadSingleUser() {
+        val user1_1 = dao.insert(createUser("Sommai"), nectecOrg.id)
+        val user1_2 = dao.insert(createUser("CatMaLo"), nectecOrg.id)
+        val user1_3 = dao.insert(createUser("CMM"), nectecOrg.id)
+        val user2_1 = dao.insert(createUser("Thanachai"), mameOrg.id)
+        val user2_2 = dao.insert(createUser("Mora"), mameOrg.id)
+        val user2_3 = dao.insert(createUser("Male"), mameOrg.id)
+
+        dao.delete(nectecOrg.id, listOf(user1_1.id))
+
+        val checkNectecOrg = dao.findUser(nectecOrg.id)
+        checkNectecOrg.find { it.id == user1_1.id }?.id `should equal` null
+        checkNectecOrg.find { it.id == user1_2.id }?.id `should equal` user1_2.id
+        checkNectecOrg.find { it.id == user1_3.id }?.id `should equal` user1_3.id
+
+        val checkMameOrg = dao.findUser(mameOrg.id)
+        checkMameOrg.find { it.id == user2_1.id }?.id `should equal` user2_1.id
+        checkMameOrg.find { it.id == user2_2.id }?.id `should equal` user2_2.id
+        checkMameOrg.find { it.id == user2_3.id }?.id `should equal` user2_3.id
+    }
+
+    @Test
+    fun deleteTailSingleUser() {
+        val user1_1 = dao.insert(createUser("Sommai"), nectecOrg.id)
+        val user1_2 = dao.insert(createUser("CatMaLo"), nectecOrg.id)
+        val user1_3 = dao.insert(createUser("CMM"), nectecOrg.id)
+        val user2_1 = dao.insert(createUser("Thanachai"), mameOrg.id)
+        val user2_2 = dao.insert(createUser("Mora"), mameOrg.id)
+        val user2_3 = dao.insert(createUser("Male"), mameOrg.id)
+
+        dao.delete(mameOrg.id, listOf(user2_3.id))
+        val checkNectecOrg = dao.findUser(nectecOrg.id)
+        checkNectecOrg.find { it.id == user1_1.id }?.id `should equal` user1_1.id
+        checkNectecOrg.find { it.id == user1_2.id }?.id `should equal` user1_2.id
+        checkNectecOrg.find { it.id == user1_3.id }?.id `should equal` user1_3.id
+
+        val checkMameOrg = dao.findUser(mameOrg.id)
+        checkMameOrg.find { it.id == user2_1.id }?.id `should equal` user2_1.id
+        checkMameOrg.find { it.id == user2_2.id }?.id `should equal` user2_2.id
+        checkMameOrg.find { it.id == user2_3.id }?.id `should equal` null
+    }
+
+    @Test
+    fun deleteMultiUser() {
+        val user1_1 = dao.insert(createUser("Sommai"), nectecOrg.id)
+        val user1_2 = dao.insert(createUser("CatMaLo"), nectecOrg.id)
+        val user1_3 = dao.insert(createUser("CMM"), nectecOrg.id)
+        val user2_1 = dao.insert(createUser("Thanachai"), mameOrg.id)
+        val user2_2 = dao.insert(createUser("Mora"), mameOrg.id)
+        val user2_3 = dao.insert(createUser("Male"), mameOrg.id)
+
+        dao.delete(nectecOrg.id, listOf(user1_2.id, user1_3.id))
+        runBlocking {
+            val checkNectecOrg = dao.findUser(nectecOrg.id)
+            checkNectecOrg.find { it.id == user1_1.id }?.id `should equal` user1_1.id
+            checkNectecOrg.find { it.id == user1_2.id }?.id `should equal` null
+            checkNectecOrg.find { it.id == user1_3.id }?.id `should equal` null
+
+            val checkMameOrg = dao.findUser(mameOrg.id)
+            checkMameOrg.find { it.id == user2_1.id }?.id `should equal` user2_1.id
+            checkMameOrg.find { it.id == user2_2.id }?.id `should equal` user2_2.id
+            checkMameOrg.find { it.id == user2_3.id }?.id `should equal` user2_3.id
+        }
+
+        dao.delete(mameOrg.id, listOf(user2_1.id, user2_2.id))
+        runBlocking {
+            val checkNectecOrg = dao.findUser(nectecOrg.id)
+            checkNectecOrg.find { it.id == user1_1.id }?.id `should equal` user1_1.id
+            checkNectecOrg.find { it.id == user1_2.id }?.id `should equal` null
+            checkNectecOrg.find { it.id == user1_3.id }?.id `should equal` null
+
+            val checkMameOrg = dao.findUser(mameOrg.id)
+            checkMameOrg.find { it.id == user2_1.id }?.id `should equal` null
+            checkMameOrg.find { it.id == user2_2.id }?.id `should equal` null
+            checkMameOrg.find { it.id == user2_3.id }?.id `should equal` user2_3.id
+        }
+
+        dao.delete(nectecOrg.id, listOf(user1_1.id))
+        dao.delete(mameOrg.id, listOf(user2_3.id))
+        runBlocking {
+            val checkNectecOrg = dao.findUser(nectecOrg.id)
+            checkNectecOrg.find { it.id == user1_1.id }?.id `should equal` null
+            checkNectecOrg.find { it.id == user1_2.id }?.id `should equal` null
+            checkNectecOrg.find { it.id == user1_3.id }?.id `should equal` null
+
+            val checkMameOrg = dao.findUser(mameOrg.id)
+            checkMameOrg.find { it.id == user2_1.id }?.id `should equal` null
+            checkMameOrg.find { it.id == user2_2.id }?.id `should equal` null
+            checkMameOrg.find { it.id == user2_3.id }?.id `should equal` null
+        }
     }
 }

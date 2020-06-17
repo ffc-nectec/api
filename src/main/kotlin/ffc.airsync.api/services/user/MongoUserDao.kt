@@ -29,12 +29,15 @@ import ffc.entity.User
 import ffc.entity.gson.ffcGson
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
+import org.bson.BsonArray
+import org.bson.BsonDocument
+import org.bson.BsonString
 import org.bson.Document
 import org.bson.types.ObjectId
 
 internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
 
-    override fun insertUser(user: User, orgId: String): User {
+    override fun insert(user: User, orgId: String): User {
         require(!user.isActivated) { "User ที่จะเพิ่มเข้ามาใหม่ ต้อง isActivated=false" }
         if (!haveUserInDb(orgId, user)) {
             user.orgId = orgId
@@ -65,7 +68,7 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
         return getUserDocument(orgId, userId).toJson().parseTo()
     }
 
-    override fun updateUser(user: User, orgId: String, updatePassword: Boolean): User {
+    override fun update(user: User, orgId: String, updatePassword: Boolean): User {
         getUserById(orgId, user.id)
         user.orgId = orgId
 
@@ -81,6 +84,14 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
         dbCollection.updateOne(query, set)
 
         return getUserById(orgId, user.id)
+    }
+
+    override fun delete(orgId: String, userId: List<String>): Boolean {
+        val query = "_id" equal ObjectId(orgId)
+        val userIdDocArray = BsonArray(userId.mapNotNull { if (it.isNullOrEmpty()) null else BsonString(it) })
+        val pullUpdate = "\$pull" equal BsonDocument("users", BsonDocument("id", BsonDocument("\$in", userIdDocArray)))
+        dbCollection.updateMany(query, pullUpdate)
+        return true
     }
 
     private fun getUserDocument(orgId: String, userId: String): Document {
@@ -113,7 +124,7 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
         val oldUserData = getUserByName(orgId, username)
         require(oldUserData != null) { "ไม่พบผู้ใช้ในระบบ" }
         oldUserData.password = password
-        updateUser(oldUserData, orgId, true)
+        update(oldUserData, orgId, true)
         return getUserById(orgId, oldUserData.id)
     }
 }

@@ -54,7 +54,7 @@ class UserResource(
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     @RolesAllowed("ADMIN")
     fun create(@PathParam("orgUuid") orgId: String, user: List<User>): Response {
-        val usersUpdate = user.map { usersDao.insertUser(it, orgId) }
+        val usersUpdate = user.map { usersDao.insert(it, orgId) }
         return Response.status(Response.Status.CREATED).entity(usersUpdate).build()
     }
 
@@ -86,7 +86,7 @@ class UserResource(
 
         try {
             user.activate()
-            usersDao.updateUser(user, orgId)
+            usersDao.update(user, orgId)
         } catch (ex: IllegalStateException) {
             throw BadRequestException("${user.name} ได้รับการ Activate แล้ว")
         }

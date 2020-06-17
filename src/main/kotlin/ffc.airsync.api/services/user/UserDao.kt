@@ -28,8 +28,9 @@ interface UserDao : Dao {
         fun isBlockUser(name: String) = userBlock.firstOrNull { it == name.trim() } != null
     }
 
-    fun insertUser(user: User, orgId: String): User
-    fun updateUser(user: User, orgId: String, updatePassword: Boolean = false): User
+    fun insert(user: User, orgId: String): User
+    fun update(user: User, orgId: String, updatePassword: Boolean = false): User
+    fun delete(orgId: String, userId: List<String>): Boolean
 
     fun getUserByName(orgId: String, name: String): User?
     fun getUserById(orgId: String, userId: String): User
