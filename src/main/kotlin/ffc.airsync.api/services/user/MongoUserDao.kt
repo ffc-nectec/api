@@ -43,7 +43,8 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
         if (!haveUserInDb(orgId, user)) {
             user.orgId = orgId
             require(user.isTempId) { "รุปแบบ id ต้องใช้ TempId ในการสร้าง User" }
-            val userStruct = "users" equal user.toDocument(genUserId)  // สำหรับการ Insert ต้อง gen ID ใหม่
+            // สำหรับการ Insert ต้อง gen ID ใหม่
+            val userStruct = "users" equal user.toDocument(genUserId)
             val userPush = "\$push" equal userStruct
 
             dbCollection.updateOne("_id" equal ObjectId(orgId), userPush)
