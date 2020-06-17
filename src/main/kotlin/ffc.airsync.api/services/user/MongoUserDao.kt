@@ -69,17 +69,25 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
     }
 
     override fun update(user: User, orgId: String, updatePassword: Boolean): User {
-        getUserById(orgId, user.id)
+        val userOldDoc = getUserDocument(orgId, user.id)
         user.orgId = orgId
 
-        val userDocument = Document.parse(user.toJson())
+        val userDoc = Document.parse(user.toJson())
         if (!updatePassword) {
-            val userInDb = getUserDocument(orgId, user.id)
-            userDocument.append("password", userInDb["password"])
-        } else userDocument.append("password", password().hash(user.password))
+            userDoc["password"] = userOldDoc["password"]
+        } else userDoc["password"] = password().hash(user.password)
+
+        userOldDoc.getBoolean("isActivated")?.let { isActivate ->
+            if (isActivate) {
+                userDoc["isActivated"] = isActivate
+                userOldDoc.getString("activateTime")?.let { userDoc["activateTime"] = it }
+            }
+        }
+        userOldDoc["privacy"]?.let { userDoc["privacy"] = it }
+        userOldDoc["terms"]?.let { userDoc["terms"] = it }
 
         val query = ("_id" equal ObjectId(orgId)) plus ("users.id" equal user.id)
-        val set = "\$set" equal ("users.$" equal userDocument)
+        val set = "\$set" equal ("users.$" equal userDoc)
 
         dbCollection.updateOne(query, set)
 

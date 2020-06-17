@@ -95,22 +95,19 @@ class MongoUserDaoTest {
     fun insertUser() {
         val user = dao.insert(createUser("Sommai"), nectecOrg.id)
 
+        user.isActivated `should be equal to` false
         user.name `should be equal to` "Sommai"
         user.password `should not equal` null
         user.isActivated `should be equal to` false
     }
 
     @Test
-    fun updateUser() {
+    fun updateActivateUser() {
         val user = dao.insert(createUser("Sommai"), nectecOrg.id)
         val user2 = dao.insert(createUser("somTum"), nectecOrg.id)
-
-        user.isActivated `should be equal to` false
         user.activate()
-        user.isActivated `should be equal to` true
-        val userUpdate = dao.update(user, nectecOrg.id)
 
-        userUpdate.isActivated `should be equal to` true
+        dao.update(user, nectecOrg.id).isActivated `should be equal to` true
         dao.getUserById(nectecOrg.id, user2.id).isActivated `should be equal to` false
     }
 
@@ -126,6 +123,29 @@ class MongoUserDaoTest {
         dao.findThat(nectecOrg.id, name, password) `should not equal` null // Login new password
         user `should not equal` null
         user.name `should be equal to` name
+    }
+
+    @Test
+    fun updatePasswordAndActivate() {
+        val name = "Sommai"
+        val password = "7499"
+
+        dao.insert(createUser(name), nectecOrg.id)
+
+        val userUpdatePass = dao.updatePassword(nectecOrg.id, name, password)
+        userUpdatePass `should not equal` null
+        userUpdatePass.isActivated `should be equal to` false
+        dao.findThat(nectecOrg.id, name, "catbite") `should equal` null // Login old password
+        dao.findThat(nectecOrg.id, name, password) `should not equal` null // Login new password
+        userUpdatePass.name `should be equal to` name
+
+        userUpdatePass.activate()
+        val userUpdateActivate = dao.update(userUpdatePass, nectecOrg.id)
+        userUpdateActivate `should not equal` null
+        userUpdateActivate.isActivated `should be equal to` true
+        dao.findThat(nectecOrg.id, name, "catbite") `should equal` null // Login old password
+        dao.findThat(nectecOrg.id, name, password) `should not equal` null // Login new password
+        userUpdateActivate.name `should be equal to` name
     }
 
     @Test(expected = IllegalArgumentException::class)
