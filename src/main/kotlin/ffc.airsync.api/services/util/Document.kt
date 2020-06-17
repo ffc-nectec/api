@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 NECTEC
+ * Copyright (c) 2019 NECTEC
  *   National Electronics and Computer Technology Center, Thailand
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.services.util
@@ -32,11 +33,6 @@ import org.bson.Document
 import org.bson.types.BasicBSONList
 import org.bson.types.ObjectId
 import javax.ws.rs.ForbiddenException
-import kotlin.collections.List
-import kotlin.collections.arrayListOf
-import kotlin.collections.forEach
-import kotlin.collections.putAll
-import kotlin.collections.toMap
 import kotlin.collections.map as mapKt
 
 private val logger = LogManager.getLogger("ffc.airsync.api.services.util")
@@ -161,8 +157,11 @@ private fun MongoCollection<Document>.smartInsert(doc: List<Document>, deep: Int
     }
 }
 
-fun User.toDocument(): Document {
-    val user = this.copy(ObjectId().toHexString())
+/**
+ * ใส่ค่า id และแปลง password ให้
+ */
+fun User.toDocument(id: String = this.id): Document {
+    val user = this.copy(id)
     val document = Document.parse(user.toJson())
     document.append("password", password().hash(user.password))
     return document

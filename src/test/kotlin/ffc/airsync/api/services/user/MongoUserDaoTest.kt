@@ -329,4 +329,27 @@ class MongoUserDaoTest {
             checkMameOrg.find { it.id == user2_3.id }?.id `should equal` null
         }
     }
+
+    @Test
+    fun protectSyncUser() {
+        val user1_1 = dao.insert(createUser("Sommai"), nectecOrg.id)
+        val user1_2 = dao.insert(createUser("CatMaLo").apply { this.roles.add(User.Role.SYNC_AGENT) }, nectecOrg.id)
+        val user1_3 = dao.insert(createUser("CMM"), nectecOrg.id)
+        val user2_1 = dao.insert(createUser("Thanachai"), mameOrg.id)
+        val user2_2 = dao.insert(createUser("Mora"), mameOrg.id)
+        val user2_3 = dao.insert(createUser("Male").apply { this.roles.add(User.Role.SYNC_AGENT) }, mameOrg.id)
+
+        dao.delete(nectecOrg.id, listOf(user1_2.id, user1_3.id))
+        dao.delete(mameOrg.id, listOf(user2_3.id, user2_1.id))
+
+        val checkNectecOrg = dao.findUser(nectecOrg.id)
+        checkNectecOrg.find { it.id == user1_1.id }?.id `should equal` user1_1.id
+        checkNectecOrg.find { it.id == user1_2.id }?.id `should equal` user1_2.id
+        checkNectecOrg.find { it.id == user1_3.id }?.id `should equal` null
+
+        val checkMameOrg = dao.findUser(mameOrg.id)
+        checkMameOrg.find { it.id == user2_1.id }?.id `should equal` null
+        checkMameOrg.find { it.id == user2_2.id }?.id `should equal` user2_2.id
+        checkMameOrg.find { it.id == user2_3.id }?.id `should equal` user2_3.id
+    }
 }
