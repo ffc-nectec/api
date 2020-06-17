@@ -39,10 +39,11 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
 
     override fun insert(user: User, orgId: String): User {
         require(!user.isActivated) { "User ที่จะเพิ่มเข้ามาใหม่ ต้อง isActivated=false" }
+        val genUserId = ObjectId().toHexString()
         if (!haveUserInDb(orgId, user)) {
             user.orgId = orgId
             require(user.isTempId) { "รุปแบบ id ต้องใช้ TempId ในการสร้าง User" }
-            val userStruct = "users" equal user.toDocument()
+            val userStruct = "users" equal user.toDocument(genUserId)  // สำหรับการ Insert ต้อง gen ID ใหม่
             val userPush = "\$push" equal userStruct
 
             dbCollection.updateOne("_id" equal ObjectId(orgId), userPush)
@@ -68,6 +69,13 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
         return getUserDocument(orgId, userId).toJson().parseTo()
     }
 
+    /**
+     * จะใช้ค่า id ภายใน user มาอ้างอิงในการ update
+     * @param updatePassword ถ้าไม่กำหนดว่าจะ update password จะดึงค่าเก่ามาใส่ ใน ข้อมูลใหม่
+     * ถ้าค่า activate==true ให้ดึงค่า activate, activateTime มาใส่ในข้อมูลใหม่
+     * ถ้ามีค่า privacy, terms ให้ดึงค่า privacy, terms มาใส่ในข้อมูลใหม่
+     * ส่วนที่เหลือ update ข้อมูลตามที่ส่งเข้ามาทั้งหมด
+     */
     override fun update(user: User, orgId: String, updatePassword: Boolean): User {
         val userOldDoc = getUserDocument(orgId, user.id)
         user.orgId = orgId
@@ -95,8 +103,11 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
     }
 
     override fun delete(orgId: String, userId: List<String>): Boolean {
+        val syncUserId = findUser(orgId).filter { it.roles.contains(User.Role.SYNC_AGENT) }.map { it.id }
+
         val query = "_id" equal ObjectId(orgId)
-        val userIdDocArray = BsonArray(userId.mapNotNull { if (it.isNullOrEmpty()) null else BsonString(it) })
+        val userIdDocArray =
+            BsonArray(userId.mapNotNull { if (it.isNullOrEmpty() || syncUserId.contains(it)) null else BsonString(it) })
         val pullUpdate = "\$pull" equal BsonDocument("users", BsonDocument("id", BsonDocument("\$in", userIdDocArray)))
         dbCollection.updateMany(query, pullUpdate)
         return true

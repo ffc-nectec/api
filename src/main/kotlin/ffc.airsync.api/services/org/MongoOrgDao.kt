@@ -54,7 +54,7 @@ class MongoOrgDao : OrgDao, MongoDao("ffc", "organ") {
             require(!it.isActivated) { "User มีการ Activate:${it.isActivated} ต้อง isActivated = false เท่านั้น" }
             it.orgId = genOrgId.toHexString()
             if (it.roles.contains(ADMIN) || it.roles.contains(SYNC_AGENT)) if (!it.isActivated) it.activate()
-            userListDoc.add(it.toDocument())
+            userListDoc.add(it.toDocument(ObjectId().toHexString()))
         }
         val orgDoc = Document.parse(organization.toJson())
         orgDoc.append("users", userListDoc)
