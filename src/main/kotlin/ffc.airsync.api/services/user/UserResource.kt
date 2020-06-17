@@ -30,6 +30,7 @@ import ffc.entity.User
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.Consumes
+import javax.ws.rs.DELETE
 import javax.ws.rs.GET
 import javax.ws.rs.NotAuthorizedException
 import javax.ws.rs.POST
@@ -56,6 +57,22 @@ class UserResource(
     fun create(@PathParam("orgUuid") orgId: String, user: List<User>): Response {
         val usersUpdate = user.map { usersDao.insert(it, orgId) }
         return Response.status(Response.Status.CREATED).entity(usersUpdate).build()
+    }
+
+    @PUT
+    @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
+    @RolesAllowed("ADMIN")
+    fun update(@PathParam("orgUuid") orgId: String, user: List<User>): Response {
+        val usersUpdate = user.map { usersDao.update(it, orgId, true) }
+        return Response.status(Response.Status.CREATED).entity(usersUpdate).build()
+    }
+
+    @DELETE
+    @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
+    @RolesAllowed("ADMIN")
+    fun delete(@PathParam("orgUuid") orgId: String, userIdList: List<String>): Response {
+        val deleteStatus = usersDao.delete(orgId, userIdList)
+        return Response.status(Response.Status.OK).entity(deleteStatus).build()
     }
 
     @GET

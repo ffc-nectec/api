@@ -27,6 +27,7 @@ import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.amshove.kluent.`should not equal`
+import org.bson.types.ObjectId
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -235,6 +236,45 @@ class MongoUserDaoTest {
         UserDao.isBlockUser("newuser") `should be equal to` true
         UserDao.isBlockUser("usr_db") `should be equal to` true
         UserDao.isBlockUser("Drug_Store_Admin") `should be equal to` true
+    }
+
+    @Test
+    fun deleteHaveUserStatus() {
+        val user1_1 = dao.insert(createUser("Sommai"), nectecOrg.id)
+        val status = dao.delete(nectecOrg.id, listOf(user1_1.id))
+
+        status.size `should be equal to` 1
+        status[user1_1.id]!! `should be equal to` true
+    }
+
+    @Test
+    fun deleteNotHaveUserStatus() {
+        dao.insert(createUser("Sommai"), nectecOrg.id)
+        val dummy = ObjectId().toHexString()!!
+        val status = dao.delete(nectecOrg.id, listOf(dummy))
+
+        status.size `should be equal to` 1
+        status[dummy]!! `should be equal to` false
+    }
+
+    @Test
+    fun fullStepDeleteUser() {
+        val user1_1 = dao.insert(createUser("Sommai"), nectecOrg.id).id
+        val user1_2 = dao.insert(createUser("CatMaLo"), nectecOrg.id).id
+        val user1_3 = dao.insert(createUser("CMM"), nectecOrg.id).id
+        val user2_1 = dao.insert(createUser("Thanachai"), mameOrg.id).id
+        val user2_2 = dao.insert(createUser("Mora"), mameOrg.id).id
+        val user2_3 = dao.insert(createUser("Male"), mameOrg.id).id
+
+        val dummy1 = ObjectId().toHexString()
+        val dummy2 = ObjectId().toHexString()
+
+        val status = dao.delete(nectecOrg.id, listOf(user1_1, user1_3, user2_2))
+
+        status.size `should be equal to` 3
+        status[user1_1]!! `should be equal to` true
+        status[user1_3]!! `should be equal to` true
+        status[user2_2]!! `should be equal to` false
     }
 
     @Test
