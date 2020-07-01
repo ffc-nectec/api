@@ -40,6 +40,8 @@ import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import javax.ws.rs.core.Response.Status.CREATED
+import javax.ws.rs.core.Response.Status.OK
 
 @Path("/org")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -56,7 +58,7 @@ class UserResource(
     @RolesAllowed("ADMIN")
     fun create(@PathParam("orgUuid") orgId: String, user: List<User>): Response {
         val usersUpdate = user.map { usersDao.insert(it, orgId) }
-        return Response.status(Response.Status.CREATED).entity(usersUpdate).build()
+        return Response.status(CREATED).entity(usersUpdate).build()
     }
 
     @PUT
@@ -64,7 +66,7 @@ class UserResource(
     @RolesAllowed("ADMIN")
     fun update(@PathParam("orgUuid") orgId: String, user: List<User>): Response {
         val usersUpdate = user.map { usersDao.update(it, orgId, true) }
-        return Response.status(Response.Status.CREATED).entity(usersUpdate).build()
+        return Response.status(OK).entity(usersUpdate).build()
     }
 
     @DELETE
@@ -72,14 +74,14 @@ class UserResource(
     @RolesAllowed("ADMIN")
     fun delete(@PathParam("orgUuid") orgId: String, userIdList: List<String>): Response {
         val deleteStatus = usersDao.delete(orgId, userIdList)
-        return Response.status(Response.Status.OK).entity(deleteStatus).build()
+        return Response.status(OK).entity(deleteStatus).build()
     }
 
     @GET
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
     fun getUsersIn(@PathParam("orgUuid") orgId: String): Response {
-        return Response.status(Response.Status.OK).entity(usersDao.findUser(orgId)).build()
+        return Response.status(OK).entity(usersDao.findUser(orgId)).build()
     }
 
     @POST
