@@ -25,7 +25,9 @@ import ffc.airsync.api.services.util.containsSome
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
-import ffc.entity.User
+import ffc.entity.User.Role.ADMIN
+import ffc.entity.User.Role.SURVEYOR
+import ffc.entity.User.Role.SYNC_AGENT
 import ffc.entity.place.House
 import ffc.entity.update
 import me.piruin.geok.geometry.Feature
@@ -58,9 +60,11 @@ class HouseResourceNewEndpoint {
     @Context
     private lateinit var context: SecurityContext
 
+    val surveyorProcess by lazy { SurveyorProcess() }
+
     @POST
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
-    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("ADMIN", "PROVIDER")
     fun createSingle(@PathParam("orgId") orgId: String, house: House?): Response {
         if (house == null) throw BadRequestException()
 
@@ -70,7 +74,7 @@ class HouseResourceNewEndpoint {
 
     @POST
     @Path("/$ORGIDTYPE/houses")
-    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("ADMIN", "PROVIDER")
     fun create(@PathParam("orgId") orgId: String, houseList: List<House>?): Response {
         if (houseList == null) throw BadRequestException()
 
@@ -184,12 +188,26 @@ class HouseResourceNewEndpoint {
     ): Response {
         val role = context.getLoginRole()
         when {
-            role.containsSome(User.Role.ADMIN) -> house.link?.isSynced = true
+            role.containsSome(ADMIN) -> house.link?.isSynced = true
             else -> house.link?.isSynced = false
         }
 
-        val houseUpdate = houseService.update(orgId, house.update { }, houseId)
-        return Response.status(200).entity(houseUpdate).build()
+        return when {
+            /**
+             * SURVEYOR สามารถปักพิกัดได้เฉพาะหลังที่ไม่มีพิกัดเท่านั้น
+             */
+            role.containsSome(SURVEYOR) -> {
+                val original = houseService.getSingle(orgId, houseId)!!
+                val build = surveyorProcess.process(original, house)
+                Response.status(200).entity(houseService.update(orgId, build, houseId)).build()
+            }
+            role.containsSome(SYNC_AGENT) -> {
+                Response.status(200).entity(houseService.update(orgId, house, houseId)).build()
+            }
+            else -> {
+                Response.status(200).entity(houseService.update(orgId, house.update { }, houseId)).build()
+            }
+        }
     }
 
     @PUT
