@@ -127,3 +127,12 @@ class CloudInternalServerErrorException : ExceptionMapper<InternalServerErrorExc
         return Response.status(exception.response.statusInfo).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
     }
 }
+
+@Provider
+class UninitializedPropertyAccessExceptionFilter : ExceptionMapper<UninitializedPropertyAccessException> {
+    override fun toResponse(exception: UninitializedPropertyAccessException): Response {
+        getLogger().error("lateinit error", exception)
+        val err = ErrorDetail(500, exception.message, exception)
+        return Response.status(500).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
+    }
+}
