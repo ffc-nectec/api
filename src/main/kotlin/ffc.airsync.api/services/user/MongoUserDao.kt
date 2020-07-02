@@ -81,10 +81,10 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
         val userOldDoc = getUserDocument(orgId, user.id)
         user.orgId = orgId
 
-        val userDoc = Document.parse(user.toJson())
+        val userDoc = user.toDocument()
         if (!updatePassword) {
             userDoc["password"] = userOldDoc["password"]
-        } else userDoc["password"] = password().hash(user.password)
+        }
 
         userOldDoc.getBoolean("isActivated")?.let { isActivate ->
             if (isActivate) {
