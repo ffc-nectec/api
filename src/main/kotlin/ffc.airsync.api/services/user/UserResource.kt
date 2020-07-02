@@ -27,6 +27,7 @@ import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.user.jhcis.JHCISutil
 import ffc.entity.Token
 import ffc.entity.User
+import ffc.entity.gson.toJson
 import javax.annotation.security.RolesAllowed
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.Consumes
@@ -65,6 +66,11 @@ class UserResource(
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     @RolesAllowed("ADMIN")
     fun update(@PathParam("orgUuid") orgId: String, user: List<User>): Response {
+        val find = user.filter { runCatching { it.password }.isFailure }
+        if (find.isNullOrEmpty())
+            throw UninitializedPropertyAccessException(
+                "พบข้อมูลรหัสของ org:${orgId} name:${find.map { it.name }.toJson()} มีปัญหา"
+            )
         val usersUpdate = user.map { usersDao.update(it, orgId, true) }
         return Response.status(OK).entity(usersUpdate).build()
     }
