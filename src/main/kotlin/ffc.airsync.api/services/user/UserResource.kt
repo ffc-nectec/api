@@ -67,10 +67,10 @@ class UserResource(
     @RolesAllowed("ADMIN")
     fun update(@PathParam("orgUuid") orgId: String, user: List<User>): Response {
         val find = user.filter { runCatching { it.password }.isFailure }
-        if (find.isNullOrEmpty())
-            throw UninitializedPropertyAccessException(
-                "พบข้อมูลรหัสของ org:${orgId} name:${find.map { it.name }.toJson()} มีปัญหา"
-            )
+        if (find.isNullOrEmpty()) {
+            val toJson = find.map { it.name }.toJson()
+            throw UninitializedPropertyAccessException("พบข้อมูลรหัสมีปัญหา org:$orgId name:$toJson")
+        }
         val usersUpdate = user.map { usersDao.update(it, orgId, true) }
         return Response.status(OK).entity(usersUpdate).build()
     }
