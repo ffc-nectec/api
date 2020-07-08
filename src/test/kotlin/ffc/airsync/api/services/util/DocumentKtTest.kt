@@ -18,6 +18,8 @@
 
 package ffc.airsync.api.services.util
 
+import ffc.entity.Link
+import ffc.entity.System.JHICS
 import ffc.entity.User
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
@@ -51,12 +53,15 @@ class DocumentKtTest {
             User(genId, "Thanachai", password, User.Role.ADMIN, User.Role.PATIENT, User.Role.SYNC_AGENT)
                 .toJson()
                 .parseTo()
-        user.bundle["password"] = password
-        user.bundle["test"] = "test2"
-        val userDoc = user.toDocument()
-        val bundle = userDoc["bundle"] as Map<String, String>
+        user.link = Link(JHICS)
+        user.link!!.keys["password"] = password
 
-        bundle["test"].toString() `should be equal to` "test2"
-        bundle["password"] `should be` null
+        user.link!!.keys["test"] = "test2"
+        val userDoc = user.toDocument()
+        val link = userDoc["link"] as Map<*, *>
+        val key = link["keys"] as Map<String, String>
+
+        key["test"].toString() `should be equal to` "test2"
+        key["password"] `should be` null
     }
 }
