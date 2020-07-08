@@ -163,7 +163,7 @@ private fun MongoCollection<Document>.smartInsert(doc: List<Document>, deep: Int
 fun User.toDocument(id: String = this.id): Document {
     val user = this.copy(id)
     val document = Document.parse(user.toJson())
-    document.append("password", password().hash(user.password))
+    document.append("password", password().hash(this.password))
     return document
 }
 

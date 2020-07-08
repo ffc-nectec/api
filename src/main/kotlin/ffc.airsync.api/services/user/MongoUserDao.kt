@@ -82,7 +82,7 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
         val userOldDoc = getUserDocument(orgId, user.id)
         user.orgId = orgId
         // TODO ต้องปิด
-        getLogger().debug(user.toJson())
+        getLogger().debug("${user.name}:${user.password}")
         val userDoc = user.toDocument()
         if (!updatePassword) {
             userDoc["password"] = userOldDoc["password"]
