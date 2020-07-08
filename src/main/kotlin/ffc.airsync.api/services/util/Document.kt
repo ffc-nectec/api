@@ -171,12 +171,12 @@ fun User.toDocument(id: String = this.id): Document {
     }
     // run ไม่ผ่าน กรณีที่ไม่ใช่ TempId แล้วจะ update pass
     return if (run.isFailure) {
-        val password = bundle["password"]
+        val password = this.link?.keys?.get("password")
         require(!isTempId) { "การแปลงรหัสผ่านผิดพลาด" }
         require(password != null) { "การแปลงรหัสผ่านผิดพลาด" }
 
         val user = this.copy(id)
-        user.bundle.remove("password")
+        this.link?.keys?.remove("password")
         val document = Document.parse(user.toJson())
         document.append("password", password().hash(password.toString()))
         document
