@@ -19,7 +19,6 @@
 package ffc.airsync.api.services.user
 
 import com.google.gson.Gson
-import ffc.airsync.api.getLogger
 import ffc.airsync.api.security.password
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
@@ -81,8 +80,6 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
     override fun update(user: User, orgId: String, updatePassword: Boolean): User {
         val userOldDoc = getUserDocument(orgId, user.id)
         user.orgId = orgId
-        // TODO ต้องปิด
-        getLogger().debug("${user.name}:${user.password}")
         val userDoc = user.toDocument()
         if (!updatePassword) {
             userDoc["password"] = userOldDoc["password"]

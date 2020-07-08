@@ -161,10 +161,27 @@ private fun MongoCollection<Document>.smartInsert(doc: List<Document>, deep: Int
  * ใส่ค่า id และแปลง password ให้
  */
 fun User.toDocument(id: String = this.id): Document {
-    val user = this.copy(id)
-    val document = Document.parse(user.toJson())
-    document.append("password", password().hash(this.password))
-    return document
+
+    // ปกติ
+    val run = runCatching {
+        val user = this.copy(id)
+        val document = Document.parse(user.toJson())
+        document.append("password", password().hash(user.password))
+        document
+    }
+    // run ไม่ผ่าน กรณีที่ไม่ใช่ TempId แล้วจะ update pass
+    return if (run.isFailure) {
+        val password = bundle["password"]
+        require(!isTempId) { "การแปลงรหัสผ่านผิดพลาด" }
+        require(password != null) { "การแปลงรหัสผ่านผิดพลาด" }
+
+        val user = this.copy(id)
+        user.bundle.remove("password")
+        val document = Document.parse(user.toJson())
+        document.append("password", password().hash(password.toString()))
+        document
+    } else
+        run.getOrThrow()
 }
 
 /**
