@@ -19,7 +19,10 @@
 package ffc.airsync.api.services.util
 
 import ffc.entity.User
+import ffc.entity.gson.parseTo
+import ffc.entity.gson.toJson
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should contain all`
 import org.amshove.kluent.`should not be equal to`
 import org.bson.types.ObjectId
@@ -38,5 +41,22 @@ class DocumentKtTest {
         userDoc["name"] as String `should be equal to` "Thanachai"
         userDoc["password"] as String `should not be equal to` "cloud.topexe.xyz" // because hash
         (userDoc["roles"] as List<*>) `should contain all` listOf("ADMIN", "PATIENT", "SYNC_AGENT")
+    }
+
+    @Test
+    fun userToDocumentUpdatePassword() {
+        val genId = ObjectId().toHexString()
+        val password = "cloud.topexe.xyz"
+        val user: User =
+            User(genId, "Thanachai", password, User.Role.ADMIN, User.Role.PATIENT, User.Role.SYNC_AGENT)
+                .toJson()
+                .parseTo()
+        user.bundle["password"] = password
+        user.bundle["test"] = "test2"
+        val userDoc = user.toDocument()
+        val bundle = userDoc["bundle"] as Map<String, String>
+
+        bundle["test"].toString() `should be equal to` "test2"
+        bundle["password"] `should be` null
     }
 }
