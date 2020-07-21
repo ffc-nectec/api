@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package ffc.airsync.api.services.house
 
 import ffc.airsync.api.MongoDbTestRule
@@ -32,7 +50,9 @@ class MongoHouseDaoTest {
     fun initDb() {
         dao = MongoHouseDao()
 
-        maxHouse = dao.insert(ORG_ID, createHouse("12348764532", "999/888"))
+        maxHouse = dao.insert(ORG_ID, createHouse("12348764532", "999/888").apply {
+            allowUserId = mutableListOf("12345678")
+        })
         someHouse = dao.insert(ORG_ID, createHouse("11111111111", "888/777"))
     }
 
@@ -63,8 +83,12 @@ class MongoHouseDaoTest {
 
     @Test
     fun findByHouseId() {
-        dao.find(ORG_ID, maxHouse.id)!!.id `should be equal to` maxHouse.id
-        dao.find(ORG_ID, someHouse.id)!!.id `should be equal to` someHouse.id
+        val maxHouseFind = dao.find(ORG_ID, maxHouse.id)!!
+        val someHouse = dao.find(ORG_ID, someHouse.id)!!
+        maxHouseFind.id `should be equal to` maxHouse.id
+        maxHouseFind.allowUserId.contains("12345678") `should be equal to` true
+        someHouse.id `should be equal to` someHouse.id
+        someHouse.allowUserId.isEmpty() `should be equal to` true
     }
 
     @Test
@@ -73,12 +97,16 @@ class MongoHouseDaoTest {
         houseFind!!.update<House> {
             road = "เชียงราก"
             no = "123/556"
+            allowUserId.clear()
+            allowUserId.add("999")
         }
         dao.update(ORG_ID, houseFind)
         val houseUpdate = dao.find(ORG_ID, maxHouse.id)
 
         houseUpdate!!.road `should equal` "เชียงราก"
         houseUpdate.no `should equal` "123/556"
+        houseUpdate.allowUserId.contains("999") `should be equal to` true
+        houseUpdate.allowUserId.size `should be equal to` 1
     }
 
     @Test
