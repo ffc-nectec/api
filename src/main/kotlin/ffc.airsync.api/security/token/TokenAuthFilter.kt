@@ -21,7 +21,7 @@ package ffc.airsync.api.security.token
 import ffc.airsync.api.DummyChallenge
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.security.ApiSecurityContext
-import ffc.airsync.api.security.UserPrincipal
+import ffc.airsync.api.security.FfcUserPrincipal
 import ffc.entity.User.Role.SYNC_AGENT
 import java.util.regex.Pattern
 import javax.annotation.Priority
@@ -64,7 +64,7 @@ class TokenAuthFilter : ContainerRequestFilter {
 
         requestContext.securityContext = ApiSecurityContext(token, requestContext.uriInfo.baseUri.scheme)
         requestContext.securityContext.let {
-            val user = (it.userPrincipal as UserPrincipal).user
+            val user = (it.userPrincipal as FfcUserPrincipal).getUser()
             logger.info(
                 "${user.orgId}.${user.id} use token ${requestToken.substring(0, 7)} at " +
                     "${requestContext.method} ${requestContext.uriInfo.path}  "

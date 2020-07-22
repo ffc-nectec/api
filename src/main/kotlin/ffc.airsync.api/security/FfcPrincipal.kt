@@ -18,23 +18,9 @@
 
 package ffc.airsync.api.security
 
-import ffc.entity.Token
 import ffc.entity.User
-import javax.ws.rs.core.SecurityContext
+import java.security.Principal
 
-class ApiSecurityContext(token: Token, val scheme: String?) : SecurityContext {
-
-    private var userPrincipal: FfcPrincipal = FfcUserPrincipal(token.user)
-
-    override fun isUserInRole(role: String?): Boolean {
-        if (role == null)
-            return false
-        return userPrincipal.getUser().roles.contains(User.Role.valueOf(role))
-    }
-
-    override fun getAuthenticationScheme() = "Bearer"
-
-    override fun getUserPrincipal() = userPrincipal
-
-    override fun isSecure() = "https" == scheme
+interface FfcPrincipal : Principal {
+    fun getUser(): User
 }

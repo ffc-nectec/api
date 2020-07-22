@@ -13,13 +13,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.security
 
 import ffc.entity.User
-import java.security.Principal
+import ffc.entity.copy
 
-class UserPrincipal(val user: User) : Principal {
+class FfcUserPrincipal(private val user: User) : FfcPrincipal {
     override fun getName() = user.name
+    override fun getUser() = user.copy()
 }

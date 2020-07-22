@@ -18,6 +18,7 @@
 
 package ffc.airsync.api.services.house
 
+import ffc.airsync.api.checkAllowUser
 import ffc.entity.copy
 import ffc.entity.place.House
 import ffc.entity.update
@@ -28,13 +29,13 @@ import ffc.entity.update
  * โดยจะนำข้อมูลที่ส่งมา แล้วคัดแต่อันที่แก้ไขได้ มาใส่อันเดิม
  */
 class SurveyorProcess {
-    fun process(original: House, surveyorHouse: House): House {
+    fun process(original: House, surveyorHouse: House, userId: String = "xxxx"): House {
         val originalCopy = original.copy()
-        if (originalCopy.noPosition())
+        if (originalCopy.noPosition() || originalCopy.checkAllowUser(userId))
             surveyorHouse.location?.let {
                 originalCopy.location = it.copy()
             }
-        else throw IllegalStateException("ปักพิกัดได้เฉพาะ บ้านที่ไม่มีพิกัด")
+        else throw IllegalStateException("นักสำรวจสามารถปักพิกัดได้เฉพาะ บ้านที่ไม่มีพิกัด และ บ้านที่ตัวเองรับผิดชอบ")
         return originalCopy.update(surveyorHouse.timestamp) {}
     }
 
