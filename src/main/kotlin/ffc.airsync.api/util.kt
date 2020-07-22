@@ -18,7 +18,11 @@
 
 package ffc.airsync.api
 
+import ffc.airsync.api.security.FfcPrincipal
+import ffc.entity.Entity
 import ffc.entity.Lang
+import ffc.entity.User
+import ffc.entity.User.Role.SURVEYOR
 import ffc.entity.gson.parseTo
 import ffc.entity.gson.toJson
 import org.bson.Document
@@ -28,6 +32,7 @@ import java.nio.charset.Charset
 import java.time.ZoneId
 import java.util.Locale
 import java.util.TimeZone
+import javax.ws.rs.core.SecurityContext
 
 private val bangkokTimeZone = TimeZone.getTimeZone(ZoneId.of("Asia/Bangkok"))
 
@@ -66,5 +71,11 @@ fun <T> resorceCall(call: () -> T): T {
 }
 
 val logLevel get() = Any().getLogger().level
+
+fun SecurityContext.getUserLoginObject() = (userPrincipal as FfcPrincipal).getUser()
+
+fun Entity.checkAllowUser(userId: String): Boolean = allowUserId.contains(userId)
+
+fun User.isSurveyor() = roles.contains(SURVEYOR)
 
 class DummyChallenge

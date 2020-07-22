@@ -18,10 +18,12 @@
 
 package ffc.airsync.api.services.house
 
+import ffc.airsync.api.checkAllowUser
 import ffc.airsync.api.filter.cache.Cache
+import ffc.airsync.api.getUserLoginObject
+import ffc.airsync.api.isSurveyor
 import ffc.airsync.api.services.ORGIDTYPE
 import ffc.airsync.api.services.util.GEOJSONHeader
-import ffc.airsync.api.services.util.containsSome
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
@@ -90,7 +92,15 @@ class HouseResourceNewEndpoint {
     fun getGeoJsonHouse(
         @PathParam("orgId") orgId: String
     ): FeatureCollection<House> {
-        val houses = houseService.getHouses(orgId, haveLocation = true)
+        val userLogin = context.getUserLoginObject()
+        val houses = if (userLogin.isSurveyor()) {
+            houseService.getHouses(orgId, haveLocation = true).mapNotNull {
+                if (it.checkAllowUser(userLogin.id)) it
+                else null
+            }
+        } else {
+            houseService.getHouses(orgId, haveLocation = true)
+        }
         if (houses.isEmpty()) throw NoSuchElementException("ไม่มีรายการบ้าน")
         return FeatureCollection(houses.map { Feature(it.location!!, it) })
     }
@@ -124,7 +134,18 @@ class HouseResourceNewEndpoint {
             "false" -> false
             else -> null
         }
-        return houseService.getHouses(orgId, query, haveLocation).paging(page, per_page)
+        val houseQuery = houseService.getHouses(orgId, query, haveLocation)
+        val userLogin = context.getUserLoginObject()
+        return if (haveLocation == true && userLogin.isSurveyor()) {
+            houseQuery
+                .mapNotNull {
+                    if (it.checkAllowUser(userLogin.id)) it
+                    else null
+                }
+                .paging(page, per_page)
+        } else {
+            houseQuery.paging(page, per_page)
+        }
     }
 
     @GET
@@ -149,9 +170,15 @@ class HouseResourceNewEndpoint {
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
     ): List<Person> {
+        val userLogin = context.getUserLoginObject()
         houseService.getSingle(orgId, houseId).let {
             require(it != null) { "ไม่พบข้อมูลบ้าน" }
             require(it.no?.trim() != "0") { "ไม่สามารถดูสมาชิกในบ้านนอกเขตได้" }
+            if (userLogin.isSurveyor()) {
+                require(
+                    (it.checkAllowUser(userLogin.id))
+                ) { "User ระดับสำรวจ สามารถดูข้อมูลคนของบ้านที่ตัวเองสำรวจเท่านั้น" }
+            }
         }
         return houseService.getPerson(orgId, houseId)
     }
@@ -164,7 +191,16 @@ class HouseResourceNewEndpoint {
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
     ): House {
-        return houseService.getSingle(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
+        val house = houseService.getSingle(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
+        val userLogin = context.getUserLoginObject()
+
+        if (userLogin.isSurveyor()) {
+            require(
+                house.checkAllowUser(userLogin.id)
+            ) { "User ระดับสำรวจ สามารถดูข้อมูลคนของบ้านที่ตัวเองสำรวจเท่านั้น" }
+        }
+
+        return house
     }
 
     @GET
@@ -186,9 +222,10 @@ class HouseResourceNewEndpoint {
         @PathParam("houseId") houseId: String,
         house: House
     ): Response {
-        val role = context.getLoginRole()
+        val userLogin = context.getUserLoginObject()
+        val role = userLogin.roles
         when {
-            role.containsSome(ADMIN) -> house.link?.isSynced = true
+            role.contains(ADMIN) -> house.link?.isSynced = true
             else -> house.link?.isSynced = false
         }
 
@@ -196,13 +233,13 @@ class HouseResourceNewEndpoint {
             /**
              * SURVEYOR สามารถปักพิกัดได้เฉพาะหลังที่ไม่มีพิกัดเท่านั้น
              */
-            role.containsSome(SURVEYOR) -> {
-                val original = houseService.getSingle(orgId, houseId)!!
-                val build = surveyorProcess.process(original, house)
-                Response.status(200).entity(houseService.update(orgId, build, houseId)).build()
-            }
-            role.containsSome(SYNC_AGENT) -> {
+            role.contains(SYNC_AGENT) -> {
                 Response.status(200).entity(houseService.update(orgId, house, houseId)).build()
+            }
+            role.contains(SURVEYOR) -> {
+                val original = houseService.getSingle(orgId, houseId)!!
+                val build = surveyorProcess.process(original, house, userLogin.id)
+                Response.status(200).entity(houseService.update(orgId, build, houseId)).build()
             }
             else -> {
                 Response.status(200).entity(houseService.update(orgId, house.update { }, houseId)).build()
