@@ -51,7 +51,7 @@ class MongoHouseDaoTest {
         dao = MongoHouseDao()
 
         maxHouse = dao.insert(ORG_ID, createHouse("12348764532", "999/888").apply {
-            allowUserId = mutableListOf("12345678")
+            allowUserId = hashSetOf("12345678")
         })
         someHouse = dao.insert(ORG_ID, createHouse("11111111111", "888/777"))
     }
