@@ -54,7 +54,7 @@ class ResourceAnalytic {
 
     @GET
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/healthanalyze")
-    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER")
     fun getByPersonId(
         @PathParam("orgId") orgId: String,
         @PathParam("personId") personId: String
