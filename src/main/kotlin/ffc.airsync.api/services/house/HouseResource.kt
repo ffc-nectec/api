@@ -239,7 +239,7 @@ class HouseResourceNewEndpoint {
             role.contains(ADMIN) -> house.link?.isSynced = true
             else -> house.link?.isSynced = false
         }
-
+        logger.info("${userLogin.name} ระดับ ${userLogin.roles} อัพเดทข้อมูลบ้าน sync=${house.link?.isSynced}")
         return when {
             /**
              * SURVEYOR สามารถปักพิกัดได้เฉพาะหลังที่ไม่มีพิกัดเท่านั้น

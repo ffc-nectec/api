@@ -18,7 +18,9 @@
 
 package ffc.airsync.api.services.house
 
+import ffc.entity.Link
 import ffc.entity.Person
+import ffc.entity.System
 import ffc.entity.ThaiCitizenId
 import ffc.entity.ThaiHouseholdId
 import ffc.entity.healthcare.Chronic
@@ -34,7 +36,11 @@ class SurveyorProcessTest {
 
     val houseHaveLocation = createHouse("12332569057", "1", Point(13.111, 110.111))
     val houseNullLocation = createHouse("38276364212", "2", null)
-    val houseZeroLocation = createHouse("87909874332", "3", Point(0.0, 0.0))
+    val houseZeroLocation = createHouse("87909874332", "3", Point(0.0, 0.0)).apply {
+        link = Link(System.JHICS).apply {
+            isSynced = true
+        }
+    }
 
     @Test
     fun `อัพเดทบ้านมีพิกัดใส่บ้านที่ไม่มีพิกัด`() {
@@ -44,6 +50,7 @@ class SurveyorProcessTest {
         result.no!! `should be equal to` houseZeroLocation.no!!
         result.location!!.coordinates.latitude `should be equal to` houseHaveLocation.location!!.coordinates.latitude
         result.location!!.coordinates.longitude `should be equal to` houseHaveLocation.location!!.coordinates.longitude
+        result.link!!.isSynced `should be equal to` false
     }
 
     @Test

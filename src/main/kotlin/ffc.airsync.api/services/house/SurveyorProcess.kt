@@ -36,6 +36,7 @@ class SurveyorProcess {
                 originalCopy.location = it.copy()
             }
         else throw IllegalStateException("นักสำรวจสามารถปักพิกัดได้เฉพาะ บ้านที่ไม่มีพิกัด และ บ้านที่ตัวเองรับผิดชอบ")
+        originalCopy.link?.isSynced = false
         return originalCopy.update(surveyorHouse.timestamp) {}
     }
 

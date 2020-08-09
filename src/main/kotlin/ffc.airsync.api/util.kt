@@ -76,6 +76,6 @@ fun SecurityContext.getUserLoginObject() = (userPrincipal as FfcPrincipal).getUs
 
 fun Entity.checkAllowUser(userId: String): Boolean = allowUserId.contains(userId)
 
-fun User.isSurveyor() = roles.contains(SURVEYOR)
+fun User.isSurveyor(): Boolean = roles.contains(SURVEYOR)
 
 class DummyChallenge
