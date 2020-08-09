@@ -30,16 +30,7 @@ import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
 import ffc.entity.User
 import javax.annotation.security.RolesAllowed
-import javax.ws.rs.Consumes
-import javax.ws.rs.DELETE
-import javax.ws.rs.DefaultValue
-import javax.ws.rs.GET
-import javax.ws.rs.POST
-import javax.ws.rs.PUT
-import javax.ws.rs.Path
-import javax.ws.rs.PathParam
-import javax.ws.rs.Produces
-import javax.ws.rs.QueryParam
+import javax.ws.rs.*
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -89,7 +80,7 @@ class PersonResource {
 
     @PUT
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE")
-    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER")
     @Cache(maxAge = 5)
     fun updatePerson(
         @PathParam("orgId") orgId: String,
@@ -107,7 +98,7 @@ class PersonResource {
 
     @GET
     @Path("/$ORGIDTYPE/person")
-    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER")
     @Cache(maxAge = 5)
     fun get(
         @QueryParam("page") @DefaultValue("1") page: Int,
@@ -137,7 +128,7 @@ class PersonResource {
 
     @GET
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE")
-    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER")
     @Cache(maxAge = 5)
     fun getByPersonId(
         @PathParam("orgId") orgId: String,
