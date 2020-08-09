@@ -20,6 +20,7 @@ package ffc.airsync.api.services.house
 
 import ffc.airsync.api.checkAllowUser
 import ffc.airsync.api.filter.cache.Cache
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.getUserLoginObject
 import ffc.airsync.api.isSurveyor
 import ffc.airsync.api.services.ORGIDTYPE
@@ -49,6 +50,7 @@ class HouseResourceNewEndpoint {
 
     @Context
     private lateinit var context: SecurityContext
+    private val logger = getLogger()
 
     val surveyorProcess by lazy { SurveyorProcess() }
 
@@ -175,15 +177,16 @@ class HouseResourceNewEndpoint {
         @PathParam("houseId") houseId: String
     ): List<Person> {
         val userLogin = context.getUserLoginObject()
-        houseService.getSingle(orgId, houseId).let {
-            require(it != null) { "ไม่พบข้อมูลบ้าน" }
-            require(it.no?.trim() != "0") { "ไม่สามารถดูสมาชิกในบ้านนอกเขตได้" }
-            if (userLogin.isSurveyor()) {
-                require(
-                    (it.checkAllowUser(userLogin.id))
-                ) { "User ระดับสำรวจ สามารถดูข้อมูลคนของบ้านที่ตัวเองสำรวจเท่านั้น" }
-            }
+        logger.info("${userLogin.name} ระดับ ${userLogin.roles} ขอดูข้อมูลบ้าน")
+        val house = houseService.getSingle(orgId, houseId)
+        require(house != null) { "ไม่พบข้อมูลบ้าน" }
+        require(house.no?.trim() != "0") { "ไม่สามารถดูสมาชิกในบ้านนอกเขตได้" }
+        if (userLogin.isSurveyor()) {
+            require(
+                (house.checkAllowUser(userLogin.id))
+            ) { "User ระดับสำรวจ สามารถดูข้อมูลคนของบ้านที่ตัวเองสำรวจเท่านั้น" }
         }
+
         return houseService.getPerson(orgId, houseId)
     }
 
