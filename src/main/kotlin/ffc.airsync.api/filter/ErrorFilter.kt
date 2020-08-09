@@ -22,6 +22,7 @@ import com.mongodb.MongoException
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.logLevel
 import org.apache.logging.log4j.Level
+import javax.servlet.ServletException
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotAllowedException
@@ -132,6 +133,24 @@ class CloudInternalServerErrorException : ExceptionMapper<InternalServerErrorExc
 class UninitializedPropertyAccessExceptionFilter : ExceptionMapper<UninitializedPropertyAccessException> {
     override fun toResponse(exception: UninitializedPropertyAccessException): Response {
         getLogger().error("lateinit error", exception)
+        val err = ErrorDetail(500, exception.message, exception)
+        return Response.status(500).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
+    }
+}
+
+@Provider
+class NoClassDefFoundErrorFilter : ExceptionMapper<NoClassDefFoundError> {
+    override fun toResponse(exception: NoClassDefFoundError): Response {
+        getLogger().error(exception)
+        val err = ErrorDetail(500, exception.message, exception)
+        return Response.status(500).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
+    }
+}
+
+@Provider
+class IllegalStateExceptionErrorFilter : ExceptionMapper<IllegalStateException> {
+    override fun toResponse(exception: IllegalStateException): Response {
+        getLogger().error(exception)
         val err = ErrorDetail(500, exception.message, exception)
         return Response.status(500).entity(err).type(MediaType.APPLICATION_JSON_TYPE).build()
     }
