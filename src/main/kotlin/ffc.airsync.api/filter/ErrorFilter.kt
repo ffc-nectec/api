@@ -22,7 +22,6 @@ import com.mongodb.MongoException
 import ffc.airsync.api.getLogger
 import ffc.airsync.api.logLevel
 import org.apache.logging.log4j.Level
-import javax.servlet.ServletException
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotAllowedException
