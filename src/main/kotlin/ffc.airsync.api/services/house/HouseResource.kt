@@ -199,16 +199,7 @@ class HouseResourceNewEndpoint {
         @PathParam("orgId") orgId: String,
         @PathParam("houseId") houseId: String
     ): House {
-        val house = houseService.getSingle(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
-        val userLogin = context.getUserLoginObject()
-
-        if (userLogin.isSurveyor()) {
-            require(
-                house.checkAllowUser(userLogin.id)
-            ) { "User ระดับสำรวจ สามารถดูข้อมูลคนของบ้านที่ตัวเองสำรวจเท่านั้น" }
-        }
-
-        return house
+        return houseService.getSingle(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
     }
 
     /**
