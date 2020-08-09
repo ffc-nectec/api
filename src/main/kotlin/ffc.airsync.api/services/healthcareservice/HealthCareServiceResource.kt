@@ -33,12 +33,7 @@ import ffc.entity.User
 import ffc.entity.healthcare.HealthCareService
 import ffc.entity.healthcare.analyze.HealthAnalyzer
 import javax.annotation.security.RolesAllowed
-import javax.ws.rs.DELETE
-import javax.ws.rs.GET
-import javax.ws.rs.POST
-import javax.ws.rs.PUT
-import javax.ws.rs.Path
-import javax.ws.rs.PathParam
+import javax.ws.rs.*
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.Response
 import javax.ws.rs.core.SecurityContext
@@ -53,7 +48,7 @@ class HealthCareServiceResource {
 
     @POST
     @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE")
-    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("ADMIN", "PROVIDER")
     fun create(
         @PathParam("orgId") orgId: String,
         healthCareService: HealthCareService
@@ -122,7 +117,7 @@ class HealthCareServiceResource {
 
     @GET
     @Path("/$ORGIDTYPE/$PART_HEALTHCARESERVICE/$VISITIDTYPE")
-    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
+    @RolesAllowed("ADMIN", "PROVIDER")
     @Cache(maxAge = 2)
     fun find(@PathParam("orgId") orgId: String, @PathParam("visitId") visitId: String): HealthCareService {
         return healthCareServices.get(visitId, orgId) ?: throw NullPointerException("ไม่พบ ข้อมูลที่ค้นหา")
@@ -144,7 +139,7 @@ class HealthCareServiceResource {
 
     @GET
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/$PART_HEALTHCARESERVICE")
-    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER")
     @Cache(maxAge = 5)
     fun getPerson(
         @PathParam("orgId") orgId: String,
