@@ -27,25 +27,13 @@ import ffc.airsync.api.services.util.GEOJSONHeader
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
-import ffc.entity.User.Role.ADMIN
-import ffc.entity.User.Role.SURVEYOR
-import ffc.entity.User.Role.SYNC_AGENT
+import ffc.entity.User.Role.*
 import ffc.entity.place.House
 import ffc.entity.update
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import javax.annotation.security.RolesAllowed
-import javax.ws.rs.BadRequestException
-import javax.ws.rs.Consumes
-import javax.ws.rs.DELETE
-import javax.ws.rs.DefaultValue
-import javax.ws.rs.GET
-import javax.ws.rs.POST
-import javax.ws.rs.PUT
-import javax.ws.rs.Path
-import javax.ws.rs.PathParam
-import javax.ws.rs.Produces
-import javax.ws.rs.QueryParam
+import javax.ws.rs.*
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -64,6 +52,12 @@ class HouseResourceNewEndpoint {
 
     val surveyorProcess by lazy { SurveyorProcess() }
 
+    /**
+     * สร้างข้อมูลบ้าน
+     * @param house ข้อมูลบ้าน
+     * @param orgId รหัส ID ของหน่วยงาน
+     * @return ข้อมูลบ้านที่สร้างขึ้นใหม่ในระบบ
+     */
     @POST
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
     @RolesAllowed("ADMIN", "PROVIDER")
@@ -74,6 +68,12 @@ class HouseResourceNewEndpoint {
         return Response.status(Response.Status.CREATED).entity(houseService.create(orgId, role, house)).build()
     }
 
+    /**
+     * สร้างข้อมูลบ้านหลายหลัง
+     * @param houseList ข้อมูลบ้าน
+     * @param orgId รหัส ID ของหน่วยงาน
+     * @return ข้อมูลบ้านที่สร้างขึ้นใหม่ในระบบ
+     */
     @POST
     @Path("/$ORGIDTYPE/houses")
     @RolesAllowed("ADMIN", "PROVIDER")
@@ -84,6 +84,9 @@ class HouseResourceNewEndpoint {
         return Response.status(Response.Status.CREATED).entity(houseService.create(orgId, role, houseList)).build()
     }
 
+    /**
+     * ดึงข้อมูลบ้านภายในหน่วยงานแบบ GeoJson จะส่งออกเฉพาะบ้านที่มีพิกัดเท่านั้น
+     */
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
     @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
@@ -105,6 +108,11 @@ class HouseResourceNewEndpoint {
         return FeatureCollection(houses.map { Feature(it.location!!, it) })
     }
 
+    /**
+     * ดึงข้อมูลบ้านภายในหน่วยงานแบบ GeoJson จะส่งออกเฉพาะบ้านที่มีพิกัดเท่านั้น
+     * ผลลัพท์เหมือนกับ #getGeoJsonHouse
+     * @see getGeoJsonHouse
+     */
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE.geojson")
     @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
@@ -118,6 +126,10 @@ class HouseResourceNewEndpoint {
         return getGeoJsonHouse(orgId)
     }
 
+    /**
+     * ดึงข้อมูลรายการบ้านแบบ Json
+     * @param haveLocationQuery ถ้าเป็น true:บ้านเฉพาะมีพิกัด false:บ้านเฉพาะที่ไม่มีพิกัด null:บ้านทุกหลัง
+     */
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE")
     @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
@@ -134,8 +146,17 @@ class HouseResourceNewEndpoint {
             "false" -> false
             else -> null
         }
-        val houseQuery = houseService.getHouses(orgId, query, haveLocation)
         val userLogin = context.getUserLoginObject()
+
+        val houseQuery = if (userLogin.isSurveyor()) {
+            houseService.getHouses(orgId, query, haveLocation).mapNotNull {
+                if (it.checkAllowUser(userLogin.id)) it
+                else null
+            }
+        } else {
+            houseService.getHouses(orgId, query, haveLocation)
+        }
+
         return if (haveLocation == true && userLogin.isSurveyor()) {
             houseQuery
                 .mapNotNull {
@@ -148,6 +169,11 @@ class HouseResourceNewEndpoint {
         }
     }
 
+    /**
+     * ดึงข้อมูลรายการบ้านแบบ Json ข้อมูลเหมือนกับ #getJsonHouse
+     * @see getJsonHouse
+     * @param haveLocationQuery ถ้าเป็น true:บ้านเฉพาะมีพิกัด false:บ้านเฉพาะที่ไม่มีพิกัด null:บ้านทุกหลัง
+     */
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE.json")
     @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
@@ -162,6 +188,11 @@ class HouseResourceNewEndpoint {
         return getJsonHouse(page, per_page, query, haveLocationQuery, orgId)
     }
 
+    /**
+     * ดึงข้อมูลคนในบ้าน
+     * @param houseId หมายเลข Object id ของบ้าน
+     * @return รายการข้อมูลคนในบ้าน
+     */
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}/resident")
     @RolesAllowed("PROVIDER", "SURVEYOR")
@@ -183,6 +214,10 @@ class HouseResourceNewEndpoint {
         return houseService.getPerson(orgId, houseId)
     }
 
+    /**
+     * ดูข้อมูลเฉพาะบ้านหลังที่ระบุ
+     * @param houseId รหัส Object id ของบ้าน
+     */
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
@@ -203,6 +238,10 @@ class HouseResourceNewEndpoint {
         return house
     }
 
+    /**
+     * ดูข้อมูลเฉพาะบ้านหลังที่ระบุ เหมือนกับ #getSingle
+     * @param houseId รหัส Object id ของบ้าน
+     */
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}.json")
     @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
@@ -214,6 +253,11 @@ class HouseResourceNewEndpoint {
         return getSingle(orgId, houseId)
     }
 
+    /**
+     * แก้ไขข้อมูลบ้าน ในกรณีที่เป็น #SURVEYOR จะแก้ไขได้เฉพาะพิกัด
+     * @param houseId รหัส Object id ข้องบ้าน
+     * @param house Object ของบ้าน
+     */
     @PUT
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
@@ -258,6 +302,9 @@ class HouseResourceNewEndpoint {
         require(false) { "URL สำหรับการ update ข้อมูลผิด" }
     }
 
+    /**
+     * ดึงข้อมูล GeoJson สำหรับวาดของบ้าน 1 หลัง
+     */
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}")
     @RolesAllowed("PROVIDER", "SURVEYOR")
@@ -270,6 +317,10 @@ class HouseResourceNewEndpoint {
         return houseService.getSingleGeo(orgId, houseId) ?: throw NoSuchElementException("ไม่พบรหัสบ้าน $houseId")
     }
 
+    /**
+     * ดึงข้อมูล GeoJson สำหรับวาดของบ้าน 1 หลัง
+     * เหมือนกับ #getSingleGeo
+     */
     @GET
     @Path("/$ORGIDTYPE/$NEWPART_HOUSESERVICE/{houseId:([\\dabcdefABCDEF]{24})}.geojson")
     @RolesAllowed("PROVIDER", "SURVEYOR")
@@ -282,6 +333,10 @@ class HouseResourceNewEndpoint {
         return getSingleGeo(orgId, houseId)
     }
 
+    /**
+     * ลบข้อมูลบ้านในหน่วยงานนั้น ทั้งหมด
+     * ใช้สำหรับตอน clear ข้อมูลก่อนรับข้อมูลจากระบบ HIS
+     */
     @DELETE
     @Path("/$ORGIDTYPE/${NEWPART_HOUSESERVICE}s")
     @RolesAllowed("ADMIN")
