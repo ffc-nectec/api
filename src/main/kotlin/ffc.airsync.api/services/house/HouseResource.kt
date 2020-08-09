@@ -95,15 +95,7 @@ class HouseResourceNewEndpoint {
     fun getGeoJsonHouse(
         @PathParam("orgId") orgId: String
     ): FeatureCollection<House> {
-        val userLogin = context.getUserLoginObject()
-        val houses = if (userLogin.isSurveyor()) {
-            houseService.getHouses(orgId, haveLocation = true).mapNotNull {
-                if (it.checkAllowUser(userLogin.id)) it
-                else null
-            }
-        } else {
-            houseService.getHouses(orgId, haveLocation = true)
-        }
+        val houses = houseService.getHouses(orgId, haveLocation = true)
         if (houses.isEmpty()) throw NoSuchElementException("ไม่มีรายการบ้าน")
         return FeatureCollection(houses.map { Feature(it.location!!, it) })
     }
@@ -146,27 +138,8 @@ class HouseResourceNewEndpoint {
             "false" -> false
             else -> null
         }
-        val userLogin = context.getUserLoginObject()
-
-        val houseQuery = if (userLogin.isSurveyor()) {
-            houseService.getHouses(orgId, query, haveLocation).mapNotNull {
-                if (it.checkAllowUser(userLogin.id)) it
-                else null
-            }
-        } else {
-            houseService.getHouses(orgId, query, haveLocation)
-        }
-
-        return if (haveLocation == true && userLogin.isSurveyor()) {
-            houseQuery
-                .mapNotNull {
-                    if (it.checkAllowUser(userLogin.id)) it
-                    else null
-                }
-                .paging(page, per_page)
-        } else {
-            houseQuery.paging(page, per_page)
-        }
+        val houseQuery = houseService.getHouses(orgId, query, haveLocation)
+        return houseQuery.paging(page, per_page)
     }
 
     /**
@@ -189,7 +162,7 @@ class HouseResourceNewEndpoint {
     }
 
     /**
-     * ดึงข้อมูลคนในบ้าน
+     * ดึงข้อมูลคนในบ้าน ถ้าเป็น #SURVEYOR จะดูได้เฉพาะ บ้านที่ตนดูแลเท่านั้น
      * @param houseId หมายเลข Object id ของบ้าน
      * @return รายการข้อมูลคนในบ้าน
      */
