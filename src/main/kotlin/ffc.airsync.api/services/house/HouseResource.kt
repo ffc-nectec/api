@@ -28,13 +28,26 @@ import ffc.airsync.api.services.util.GEOJSONHeader
 import ffc.airsync.api.services.util.getLoginRole
 import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
-import ffc.entity.User.Role.*
+import ffc.entity.User
+import ffc.entity.User.Role.ADMIN
+import ffc.entity.User.Role.SURVEYOR
+import ffc.entity.User.Role.SYNC_AGENT
 import ffc.entity.place.House
 import ffc.entity.update
 import me.piruin.geok.geometry.Feature
 import me.piruin.geok.geometry.FeatureCollection
 import javax.annotation.security.RolesAllowed
-import javax.ws.rs.*
+import javax.ws.rs.BadRequestException
+import javax.ws.rs.Consumes
+import javax.ws.rs.DELETE
+import javax.ws.rs.DefaultValue
+import javax.ws.rs.GET
+import javax.ws.rs.POST
+import javax.ws.rs.PUT
+import javax.ws.rs.Path
+import javax.ws.rs.PathParam
+import javax.ws.rs.Produces
+import javax.ws.rs.QueryParam
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -235,26 +248,62 @@ class HouseResourceNewEndpoint {
     ): Response {
         val userLogin = context.getUserLoginObject()
         val role = userLogin.roles
+        logger.info("${userLogin.name} ระดับ ${userLogin.roles} อัพเดทข้อมูลบ้าน sync=${house.link?.isSynced}")
+        val houseResult = updateHouseProcess(role, house, userLogin, orgId, houseId)
+        return Response.status(200).entity(houseResult).build()
+    }
+
+    /**
+     * แยก Process ออกมาเพราะ มีเรียกใช้เหมือนกัน 2 จุด
+     */
+    private fun updateHouseProcess(
+        role: MutableList<User.Role>,
+        house: House,
+        userLogin: User,
+        orgId: String,
+        houseId: String
+    ): House {
         when {
             role.contains(ADMIN) -> house.link?.isSynced = true
             else -> house.link?.isSynced = false
         }
-        logger.info("${userLogin.name} ระดับ ${userLogin.roles} อัพเดทข้อมูลบ้าน sync=${house.link?.isSynced}")
-        return when {
+        val houseResult = when {
             /**
              * SURVEYOR สามารถปักพิกัดได้เฉพาะหลังที่ไม่มีพิกัดเท่านั้น
              */
             role.contains(SYNC_AGENT) -> {
-                Response.status(200).entity(houseService.update(orgId, house, houseId)).build()
+                houseService.update(orgId, house, houseId)
             }
             role.contains(SURVEYOR) -> {
                 val original = houseService.getSingle(orgId, houseId)!!
                 val build = surveyorProcess.process(original, house, userLogin.id)
-                Response.status(200).entity(houseService.update(orgId, build, houseId)).build()
+                houseService.update(orgId, build, houseId)
             }
             else -> {
-                Response.status(200).entity(houseService.update(orgId, house.update { }, houseId)).build()
+                houseService.update(orgId, house.update { }, houseId)
             }
+        }
+        return houseResult
+    }
+
+    @PUT
+    @Path("/$ORGIDTYPE/${NEWPART_HOUSESERVICE}s")
+    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR")
+    fun updates(
+        @PathParam("orgId") orgId: String,
+        houses: List<House>
+    ): List<House> {
+        val userLogin = context.getUserLoginObject()
+        val role = userLogin.roles
+        logger.info("${userLogin.name} ระดับ ${userLogin.roles} อัพเดทรายการข้อมูลบ้าน")
+        return houses.mapNotNull { house ->
+            val run = kotlin.runCatching {
+                require(!house.isTempId) { "ข้อมูลบ้านที่จะ update ห้ามเป็น Temp id" }
+                updateHouseProcess(role, house, userLogin, orgId, house.id)
+            }
+
+            if (run.isFailure) logger.warn(run.getOrThrow())
+            run.getOrNull()
         }
     }
 
