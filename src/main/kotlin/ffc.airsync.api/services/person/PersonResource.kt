@@ -30,7 +30,16 @@ import ffc.airsync.api.services.util.paging
 import ffc.entity.Person
 import ffc.entity.User
 import javax.annotation.security.RolesAllowed
-import javax.ws.rs.*
+import javax.ws.rs.Consumes
+import javax.ws.rs.DELETE
+import javax.ws.rs.DefaultValue
+import javax.ws.rs.GET
+import javax.ws.rs.POST
+import javax.ws.rs.PUT
+import javax.ws.rs.Path
+import javax.ws.rs.PathParam
+import javax.ws.rs.Produces
+import javax.ws.rs.QueryParam
 import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -94,6 +103,27 @@ class PersonResource {
             else -> person.link?.isSynced = false
         }
         return persons.update(orgId, person)
+    }
+
+    /**
+     * อัพเดทรายการคน
+     */
+    @PUT
+    @Path("/$ORGIDTYPE/persons")
+    @RolesAllowed("ADMIN", "PROVIDER")
+    @Cache(maxAge = 5)
+    fun updatePersons(
+        @PathParam("orgId") orgId: String,
+        persons: List<Person>
+    ): List<Person> {
+        return persons.mapNotNull {
+            val run = runCatching {
+                require(!it.isTempId) { "ข้อมูลที่จะ update ห้ามเป็น Temp id" }
+                updatePerson(orgId, it.id, it)
+            }
+            if (run.isFailure) logger.warn(run.getOrThrow())
+            run.getOrNull()
+        }
     }
 
     @GET
