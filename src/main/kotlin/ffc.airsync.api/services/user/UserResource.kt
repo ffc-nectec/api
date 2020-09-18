@@ -66,8 +66,11 @@ class UserResource(
     @Path("/{orgUuid:([\\dabcdefABCDEF].*)}/user")
     @RolesAllowed("ADMIN")
     fun update(@PathParam("orgUuid") orgId: String, user: List<User>): Response {
+        logger.debug("Update user ${user.map { it.name + " " }}")
         val find = user.filter { runCatching { it.password }.isFailure }
+        logger.debug("Check password is not null")
         if (find.isNullOrEmpty()) {
+            logger.info("Find is null error")
             val toJson = find.map { it.name }.toJson()
             throw UninitializedPropertyAccessException("พบข้อมูลรหัสมีปัญหา org:$orgId name:$toJson")
         }
