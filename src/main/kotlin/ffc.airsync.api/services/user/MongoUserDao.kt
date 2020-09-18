@@ -19,6 +19,7 @@
 package ffc.airsync.api.services.user
 
 import com.google.gson.Gson
+import ffc.airsync.api.getLogger
 import ffc.airsync.api.security.password
 import ffc.airsync.api.services.MongoDao
 import ffc.airsync.api.services.util.equal
@@ -36,7 +37,7 @@ import org.bson.Document
 import org.bson.types.ObjectId
 
 internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
-
+    private val logger = getLogger()
     override fun insert(user: User, orgId: String): User {
         require(!user.isActivated) { "User ที่จะเพิ่มเข้ามาใหม่ ต้อง isActivated=false" }
         val genUserId = ObjectId().toHexString()
@@ -78,6 +79,7 @@ internal class MongoUserDao : UserDao, MongoDao("ffc", "organ") {
      * ส่วนที่เหลือ update ข้อมูลตามที่ส่งเข้ามาทั้งหมด
      */
     override fun update(user: User, orgId: String, updatePassword: Boolean): User {
+        logger.debug("Mongo update user ${user.name}")
         val userOldDoc = getUserDocument(orgId, user.id)
         user.orgId = orgId
         val userDoc = user.toDocument()
