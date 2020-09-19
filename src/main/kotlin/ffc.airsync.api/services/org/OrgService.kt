@@ -13,6 +13,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package ffc.airsync.api.services.org
@@ -23,6 +24,7 @@ import ffc.airsync.api.services.analytic.analyzers
 import ffc.airsync.api.services.healthcareservice.healthCareServices
 import ffc.airsync.api.services.house.houses
 import ffc.airsync.api.services.person.persons
+import ffc.airsync.api.services.template.templates
 import ffc.airsync.api.services.village.villages
 import ffc.entity.Organization
 import ffc.entity.gson.toJson
@@ -35,20 +37,22 @@ internal object OrgService {
     }
 
     fun remove(orgId: String) {
-        logger.debug("Remove org 1/7")
+        logger.debug("Remove org 1")
         orgs.remove(orgId)
-        logger.debug("Remove analyzers 1/2")
+        logger.debug("Remove analyzers 2")
         analyzers.removeByOrgId(orgId)
-        logger.debug("Remove healthCare 1/3")
+        logger.debug("Remove healthCare 3")
         healthCareServices.removeByOrgId(orgId)
-        logger.debug("Remove house 1/4")
+        logger.debug("Remove house 4")
         houses.removeByOrgId(orgId)
-        logger.debug("Remove persons 1/5")
+        logger.debug("Remove persons 5")
         persons.remove(orgId)
-        logger.debug("Remove villages 1/6")
+        logger.debug("Remove villages 6")
         villages.removeByOrgId(orgId)
-        logger.debug("Remove token 1/7")
+        logger.debug("Remove token 7")
         tokens.removeByOrgId(orgId)
+        logger.debug("Remove template 8")
+        templates.removeByOrgId(orgId)
     }
 
     fun getMy(ipAddress: String): List<Organization> {
