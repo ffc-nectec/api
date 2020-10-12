@@ -101,7 +101,7 @@ class MongoRelationsShipDao : MongoDao("ffc", "person"), GenoGramDao {
         dbCollection.updateMany("orgIndex" equal ObjectId(orgId), update, UpdateOptions())
     }
 
-    override fun insertBlock(
+    override fun addRelation(
         orgId: String,
         block: Int,
         relation: Map<String, List<Person.Relationship>>
@@ -130,35 +130,26 @@ class MongoRelationsShipDao : MongoDao("ffc", "person"), GenoGramDao {
         }
     }
 
-    override fun removeInsertBlock() {
-        val update = BasicDBObject()
-        val pull = Document()
-        pull["relationships.insertBlock"] = ("\$exists" equal true)
-
-        update["\$pull"] = "relationships.insertBlock"
-
-        dbCollection.updateMany("relationships.insertBlock" equal ("\$exists" equal true), update, UpdateOptions())
-    }
-
-    override fun confirmBlock(orgId: String, block: Int) {
-        val update = BasicDBObject()
-        update["\$pop"] = BasicDBObject("relationships", "")
-
-        dbCollection.updateMany("relationships.insertBlock" equal block, update, UpdateOptions())
-    }
-
     override fun unConfirmBlock(orgId: String, block: Int) {
 
         val update = BasicDBObject()
         update["\$set"] = BasicDBObject("relationships", BasicBSONList())
 
-        dbCollection.updateMany("relationships.insertBlock" equal block, update, UpdateOptions())
+        val andList = BasicBSONList()
+        andList.add("orgIndex" equal ObjectId(orgId))
+        andList.add("relationships.insertBlock" equal block)
+
+        dbCollection.updateMany("\$and" equal andList, update, UpdateOptions())
     }
 
     override fun getBlock(orgId: String, block: Int): Map<String, List<Person.Relationship>> {
         val result = HashMap<String, List<Person.Relationship>>()
+        val andList = BasicBSONList()
+        andList.add("orgIndex" equal ObjectId(orgId))
+        andList.add("relationships.insertBlock" equal block)
+
         val query = dbCollection
-            .find("relationships.insertBlock" equal block)
+            .find("\$and" equal andList)
             .projection(("relationships" equal 1) plus ("id" equal 1))
 
         query.forEach {

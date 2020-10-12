@@ -55,7 +55,7 @@ class SyncRelationshipResource {
         relation: Map<String, @JvmSuppressWildcards List<Person.Relationship>>
     ): Map<String, List<Person.Relationship>> {
         try {
-            return personRelationsShip.insertBlock(orgId, block, relation)
+            return personRelationsShip.addRelation(orgId, block, relation)
         } catch (ex: Exception) {
             logger.error(ex.message, ex)
             throw ex
@@ -86,12 +86,6 @@ class SyncRelationshipResource {
         @PathParam("orgId") orgId: String,
         @PathParam("block") block: Int
     ) {
-        try {
-            personRelationsShip.confirmBlock(orgId, block)
-        } catch (ex: Exception) {
-            logger.error(ex.message, ex)
-            throw ex
-        }
     }
 
     @DELETE
@@ -102,12 +96,6 @@ class SyncRelationshipResource {
         @PathParam("orgId") orgId: String,
         @PathParam("block") block: Int
     ) {
-        try {
-            personRelationsShip.unConfirmBlock(orgId, block)
-        } catch (ex: Exception) {
-            logger.error(ex.message, ex)
-            throw ex
-        }
     }
 
     @DELETE
@@ -117,24 +105,5 @@ class SyncRelationshipResource {
     fun cleanAll(
         @PathParam("orgId") orgId: String
     ) {
-        try {
-            personRelationsShip.removeByOrgId(orgId)
-        } catch (ex: Exception) {
-            logger.error(ex.message, ex)
-            throw ex
-        }
-    }
-
-    @DELETE
-    @Path("/relationship/insertblock")
-    @RolesAllowed("ADMIN")
-    @Cache(maxAge = 5)
-    fun removeInsert() {
-        try {
-            personRelationsShip.removeInsertBlock()
-        } catch (ex: Exception) {
-            logger.error(ex.message, ex)
-            throw ex
-        }
     }
 }
