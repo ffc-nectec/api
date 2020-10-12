@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package ffc.airsync.api.services.genogram
 
 import ffc.airsync.api.MongoDbTestRule
@@ -87,7 +105,7 @@ class MongoRelationsShipSyncDaoTest {
         relation[somChai.id] = somChai.relationships
         relation[somYing.id] = somYing.relationships
 
-        val result = dao.insertBlock(ORG_ID, 1, relation)
+        val result = dao.addRelation(ORG_ID, 1, relation)
 
         result.count() `should be equal to` 2
         result[somChai.id]!!.size `should be equal to` somChai.relationships.size
@@ -100,34 +118,10 @@ class MongoRelationsShipSyncDaoTest {
         relation[somChai.id] = somChai.relationships
         relation[somYing.id] = somYing.relationships
 
-        dao.insertBlock(ORG_ID, 1, relation)
+        dao.addRelation(ORG_ID, 1, relation)
 
         dao.getBlock(ORG_ID, 1).size `should be equal to` 2
-    }
-
-    @Test
-    fun confirmBlock() {
-        val relation = HashMap<String, List<Person.Relationship>>()
-        relation[somChai.id] = somChai.relationships
-        relation[somYing.id] = somYing.relationships
-
-        dao.insertBlock(ORG_ID, 1, relation)
-        dao.confirmBlock(ORG_ID, 1)
-
-        val result = dao.getBlock(ORG_ID, 1)
-        result.size `should be equal to` 0
-    }
-
-    @Test
-    fun unConfirmBlock() {
-        val relation = HashMap<String, List<Person.Relationship>>()
-        relation[somChai.id] = somChai.relationships
-        relation[somYing.id] = somYing.relationships
-
-        dao.insertBlock(ORG_ID, 1, relation)
-        dao.unConfirmBlock(ORG_ID, 1)
-
-        dao.getBlock(ORG_ID, 1).size `should be equal to` 0
+        daoPerson.getPerson(ORG_ID, somChai.id).relationships.size `should be equal to` 1
     }
 
     @Test
@@ -136,22 +130,9 @@ class MongoRelationsShipSyncDaoTest {
         relation[somChai.id] = somChai.relationships
         relation[somYing.id] = somYing.relationships
 
-        dao.insertBlock(ORG_ID, 1, relation)
+        dao.addRelation(ORG_ID, 1, relation)
         dao.removeByOrgId(ORG_ID)
 
         dao.getBlock(ORG_ID, 1).size `should be equal to` 0
-    }
-
-    @Test
-    fun removeInsertBlock() {
-        val relation = HashMap<String, List<Person.Relationship>>()
-        relation[somChai.id] = somChai.relationships
-        relation[somYing.id] = somYing.relationships
-
-        dao.insertBlock(ORG_ID, 1, relation)
-
-        // dao.removeInsertBlock()
-
-        // dao.getBlock(ORG_ID, 1).size `should be equal to` 0
     }
 }

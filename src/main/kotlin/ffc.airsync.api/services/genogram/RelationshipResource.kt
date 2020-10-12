@@ -46,7 +46,7 @@ class RelationshipResource {
 
     @GET
     @Path("/$ORGIDTYPE/person/{personId:([\\dabcdefABCDEF]+)}/relationship")
-    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "PATIENT")
     @Cache(maxAge = 5)
     fun get(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<Person.Relationship> {
         return personRelationsShip.get(orgId, personId)
@@ -54,7 +54,7 @@ class RelationshipResource {
 
     @PUT
     @Path("/$ORGIDTYPE/person/{personId:([\\dabcdefABCDEF]+)}/relationship")
-    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN")
     @Cache(maxAge = 5)
     fun update(
         @PathParam("orgId") orgId: String,
@@ -66,7 +66,7 @@ class RelationshipResource {
 
     @GET
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/genogram/collect")
-    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "PATIENT")
     @Cache(maxAge = 5)
     fun getGenogramCollect(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): List<Person> {
         return personRelationsShip.collectGenogram(orgId, personId)
@@ -74,7 +74,7 @@ class RelationshipResource {
 
     @GET
     @Path("/$ORGIDTYPE/person/$PERSONIDTYPE/genogram")
-    @RolesAllowed("ADMIN", "PROVIDER", "SURVEYOR", "PATIENT")
+    @RolesAllowed("ADMIN", "PROVIDER", "PATIENT")
     @Cache(maxAge = 5)
     fun getGenogramFamily(@PathParam("orgId") orgId: String, @PathParam("personId") personId: String): Family {
 

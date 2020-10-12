@@ -64,7 +64,7 @@ dependencies {
     compile 'com.marcelkliemannel:kotlin-onetimepassword:1.0.0'
 
     testImplementation "com.github.kstyrc:embedded-redis:0.6"
-    testImplementation "de.bwaldvogel:mongo-java-server:1.9.8"
+    testImplementation "de.bwaldvogel:mongo-java-server:1.18.0"
     testImplementation "junit:junit:4.12"
     testImplementation "org.amshove.kluent:kluent:1.48"
     testImplementation "org.mockito:mockito-core:2.19.0"

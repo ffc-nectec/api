@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2019 NECTEC
+ *   National Electronics and Computer Technology Center, Thailand
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package ffc.airsync.api.services.genogram
 
 import ffc.airsync.api.MongoDbTestRule
@@ -24,11 +42,14 @@ class MongoRelationsShipDaoTest {
     val mongo = MongoDbTestRule()
 
     private val ORG_ID = "5bbd7f5ebc920637b04c7796"
+    private val ORG_ID2 = "5bbd7f5ebc920637b04c7797"
     lateinit var dao: GenoGramDao
     lateinit var daoPerson: PersonDao
     lateinit var somChai: Person
     lateinit var somYing: Person
     lateinit var rabbit: Person
+    lateinit var katar: Person
+    lateinit var karog: Person
 
     val `สมชาย` = Person().apply {
         identities.add(ThaiCitizenId("1231233123421"))
@@ -69,6 +90,32 @@ class MongoRelationsShipDaoTest {
         link!!.isSynced = false
         houseId = "99887744998"
     }
+    val `กระแต` = Person().apply {
+        identities.add(ThaiCitizenId("2343211234565"))
+        prename = "นางสาว"
+        firstname = "กระแต"
+        lastname = "ปรีดแตก"
+        sex = Person.Sex.FEMALE
+        birthDate = LocalDate.now().minusYears(18)
+        chronics.add(Chronic(Icd10("sleep", "I12")))
+        chronics.add(Chronic(Icd10("god", "I15")))
+        link = Link(System.JHICS)
+        link!!.isSynced = false
+        houseId = "99887744903"
+    }
+    val `กระรอก` = Person().apply {
+        identities.add(ThaiCitizenId("2343210934516"))
+        prename = "นาย"
+        firstname = "กระรอก"
+        lastname = "ศีลเสมอ"
+        sex = Person.Sex.MALE
+        birthDate = LocalDate.now().minusYears(18)
+        chronics.add(Chronic(Icd10("sleep", "I12")))
+        chronics.add(Chronic(Icd10("god", "I15")))
+        link = Link(System.JHICS)
+        link!!.isSynced = false
+        houseId = "99887744903"
+    }
 
     @Before
     fun initDb() {
@@ -80,18 +127,29 @@ class MongoRelationsShipDaoTest {
         somYing = daoPerson.insert(ORG_ID, `สมหญิง`)
         rabbit = daoPerson.insert(ORG_ID, `กระต่าย`)
 
+        katar = daoPerson.insert(ORG_ID2, `กระแต`)
+        karog = daoPerson.insert(ORG_ID2, `กระรอก`)
+
         somChai.relationships.add(Person.Relationship(Person.Relate.Child, somYing))
         somYing.relationships.add(Person.Relationship(Person.Relate.Father, somChai))
         daoPerson.update(ORG_ID, somChai)
         daoPerson.update(ORG_ID, somYing)
+
+        katar.addRelationship(Person.Relate.Married to karog)
+        karog.addRelationship(Person.Relate.Married to katar)
+        daoPerson.update(ORG_ID2, katar)
+        daoPerson.update(ORG_ID2, karog)
     }
 
     @Test
     fun get() {
         val dogRelation = dao.get(ORG_ID, somChai.id).first()
+        val dogRelation2 = dao.get(ORG_ID2, katar.id).first()
 
         dogRelation.id `should be equal to` somYing.id
         dogRelation.relate `should equal` Person.Relate.Child
+        dogRelation2.id `should be equal to` karog.id
+        dogRelation2.relate `should equal` Person.Relate.Married
     }
 
     @Test
@@ -143,66 +201,74 @@ class MongoRelationsShipDaoTest {
     @Test
     fun insertBlock() {
         dao.removeByOrgId(ORG_ID)
+        dao.removeByOrgId(ORG_ID2)
 
         val inputBlock: Map<String, List<Person.Relationship>> = mapOf(
             somChai.id to สมชาย.relationships,
             somYing.id to `สมหญิง`.relationships,
             rabbit.id to `กระต่าย`.relationships
         )
+        val inputBlock2: Map<String, List<Person.Relationship>> = mapOf(
+            karog.id to `กระรอก`.relationships,
+            katar.id to `กระแต`.relationships
+        )
 
-        val resultBlock = dao.insertBlock(ORG_ID, 2, inputBlock)
+        val resultBlock = dao.addRelation(ORG_ID, 2, inputBlock)
+        val resultBlock2 = dao.addRelation(ORG_ID2, 1, inputBlock2)
 
         resultBlock.size `should be equal to` 3
+        resultBlock2.size `should be equal to` 2
     }
 
     @Test
     fun getBlock() {
         dao.removeByOrgId(ORG_ID)
+        dao.removeByOrgId(ORG_ID2)
 
         val inputBlock: Map<String, List<Person.Relationship>> = mapOf(
             somChai.id to สมชาย.relationships,
             somYing.id to `สมหญิง`.relationships,
             rabbit.id to `กระต่าย`.relationships
         )
-        dao.insertBlock(ORG_ID, 2, inputBlock)
-
-        val resultBlock = dao.getBlock(ORG_ID, 2)
-        resultBlock.size `should be equal to` 3
-    }
-
-    @Test
-    fun confirmBlock() {
-        dao.removeByOrgId(ORG_ID)
-
-        val inputBlock: Map<String, List<Person.Relationship>> = mapOf(
-            somChai.id to somChai.relationships,
-            somYing.id to somYing.relationships,
-            rabbit.id to rabbit.relationships
+        val inputBlock2: Map<String, List<Person.Relationship>> = mapOf(
+            karog.id to `กระรอก`.relationships,
+            katar.id to `กระแต`.relationships
         )
-        dao.insertBlock(ORG_ID, 2, inputBlock)
-        dao.confirmBlock(ORG_ID, 2)
+        dao.addRelation(ORG_ID, 2, inputBlock)
+        dao.addRelation(ORG_ID2, 1, inputBlock2)
 
         val resultBlock = dao.getBlock(ORG_ID, 2)
-        resultBlock.size `should be equal to` 0
+        val resultBlock2 = dao.getBlock(ORG_ID2, 1)
 
-        dao.get(ORG_ID, somChai.id).isNotEmpty() `should be equal to` true
+        resultBlock.size `should be equal to` 3
+        resultBlock2.size `should be equal to` 2
     }
 
     @Test
     fun unConfirmBlock() {
         dao.removeByOrgId(ORG_ID)
+        dao.removeByOrgId(ORG_ID2)
 
         val inputBlock: Map<String, List<Person.Relationship>> = mapOf(
-            somChai.id to somChai.relationships,
-            somYing.id to somYing.relationships,
-            rabbit.id to rabbit.relationships
+            somChai.id to สมชาย.relationships,
+            somYing.id to `สมหญิง`.relationships,
+            rabbit.id to `กระต่าย`.relationships
         )
-        dao.insertBlock(ORG_ID, 2, inputBlock)
+        val inputBlock2: Map<String, List<Person.Relationship>> = mapOf(
+            karog.id to `กระรอก`.relationships,
+            katar.id to `กระแต`.relationships
+        )
+        dao.addRelation(ORG_ID, 2, inputBlock)
+        dao.addRelation(ORG_ID2, 1, inputBlock2)
         dao.unConfirmBlock(ORG_ID, 2)
+        dao.unConfirmBlock(ORG_ID2, 1)
 
         val resultBlock = dao.getBlock(ORG_ID, 2)
+        val resultBlock2 = dao.getBlock(ORG_ID2, 1)
         resultBlock.size `should be equal to` 0
+        resultBlock2.size `should be equal to` 0
 
         dao.get(ORG_ID, somChai.id).isEmpty() `should be equal to` true
+        dao.get(ORG_ID2, katar.id).isEmpty() `should be equal to` true
     }
 }
