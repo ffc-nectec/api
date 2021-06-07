@@ -278,14 +278,17 @@ class HouseResourceNewEndpoint {
             role.contains(SURVEYOR) -> {
                 val original = houseService.getSingle(orgId, houseId)!!
                 val build = surveyorProcess.process(original, house, userLogin.id)
-                require(house.location != null) {
-                    logger.error("พบรหัสบ้านเป็น ค่าว่างไม่สามารถอัดเดทได้ houseId:${house.id} user role $role")
-                    "พบรหัสบ้านเป็น ค่าว่างไม่สามารถอัดเดทได้"
+                if (house.location == null) {
+                    logger.warn("พบรหัสบ้านเป็น ค่าว่างไม่สามารถอัดเดทได้ houseId:${house.id} user role $role")
+                    // "พบรหัสบ้านเป็น ค่าว่างไม่สามารถอัดเดทได้"
                 }
                 houseService.update(orgId, build, houseId)
             }
             else -> {
-                logger.error("พบรหัสบ้านเป็น ค่าว่างไม่สามารถอัดเดทได้ houseId:${house.id} user role $role")
+                if (house.location == null) {
+                    logger.warn("พบรหัสบ้านเป็น ค่าว่างไม่สามารถอัดเดทได้ houseId:${house.id} user role $role")
+                    // "พบรหัสบ้านเป็น ค่าว่างไม่สามารถอัดเดทได้"
+                }
                 houseService.update(orgId, house.update { }, houseId)
             }
         }
@@ -305,9 +308,9 @@ class HouseResourceNewEndpoint {
         // ถ้าเป็นตามนี้ให้เช็คก่อนว่า พิกัดบ้านห้ามว่าง
         if (role.contains(SURVEYOR) || role.contains(PROVIDER)) {
             val find = houses.find { it.location == null }
-            require(find == null) {
-                logger.error("พบรหัสบ้านเป็น ค่าว่างไม่สามารถอัดเดทได้ houseId:${find?.id} user role $role")
-                "${userLogin.name} ระดับ $role พบรหัสบ้านเป็น ค่าว่างไม่สามารถอัดเดทได้"
+            if (find != null) {
+                logger.warn("พบรหัสบ้านเป็น ค่าว่างไม่สามารถอัดเดทได้ houseId:${find.id} user role $role")
+                // "${userLogin.name} ระดับ $role พบรหัสบ้านเป็น ค่าว่างไม่สามารถอัดเดทได้"
             }
         }
         return houses.mapNotNull { house ->
