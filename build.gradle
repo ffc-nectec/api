@@ -29,7 +29,6 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url 'https://jitpack.io' }
-    //maven { url "https://dl.bintray.com/blazei/maven" }  // ไม่มีไฟล์
     maven { url "https://maven.google.com" }
 }
 
@@ -58,7 +57,6 @@ dependencies {
     compile 'com.google.firebase:firebase-admin:5.11.0'
     compile "com.github.ffc-nectec:entities:$entitiesVersion"
     compile 'com.github.ffc-nectec.genogram:genogram:1.0.0-alpha4'
-    //compile 'com.github.piruin:jbcrypt:0.4' // ไม่มีไฟล์
     compile 'org.mindrot:jbcrypt:0.4'
     compile "joda-time:joda-time:2.9.9"
     compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
